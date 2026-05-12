@@ -98,6 +98,75 @@ export interface WebhookHistoryEntry {
   createdAt: Date;
 }
 
+export type AssessmentStatus = 'started' | 'paused' | 'resumed' | 'completed' | 'incomplete';
+
+export type AgeGroupCDSA = '2-6m' | '7-12m' | '13-24m' | '25-36m' | '37-48m' | '49-60m' | '61-72m';
+
+export interface Child {
+  id: string;
+  birthDate: string;
+  gender: 'male' | 'female' | 'other';
+  nickName?: string;
+  createdAt: Date;
+}
+
+export interface Assessment {
+  id: string;
+  childId: string;
+  status: AssessmentStatus;
+  language: string;
+  currentStep: number;
+  startedAt: Date;
+  completedAt?: Date;
+  pausedAt?: Date;
+  triageResult?: {
+    category: 'normal' | 'monitor' | 'refer';
+    confidence: number;
+    summary: string;
+  };
+  fhirSubmitted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface AssessmentEvent {
+  id: string;
+  assessmentId: string;
+  childId: string;
+  moduleType: 'questionnaire' | 'game' | 'voice' | 'video' | 'drawing';
+  eventType: string;
+  timestamp: Date;
+  data: Record<string, unknown>;
+  qualityFlags?: {
+    isComplete: boolean;
+    isAnomaly: boolean;
+    anomalyType?: string;
+  };
+}
+
+export interface MediaFile {
+  id: string;
+  assessmentId: string;
+  childId: string;
+  fileType: 'voice' | 'video' | 'drawing';
+  blob: Blob;
+  mimeType: string;
+  fileSize: number;
+  duration?: number;
+  processed: boolean;
+  createdAt: Date;
+}
+
+export interface NormThreshold {
+  id: string;
+  ageGroup: AgeGroupCDSA;
+  metric: string;
+  mean: number;
+  std: number;
+  source: string;
+  updatedAt: Date;
+}
+
 export class CdssDatabase extends Dexie {
   patients!: Table<Patient>;
   observations!: Table<Observation>;
@@ -108,6 +177,11 @@ export class CdssDatabase extends Dexie {
   educationInteractions!: Table<EducationInteraction>;
   ruleVersions!: Table<RuleVersion>;
   webhookHistory!: Table<WebhookHistoryEntry>;
+  children!: Table<Child>;
+  assessments!: Table<Assessment>;
+  assessmentEvents!: Table<AssessmentEvent>;
+  mediaFiles!: Table<MediaFile>;
+  normThresholds!: Table<NormThreshold>;
 
   constructor() {
     super('cdss-pediatric');
@@ -121,6 +195,24 @@ export class CdssDatabase extends Dexie {
       educationInteractions: 'id, contentSlug, createdAt',
       ruleVersions: 'id, createdAt',
       webhookHistory: 'id, webhookId, alertId, createdAt',
+    });
+    this.version(2).stores({
+      // Repeat ALL v1 stores exactly as they are
+      patients: 'id, ageGroup, currentRiskLevel, lastSyncedAt',
+      observations: 'id, patientId, indicator, effectiveDateTime, [patientId+indicator]',
+      alerts: 'id, patientId, riskLevel, status, createdAt, [patientId+status]',
+      baselines: '[patientId+indicator], patientId, updatedAt',
+      syncQueue: 'id, createdAt',
+      serverConfigs: 'id, lastUsedAt',
+      educationInteractions: 'id, contentSlug, createdAt',
+      ruleVersions: 'id, createdAt',
+      webhookHistory: 'id, webhookId, alertId, createdAt',
+      // New v2 stores
+      children: 'id, createdAt',
+      assessments: 'id, childId, status, createdAt, [childId+status]',
+      assessmentEvents: 'id, assessmentId, childId, moduleType, timestamp, [assessmentId+moduleType]',
+      mediaFiles: 'id, assessmentId, childId, fileType, createdAt, [assessmentId+fileType]',
+      normThresholds: 'id, ageGroup, metric, [ageGroup+metric]',
     });
   }
 }
