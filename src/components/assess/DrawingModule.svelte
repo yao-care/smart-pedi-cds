@@ -116,7 +116,7 @@
           shapeName: currentShape.name,
           strokeCount: allStrokes.length,
           totalPoints: allStrokes.reduce((sum, s) => sum + s.length, 0),
-          strokes: allStrokes,
+          strokes: JSON.parse(JSON.stringify(allStrokes)),
           fileSize: blob.size,
         },
       });
