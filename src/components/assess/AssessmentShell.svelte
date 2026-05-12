@@ -71,6 +71,7 @@
           {/each}
         </div>
         <button class="btn-new" onclick={handleStartNew}>開始新的評估</button>
+        <a href="/smart-pedi-cds/assess/history/" class="history-link">查看過去的評估紀錄</a>
       </div>
 
     {:else if assessmentStore.currentStep === 'profile'}
@@ -209,6 +210,18 @@
     min-height: 44px;
   }
 
+  .history-link {
+    display: inline-block;
+    margin-top: var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .history-link:hover {
+    text-decoration: underline;
+  }
+
   /* Module placeholder */
   .module-placeholder {
     text-align: center;
@@ -228,13 +241,6 @@
   .module-placeholder p {
     color: var(--color-text-muted);
     margin-bottom: var(--space-2);
-  }
-
-  .dev-note {
-    font-size: var(--text-xs);
-    color: var(--color-text-subtle);
-    font-style: italic;
-    margin-bottom: var(--space-6);
   }
 
   .btn-skip {

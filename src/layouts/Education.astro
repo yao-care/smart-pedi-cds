@@ -22,7 +22,7 @@ const { title, description, breadcrumbs } = Astro.props;
         <aside class="edu-sidebar">
           <slot name="sidebar" />
         </aside>
-        <main id="main-content" class="prose">
+        <main id="main-content" class="prose" data-pagefind-body>
           <slot />
         </main>
       </div>

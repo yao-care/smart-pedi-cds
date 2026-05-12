@@ -1,6 +1,5 @@
 import type { RiskLevel } from '../lib/utils/risk-levels';
 import { maxRisk } from '../lib/utils/risk-levels';
-import { INDICATOR_NAMES, type IndicatorName } from '../lib/utils/loinc-map';
 
 // Import worker types (type-only since workers are loaded via URL)
 import type { RuleEngineRequest, RuleEngineResponse, IndicatorResult } from './workers/rule-engine.worker';

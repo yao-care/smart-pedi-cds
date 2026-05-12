@@ -10,7 +10,7 @@
     { id: 'diamond', name: '菱形', icon: '◇', guide: '請畫一個菱形' },
   ];
 
-  let canvas: HTMLCanvasElement;
+  let canvas = $state<HTMLCanvasElement | null>(null);
   let isDrawing = $state(false);
   let currentShapeIndex = $state(0);
   let isComplete = $state(false);

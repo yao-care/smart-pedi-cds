@@ -1,8 +1,8 @@
-import { createAlert, getOpenAlerts, updateAlertStatus, findDuplicateAlert, getAlertHistory } from '../lib/db/alerts';
+import { createAlert, getOpenAlerts, updateAlertStatus, findDuplicateAlert } from '../lib/db/alerts';
 import { updateRiskLevel } from '../lib/db/patients';
 import type { Alert } from '../lib/db/schema';
 import type { RiskLevel } from '../lib/utils/risk-levels';
-import { maxRisk, isEscalation } from '../lib/utils/risk-levels';
+import { isEscalation } from '../lib/utils/risk-levels';
 import type { RiskAnalysisResult } from './risk-analyzer';
 
 export interface ClosedLoopConfig {

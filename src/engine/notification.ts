@@ -1,5 +1,4 @@
 import type { Alert } from '../lib/db/schema';
-import type { RiskLevel } from '../lib/utils/risk-levels';
 
 export interface NotificationConfig {
   enabled: boolean;

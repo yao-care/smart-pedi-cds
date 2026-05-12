@@ -38,25 +38,32 @@
     `${indicatorName} 趨勢圖，共 ${data.length} 筆資料${baselineMean != null ? `，基準線均值 ${baselineMean} ${unit}` : ''}`,
   );
 
-  $effect(() => {
-    if (!containerEl || data.length === 0) return;
-
+  function renderChart(
+    container: HTMLDivElement,
+    chartData: Array<{ date: Date; value: number }>,
+    chartWidth: number,
+    chartHeight: number,
+    mean: number | null,
+    std: number | null,
+    unitLabel: string,
+    ariaLabel: string,
+  ) {
     // Clear previous content
-    select(containerEl).selectAll('*').remove();
+    select(container).selectAll('*').remove();
 
-    const innerWidth = width - margin.left - margin.right;
-    const innerHeight = height - margin.top - margin.bottom;
+    const innerWidth = chartWidth - margin.left - margin.right;
+    const innerHeight = chartHeight - margin.top - margin.bottom;
 
     // Scales
-    const xExtent = extent(data, (d) => new Date(d.date)) as [Date, Date];
-    const yValues = data.map((d) => d.value);
+    const xExtent = extent(chartData, (d) => new Date(d.date)) as [Date, Date];
+    const yValues = chartData.map((d) => d.value);
     let yMin = Math.min(...yValues);
     let yMax = Math.max(...yValues);
 
     // Extend Y domain for baseline band if present
-    if (baselineMean != null && baselineStd != null) {
-      yMin = Math.min(yMin, baselineMean - 2.5 * baselineStd);
-      yMax = Math.max(yMax, baselineMean + 2.5 * baselineStd);
+    if (mean != null && std != null) {
+      yMin = Math.min(yMin, mean - 2.5 * std);
+      yMax = Math.max(yMax, mean + 2.5 * std);
     }
 
     const yPad = (yMax - yMin) * 0.1 || 1;
@@ -66,21 +73,21 @@
       .domain([yMin - yPad, yMax + yPad])
       .range([innerHeight, 0]);
 
-    const svg = select(containerEl)
+    const svg = select(container)
       .append('svg')
-      .attr('width', width)
-      .attr('height', height)
+      .attr('width', chartWidth)
+      .attr('height', chartHeight)
       .attr('role', 'img')
-      .attr('aria-label', chartDescription);
+      .attr('aria-label', ariaLabel);
 
     const g = svg
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Baseline band (mean +/- 2*std)
-    if (baselineMean != null && baselineStd != null) {
-      const bandTop = baselineMean + 2 * baselineStd;
-      const bandBottom = baselineMean - 2 * baselineStd;
+    if (mean != null && std != null) {
+      const bandTop = mean + 2 * std;
+      const bandBottom = mean - 2 * std;
 
       g.append('rect')
         .attr('x', 0)
@@ -93,9 +100,9 @@
       // Baseline mean dashed line
       g.append('line')
         .attr('x1', 0)
-        .attr('y1', yScale(baselineMean))
+        .attr('y1', yScale(mean))
         .attr('x2', innerWidth)
-        .attr('y2', yScale(baselineMean))
+        .attr('y2', yScale(mean))
         .attr('stroke', '#3a8a3a')
         .attr('stroke-width', 1.5)
         .attr('stroke-dasharray', '6,4')
@@ -108,7 +115,7 @@
       .y((d) => yScale(d.value));
 
     g.append('path')
-      .datum(data)
+      .datum(chartData)
       .attr('fill', 'none')
       .attr('stroke', 'var(--color-accent)')
       .attr('stroke-width', 2)
@@ -116,7 +123,7 @@
 
     // Data points
     g.selectAll('.data-point')
-      .data(data)
+      .data(chartData)
       .enter()
       .append('circle')
       .attr('class', 'data-point')
@@ -124,9 +131,9 @@
       .attr('cy', (d) => yScale(d.value))
       .attr('r', 4)
       .attr('fill', (d) => {
-        if (baselineMean != null && baselineStd != null) {
-          const deviation = Math.abs(d.value - baselineMean);
-          if (deviation > 2 * baselineStd) return 'var(--color-risk-critical)';
+        if (mean != null && std != null) {
+          const deviation = Math.abs(d.value - mean);
+          if (deviation > 2 * std) return 'var(--color-risk-critical)';
         }
         return 'var(--color-accent)';
       })
@@ -135,9 +142,9 @@
       .style('cursor', 'pointer');
 
     // Anomaly rings for points beyond 2 std
-    if (baselineMean != null && baselineStd != null) {
-      const anomalies = data.filter(
-        (d) => Math.abs(d.value - baselineMean) > 2 * baselineStd,
+    if (mean != null && std != null) {
+      const anomalies = chartData.filter(
+        (d) => Math.abs(d.value - mean) > 2 * std,
       );
 
       g.selectAll('.anomaly-ring')
@@ -158,7 +165,7 @@
     const formatDate = timeFormat('%Y-%m-%d %H:%M');
 
     g.selectAll('.hover-target')
-      .data(data)
+      .data(chartData)
       .enter()
       .append('circle')
       .attr('class', 'hover-target')
@@ -168,7 +175,7 @@
       .attr('fill', 'transparent')
       .style('cursor', 'pointer')
       .on('mouseenter', (event, d) => {
-        tooltipText = `${formatDate(new Date(d.date))}\n${d.value} ${unit}`;
+        tooltipText = `${formatDate(new Date(d.date))}\n${d.value} ${unitLabel}`;
         tooltipX = xScale(new Date(d.date)) + margin.left;
         tooltipY = yScale(d.value) + margin.top - 10;
         tooltipVisible = true;
@@ -200,10 +207,15 @@
       .attr('text-anchor', 'middle')
       .attr('font-size', '0.75rem')
       .attr('fill', 'var(--color-text-subtle)')
-      .text(unit);
+      .text(unitLabel);
 
     // Style axis lines
     g.selectAll('.domain, .tick line').attr('stroke', 'var(--border-default)');
+  }
+
+  $effect(() => {
+    if (!containerEl || data.length === 0) return;
+    renderChart(containerEl, data, width, height, baselineMean, baselineStd, unit, chartDescription);
   });
 </script>
 
