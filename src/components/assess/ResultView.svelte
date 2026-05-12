@@ -1,7 +1,8 @@
 <script lang="ts">
   import { assessmentStore } from '../../lib/stores/assessment.svelte';
   import { authStore } from '../../lib/stores/auth.svelte';
-  import { setTriageResult, markFhirSubmitted } from '../../lib/db/assessments';
+  import { setTriageResult } from '../../lib/db/assessments';
+  import { submitAssessmentToFhir } from '../../lib/fhir/cdsa-submit';
   import RadarChart from './RadarChart.svelte';
   import EducationMatch from './EducationMatch.svelte';
 
@@ -25,6 +26,7 @@
 
   let fhirSubmitting = $state(false);
   let fhirSubmitted = $state(false);
+  let fhirError = $state<string | null>(null);
 
   const categoryLabels: Record<string, string> = {
     normal: '正常',
@@ -82,16 +84,22 @@
   }
 
   async function submitToFhir() {
-    if (!assessmentStore.assessment || !authStore.isAuthenticated) return;
+    if (!assessmentStore.assessment || !assessmentStore.child || !authStore.isAuthenticated) return;
     fhirSubmitting = true;
+    fhirError = null;
     try {
-      // In a full implementation, this would create FHIR Observation resources
-      // for each metric and a DiagnosticReport for the triage result.
-      // For now, just mark as submitted.
-      await markFhirSubmitted(assessmentStore.assessment.id);
-      fhirSubmitted = true;
+      const result = await submitAssessmentToFhir(
+        assessmentStore.assessment,
+        assessmentStore.child.id,
+        triageResult,
+      );
+      if (result.success) {
+        fhirSubmitted = true;
+      } else {
+        fhirError = result.error ?? '傳送失敗';
+      }
     } catch {
-      // Silently fail — will retry later
+      fhirError = '傳送失敗，請稍後重試';
     } finally {
       fhirSubmitting = false;
     }
@@ -156,6 +164,10 @@
       </button>
     {:else if fhirSubmitted}
       <p class="fhir-success">已傳送至醫院 FHIR Server</p>
+    {/if}
+
+    {#if fhirError}
+      <p class="fhir-error">{fhirError}</p>
     {/if}
 
     <a href="/smart-pedi-cds/" class="btn-home">返回首頁</a>
@@ -313,6 +325,12 @@
   .fhir-success {
     font-size: var(--text-sm);
     color: var(--color-risk-normal);
+    font-weight: var(--font-medium);
+  }
+
+  .fhir-error {
+    font-size: var(--text-sm);
+    color: var(--color-risk-critical);
     font-weight: var(--font-medium);
   }
 
