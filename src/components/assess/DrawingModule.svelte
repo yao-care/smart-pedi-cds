@@ -22,6 +22,7 @@
   const progress = $derived(currentShapeIndex / SHAPES.length);
 
   function getCanvasPos(e: MouseEvent | TouchEvent): { x: number; y: number } {
+    if (!canvas) return { x: 0, y: 0 };
     const rect = canvas.getBoundingClientRect();
     if ('touches' in e) {
       const touch = e.touches[0];
@@ -43,7 +44,7 @@
     const pos = getCanvasPos(e);
     currentStroke.push({ ...pos, t: Date.now() });
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas?.getContext('2d');
     if (ctx) {
       ctx.beginPath();
       ctx.moveTo(pos.x, pos.y);
@@ -60,7 +61,7 @@
     const pos = getCanvasPos(e);
     currentStroke.push({ ...pos, t: Date.now() });
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas?.getContext('2d');
     if (ctx) {
       ctx.lineTo(pos.x, pos.y);
       ctx.stroke();
@@ -76,6 +77,7 @@
   }
 
   function clearCanvas() {
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (ctx) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -86,8 +88,9 @@
 
   async function submitDrawing() {
     // Export canvas as PNG blob
+    if (!canvas) return;
     const blob = await new Promise<Blob | null>((resolve) => {
-      canvas.toBlob(resolve, 'image/png');
+      canvas!.toBlob(resolve, 'image/png');
     });
 
     if (blob && assessmentStore.assessment && assessmentStore.child) {
