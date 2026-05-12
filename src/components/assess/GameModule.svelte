@@ -1,6 +1,7 @@
 <script lang="ts">
   import { assessmentStore } from '../../lib/stores/assessment.svelte';
-  import { recordEvent } from '../../lib/db/assessment-events';
+  import { recordEvent, getEventsByModule } from '../../lib/db/assessment-events';
+  import { analyzeBehavior } from '../../engine/cdsa/behavior-analysis';
   import { instructionLevel } from '../../lib/utils/age-groups';
   import type { AgeGroupCDSA } from '../../lib/utils/age-groups';
 
@@ -297,7 +298,15 @@
       <div class="complete-icon" aria-hidden="true">&#127881;</div>
       <h2>遊戲完成！</h2>
       <p>你做得非常好！</p>
-      <button class="btn-next" onclick={() => assessmentStore.nextStep()}>繼續下一步 →</button>
+      <button class="btn-next" onclick={async () => {
+        // 即時行為分析
+        if (assessmentStore.assessment) {
+          const events = await getEventsByModule(assessmentStore.assessment.id, 'game');
+          const metrics = analyzeBehavior(events);
+          assessmentStore.addAnalysis({ behaviorMetrics: metrics });
+        }
+        assessmentStore.nextStep();
+      }}>繼續下一步 →</button>
     </div>
   {:else if currentStimulus}
     <div class="game-header">

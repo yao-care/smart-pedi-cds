@@ -1,9 +1,24 @@
-import type { Assessment, Child, AssessmentStatus } from '../db/schema';
+import type { Assessment, Child } from '../db/schema';
 import * as assessmentDao from '../db/assessments';
 import { ageGroupCDSA, type AgeGroupCDSA } from '../utils/age-groups';
+import type { BehaviorMetrics } from '../../engine/cdsa/behavior-analysis';
+import type { VoiceMetrics } from '../../engine/cdsa/voice-analysis';
+import type { DrawingAnalysisResult } from '../../engine/cdsa/drawing-analysis';
+import type { GrossMotorResult } from '../../engine/cdsa/gross-motor-analysis';
+import type { TriageResult } from '../../engine/cdsa/triage';
 
-const STEPS = ['profile', 'questionnaire', 'game', 'voice', 'video', 'drawing', 'analyzing', 'result'] as const;
+// 移除 'analyzing' 步驟——分析在各模組完成時即時執行
+const STEPS = ['profile', 'questionnaire', 'game', 'voice', 'video', 'drawing', 'result'] as const;
 export type AssessmentStep = typeof STEPS[number];
+
+/** 各模組即時產出的分析結果 */
+export interface PartialAnalysis {
+  questionnaireScores?: Record<string, number>;
+  behaviorMetrics?: BehaviorMetrics;
+  voiceMetrics?: VoiceMetrics;
+  drawingResult?: DrawingAnalysisResult;
+  grossMotorResult?: GrossMotorResult;
+}
 
 class AssessmentStore {
   child = $state<Child | null>(null);
@@ -11,6 +26,12 @@ class AssessmentStore {
   currentStepIndex = $state(0);
   isLoading = $state(false);
   error = $state<string | null>(null);
+
+  /** 各模組即時累積的分析結果 */
+  partialAnalysis = $state<PartialAnalysis>({});
+
+  /** 最終分流結果（進入 result 步驟時由 ResultView 計算） */
+  triageResult = $state<TriageResult | null>(null);
 
   currentStep = $derived(STEPS[this.currentStepIndex] ?? 'profile');
   ageGroup = $derived<AgeGroupCDSA | null>(
@@ -20,6 +41,11 @@ class AssessmentStore {
   isLastStep = $derived(this.currentStepIndex === STEPS.length - 1);
   progress = $derived(this.currentStepIndex / (STEPS.length - 1));
   steps = STEPS;
+
+  /** 各模組完成時呼叫，累積分析結果 */
+  addAnalysis(partial: Partial<PartialAnalysis>): void {
+    this.partialAnalysis = { ...this.partialAnalysis, ...partial };
+  }
 
   async startNew(childData: Omit<Child, 'id' | 'createdAt'>): Promise<void> {
     this.isLoading = true;
@@ -96,6 +122,8 @@ class AssessmentStore {
     this.assessment = null;
     this.currentStepIndex = 0;
     this.error = null;
+    this.partialAnalysis = {};
+    this.triageResult = null;
   }
 }
 

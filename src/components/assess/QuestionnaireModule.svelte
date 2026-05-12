@@ -126,6 +126,12 @@
 
   // ---- Finish ----
   async function handleFinish() {
+    // 累積問卷分數到 store（即時分析）
+    const scores: Record<string, number> = {};
+    for (const s of domainSummary) {
+      scores[s.domain] = s.score;
+    }
+    assessmentStore.addAnalysis({ questionnaireScores: scores });
     await assessmentStore.nextStep();
   }
 </script>

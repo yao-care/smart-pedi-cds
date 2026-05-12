@@ -9,13 +9,9 @@
   import ResultView from './ResultView.svelte';
   import { assessmentStore } from '../../lib/stores/assessment.svelte';
   import { getIncompleteAssessments } from '../../lib/db/assessments';
-  import { analyzeAssessment, type AssessmentAnalysisResult } from '../../engine/cdsa/assessment-analyzer';
-
-  let analysisResult = $state<AssessmentAnalysisResult | null>(null);
-  let analysisError = $state<string | null>(null);
   import type { Assessment } from '../../lib/db/schema';
 
-  const STEP_LABELS = ['基本資料', '問卷', '互動遊戲', '語音互動', '影片錄製', '繪圖測試', '分析中', '評估結果'];
+  const STEP_LABELS = ['基本資料', '問卷', '互動遊戲', '語音互動', '影片錄製', '繪圖測試', '評估結果'];
 
   let incompleteAssessments = $state<Assessment[]>([]);
   let showResume = $state(true);
@@ -24,32 +20,6 @@
     getIncompleteAssessments().then(list => {
       incompleteAssessments = list;
     });
-  });
-
-  let analysisTimedOut = $state(false);
-
-  // Auto-trigger AI analysis when entering 'analyzing' step (with 15s timeout)
-  $effect(() => {
-    if (assessmentStore.currentStep === 'analyzing' && assessmentStore.assessment && assessmentStore.ageGroup) {
-      analysisResult = null;
-      analysisError = null;
-      analysisTimedOut = false;
-
-      const timeoutId = setTimeout(() => {
-        analysisTimedOut = true;
-      }, 15000);
-
-      analyzeAssessment(assessmentStore.assessment.id, assessmentStore.ageGroup)
-        .then(result => {
-          clearTimeout(timeoutId);
-          analysisResult = result;
-          assessmentStore.nextStep();
-        })
-        .catch(err => {
-          clearTimeout(timeoutId);
-          analysisError = err instanceof Error ? err.message : '分析失敗';
-        });
-    }
   });
 
   async function handleResume(id: string) {
@@ -102,44 +72,14 @@
     {:else if assessmentStore.currentStep === 'drawing'}
       <DrawingModule />
 
-    {:else if assessmentStore.currentStep === 'analyzing'}
-      {#if analysisError}
-        <div class="module-placeholder">
-          <h2>分析發生錯誤</h2>
-          <p>{analysisError}</p>
-          <button class="btn-skip" onclick={() => assessmentStore.nextStep()}>繼續查看結果 →</button>
-        </div>
-      {:else}
-        <div class="module-placeholder analyzing">
-          <div class="spinner"></div>
-          <h2>AI 分析中…</h2>
-          <p>正在分析評估資料，請稍候</p>
-          {#if analysisTimedOut}
-            <p class="timeout-notice">分析時間較長，您可以選擇跳過</p>
-            <button class="btn-skip" onclick={() => assessmentStore.nextStep()}>跳過分析，查看結果 →</button>
-          {/if}
-        </div>
-      {/if}
-
     {:else if assessmentStore.currentStep === 'result'}
-      {#if analysisResult}
-        <ResultView triageResult={analysisResult.triageResult} />
-      {:else}
-        <div class="module-placeholder">
-          <div class="module-icon">📊</div>
-          <h2>評估完成</h2>
-          <p>感謝您完成評估！</p>
-          <a href="/smart-pedi-cds/" class="btn-restart">返回首頁</a>
-        </div>
-      {/if}
+      <ResultView />
     {/if}
 
     <!-- Bottom navigation -->
     {#if assessmentStore.assessment && assessmentStore.currentStep !== 'profile' && assessmentStore.currentStep !== 'result'}
       <div class="bottom-nav">
-        {#if assessmentStore.currentStep !== 'analyzing'}
-          <button class="btn-back" onclick={() => assessmentStore.prevStep()}>← 上一步</button>
-        {/if}
+        <button class="btn-back" onclick={() => assessmentStore.prevStep()}>← 上一步</button>
         <button class="btn-pause" onclick={() => assessmentStore.pause()}>暫停評估</button>
       </div>
     {/if}
@@ -157,7 +97,6 @@
     padding-bottom: var(--space-12);
   }
 
-  /* Resume prompt */
   .resume-prompt {
     text-align: center;
     padding: var(--space-8);
@@ -236,76 +175,6 @@
     text-decoration: underline;
   }
 
-  /* Module placeholder */
-  .module-placeholder {
-    text-align: center;
-    padding: var(--space-10);
-  }
-
-  .module-icon {
-    font-size: 56px;
-    margin-bottom: var(--space-4);
-  }
-
-  .module-placeholder h2 {
-    font-size: var(--text-2xl);
-    margin-bottom: var(--space-3);
-  }
-
-  .module-placeholder p {
-    color: var(--color-text-muted);
-    margin-bottom: var(--space-2);
-  }
-
-  .timeout-notice {
-    color: var(--color-risk-warning);
-    font-size: var(--text-sm);
-    margin-bottom: var(--space-4);
-  }
-
-  .btn-skip {
-    padding: var(--space-3) var(--space-7);
-    background: var(--color-accent);
-    color: #fff;
-    border: none;
-    border-radius: var(--radius-md);
-    font-size: var(--text-sm);
-    font-weight: var(--font-medium);
-    cursor: pointer;
-    min-height: 48px;
-  }
-
-  .btn-skip:hover {
-    background: var(--color-accent-hover);
-  }
-
-  .btn-restart {
-    padding: var(--space-3) var(--space-7);
-    background: var(--bg-surface);
-    color: var(--color-text-base);
-    border: 1px solid var(--border-default);
-    border-radius: var(--radius-md);
-    font-size: var(--text-sm);
-    cursor: pointer;
-    min-height: 48px;
-  }
-
-  /* Analyzing spinner */
-  .spinner {
-    width: 48px;
-    height: 48px;
-    border: 4px solid var(--border-default);
-    border-top-color: var(--color-accent);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin: 0 auto var(--space-6);
-  }
-
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-
-  /* Bottom nav */
   .bottom-nav {
     display: flex;
     justify-content: space-between;
