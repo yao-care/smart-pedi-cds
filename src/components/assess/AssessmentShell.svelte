@@ -26,18 +26,28 @@
     });
   });
 
-  // Auto-trigger AI analysis when entering 'analyzing' step
+  let analysisTimedOut = $state(false);
+
+  // Auto-trigger AI analysis when entering 'analyzing' step (with 15s timeout)
   $effect(() => {
     if (assessmentStore.currentStep === 'analyzing' && assessmentStore.assessment && assessmentStore.ageGroup) {
       analysisResult = null;
       analysisError = null;
+      analysisTimedOut = false;
+
+      const timeoutId = setTimeout(() => {
+        analysisTimedOut = true;
+      }, 15000);
+
       analyzeAssessment(assessmentStore.assessment.id, assessmentStore.ageGroup)
         .then(result => {
+          clearTimeout(timeoutId);
           analysisResult = result;
           assessmentStore.nextStep();
         })
         .catch(err => {
-          analysisError = err instanceof Error ? err.message : 'Analysis failed';
+          clearTimeout(timeoutId);
+          analysisError = err instanceof Error ? err.message : '分析失敗';
         });
     }
   });
@@ -104,6 +114,10 @@
           <div class="spinner"></div>
           <h2>AI 分析中…</h2>
           <p>正在分析評估資料，請稍候</p>
+          {#if analysisTimedOut}
+            <p class="timeout-notice">分析時間較長，您可以選擇跳過</p>
+            <button class="btn-skip" onclick={() => assessmentStore.nextStep()}>跳過分析，查看結果 →</button>
+          {/if}
         </div>
       {/if}
 
@@ -241,6 +255,12 @@
   .module-placeholder p {
     color: var(--color-text-muted);
     margin-bottom: var(--space-2);
+  }
+
+  .timeout-notice {
+    color: var(--color-risk-warning);
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-4);
   }
 
   .btn-skip {

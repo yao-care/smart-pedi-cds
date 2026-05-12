@@ -15,6 +15,14 @@ export interface AssessmentAnalysisResult {
   analyzedAt: Date;
 }
 
+/** Race a promise against a timeout. Returns null on timeout. */
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | null> {
+  return Promise.race([
+    promise,
+    new Promise<null>(resolve => setTimeout(() => resolve(null), ms)),
+  ]);
+}
+
 export async function analyzeAssessment(
   assessmentId: string,
   ageGroup: AgeGroupCDSA,
@@ -29,35 +37,36 @@ export async function analyzeAssessment(
   const allEvents = [...gameEvents, ...voiceEvents, ...drawingEvents, ...questionnaireEvents];
   const behaviorMetrics = analyzeBehavior(allEvents);
 
-  // Voice analysis — use full audio analysis if blobs available
+  // Voice analysis — 5s timeout, fallback to event-based
+  const voiceEventData = voiceEvents.map(e => ({ eventType: e.eventType, data: e.data }));
   let voiceMetrics: VoiceMetrics;
   try {
     const voiceFiles = await getMediaByType(assessmentId, 'voice');
     if (voiceFiles.length > 0) {
-      voiceMetrics = await analyzeVoiceFull(
-        voiceFiles.map(f => f.blob),
-        voiceEvents.map(e => ({ eventType: e.eventType, data: e.data })),
+      const fullResult = await withTimeout(
+        analyzeVoiceFull(voiceFiles.map(f => f.blob), voiceEventData),
+        5000,
       );
+      voiceMetrics = fullResult ?? analyzeVoiceFromEvents(voiceEventData);
     } else {
-      voiceMetrics = analyzeVoiceFromEvents(
-        voiceEvents.map(e => ({ eventType: e.eventType, data: e.data })),
-      );
+      voiceMetrics = analyzeVoiceFromEvents(voiceEventData);
     }
   } catch {
-    voiceMetrics = analyzeVoiceFromEvents(
-      voiceEvents.map(e => ({ eventType: e.eventType, data: e.data })),
-    );
+    voiceMetrics = analyzeVoiceFromEvents(voiceEventData);
   }
 
   const drawingCompleteEvents = drawingEvents.filter(e => e.eventType === 'drawing_complete');
   const drawingResult = analyzeDrawing(drawingCompleteEvents.map(e => ({ data: e.data })));
 
-  // Gross motor analysis (from video)
+  // Gross motor analysis — 10s timeout (MediaPipe model download can be slow)
   let grossMotorResult: GrossMotorResult | null = null;
   try {
     const videoFiles = await getMediaByType(assessmentId, 'video');
     if (videoFiles.length > 0) {
-      grossMotorResult = await analyzeGrossMotor(videoFiles[0].blob, ageGroup);
+      grossMotorResult = await withTimeout(
+        analyzeGrossMotor(videoFiles[0].blob, ageGroup),
+        10000,
+      );
     }
   } catch {
     // MediaPipe may fail — non-blocking
