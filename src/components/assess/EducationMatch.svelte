@@ -8,28 +8,29 @@
   // Static mapping: anomaly domain -> education content slugs and descriptions
   const EDUCATION_MAP: Record<string, Array<{ slug: string; title: string; summary: string }>> = {
     gross_motor: [
-      { slug: 'exercise-guide', title: '兒童運動建議', summary: '適齡的粗動作發展活動與運動建議' },
+      { slug: 'gross-motor-activities', title: '粗動作發展促進活動', summary: '各年齡層的粗動作訓練遊戲與居家活動' },
+      { slug: 'exercise-guide', title: '兒童運動建議', summary: '適齡運動與活動建議' },
     ],
     fine_motor: [
-      { slug: 'exercise-guide', title: '精細動作活動建議', summary: '促進手部精細動作發展的居家活動' },
+      { slug: 'fine-motor-activities', title: '精細動作發展促進活動', summary: '手部精細動作與手眼協調居家活動' },
     ],
     language: [
-      { slug: 'milestones/1-2y', title: '語言發展里程碑', summary: '各年齡層語言發展的預期進程與促進方式' },
+      { slug: 'language-stimulation', title: '語言發展促進技巧', summary: '親子互動促進語言能力的方法' },
     ],
     language_comprehension: [
-      { slug: 'milestones/1-2y', title: '語言理解發展', summary: '促進語言理解能力的親子互動技巧' },
+      { slug: 'language-stimulation', title: '語言發展促進技巧', summary: '促進語言理解的親子互動方式' },
     ],
     language_expression: [
-      { slug: 'milestones/2-3y', title: '語言表達發展', summary: '鼓勵語言表達的日常互動建議' },
+      { slug: 'language-stimulation', title: '語言發展促進技巧', summary: '鼓勵語言表達的日常互動' },
     ],
     cognition: [
-      { slug: 'milestones/3-6y', title: '認知發展活動', summary: '促進認知能力的遊戲與活動建議' },
+      { slug: 'cognitive-play', title: '認知發展遊戲建議', summary: '分類、配對、因果理解遊戲' },
     ],
     social_emotional: [
-      { slug: 'milestones/2-3y', title: '社會情緒發展', summary: '培養社交能力與情緒管理的建議' },
+      { slug: 'social-emotional-guide', title: '社會情緒發展引導', summary: '社交互動與情緒管理建議' },
     ],
     behavior: [
-      { slug: 'sleep-hygiene', title: '生活作息建議', summary: '建立良好生活習慣以支持整體發展' },
+      { slug: 'sleep-hygiene', title: '生活作息建議', summary: '良好生活習慣支持整體發展' },
     ],
   };
 
@@ -44,6 +45,10 @@
           results.push(item);
         }
       }
+    }
+    // Always add "when to seek help" when there are anomaly domains
+    if (domains.length > 0) {
+      results.push({ slug: 'when-to-seek-help', title: '何時該尋求專業協助', summary: '發展警訊與轉介流程說明' });
     }
     return results;
   });

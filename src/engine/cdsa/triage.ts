@@ -2,6 +2,7 @@ import type { BehaviorMetrics } from './behavior-analysis';
 import type { VoiceMetrics } from './voice-analysis';
 import type { DrawingAnalysisResult } from './drawing-analysis';
 import type { AgeGroupCDSA } from '../../lib/utils/age-groups';
+import { db } from '../../lib/db/schema';
 
 export interface TriageInput {
   ageGroup: AgeGroupCDSA;
@@ -26,22 +27,44 @@ export interface TriageResult {
   }>;
 }
 
-// Simplified norms (would come from NormThreshold DB in production)
-const NORMS: Record<string, { mean: number; std: number }> = {
-  'completionRate': { mean: 0.75, std: 0.15 },
-  'operationConsistency': { mean: 0.70, std: 0.15 },
-  'reactionLatency': { mean: 2000, std: 800 },
-  'interactionRhythm': { mean: 0.5, std: 0.2 },
-  'drawingScore': { mean: 55, std: 20 },
-  'voiceDuration': { mean: 8, std: 4 },
-};
+/** Load norms from DB, fall back to hardcoded defaults */
+async function loadNorms(ageGroup: AgeGroupCDSA): Promise<Record<string, { mean: number; std: number }>> {
+  const defaults: Record<string, { mean: number; std: number }> = {
+    'completionRate': { mean: 0.75, std: 0.15 },
+    'operationConsistency': { mean: 0.70, std: 0.15 },
+    'reactionLatency': { mean: 2000, std: 800 },
+    'interactionRhythm': { mean: 0.5, std: 0.2 },
+    'drawingScore': { mean: 55, std: 20 },
+    'voiceDuration': { mean: 8, std: 4 },
+  };
+
+  try {
+    const dbNorms = await db.normThresholds
+      .where('ageGroup')
+      .equals(ageGroup)
+      .toArray();
+
+    if (dbNorms.length > 0) {
+      const result = { ...defaults };
+      for (const norm of dbNorms) {
+        result[norm.metric] = { mean: norm.mean, std: norm.std };
+      }
+      return result;
+    }
+  } catch {
+    // DB not available, use defaults
+  }
+
+  return defaults;
+}
 
 function zScore(value: number, mean: number, std: number): number {
   if (std === 0) return 0;
   return (value - mean) / std;
 }
 
-export function computeTriage(input: TriageInput): TriageResult {
+export async function computeTriage(input: TriageInput): Promise<TriageResult> {
+  const NORMS = await loadNorms(input.ageGroup);
   const details: TriageResult['details'] = [];
 
   // Behavior metrics

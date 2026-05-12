@@ -74,7 +74,7 @@ export async function analyzeAssessment(
   }
 
   // Compute triage
-  const triageResult = computeTriage({
+  const triageResult = await computeTriage({
     ageGroup,
     behavior: behaviorMetrics,
     voice: voiceMetrics,
