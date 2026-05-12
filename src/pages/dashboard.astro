@@ -1,5 +1,8 @@
 ---
 import App from '../layouts/App.astro';
+import RiskSummary from '../components/dashboard/RiskSummary.svelte';
+import PatientList from '../components/dashboard/PatientList.svelte';
+import AlertFeed from '../components/dashboard/AlertFeed.svelte';
 ---
 
 <App title="臨床儀表板" description="兒童健康監測與預警總覽">
@@ -8,20 +11,17 @@ import App from '../layouts/App.astro';
   <div class="dashboard-grid">
     <section class="risk-summary-section" aria-label="風險摘要">
       <h2>風險摘要</h2>
-      <!-- RiskSummary.svelte will mount here -->
-      <div class="placeholder">Svelte 元件載入中…</div>
+      <RiskSummary client:load />
     </section>
 
     <section class="patient-list-section" aria-label="病患列表">
       <h2>病患列表</h2>
-      <!-- PatientList.svelte will mount here -->
-      <div class="placeholder">Svelte 元件載入中…</div>
+      <PatientList client:load />
     </section>
 
     <section class="alert-feed-section" aria-label="即時預警">
       <h2>即時預警</h2>
-      <!-- AlertFeed.svelte will mount here -->
-      <div class="placeholder">Svelte 元件載入中…</div>
+      <AlertFeed client:visible />
     </section>
   </div>
 </App>
@@ -70,14 +70,5 @@ import App from '../layouts/App.astro';
     font-weight: var(--font-bold);
     margin-bottom: var(--space-4);
     color: var(--color-text-base);
-  }
-
-  .placeholder {
-    padding: var(--space-8);
-    text-align: center;
-    color: var(--color-text-subtle);
-    font-size: var(--text-sm);
-    border: 1px dashed var(--border-default);
-    border-radius: var(--radius-md);
   }
 </style>

@@ -1,5 +1,6 @@
 ---
 import App from '../layouts/App.astro';
+import ReportExport from '../components/patient/ReportExport.svelte';
 ---
 
 <App title="健康趨勢報告" description="CDSS 兒童健康趨勢 PDF 報告預覽與下載">
@@ -8,13 +9,11 @@ import App from '../layouts/App.astro';
 
   <section class="report-controls" aria-label="報告設定">
     <h2>報告設定</h2>
-    <!-- ReportExport.svelte will mount here -->
-    <div class="placeholder">Svelte 元件載入中…</div>
+    <ReportExport client:idle patientId="" />
   </section>
 
   <section class="report-preview" aria-label="報告預覽">
     <h2>報告預覽</h2>
-    <!-- PDF preview area -->
     <div class="preview-area">
       <p class="preview-hint">報告預覽將在設定完成後顯示於此區域。</p>
     </div>
@@ -45,15 +44,6 @@ import App from '../layouts/App.astro';
     font-weight: var(--font-bold);
     margin-bottom: var(--space-4);
     color: var(--color-text-base);
-  }
-
-  .placeholder {
-    padding: var(--space-8);
-    text-align: center;
-    color: var(--color-text-subtle);
-    font-size: var(--text-sm);
-    border: 1px dashed var(--border-default);
-    border-radius: var(--radius-md);
   }
 
   .preview-area {

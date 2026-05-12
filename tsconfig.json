@@ -2,7 +2,10 @@
   "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
     "strictNullChecks": true,
-    "allowJs": true
+    "allowJs": true,
+    "paths": {
+      "$lib/*": ["./src/lib/*"]
+    }
   },
   "include": ["src/**/*", "src/**/*.svelte"],
   "exclude": ["node_modules", "dist"]
