@@ -29,21 +29,21 @@
   const SHAPES: ShapeType[] = ['circle', 'square', 'triangle', 'star'];
 
   const SHAPE_LABELS: Record<ShapeType, string> = {
-    circle: '\u5713\u5f62',
-    square: '\u6b63\u65b9\u5f62',
-    triangle: '\u4e09\u89d2\u5f62',
-    star: '\u661f\u661f',
+    circle: '圓形',
+    square: '正方形',
+    triangle: '三角形',
+    star: '星星',
   };
 
   const COLOR_LABELS: Record<string, string> = {
-    '#e74c3c': '\u7d05\u8272',
-    '#3498db': '\u85cd\u8272',
-    '#2ecc71': '\u7da0\u8272',
-    '#f39c12': '\u9ec3\u8272',
-    '#9b59b6': '\u7d2b\u8272',
+    '#e74c3c': '紅色',
+    '#3498db': '藍色',
+    '#2ecc71': '綠色',
+    '#f39c12': '黃色',
+    '#9b59b6': '紫色',
   };
 
-  const FEEDBACKS = ['\u597d\u68d2\uff01', '\u4e0d\u932f\u5594\uff01', '\u5f88\u597d\uff01', '\u592a\u5389\u5bb3\u4e86\uff01', '\u7e7c\u7e8c\u52a0\u6cb9\uff01'];
+  const FEEDBACKS = ['好棒！', '不錯喔！', '很好！', '太厲害了！', '繼續加油！'];
 
   /** Maximum duration per game block in milliseconds (3 minutes). */
   const MAX_BLOCK_MS = 3 * 60 * 1000;
@@ -86,10 +86,10 @@
 
       const instructions: Record<string, string> = {
         none: '',
-        single_verb: '\u6309\u4e00\u4e0b\uff01',
-        verb_object: `\u6309${SHAPE_LABELS[targetShape]}`,
-        verb_adj_object: `\u627e${COLOR_LABELS[targetColor] ?? ''}\u7684${SHAPE_LABELS[targetShape]}`,
-        compound: `\u5148\u627e${COLOR_LABELS[targetColor] ?? ''}\u7684\u5716\u5f62\uff0c\u518d\u6309\u5b83`,
+        single_verb: '按一下！',
+        verb_object: `按${SHAPE_LABELS[targetShape]}`,
+        verb_adj_object: `找${COLOR_LABELS[targetColor] ?? ''}的${SHAPE_LABELS[targetShape]}`,
+        compound: `先找${COLOR_LABELS[targetColor] ?? ''}的圖形，再按它`,
       };
 
       stimuli.push({

@@ -204,7 +204,7 @@
   {:else}
     <!-- No questions for this age group (should not happen) -->
     <div class="empty-state">
-      <p>此年齡段目前沒有適用的問卷題目。</p>
+      <p>此年齡層目前沒有適用的問卷題目。</p>
       <button class="btn-finish" onclick={handleFinish}>繼續下一步</button>
     </div>
   {/if}
