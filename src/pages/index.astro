@@ -1,158 +1,131 @@
 ---
-import App from '../layouts/App.astro';
-
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'SoftwareApplication',
-  name: 'CDSS 兒科臨床決策輔助系統',
-  applicationCategory: 'HealthApplication',
-  operatingSystem: 'Web Browser',
-  description:
-    '以 SMART on FHIR 標準運行於瀏覽器端的兒科臨床決策輔助系統',
-  offers: {
-    '@type': 'Offer',
-    price: '0',
-    priceCurrency: 'TWD',
-  },
-  featureList: [
-    '零後端 — 所有邏輯在瀏覽器執行',
-    '即插即用 — 接上 FHIR Server 即可運作',
-    '隱私優先 — 資料僅在瀏覽器與 FHIR Server 之間流動',
-  ],
-};
-
-const features = [
-  {
-    title: '零後端',
-    description: '所有邏輯在瀏覽器執行，無需維護伺服器',
-  },
-  {
-    title: '即插即用',
-    description: '接上醫院 FHIR Server 即可運作',
-  },
-  {
-    title: '隱私優先',
-    description: '資料僅在瀏覽器與 FHIR Server 之間流動',
-  },
-];
+import Base from '../layouts/Base.astro';
 ---
 
-<App title="首頁" description="開源兒科臨床決策輔助系統 — SMART on FHIR 瀏覽器端 CDS">
-  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+<Base title="兒童發展智慧評估" description="兒童發展遲緩智慧分流評估系統 — SMART on FHIR">
+  <main id="main-content" class="role-selector">
+    <div class="selector-container">
+      <h1>兒童發展智慧評估系統</h1>
+      <p class="subtitle">請選擇您的身份以開始使用</p>
 
-  <section class="hero" aria-label="主視覺">
-    <h1>CDSS 兒科臨床決策輔助系統</h1>
-    <p class="hero-subtitle">
-      以 SMART on FHIR 標準運行於瀏覽器端的兒科臨床決策輔助系統
-    </p>
-    <div class="hero-actions">
-      <a href="/smart-pedi-cds/launch/" class="btn btn-primary">開始使用</a>
-      <a href="/smart-pedi-cds/about/" class="btn btn-secondary">了解更多</a>
-    </div>
-  </section>
+      <div class="role-cards">
+        <a href="/smart-pedi-cds/assess/" class="role-card role-parent">
+          <div class="role-icon" aria-hidden="true">👶</div>
+          <h2>家長 / 照顧者</h2>
+          <p>為您的孩子進行發展評估，了解成長狀態並獲得衛教建議</p>
+        </a>
 
-  <section class="features" aria-label="功能特色">
-    <h2 class="sr-only">功能特色</h2>
-    <div class="features-grid">
-      {features.map((feature) => (
-        <article class="feature-card">
-          <h3 class="feature-title">{feature.title}</h3>
-          <p class="feature-description">{feature.description}</p>
-        </article>
-      ))}
+        <a href="/smart-pedi-cds/workspace/" class="role-card role-doctor">
+          <div class="role-icon" aria-hidden="true">🩺</div>
+          <h2>醫護人員</h2>
+          <p>查看病患評估結果、監測健康指標、管理預警與追蹤</p>
+        </a>
+      </div>
+
+      <footer class="selector-footer">
+        <a href="/smart-pedi-cds/about/">關於本系統</a>
+        <span class="separator">·</span>
+        <span>Powered by SMART on FHIR</span>
+      </footer>
     </div>
-  </section>
-</App>
+  </main>
+</Base>
 
 <style>
-  /* ---------- Hero ---------- */
-  .hero {
-    text-align: center;
-    padding: var(--space-12) 0 var(--space-10);
-  }
-
-  .hero h1 {
-    color: var(--color-text-base);
-    margin-bottom: var(--space-4);
-  }
-
-  .hero-subtitle {
-    font-size: var(--text-lg);
-    line-height: var(--lh-lg);
-    color: var(--color-text-muted);
-    max-width: 640px;
-    margin: 0 auto var(--space-8);
-  }
-
-  .hero-actions {
+  .role-selector {
+    min-height: 100dvh;
     display: flex;
-    gap: var(--space-4);
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  /* ---------- Buttons ---------- */
-  .btn {
-    display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: var(--space-3) var(--space-6);
-    font-size: var(--text-sm);
-    font-weight: var(--font-medium);
-    border-radius: var(--radius-md);
-    text-decoration: none;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    background: var(--bg-base);
   }
 
-  .btn-primary {
-    background-color: var(--color-accent);
-    color: #ffffff;
+  .selector-container {
+    max-width: 720px;
+    padding: var(--space-8);
+    text-align: center;
   }
 
-  .btn-primary:hover {
-    background-color: var(--color-accent-hover);
-  }
-
-  .btn-secondary {
-    background-color: var(--bg-surface);
+  h1 {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-3);
     color: var(--color-text-base);
-    border: 1px solid var(--border-default);
   }
 
-  .btn-secondary:hover {
-    background-color: var(--bg-muted);
-    border-color: var(--border-strong);
+  .subtitle {
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-10);
   }
 
-  /* ---------- Features ---------- */
-  .features {
-    padding: var(--space-10) 0 var(--space-12);
-  }
-
-  .features-grid {
+  .role-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--space-6);
   }
 
-  .feature-card {
-    background-color: var(--bg-surface);
-    border: 1px solid var(--border-default);
-    border-radius: var(--radius-lg);
-    padding: var(--space-7);
+  @media (max-width: 640px) {
+    .role-cards {
+      grid-template-columns: 1fr;
+    }
   }
 
-  .feature-title {
+  .role-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--space-8);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s;
+    min-height: 240px;
+    justify-content: center;
+  }
+
+  .role-card:hover {
+    border-color: var(--color-accent);
+  }
+
+  .role-parent {
+    border-left: 4px solid var(--color-accent);
+  }
+
+  .role-doctor {
+    border-left: 4px solid var(--color-risk-advisory);
+  }
+
+  .role-icon {
+    font-size: 48px;
+    margin-bottom: var(--space-4);
+  }
+
+  .role-card h2 {
     font-size: var(--text-xl);
-    line-height: var(--lh-xl);
     font-weight: var(--font-bold);
-    color: var(--color-text-base);
     margin-bottom: var(--space-3);
   }
 
-  .feature-description {
+  .role-card p {
     font-size: var(--text-sm);
-    line-height: var(--lh-sm);
     color: var(--color-text-muted);
+    line-height: var(--lh-sm);
+  }
+
+  .selector-footer {
+    margin-top: var(--space-10);
+    font-size: var(--text-xs);
+    color: var(--color-text-subtle);
+  }
+
+  .selector-footer a {
+    color: var(--color-accent);
+  }
+
+  .separator {
+    margin: 0 var(--space-2);
   }
 </style>
