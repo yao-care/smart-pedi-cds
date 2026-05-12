@@ -1,0 +1,103 @@
+/* ==========================================================================
+   Design Tokens — Pediatric CDSS
+   OKLCH color system with hex fallback for older browsers.
+   ========================================================================== */
+
+/* ---------- Hex fallback (browsers without OKLCH support) ---------- */
+:root {
+  /* Background */
+  --bg-base: #f5f5f5;
+  --bg-surface: #ebebeb;
+  --bg-muted: #e0e0e0;
+
+  /* Text */
+  --color-text-base: #303030;
+  --color-text-muted: #6b6b6b;
+  --color-text-subtle: #8a8a8a;
+
+  /* Border */
+  --border-default: #cfcfcf;
+  --border-strong: #a3a3a3;
+
+  /* Risk levels — foreground */
+  --color-risk-normal: #3a8a3a;
+  --color-risk-advisory: #2b6cb0;
+  --color-risk-warning: #b87a1a;
+  --color-risk-critical: #c43a2b;
+
+  /* Risk levels — light background */
+  --color-risk-normal-bg: #edf7ed;
+  --color-risk-advisory-bg: #ebf1fa;
+  --color-risk-warning-bg: #faf3e6;
+  --color-risk-critical-bg: #fbeaea;
+
+  /* Accent */
+  --color-accent: #2563eb;
+  --color-accent-hover: #1d4ed8;
+
+  /* ---------- Spacing scale (4px base) ---------- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 64px;
+  --space-11: 80px;
+  --space-12: 96px;
+
+  /* ---------- Border radius ---------- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+}
+
+/* ---------- OKLCH colors (modern browsers) ---------- */
+@supports (color: oklch(0 0 0)) {
+  :root {
+    /* Background (L 0.90–0.97) */
+    --bg-base: oklch(0.97 0.005 260);
+    --bg-surface: oklch(0.94 0.005 260);
+    --bg-muted: oklch(0.90 0.005 260);
+
+    /* Text (L 0.20–0.60) */
+    --color-text-base: oklch(0.20 0.02 260);
+    --color-text-muted: oklch(0.45 0.02 260);
+    --color-text-subtle: oklch(0.60 0.02 260);
+
+    /* Border */
+    --border-default: oklch(0.85 0.005 260);
+    --border-strong: oklch(0.70 0.01 260);
+
+    /* Risk levels — foreground (L 0.45–0.55, WCAG AA 4.5:1+ on light bg) */
+    --color-risk-normal: oklch(0.50 0.15 145);
+    --color-risk-advisory: oklch(0.48 0.15 250);
+    --color-risk-warning: oklch(0.55 0.18 75);
+    --color-risk-critical: oklch(0.50 0.20 25);
+
+    /* Risk levels — light background (L ~0.95) */
+    --color-risk-normal-bg: oklch(0.95 0.04 145);
+    --color-risk-advisory-bg: oklch(0.95 0.04 250);
+    --color-risk-warning-bg: oklch(0.95 0.04 75);
+    --color-risk-critical-bg: oklch(0.95 0.04 25);
+
+    /* Accent */
+    --color-accent: oklch(0.50 0.18 255);
+    --color-accent-hover: oklch(0.45 0.18 255);
+  }
+}
+
+/* ---------- Critical pulse animation ---------- */
+@keyframes pulse-critical {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}

@@ -1,0 +1,220 @@
+/* ==========================================================================
+   Global Styles — Pediatric CDSS
+   Reset, prose, container utilities, accessibility helpers.
+   ========================================================================== */
+
+@import './tokens.css';
+@import './typography.css';
+
+/* ---------- Reset ---------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--bg-base);
+  color: var(--color-text-base);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--lh-base);
+  min-height: 100dvh;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+/* ---------- Focus ring ---------- */
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Skip to content link ---------- */
+
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  top: var(--space-2);
+  z-index: 9999;
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-accent);
+  color: #fff;
+  font-weight: var(--font-bold);
+  font-size: var(--text-sm);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+}
+
+.skip-to-content:focus {
+  left: var(--space-2);
+}
+
+/* ---------- Container ---------- */
+
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+/* ---------- Prose ---------- */
+
+.prose {
+  max-width: 72ch;
+}
+
+.prose p + p {
+  margin-top: var(--space-4);
+}
+
+.prose ul,
+.prose ol {
+  margin-top: var(--space-3);
+  margin-bottom: var(--space-3);
+  padding-left: var(--space-6);
+}
+
+.prose ul {
+  list-style-type: disc;
+}
+
+.prose ol {
+  list-style-type: decimal;
+}
+
+.prose li + li {
+  margin-top: var(--space-2);
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-4);
+}
+
+.prose h1:first-child,
+.prose h2:first-child,
+.prose h3:first-child {
+  margin-top: 0;
+}
+
+.prose a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.prose a:hover {
+  color: var(--color-accent-hover);
+}
+
+.prose blockquote {
+  border-left: 3px solid var(--border-strong);
+  padding-left: var(--space-4);
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--bg-muted);
+  padding: 0.15em 0.35em;
+  border-radius: var(--radius-sm);
+}
+
+.prose pre {
+  background: var(--bg-muted);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+}
+
+.prose pre code {
+  background: none;
+  padding: 0;
+}
+
+/* ---------- Minimum touch target ---------- */
+
+button,
+a,
+[role='button'] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* ---------- Utility: screen-reader only ---------- */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ---------- Utility: risk level classes ---------- */
+
+.risk-normal {
+  background-color: var(--color-risk-normal-bg);
+  color: var(--color-risk-normal);
+}
+
+.risk-advisory {
+  background-color: var(--color-risk-advisory-bg);
+  color: var(--color-risk-advisory);
+}
+
+.risk-warning {
+  background-color: var(--color-risk-warning-bg);
+  color: var(--color-risk-warning);
+}
+
+.risk-critical {
+  background-color: var(--color-risk-critical-bg);
+  color: var(--color-risk-critical);
+}
+
+/* ---------- Utility: pulse animation ---------- */
+
+.pulse-critical {
+  animation: pulse-critical 1.5s ease-in-out infinite;
+}
