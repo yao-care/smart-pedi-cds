@@ -1,0 +1,58 @@
+---
+import Base from './Base.astro';
+import Header from '../components/blocks/Header.astro';
+import Footer from '../components/blocks/Footer.astro';
+import Breadcrumb from '../components/blocks/Breadcrumb.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  breadcrumbs: { label: string; href?: string }[];
+}
+
+const { title, description, breadcrumbs } = Astro.props;
+---
+
+<Base title={title} description={description}>
+  <div class="app-layout">
+    <Header />
+    <div class="container">
+      <Breadcrumb items={breadcrumbs} />
+      <div class="edu-layout">
+        <aside class="edu-sidebar">
+          <slot name="sidebar" />
+        </aside>
+        <main id="main-content" class="prose">
+          <slot />
+        </main>
+      </div>
+    </div>
+    <Footer />
+  </div>
+</Base>
+
+<style>
+  .app-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+  }
+
+  .container {
+    flex: 1;
+    padding-top: var(--space-6);
+    padding-bottom: var(--space-6);
+  }
+
+  .edu-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 768px) {
+    .edu-layout {
+      grid-template-columns: 280px 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,55 @@
+---
+const year = 2026;
+const version = 'v0.1.0';
+---
+
+<footer class="site-footer">
+  <div class="footer-inner container">
+    <p class="copyright">&copy; {year} CDSS 兒科臨床決策輔助系統</p>
+    <p class="meta">
+      <span>{version}</span>
+      <span class="separator" aria-hidden="true">|</span>
+      <span>Powered by SMART on FHIR</span>
+      <span class="separator" aria-hidden="true">|</span>
+      <a href="#" class="footer-link">GitHub</a>
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--border-default);
+    padding: var(--space-6) 0;
+  }
+
+  .footer-inner {
+    text-align: center;
+  }
+
+  .copyright {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    line-height: var(--lh-xs);
+  }
+
+  .meta {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    line-height: var(--lh-xs);
+    margin-top: var(--space-2);
+  }
+
+  .separator {
+    margin: 0 var(--space-2);
+  }
+
+  .footer-link {
+    color: var(--color-text-muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .footer-link:hover {
+    color: var(--color-accent);
+  }
+</style>

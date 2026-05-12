@@ -1,0 +1,70 @@
+---
+interface Props {
+  title: string;
+  subtitle: string;
+  ctaText: string;
+  ctaHref: string;
+}
+
+const { title, subtitle, ctaText, ctaHref } = Astro.props;
+---
+
+<section class="hero">
+  <div class="hero-inner">
+    <h1 class="hero-title">{title}</h1>
+    <p class="hero-subtitle">{subtitle}</p>
+    <a href={ctaHref} class="hero-cta">{ctaText}</a>
+  </div>
+</section>
+
+<style>
+  .hero {
+    text-align: center;
+    padding: var(--space-10) var(--space-4);
+  }
+
+  @media (min-width: 768px) {
+    .hero {
+      padding: var(--space-12) var(--space-6);
+    }
+  }
+
+  .hero-inner {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .hero-title {
+    font-size: var(--text-3xl);
+    line-height: var(--lh-3xl);
+    font-weight: var(--font-bold);
+    color: var(--color-text-base);
+    letter-spacing: -0.02em;
+  }
+
+  .hero-subtitle {
+    font-size: var(--text-lg);
+    line-height: var(--lh-lg);
+    color: var(--color-text-muted);
+    margin-top: var(--space-4);
+  }
+
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: var(--space-6);
+    padding: var(--space-3) var(--space-7);
+    font-size: var(--text-base);
+    font-weight: var(--font-medium);
+    color: #fff;
+    background-color: var(--color-accent);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+
+  .hero-cta:hover {
+    background-color: var(--color-accent-hover);
+  }
+</style>

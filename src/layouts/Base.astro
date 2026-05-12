@@ -1,0 +1,44 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+}
+
+const { title, description, canonical } = Astro.props;
+const canonicalURL = canonical
+  ? new URL(canonical, Astro.site)
+  : new URL(Astro.url.pathname, Astro.site);
+const fullTitle = `${title} | CDSS 兒科臨床決策輔助系統`;
+
+import '../styles/global.css';
+---
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL.href} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="zh_TW" />
+    <meta property="og:url" content={canonicalURL.href} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+
+    <slot name="head" />
+  </head>
+  <body>
+    <a href="#main-content" class="skip-to-content">跳至主要內容</a>
+    <slot />
+  </body>
+</html>

@@ -1,0 +1,192 @@
+---
+const currentPath = Astro.url.pathname;
+
+const navLinks = [
+  { label: '首頁', href: '/smart-pedi-cds/' },
+  { label: '儀表板', href: '/smart-pedi-cds/dashboard/' },
+  { label: '預警', href: '/smart-pedi-cds/alerts/' },
+  { label: '衛教', href: '/smart-pedi-cds/education/' },
+  { label: '設定', href: '/smart-pedi-cds/settings/' },
+  { label: '關於', href: '/smart-pedi-cds/about/' },
+];
+
+function isActive(href: string): boolean {
+  if (href === '/smart-pedi-cds/') {
+    return currentPath === '/smart-pedi-cds/' || currentPath === '/smart-pedi-cds';
+  }
+  return currentPath.startsWith(href);
+}
+---
+
+<header class="site-header">
+  <div class="header-inner container">
+    <a href="/smart-pedi-cds/" class="site-title">CDSS 兒科臨床決策輔助系統</a>
+
+    <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-hidden="true" />
+    <label for="nav-toggle" class="nav-toggle-label" aria-label="開啟導覽選單">
+      <span class="hamburger"></span>
+    </label>
+
+    <nav aria-label="主導覽列">
+      <ul class="nav-links">
+        {navLinks.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class:list={['nav-link', { active: isActive(link.href) }]}
+              aria-current={isActive(link.href) ? 'page' : undefined}
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    background-color: var(--bg-surface);
+    border-bottom: 1px solid var(--border-default);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding-top: var(--space-3);
+    padding-bottom: var(--space-3);
+  }
+
+  .site-title {
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
+    color: var(--color-text-base);
+    text-decoration: none;
+    line-height: var(--lh-lg);
+  }
+
+  .site-title:hover {
+    color: var(--color-accent);
+  }
+
+  /* ---------- Hamburger toggle (CSS-only) ---------- */
+
+  .nav-toggle {
+    display: none;
+  }
+
+  .nav-toggle-label {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+  }
+
+  .hamburger,
+  .hamburger::before,
+  .hamburger::after {
+    display: block;
+    background-color: var(--color-text-base);
+    height: 3px;
+    width: 24px;
+    border-radius: var(--radius-sm);
+    position: relative;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  .hamburger::before,
+  .hamburger::after {
+    content: '';
+    position: absolute;
+    left: 0;
+  }
+
+  .hamburger::before {
+    top: -7px;
+  }
+
+  .hamburger::after {
+    top: 7px;
+  }
+
+  /* Animate hamburger to X when checked */
+  .nav-toggle:checked ~ .nav-toggle-label .hamburger {
+    background-color: transparent;
+  }
+
+  .nav-toggle:checked ~ .nav-toggle-label .hamburger::before {
+    top: 0;
+    transform: rotate(45deg);
+  }
+
+  .nav-toggle:checked ~ .nav-toggle-label .hamburger::after {
+    top: 0;
+    transform: rotate(-45deg);
+  }
+
+  /* ---------- Nav links ---------- */
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .nav-link:hover {
+    color: var(--color-text-base);
+    background-color: var(--bg-muted);
+  }
+
+  .nav-link.active {
+    color: var(--color-accent);
+    font-weight: var(--font-medium);
+    background-color: var(--bg-muted);
+  }
+
+  /* ---------- Responsive: mobile hamburger ---------- */
+
+  @media (max-width: 767px) {
+    .nav-toggle-label {
+      display: flex;
+    }
+
+    .nav-links {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      padding-top: var(--space-3);
+      padding-bottom: var(--space-3);
+    }
+
+    .nav-toggle:checked ~ nav .nav-links {
+      display: flex;
+    }
+
+    .nav-link {
+      width: 100%;
+      padding: var(--space-3) var(--space-4);
+    }
+  }
+</style>

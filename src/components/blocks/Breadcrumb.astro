@@ -1,0 +1,77 @@
+---
+interface Props {
+  items: { label: string; href?: string }[];
+}
+
+const { items } = Astro.props;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: items.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: item.label,
+    ...(item.href ? { item: new URL(item.href, Astro.site).href } : {}),
+  })),
+};
+---
+
+<nav aria-label="麵包屑導覽" class="breadcrumb">
+  <ol class="breadcrumb-list">
+    {items.map((item, index) => (
+      <li class="breadcrumb-item">
+        {index > 0 && <span class="breadcrumb-separator" aria-hidden="true"> / </span>}
+        {item.href ? (
+          <a href={item.href} class="breadcrumb-link">{item.label}</a>
+        ) : (
+          <span aria-current="page" class="breadcrumb-current">{item.label}</span>
+        )}
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+<style>
+  .breadcrumb {
+    padding: var(--space-3) 0;
+  }
+
+  .breadcrumb-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .breadcrumb-item {
+    display: inline-flex;
+    align-items: center;
+    font-size: var(--text-sm);
+    line-height: var(--lh-sm);
+  }
+
+  .breadcrumb-separator {
+    color: var(--color-text-subtle);
+    margin: 0 var(--space-1);
+  }
+
+  .breadcrumb-link {
+    color: var(--color-text-muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .breadcrumb-link:hover {
+    color: var(--color-accent);
+  }
+
+  .breadcrumb-current {
+    color: var(--color-text-base);
+    font-weight: var(--font-medium);
+  }
+</style>
