@@ -56,13 +56,7 @@
       <QuestionnaireModule />
 
     {:else if assessmentStore.currentStep === 'game'}
-      <div class="module-placeholder">
-        <div class="module-icon">🎮</div>
-        <h2>互動遊戲</h2>
-        <p>透過遊戲互動採集兒童行為數據</p>
-        <p class="dev-note">（模組開發中 — Sub-plan D）</p>
-        <button class="btn-skip" onclick={() => assessmentStore.nextStep()}>跳過此步驟 →</button>
-      </div>
+      <GameModule />
 
     {:else if assessmentStore.currentStep === 'voice'}
       <div class="module-placeholder">
