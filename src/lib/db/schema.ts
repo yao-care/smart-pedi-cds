@@ -1,6 +1,7 @@
 import Dexie, { type Table } from 'dexie';
+import type { RiskLevel } from '../utils/risk-levels';
 
-export type RiskLevel = 'normal' | 'advisory' | 'warning' | 'critical';
+export type { RiskLevel };
 export type AlertStatus = 'open' | 'acknowledged' | 'false_positive' | 'resolved';
 
 export interface Patient {
