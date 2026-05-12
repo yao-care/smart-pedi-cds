@@ -28,7 +28,7 @@ jobs:
       - name: Link check
         uses: lycheeverse/lychee-action@v2
         with:
-          args: --no-progress ./dist
+          args: --no-progress --root-dir ./dist --base https://yao.care/smart-pedi-cds/ --offline ./dist
           fail: true
       - uses: actions/upload-pages-artifact@v3
         if: github.ref == 'refs/heads/main'
