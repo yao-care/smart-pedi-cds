@@ -1,6 +1,8 @@
 <script lang="ts">
   import StepIndicator from './StepIndicator.svelte';
   import ChildProfile from './ChildProfile.svelte';
+  import QuestionnaireModule from './QuestionnaireModule.svelte';
+  import GameModule from './GameModule.svelte';
   import { assessmentStore } from '../../lib/stores/assessment.svelte';
   import { getIncompleteAssessments } from '../../lib/db/assessments';
   import type { Assessment } from '../../lib/db/schema';
@@ -51,13 +53,7 @@
       <ChildProfile />
 
     {:else if assessmentStore.currentStep === 'questionnaire'}
-      <div class="module-placeholder">
-        <div class="module-icon">📋</div>
-        <h2>問卷評估</h2>
-        <p>透過互動問卷評估兒童各面向發展狀況</p>
-        <p class="dev-note">（模組開發中 — Sub-plan C）</p>
-        <button class="btn-skip" onclick={() => assessmentStore.nextStep()}>跳過此步驟 →</button>
-      </div>
+      <QuestionnaireModule />
 
     {:else if assessmentStore.currentStep === 'game'}
       <div class="module-placeholder">

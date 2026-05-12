@@ -1,0 +1,161 @@
+{
+  "version": "1.0",
+  "questions": [
+    {
+      "id": "gm-01",
+      "domain": "gross_motor",
+      "domainLabel": "粗動作",
+      "ageGroups": ["2-6m", "7-12m"],
+      "text": "寶寶趴著時能抬頭嗎？",
+      "options": [
+        { "value": "yes", "label": "是，經常可以", "score": 2 },
+        { "value": "sometimes", "label": "有時候可以", "score": 1 },
+        { "value": "no", "label": "還不能", "score": 0 }
+      ]
+    },
+    {
+      "id": "gm-02",
+      "domain": "gross_motor",
+      "domainLabel": "粗動作",
+      "ageGroups": ["7-12m", "13-24m"],
+      "text": "寶寶能自己坐穩嗎？",
+      "options": [
+        { "value": "yes", "label": "是，坐得很穩", "score": 2 },
+        { "value": "sometimes", "label": "需要稍微支撐", "score": 1 },
+        { "value": "no", "label": "還不能", "score": 0 }
+      ]
+    },
+    {
+      "id": "gm-03",
+      "domain": "gross_motor",
+      "domainLabel": "粗動作",
+      "ageGroups": ["13-24m", "25-36m"],
+      "text": "孩子能自己走路嗎？",
+      "options": [
+        { "value": "yes", "label": "走得很穩", "score": 2 },
+        { "value": "sometimes", "label": "走路不太穩", "score": 1 },
+        { "value": "no", "label": "還需要扶著", "score": 0 }
+      ]
+    },
+    {
+      "id": "fm-01",
+      "domain": "fine_motor",
+      "domainLabel": "細動作",
+      "ageGroups": ["2-6m", "7-12m"],
+      "text": "寶寶會伸手抓東西嗎？",
+      "options": [
+        { "value": "yes", "label": "是，會主動抓", "score": 2 },
+        { "value": "sometimes", "label": "偶爾會", "score": 1 },
+        { "value": "no", "label": "還不會", "score": 0 }
+      ]
+    },
+    {
+      "id": "fm-02",
+      "domain": "fine_motor",
+      "domainLabel": "細動作",
+      "ageGroups": ["13-24m", "25-36m"],
+      "text": "孩子能用手指撿起小東西嗎？",
+      "options": [
+        { "value": "yes", "label": "可以，用拇指和食指", "score": 2 },
+        { "value": "sometimes", "label": "用整隻手抓", "score": 1 },
+        { "value": "no", "label": "還不太會", "score": 0 }
+      ]
+    },
+    {
+      "id": "lc-01",
+      "domain": "language_comprehension",
+      "domainLabel": "語言理解",
+      "ageGroups": ["7-12m", "13-24m"],
+      "text": "叫寶寶的名字時會轉頭看嗎？",
+      "options": [
+        { "value": "yes", "label": "是，通常都會", "score": 2 },
+        { "value": "sometimes", "label": "有時候會", "score": 1 },
+        { "value": "no", "label": "很少反應", "score": 0 }
+      ]
+    },
+    {
+      "id": "lc-02",
+      "domain": "language_comprehension",
+      "domainLabel": "語言理解",
+      "ageGroups": ["25-36m", "37-48m"],
+      "text": "孩子能聽懂簡單的指令嗎？（例如：把球給我）",
+      "options": [
+        { "value": "yes", "label": "可以，會照做", "score": 2 },
+        { "value": "sometimes", "label": "有時候懂", "score": 1 },
+        { "value": "no", "label": "似乎聽不懂", "score": 0 }
+      ]
+    },
+    {
+      "id": "le-01",
+      "domain": "language_expression",
+      "domainLabel": "語言表達",
+      "ageGroups": ["7-12m", "13-24m"],
+      "text": "寶寶會發出有意義的聲音嗎？（如叫爸爸、媽媽）",
+      "options": [
+        { "value": "yes", "label": "是，會叫", "score": 2 },
+        { "value": "sometimes", "label": "會發出類似的音", "score": 1 },
+        { "value": "no", "label": "還不會", "score": 0 }
+      ]
+    },
+    {
+      "id": "le-02",
+      "domain": "language_expression",
+      "domainLabel": "語言表達",
+      "ageGroups": ["25-36m", "37-48m", "49-60m"],
+      "text": "孩子能說出包含兩個詞的句子嗎？（如「要喝水」）",
+      "options": [
+        { "value": "yes", "label": "可以，經常說", "score": 2 },
+        { "value": "sometimes", "label": "偶爾會", "score": 1 },
+        { "value": "no", "label": "還不會組句", "score": 0 }
+      ]
+    },
+    {
+      "id": "cg-01",
+      "domain": "cognition",
+      "domainLabel": "認知",
+      "ageGroups": ["13-24m", "25-36m"],
+      "text": "孩子會模仿大人的動作嗎？（如拍手、揮手再見）",
+      "options": [
+        { "value": "yes", "label": "會主動模仿", "score": 2 },
+        { "value": "sometimes", "label": "有時候會", "score": 1 },
+        { "value": "no", "label": "很少模仿", "score": 0 }
+      ]
+    },
+    {
+      "id": "cg-02",
+      "domain": "cognition",
+      "domainLabel": "認知",
+      "ageGroups": ["37-48m", "49-60m", "61-72m"],
+      "text": "孩子能分辨顏色嗎？（至少認識紅、藍、黃）",
+      "options": [
+        { "value": "yes", "label": "可以正確說出", "score": 2 },
+        { "value": "sometimes", "label": "認識一些", "score": 1 },
+        { "value": "no", "label": "還不太會", "score": 0 }
+      ]
+    },
+    {
+      "id": "se-01",
+      "domain": "social_emotional",
+      "domainLabel": "社會情緒",
+      "ageGroups": ["2-6m", "7-12m", "13-24m"],
+      "text": "寶寶看到熟悉的人會微笑嗎？",
+      "options": [
+        { "value": "yes", "label": "是，會對人笑", "score": 2 },
+        { "value": "sometimes", "label": "偶爾會", "score": 1 },
+        { "value": "no", "label": "很少有表情反應", "score": 0 }
+      ]
+    },
+    {
+      "id": "se-02",
+      "domain": "social_emotional",
+      "domainLabel": "社會情緒",
+      "ageGroups": ["25-36m", "37-48m", "49-60m", "61-72m"],
+      "text": "孩子會和其他小朋友一起玩嗎？",
+      "options": [
+        { "value": "yes", "label": "會主動互動", "score": 2 },
+        { "value": "sometimes", "label": "在旁邊看但不太加入", "score": 1 },
+        { "value": "no", "label": "偏好自己玩", "score": 0 }
+      ]
+    }
+  ]
+}
