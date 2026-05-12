@@ -16,6 +16,7 @@ const tabs = [
 ---
 
 <App title="系統設定" description="FHIR Server、規則、Webhook、通知偏好設定">
+  <a href="/smart-pedi-cds/workspace/" class="back-to-workspace">&larr; 返回工作台</a>
   <h1>系統設定</h1>
 
   <div class="tabs">
@@ -56,6 +57,20 @@ const tabs = [
 </App>
 
 <style>
+  .back-to-workspace {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    text-decoration: none;
+    margin-bottom: var(--space-4);
+  }
+
+  .back-to-workspace:hover {
+    color: var(--color-accent);
+  }
+
   h1 {
     margin-bottom: var(--space-6);
   }

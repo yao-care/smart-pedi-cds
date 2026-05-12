@@ -2,22 +2,22 @@
 import App from '../layouts/App.astro';
 
 const features = [
+  { title: '家長自評 (CDSA)', description: '家長可透過引導式問卷評估孩子健康狀況，取得即時衛教建議' },
+  { title: '臨床決策輔助 (CDSS)', description: '醫護人員可即時監測兒童健康指標，接收智慧預警與風險分級' },
   { title: '智慧預警引擎', description: '即時偵測兒童健康指標異常，自動分級預警' },
-  { title: '趨勢分析圖表', description: '直覺化呈現體溫、心率、血氧等指標趨勢' },
-  { title: '衛教資源整合', description: '依預警類型自動推播對應衛教內容' },
-  { title: 'SMART on FHIR 整合', description: '可直接嵌入醫院 EHR 系統使用' },
-  { title: 'PDF 報告匯出', description: '一鍵產生兒童健康趨勢報告' },
+  { title: '衛教資源整合', description: '依評估結果與預警類型自動推播對應衛教內容' },
+  { title: 'SMART on FHIR 整合', description: '可連線醫院 FHIR Server，或獨立離線使用' },
   { title: '完全離線運算', description: '所有邏輯在瀏覽器端執行，保護病患隱私' },
 ];
 
 const faqs = [
   {
     question: '這個系統需要安裝什麼軟體嗎？',
-    answer: '不需要。CDSS 兒科臨床決策輔助系統是一個純瀏覽器端應用程式，只需要現代瀏覽器（Chrome、Firefox、Safari、Edge）即可使用。所有運算邏輯在瀏覽器執行，無需安裝額外軟體或維護後端伺服器。',
+    answer: '不需要。Smart Pedi 是一個純瀏覽器端應用程式，只需要現代瀏覽器（Chrome、Firefox、Safari、Edge）即可使用。所有運算邏輯在瀏覽器執行，無需安裝額外軟體或維護後端伺服器。',
   },
   {
     question: '如何連接醫院的 FHIR Server？',
-    answer: '系統支援兩種連線模式：Standalone Launch 與 EHR Launch。Standalone 模式下，您可以在設定頁面輸入 FHIR Server 位址進行連線。EHR Launch 模式下，醫院 EHR 系統會自動透過 SMART on FHIR 協議啟動本系統並傳入病患資料。',
+    answer: '系統支援兩種連線模式：Standalone Launch 與 EHR Launch。Standalone 模式下，您可以在醫師工作台的設定中輸入 FHIR Server 位址進行連線；家長評估流程亦可選擇性連線。EHR Launch 模式下，醫院 EHR 系統會自動透過 SMART on FHIR 協議啟動本系統並傳入病患資料。',
   },
   {
     question: '病患資料會被傳送到外部伺服器嗎？',
@@ -39,17 +39,18 @@ const faqJsonLd = {
 };
 ---
 
-<App title="關於" description="CDSS 兒科臨床決策輔助系統使用說明">
+<App title="關於" description="Smart Pedi 兒科健康評估與臨床決策輔助系統使用說明">
   <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
 
-  <h1>關於 CDSS 兒科臨床決策輔助系統</h1>
+  <h1>關於 Smart Pedi 兒科健康輔助系統</h1>
 
   <section class="about-section" aria-label="系統介紹">
     <h2>系統介紹</h2>
     <p>
-      CDSS 兒科臨床決策輔助系統是一套開源的兒科臨床決策輔助工具，
-      以 SMART on FHIR 標準運行於瀏覽器端。系統能即時分析兒童健康指標，
-      提供智慧預警與衛教建議，協助醫護人員及家長做出更好的健康決策。
+      Smart Pedi 是一套開源的兒科健康輔助系統，提供雙角色服務：
+      家長可透過 CDSA（臨床決策輔助應用）進行孩子健康自評並取得衛教建議；
+      醫護人員可透過 CDSS（臨床決策輔助系統）工作台即時監測指標、接收預警。
+      系統以 SMART on FHIR 標準運行於瀏覽器端，確保隱私與互通性。
     </p>
   </section>
 
@@ -79,19 +80,19 @@ const faqJsonLd = {
     <h2>使用方式</h2>
     <div class="usage-modes">
       <div class="usage-card">
-        <h3>Standalone Launch</h3>
+        <h3>家長評估 (CDSA)</h3>
         <p>
-          獨立啟動模式。開啟系統後，於設定頁面輸入 FHIR Server 位址，
-          系統將透過 SMART on FHIR 協議取得授權並載入病患資料。
-          適合測試、研究或獨立使用的情境。
+          從首頁選擇「我是家長」進入評估流程。透過引導式問卷回答孩子的健康狀況，
+          系統將即時提供衛教建議。可選擇性連線醫院 FHIR Server，
+          將評估結果傳送至醫療團隊。
         </p>
       </div>
       <div class="usage-card">
-        <h3>EHR Launch</h3>
+        <h3>醫師工作台 (CDSS)</h3>
         <p>
-          由醫院 EHR 系統啟動。醫護人員在 EHR 中點選本系統連結，
-          EHR 自動傳入目前病患的 context，系統直接載入該病患的健康資料。
-          適合整合至現有醫院工作流程。
+          從首頁選擇「我是醫師」進入臨床工作台。工作台提供儀表板、預警管理、
+          個案檢視等功能，可透過 SMART on FHIR 連線醫院 EHR 系統，
+          或以 Standalone 模式獨立使用。
         </p>
       </div>
     </div>

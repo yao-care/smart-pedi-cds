@@ -2,7 +2,6 @@
 import Base from './Base.astro';
 import Header from '../components/blocks/Header.astro';
 import Footer from '../components/blocks/Footer.astro';
-import ConnectionStatus from '../components/fhir/ConnectionStatus.svelte';
 
 interface Props {
   title: string;
@@ -15,14 +14,6 @@ const { title, description } = Astro.props;
 <Base title={title} description={description}>
   <div class="app-layout">
     <Header />
-    <div class="connection-bar">
-      <ConnectionStatus
-        client:load
-        isConnected={false}
-        isSyncing={false}
-        lastSyncTime={null}
-      />
-    </div>
     <main id="main-content" class="container">
       <slot />
     </main>
@@ -40,13 +31,5 @@ const { title, description } = Astro.props;
   .app-layout main {
     flex: 1;
     padding: var(--space-6) 0;
-  }
-
-  .connection-bar {
-    display: flex;
-    justify-content: flex-end;
-    padding: var(--space-2) var(--space-4);
-    max-width: 1280px;
-    margin: 0 auto;
   }
 </style>
