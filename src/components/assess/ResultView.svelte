@@ -5,6 +5,7 @@
   import { submitAssessmentToFhir } from '../../lib/fhir/cdsa-submit';
   import RadarChart from './RadarChart.svelte';
   import EducationMatch from './EducationMatch.svelte';
+  import AssessmentPdfReport from './AssessmentPdfReport.svelte';
 
   interface Props {
     triageResult: {
@@ -170,6 +171,11 @@
       <p class="fhir-error">{fhirError}</p>
     {/if}
 
+    {#if assessmentStore.assessment && assessmentStore.child}
+      <AssessmentPdfReport assessment={assessmentStore.assessment} child={assessmentStore.child} />
+    {/if}
+
+    <a href="/smart-pedi-cds/assess/history/" class="btn-history">查看評估歷史</a>
     <a href="/smart-pedi-cds/" class="btn-home">返回首頁</a>
   </div>
 </div>
@@ -332,6 +338,28 @@
     font-size: var(--text-sm);
     color: var(--color-risk-critical);
     font-weight: var(--font-medium);
+  }
+
+  .btn-history {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-3) var(--space-7);
+    background: var(--bg-surface);
+    color: var(--color-accent);
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    text-decoration: none;
+    min-height: 48px;
+    min-width: 200px;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .btn-history:hover {
+    background: var(--color-accent);
+    color: #fff;
   }
 
   .btn-home {
