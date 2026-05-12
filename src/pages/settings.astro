@@ -1,5 +1,10 @@
 ---
 import App from '../layouts/App.astro';
+import ServerConfig from '../components/fhir/ServerConfig.svelte';
+import RuleEditor from '../components/settings/RuleEditor.svelte';
+import WebhookConfig from '../components/settings/WebhookConfig.svelte';
+import NotificationPrefs from '../components/settings/NotificationPrefs.svelte';
+import ModelManager from '../components/settings/ModelManager.svelte';
 
 const tabs = [
   { id: 'fhir', label: 'FHIR Server 設定' },
@@ -27,15 +32,26 @@ const tabs = [
       </Fragment>
     ))}
 
-    {tabs.map((tab) => (
-      <section id={`panel-${tab.id}`} class="tab-panel" aria-label={tab.label}>
-        <h2>{tab.label}</h2>
-        <div class="placeholder">
-          <!-- {tab.label} Svelte island will mount here -->
-          Svelte 元件載入中…
-        </div>
-      </section>
-    ))}
+    <section id="panel-fhir" class="tab-panel" aria-label="FHIR Server 設定">
+      <h2>FHIR Server 設定</h2>
+      <ServerConfig client:idle />
+    </section>
+    <section id="panel-rules" class="tab-panel" aria-label="規則管理">
+      <h2>規則管理</h2>
+      <RuleEditor client:idle />
+    </section>
+    <section id="panel-webhook" class="tab-panel" aria-label="Webhook 設定">
+      <h2>Webhook 設定</h2>
+      <WebhookConfig client:idle />
+    </section>
+    <section id="panel-notification" class="tab-panel" aria-label="通知偏好">
+      <h2>通知偏好</h2>
+      <NotificationPrefs client:idle />
+    </section>
+    <section id="panel-model" class="tab-panel" aria-label="模型管理">
+      <h2>模型管理</h2>
+      <ModelManager client:idle />
+    </section>
   </div>
 </App>
 
@@ -108,13 +124,4 @@ const tabs = [
     border-bottom-color: var(--color-accent);
   }
 
-  .placeholder {
-    padding: var(--space-8);
-    text-align: center;
-    color: var(--color-text-subtle);
-    font-size: var(--text-sm);
-    border: 1px dashed var(--border-default);
-    border-radius: var(--radius-md);
-    background-color: var(--bg-surface);
-  }
 </style>

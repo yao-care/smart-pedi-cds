@@ -1,6 +1,8 @@
 ---
 import Education from '../../layouts/Education.astro';
 import { getCollection, render } from 'astro:content';
+import ContentViewer from '../../components/education/ContentViewer.svelte';
+import InteractionTracker from '../../components/education/InteractionTracker.svelte';
 
 export async function getStaticPaths() {
   const entries = await getCollection('education');
@@ -55,6 +57,19 @@ const breadcrumbs = [
   </div>
 
   <Content />
+
+  <!-- Interaction tracking (background, no visible UI) -->
+  <InteractionTracker client:idle contentSlug={entry.id} />
+
+  <!-- Content viewer for video/questionnaire formats -->
+  {entry.data.format !== 'article' && (
+    <ContentViewer
+      client:idle
+      slug={entry.id}
+      title={entry.data.title}
+      format={entry.data.format}
+    />
+  )}
 </Education>
 
 <style>
