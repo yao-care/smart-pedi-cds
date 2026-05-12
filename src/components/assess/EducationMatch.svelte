@@ -10,6 +10,7 @@
     gross_motor: [
       { slug: 'gross-motor-activities', title: '粗動作發展促進活動', summary: '各年齡層的粗動作訓練遊戲與居家活動' },
       { slug: 'exercise-guide', title: '兒童運動建議', summary: '適齡運動與活動建議' },
+      { slug: 'nutrition-grow-tall', title: '🎬 長高三要件', summary: '蛋白質、鈣＋日光、鉀的營養關鍵' },
     ],
     fine_motor: [
       { slug: 'fine-motor-activities', title: '精細動作發展促進活動', summary: '手部精細動作與手眼協調居家活動' },
@@ -31,6 +32,14 @@
     ],
     behavior: [
       { slug: 'sleep-hygiene', title: '生活作息建議', summary: '良好生活習慣支持整體發展' },
+    ],
+    diet: [
+      { slug: 'diet-control', title: '兒童飲食控制衛教', summary: '合理飲食結構與醣類攝取建議' },
+      { slug: 'nutrition-grow-tall', title: '🎬 長高三要件', summary: '蛋白質、鈣＋日光、鉀' },
+      { slug: 'nutrition-calcium-tofu', title: '🎬 補鈣看豆腐凝固劑', summary: '輕鬆判斷豆腐鈣含量' },
+      { slug: 'nutrition-vitamin-d-mushroom', title: '🎬 曬香菇補維生素 D', summary: '15 分鐘提升維生素 D' },
+      { slug: 'nutrition-garlic-tip', title: '🎬 大蒜拍碎要等一下', summary: '讓蒜素充分生成' },
+      { slug: 'nutrition-okra-cooking', title: '🎬 秋葵正確烹調法', summary: '整根燙、擦乾再炒' },
     ],
   };
 
