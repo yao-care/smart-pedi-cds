@@ -1,0 +1,49 @@
+{
+  "name": "cdss-pediatric",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "開源兒科臨床決策輔助系統 — SMART on FHIR 瀏覽器端 CDS",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check && svelte-check --tsconfig ./tsconfig.json",
+    "lint": "eslint . --ext .ts,.svelte,.astro",
+    "postbuild": "pagefind --site dist"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.2",
+    "@astrojs/svelte": "^8.1.0",
+    "astro": "^6.3.1",
+    "d3-array": "^3.2.4",
+    "d3-axis": "^3.0.0",
+    "d3-format": "^3.1.2",
+    "d3-scale": "^4.0.2",
+    "d3-selection": "^3.0.0",
+    "d3-shape": "^3.2.0",
+    "d3-time": "^3.1.0",
+    "d3-time-format": "^4.1.0",
+    "dexie": "^4.4.2",
+    "fhirclient": "^2.6.3",
+    "js-yaml": "^4.1.1",
+    "jspdf": "^4.2.1",
+    "onnxruntime-web": "^1.26.0",
+    "svelte": "^5.55.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@types/d3-array": "^3.2.2",
+    "@types/d3-axis": "^3.0.6",
+    "@types/d3-format": "^3.0.4",
+    "@types/d3-scale": "^4.0.9",
+    "@types/d3-selection": "^3.0.11",
+    "@types/d3-shape": "^3.1.8",
+    "@types/d3-time": "^3.0.4",
+    "@types/d3-time-format": "^4.0.3",
+    "@types/js-yaml": "^4.0.9",
+    "eslint": "^10.3.0",
+    "pagefind": "^1.5.2",
+    "svelte-check": "^4.4.8",
+    "typescript": "^6.0.3"
+  }
+}
