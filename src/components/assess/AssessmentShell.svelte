@@ -3,6 +3,8 @@
   import ChildProfile from './ChildProfile.svelte';
   import QuestionnaireModule from './QuestionnaireModule.svelte';
   import GameModule from './GameModule.svelte';
+  import VoiceModule from './VoiceModule.svelte';
+  import VideoModule from './VideoModule.svelte';
   import { assessmentStore } from '../../lib/stores/assessment.svelte';
   import { getIncompleteAssessments } from '../../lib/db/assessments';
   import type { Assessment } from '../../lib/db/schema';
@@ -59,22 +61,10 @@
       <GameModule />
 
     {:else if assessmentStore.currentStep === 'voice'}
-      <div class="module-placeholder">
-        <div class="module-icon">🎤</div>
-        <h2>語音互動</h2>
-        <p>錄製兒童語音以分析聲學特徵</p>
-        <p class="dev-note">（模組開發中 — Sub-plan E）</p>
-        <button class="btn-skip" onclick={() => assessmentStore.nextStep()}>跳過此步驟 →</button>
-      </div>
+      <VoiceModule />
 
     {:else if assessmentStore.currentStep === 'video'}
-      <div class="module-placeholder">
-        <div class="module-icon">📹</div>
-        <h2>影片錄製</h2>
-        <p>錄製兒童活動影片以分析動作發展</p>
-        <p class="dev-note">（模組開發中 — Sub-plan F）</p>
-        <button class="btn-skip" onclick={() => assessmentStore.nextStep()}>跳過此步驟 →</button>
-      </div>
+      <VideoModule />
 
     {:else if assessmentStore.currentStep === 'drawing'}
       <div class="module-placeholder">
