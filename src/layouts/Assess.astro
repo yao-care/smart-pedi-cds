@@ -1,0 +1,70 @@
+---
+import Base from './Base.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = '兒童發展智慧評估' } = Astro.props;
+---
+
+<Base title={title} description={description}>
+  <div class="assess-layout">
+    <header class="assess-header">
+      <a href="/smart-pedi-cds/" class="back-link" aria-label="返回首頁">← 返回</a>
+      <span class="assess-title">兒童發展評估</span>
+    </header>
+    <main id="main-content" class="assess-main">
+      <slot />
+    </main>
+  </div>
+</Base>
+
+<style>
+  .assess-layout {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .assess-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-default);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .back-link {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    text-decoration: none;
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .back-link:hover {
+    color: var(--color-accent);
+  }
+
+  .assess-title {
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--color-text-base);
+  }
+
+  .assess-main {
+    flex: 1;
+    padding: var(--space-6) var(--space-4);
+    max-width: 960px;
+    width: 100%;
+    margin: 0 auto;
+  }
+</style>
