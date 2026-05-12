@@ -167,6 +167,35 @@ export interface NormThreshold {
   updatedAt: Date;
 }
 
+export interface CustomEducation {
+  id: string;
+  tenantId: string;         // derived from FHIR base URL
+  title: string;
+  summary: string;
+  category: string;
+  ageGroup: string[];       // ['infant', 'toddler', 'preschool']
+  format: 'article' | 'video';
+  content: string;          // Markdown content for articles
+  videoUrl?: string;        // YouTube URL for videos
+  triggerIndicators: string[];
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface TenantSettings {
+  id: string;               // tenantId
+  tenantId: string;
+  displayName: string;
+  pollingInterval: number;
+  advisoryBatchInterval: number;
+  browserNotifications: boolean;
+  soundEnabled: boolean;
+  alertAfterHours: number;
+  customRulesYaml?: string;  // tenant-specific YAML rules override
+  updatedAt: Date;
+}
+
 export class CdssDatabase extends Dexie {
   patients!: Table<Patient>;
   observations!: Table<Observation>;
@@ -182,6 +211,8 @@ export class CdssDatabase extends Dexie {
   assessmentEvents!: Table<AssessmentEvent>;
   mediaFiles!: Table<MediaFile>;
   normThresholds!: Table<NormThreshold>;
+  customEducation!: Table<CustomEducation>;
+  tenantSettings!: Table<TenantSettings>;
 
   constructor() {
     super('cdss-pediatric');
@@ -213,6 +244,26 @@ export class CdssDatabase extends Dexie {
       assessmentEvents: 'id, assessmentId, childId, moduleType, timestamp, [assessmentId+moduleType]',
       mediaFiles: 'id, assessmentId, childId, fileType, createdAt, [assessmentId+fileType]',
       normThresholds: 'id, ageGroup, metric, [ageGroup+metric]',
+    });
+    this.version(3).stores({
+      // Repeat ALL v2 stores exactly as they are
+      patients: 'id, ageGroup, currentRiskLevel, lastSyncedAt',
+      observations: 'id, patientId, indicator, effectiveDateTime, [patientId+indicator]',
+      alerts: 'id, patientId, riskLevel, status, createdAt, [patientId+status]',
+      baselines: '[patientId+indicator], patientId, updatedAt',
+      syncQueue: 'id, createdAt',
+      serverConfigs: 'id, lastUsedAt',
+      educationInteractions: 'id, contentSlug, createdAt',
+      ruleVersions: 'id, createdAt',
+      webhookHistory: 'id, webhookId, alertId, createdAt',
+      children: 'id, createdAt',
+      assessments: 'id, childId, status, createdAt, [childId+status]',
+      assessmentEvents: 'id, assessmentId, childId, moduleType, timestamp, [assessmentId+moduleType]',
+      mediaFiles: 'id, assessmentId, childId, fileType, createdAt, [assessmentId+fileType]',
+      normThresholds: 'id, ageGroup, metric, [ageGroup+metric]',
+      // New v3 stores
+      customEducation: 'id, tenantId, category, isActive, [tenantId+isActive]',
+      tenantSettings: 'id, tenantId',
     });
   }
 }
