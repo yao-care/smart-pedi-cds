@@ -1,0 +1,233 @@
+<script lang="ts">
+  import type { Alert, AlertStatus } from '../../lib/db/schema';
+  import type { RiskLevel } from '../../lib/utils/risk-levels';
+
+  interface Props {
+    alerts: Alert[];
+  }
+
+  let { alerts }: Props = $props();
+
+  const riskLabelMap: Record<RiskLevel, string> = {
+    normal: '正常',
+    advisory: '諮詢',
+    warning: '警告',
+    critical: '危急',
+  };
+
+  const statusLabelMap: Record<AlertStatus, string> = {
+    open: '未處理',
+    acknowledged: '已確認',
+    false_positive: '誤報',
+    resolved: '已解決',
+  };
+
+  const sortedAlerts = $derived(
+    [...alerts].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    ),
+  );
+
+  function formatDate(date: Date): string {
+    const d = new Date(date);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const h = String(d.getHours()).padStart(2, '0');
+    const min = String(d.getMinutes()).padStart(2, '0');
+    return `${y}/${m}/${day} ${h}:${min}`;
+  }
+
+  function hasEscalation(alert: Alert): boolean {
+    return alert.parentAlertId != null;
+  }
+</script>
+
+<section class="alert-timeline" aria-label="預警時間軸">
+  {#if sortedAlerts.length === 0}
+    <p class="no-data">此病患暫無預警紀錄</p>
+  {:else}
+    <ol class="timeline" role="list">
+      {#each sortedAlerts as alert, i (alert.id)}
+        {@const level = alert.riskLevel}
+        {@const isLast = i === sortedAlerts.length - 1}
+        <li class="timeline-entry">
+          {#if hasEscalation(alert)}
+            <div class="escalation-arrow" aria-label="升級自前一預警">
+              <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M8 2 L12 8 L9 8 L9 14 L7 14 L7 8 L4 8 Z" fill="var(--color-risk-{level})" />
+              </svg>
+            </div>
+          {/if}
+
+          <div class="dot-column">
+            <div
+              class="dot"
+              style="background-color: var(--color-risk-{level})"
+              aria-hidden="true"
+            ></div>
+            {#if !isLast}
+              <div class="connector" aria-hidden="true"></div>
+            {/if}
+          </div>
+
+          <div class="entry-content">
+            <div class="entry-header">
+              <time class="entry-date" datetime={new Date(alert.createdAt).toISOString()}>
+                {formatDate(alert.createdAt)}
+              </time>
+              <span class="risk-badge risk-{level}">{riskLabelMap[level]}</span>
+              <span class="status-badge status-{alert.status}">{statusLabelMap[alert.status]}</span>
+            </div>
+            <p class="entry-rationale">{alert.rationale}</p>
+          </div>
+        </li>
+      {/each}
+    </ol>
+  {/if}
+</section>
+
+<style>
+  .alert-timeline {
+    padding: var(--space-2) 0;
+  }
+
+  .no-data {
+    text-align: center;
+    color: var(--color-text-muted);
+    padding: var(--space-6) 0;
+  }
+
+  .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .timeline-entry {
+    display: flex;
+    gap: var(--space-3);
+    position: relative;
+  }
+
+  .escalation-arrow {
+    position: absolute;
+    left: 2px;
+    top: -14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .dot-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 20px;
+  }
+
+  .dot {
+    width: 14px;
+    height: 14px;
+    border-radius: var(--radius-full);
+    flex-shrink: 0;
+    margin-top: var(--space-1);
+    border: 2px solid var(--bg-surface);
+    box-shadow: 0 0 0 1px var(--border-default);
+  }
+
+  .connector {
+    width: 2px;
+    flex: 1;
+    min-height: var(--space-6);
+    background-color: var(--border-default);
+  }
+
+  .entry-content {
+    flex: 1;
+    padding-bottom: var(--space-5);
+  }
+
+  .entry-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-1);
+  }
+
+  .entry-date {
+    font-size: 0.8rem;
+    color: var(--color-text-subtle);
+  }
+
+  .risk-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+  }
+
+  .risk-normal {
+    color: var(--color-risk-normal);
+    background-color: var(--color-risk-normal-bg);
+  }
+
+  .risk-advisory {
+    color: var(--color-risk-advisory);
+    background-color: var(--color-risk-advisory-bg);
+  }
+
+  .risk-warning {
+    color: var(--color-risk-warning);
+    background-color: var(--color-risk-warning-bg);
+  }
+
+  .risk-critical {
+    color: var(--color-risk-critical);
+    background-color: var(--color-risk-critical-bg);
+  }
+
+  .status-badge {
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-default);
+    color: var(--color-text-muted);
+    background-color: var(--bg-muted);
+  }
+
+  .status-open {
+    color: var(--color-risk-critical);
+    border-color: var(--color-risk-critical);
+    background-color: var(--color-risk-critical-bg);
+  }
+
+  .status-acknowledged {
+    color: var(--color-risk-advisory);
+    border-color: var(--color-risk-advisory);
+    background-color: var(--color-risk-advisory-bg);
+  }
+
+  .status-false_positive {
+    color: var(--color-text-subtle);
+    border-color: var(--border-default);
+    background-color: var(--bg-muted);
+  }
+
+  .status-resolved {
+    color: var(--color-risk-normal);
+    border-color: var(--color-risk-normal);
+    background-color: var(--color-risk-normal-bg);
+  }
+
+  .entry-rationale {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--color-text-base);
+    line-height: 1.5;
+  }
+</style>
