@@ -71,7 +71,7 @@
           {/each}
         </div>
         <button class="btn-new" onclick={handleStartNew}>開始新的評估</button>
-        <a href="/smart-pedi-cds/assess/history/" class="history-link">查看過去的評估紀錄</a>
+        <a href="/smart-pedi-cds/history/" class="history-link">查看過去的評估紀錄</a>
       </div>
 
     {:else if assessmentStore.currentStep === 'profile'}

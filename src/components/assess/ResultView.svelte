@@ -175,8 +175,8 @@
       <AssessmentPdfReport assessment={assessmentStore.assessment} child={assessmentStore.child} />
     {/if}
 
-    <a href="/smart-pedi-cds/assess/history/" class="btn-history">查看評估歷史</a>
-    <a href="/smart-pedi-cds/" class="btn-home">返回首頁</a>
+    <a href="/smart-pedi-cds/history/" class="btn-history">查看評估紀錄</a>
+    <a href="/smart-pedi-cds/" class="btn-home">開始新評估</a>
   </div>
 </div>
 

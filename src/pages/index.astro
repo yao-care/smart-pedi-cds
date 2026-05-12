@@ -1,131 +1,72 @@
 ---
 import Base from '../layouts/Base.astro';
+import AssessmentShell from '../components/assess/AssessmentShell.svelte';
 ---
 
-<Base title="兒童發展智慧評估" description="兒童發展遲緩智慧分流評估系統 — SMART on FHIR">
-  <main id="main-content" class="role-selector">
-    <div class="selector-container">
-      <h1>兒童發展智慧評估系統</h1>
-      <p class="subtitle">請選擇您的身份以開始使用</p>
-
-      <div class="role-cards">
-        <a href="/smart-pedi-cds/assess/" class="role-card role-parent">
-          <div class="role-icon" aria-hidden="true">👶</div>
-          <h2>家長 / 照顧者</h2>
-          <p>為您的孩子進行發展評估，了解成長狀態並獲得衛教建議</p>
-        </a>
-
-        <a href="/smart-pedi-cds/workspace/" class="role-card role-doctor">
-          <div class="role-icon" aria-hidden="true">🩺</div>
-          <h2>醫護人員</h2>
-          <p>查看病患評估結果、監測健康指標、管理預警與追蹤</p>
-        </a>
-      </div>
-
-      <footer class="selector-footer">
-        <a href="/smart-pedi-cds/about/">關於本系統</a>
-        <span class="separator">·</span>
-        <span>Powered by SMART on FHIR</span>
-      </footer>
-    </div>
-  </main>
+<Base title="兒童發展智慧評估" description="兒童發展遲緩智慧分流評估系統">
+  <div class="app-layout">
+    <header class="app-header">
+      <span class="app-title">兒童發展智慧評估</span>
+      <nav class="app-nav" aria-label="主導覽">
+        <a href="/smart-pedi-cds/history/">評估紀錄</a>
+        <a href="/smart-pedi-cds/education/">衛教資源</a>
+        <a href="/smart-pedi-cds/about/">關於</a>
+      </nav>
+    </header>
+    <main id="main-content" class="app-main" data-pagefind-body>
+      <AssessmentShell client:load />
+    </main>
+  </div>
 </Base>
 
 <style>
-  .role-selector {
+  .app-layout {
     min-height: 100dvh;
     display: flex;
+    flex-direction: column;
+  }
+
+  .app-header {
+    display: flex;
     align-items: center;
-    justify-content: center;
-    background: var(--bg-base);
+    justify-content: space-between;
+    padding: var(--space-3) var(--space-4);
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-default);
+    position: sticky;
+    top: 0;
+    z-index: 100;
   }
 
-  .selector-container {
-    max-width: 720px;
-    padding: var(--space-8);
-    text-align: center;
-  }
-
-  h1 {
-    font-size: var(--text-3xl);
-    margin-bottom: var(--space-3);
+  .app-title {
+    font-size: var(--text-sm);
+    font-weight: var(--font-bold);
     color: var(--color-text-base);
   }
 
-  .subtitle {
-    font-size: var(--text-lg);
-    color: var(--color-text-muted);
-    margin-bottom: var(--space-10);
-  }
-
-  .role-cards {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-6);
-  }
-
-  @media (max-width: 640px) {
-    .role-cards {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .role-card {
+  .app-nav {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: var(--space-8);
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
-    border-radius: var(--radius-lg);
-    text-decoration: none;
-    color: inherit;
-    transition: border-color 0.2s;
-    min-height: 240px;
-    justify-content: center;
+    gap: var(--space-4);
   }
 
-  .role-card:hover {
-    border-color: var(--color-accent);
-  }
-
-  .role-parent {
-    border-left: 4px solid var(--color-accent);
-  }
-
-  .role-doctor {
-    border-left: 4px solid var(--color-risk-advisory);
-  }
-
-  .role-icon {
-    font-size: 48px;
-    margin-bottom: var(--space-4);
-  }
-
-  .role-card h2 {
-    font-size: var(--text-xl);
-    font-weight: var(--font-bold);
-    margin-bottom: var(--space-3);
-  }
-
-  .role-card p {
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
-    line-height: var(--lh-sm);
-  }
-
-  .selector-footer {
-    margin-top: var(--space-10);
+  .app-nav a {
     font-size: var(--text-xs);
-    color: var(--color-text-subtle);
+    color: var(--color-text-muted);
+    text-decoration: none;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
   }
 
-  .selector-footer a {
+  .app-nav a:hover {
     color: var(--color-accent);
   }
 
-  .separator {
-    margin: 0 var(--space-2);
+  .app-main {
+    flex: 1;
+    padding: var(--space-6) var(--space-4);
+    max-width: 960px;
+    width: 100%;
+    margin: 0 auto;
   }
 </style>
