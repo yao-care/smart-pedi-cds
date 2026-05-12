@@ -57,7 +57,6 @@ export class WebhookManager {
     alertId: string,
     payload: WebhookPayload,
   ): Promise<void> {
-    const startTime = Date.now();
     let status: 'success' | 'failed' = 'failed';
     let statusCode: number | undefined;
 

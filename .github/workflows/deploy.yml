@@ -23,7 +23,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm check
-      - run: pnpm lint
+      - run: pnpm lint --max-warnings 10
       - run: pnpm build
       - name: Link check
         uses: lycheeverse/lychee-action@v2
