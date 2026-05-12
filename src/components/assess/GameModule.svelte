@@ -175,9 +175,15 @@
     ctx.fill();
   }
 
-  // Render current stimulus on canvas whenever it changes
-  $effect(() => {
-    if (!canvas || !currentStimulus) return;
+  /**
+   * Draw the current stimulus on the canvas.
+   * Extracted as a standalone function so it can be called from
+   * both the reactive effect and the canvas mount callback.
+   */
+  function renderStimulus(): void {
+    if (!canvas) return;
+    const stim = stimuli[currentIndex];
+    if (!stim) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
@@ -190,12 +196,27 @@
     ctx.fillRect(0, 0, w, h);
 
     // Draw each shape
-    for (const shape of currentStimulus.shapes) {
+    for (const shape of stim.shapes) {
       drawShape(ctx, shape, w, h);
     }
 
     stimulusStartTime = Date.now();
+  }
+
+  // Re-render when the stimulus index changes
+  $effect(() => {
+    // Read reactive deps so Svelte tracks them
+    const _idx = currentIndex;
+    const _len = stimuli.length;
+    // Use requestAnimationFrame to ensure canvas is in the DOM
+    requestAnimationFrame(renderStimulus);
   });
+
+  /** Svelte action: called when canvas mounts in the DOM */
+  function onCanvasMount(el: HTMLCanvasElement) {
+    canvas = el;
+    renderStimulus();
+  }
 
   /**
    * Advance to the next stimulus or mark the game as complete.
@@ -295,6 +316,7 @@
       <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
       <canvas
         bind:this={canvas}
+        use:onCanvasMount
         width={600}
         height={400}
         onclick={handleCanvasClick}
