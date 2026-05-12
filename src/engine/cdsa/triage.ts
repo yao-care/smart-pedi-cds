@@ -9,6 +9,7 @@ export interface TriageInput {
   voice: VoiceMetrics;
   drawing: DrawingAnalysisResult;
   questionnaireScores?: Record<string, number>; // domain -> score
+  grossMotor?: { classification: string; confidence: number; features: Record<string, number> };
 }
 
 export interface TriageResult {
@@ -105,6 +106,17 @@ export function computeTriage(input: TriageInput): TriageResult {
         isAnomaly: normalized < 0.5,
       });
     }
+  }
+
+  // Gross motor (from MediaPipe Pose analysis)
+  if (input.grossMotor && input.grossMotor.classification === 'delayed') {
+    details.push({
+      domain: 'gross_motor',
+      metric: 'poseClassification',
+      value: input.grossMotor.confidence,
+      zScore: null,
+      isAnomaly: true,
+    });
   }
 
   // Triage decision
