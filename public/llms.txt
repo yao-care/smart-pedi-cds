@@ -1,0 +1,24 @@
+# CDSS Pediatric Clinical Decision Support System
+
+## Overview
+Open-source pediatric clinical decision support system running entirely in the browser via SMART on FHIR standard. Deployed on GitHub Pages with zero backend.
+
+## Features
+- SMART on FHIR connectivity (EHR Launch + Standalone)
+- AI-powered risk alerting (rule engine + ONNX ML)
+- Closed-loop decision workflow
+- Clinical dashboard with D3 trend charts
+- Patient education content system
+- PDF report generation
+
+## Technical
+- Astro 5 SSG + Svelte 5 islands
+- IndexedDB (Dexie.js) for client-side storage
+- ONNX Runtime Web for ML inference
+- Web Workers for computation offloading
+
+## URL
+https://yao.care/smart-pedi-cds/
+
+## Source
+https://github.com/yaocare/smart-pedi-cds

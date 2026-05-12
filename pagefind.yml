@@ -1,0 +1,8 @@
+site: dist
+glob: "**/*.html"
+root_selector: "main"
+exclude_selectors:
+  - "nav"
+  - "footer"
+  - ".skip-to-content"
+force_language: zh-tw
