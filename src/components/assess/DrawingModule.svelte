@@ -72,7 +72,7 @@
     if (!isDrawing) return;
     isDrawing = false;
     if (currentStroke.length > 0) {
-      allStrokes.push(currentStroke);
+      allStrokes = [...allStrokes, currentStroke];
     }
   }
 

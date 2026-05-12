@@ -2,7 +2,7 @@
   import { assessmentStore } from '../../lib/stores/assessment.svelte';
   import { recordEvent, saveMedia } from '../../lib/db/assessment-events';
 
-  let videoElement: HTMLVideoElement;
+  let videoElement = $state<HTMLVideoElement | null>(null);
   let stream: MediaStream | null = null;
   let mediaRecorder: MediaRecorder | null = null;
   let videoChunks: Blob[] = [];
@@ -16,6 +16,14 @@
 
   const MAX_DURATION = 15; // seconds
 
+  // Connect stream to video element when both are available
+  $effect(() => {
+    if (videoElement && stream && permissionGranted) {
+      videoElement.srcObject = stream;
+      videoElement.play().catch(() => {});
+    }
+  });
+
   async function requestCameraPermission() {
     try {
       stream = await navigator.mediaDevices.getUserMedia({
@@ -23,13 +31,6 @@
         audio: false,
       });
       permissionGranted = true;
-      // Show preview after DOM updates
-      requestAnimationFrame(() => {
-        if (videoElement && stream) {
-          videoElement.srcObject = stream;
-          videoElement.play();
-        }
-      });
     } catch {
       permissionError = '無法存取攝影機。您可以改用匯入影片。';
     }
@@ -147,8 +148,10 @@
     </div>
   {:else if !permissionGranted}
     <div class="permission-prompt">
+      <div class="module-icon" aria-hidden="true">📹</div>
       <h2>影片錄製</h2>
-      <p>接下來需要錄製一段兒童活動影片（約 15 秒）。</p>
+      <p>請錄製一段孩子自由活動的影片，系統將分析動作發展狀況。</p>
+      <p>建議讓孩子在鏡頭前走動、伸手、蹲下等自然動作（約 15 秒）。</p>
       <p class="hint">請讓孩子在鏡頭前自由活動。</p>
       {#if permissionError}
         <p class="error">{permissionError}</p>

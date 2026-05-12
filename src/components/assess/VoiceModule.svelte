@@ -4,16 +4,29 @@
   import { instructionLevel } from '../../lib/utils/age-groups';
 
   // Voice prompts per age group
-  const PROMPTS = [
-    { id: 'v-01', text: '你叫什麼名字？', minAge: '13-24m' },
-    { id: 'v-02', text: '這是什麼？（指著常見物品圖片）', minAge: '13-24m' },
-    { id: 'v-03', text: '你最喜歡什麼動物？', minAge: '25-36m' },
-    { id: 'v-04', text: '今天天氣怎麼樣？', minAge: '25-36m' },
-    { id: 'v-05', text: '你早餐吃了什麼？', minAge: '37-48m' },
-    { id: 'v-06', text: '數到十', minAge: '37-48m' },
-    { id: 'v-07', text: '說一個你知道的故事', minAge: '49-60m' },
-    { id: 'v-08', text: '你的家裡有幾個人？他們是誰？', minAge: '49-60m' },
-  ] as const;
+  // image: large emoji shown to child; ttsText: what TTS says (may differ from display)
+  interface VoicePrompt {
+    id: string;
+    ttsText: string;      // TTS 播放的文字
+    displayText: string;   // 畫面上顯示的指令文字
+    image?: string;        // 大圖 emoji（給孩子看）
+    imageLabel?: string;   // 圖片的正確答案（用於紀錄）
+    minAge: string;
+  }
+
+  const PROMPTS: VoicePrompt[] = [
+    { id: 'v-01', ttsText: '你叫什麼名字？', displayText: '你叫什麼名字？', minAge: '13-24m' },
+    { id: 'v-02', ttsText: '這是什麼？', displayText: '這是什麼？', image: '🍎', imageLabel: '蘋果', minAge: '13-24m' },
+    { id: 'v-03', ttsText: '這是什麼？', displayText: '這是什麼？', image: '🐶', imageLabel: '狗', minAge: '13-24m' },
+    { id: 'v-04', ttsText: '這是什麼？', displayText: '這是什麼？', image: '🚗', imageLabel: '車子', minAge: '13-24m' },
+    { id: 'v-05', ttsText: '你最喜歡什麼動物？', displayText: '你最喜歡什麼動物？', image: '🐱🐶🐰🐟', minAge: '25-36m' },
+    { id: 'v-06', ttsText: '今天天氣怎麼樣？', displayText: '今天天氣怎麼樣？', image: '☀️', minAge: '25-36m' },
+    { id: 'v-07', ttsText: '這是什麼顏色？', displayText: '這是什麼顏色？', image: '🔴', imageLabel: '紅色', minAge: '25-36m' },
+    { id: 'v-08', ttsText: '你早餐吃了什麼？', displayText: '你早餐吃了什麼？', image: '🍚🥛🍞', minAge: '37-48m' },
+    { id: 'v-09', ttsText: '數到十', displayText: '從一數到十', minAge: '37-48m' },
+    { id: 'v-10', ttsText: '說一個你知道的故事', displayText: '說一個你知道的故事', image: '📖', minAge: '49-60m' },
+    { id: 'v-11', ttsText: '你的家裡有幾個人？他們是誰？', displayText: '你的家裡有幾個人？', image: '👨‍👩‍👧‍👦', minAge: '49-60m' },
+  ];
 
   let currentPromptIndex = $state(0);
   let isRecording = $state(false);
@@ -148,8 +161,7 @@
 
   async function handlePrompt() {
     if (!currentPrompt) return;
-    await playTTS(currentPrompt.text);
-    // Auto-start recording after TTS finishes
+    await playTTS(currentPrompt.ttsText);
     await startRecording();
   }
 
@@ -210,7 +222,10 @@
       </div>
 
       <div class="prompt-card">
-        <p class="prompt-text">{currentPrompt.text}</p>
+        {#if currentPrompt.image}
+          <div class="prompt-image" aria-hidden="true">{currentPrompt.image}</div>
+        {/if}
+        <p class="prompt-text">{currentPrompt.displayText}</p>
 
         {#if isRecording}
           <div class="recording-indicator">
@@ -306,6 +321,12 @@
     border: 1px solid var(--border-default);
     border-radius: var(--radius-lg);
     padding: var(--space-8) var(--space-6);
+  }
+
+  .prompt-image {
+    font-size: 96px;
+    line-height: 1;
+    margin-bottom: var(--space-4);
   }
 
   .prompt-text {
