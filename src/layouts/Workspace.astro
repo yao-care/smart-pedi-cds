@@ -1,0 +1,103 @@
+---
+import Base from './Base.astro';
+import ConnectionStatus from '../components/fhir/ConnectionStatus.svelte';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'CDSS 臨床監測工作台' } = Astro.props;
+---
+
+<Base title={title} description={description}>
+  <div class="workspace-layout">
+    <header class="workspace-header">
+      <div class="header-left">
+        <a href="/smart-pedi-cds/" class="back-link" aria-label="返回首頁">←</a>
+        <span class="workspace-title">臨床監測工作台</span>
+      </div>
+      <div class="header-right">
+        <ConnectionStatus client:load isConnected={false} isSyncing={false} lastSyncTime={null} />
+        <a href="/smart-pedi-cds/settings/" class="icon-btn" aria-label="系統設定" title="設定">⚙</a>
+      </div>
+    </header>
+    <div class="workspace-body">
+      <slot />
+    </div>
+  </div>
+</Base>
+
+<style>
+  .workspace-layout {
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .workspace-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-2) var(--space-4);
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-default);
+    flex-shrink: 0;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .back-link {
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+    text-decoration: none;
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .back-link:hover {
+    color: var(--color-accent);
+  }
+
+  .workspace-title {
+    font-size: var(--text-sm);
+    font-weight: var(--font-bold);
+    color: var(--color-text-base);
+  }
+
+  .icon-btn {
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+    text-decoration: none;
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+  }
+
+  .icon-btn:hover {
+    background: var(--bg-muted);
+    color: var(--color-text-base);
+  }
+
+  .workspace-body {
+    flex: 1;
+    overflow: hidden;
+  }
+</style>
