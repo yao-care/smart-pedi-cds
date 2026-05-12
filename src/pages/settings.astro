@@ -1,0 +1,120 @@
+---
+import App from '../layouts/App.astro';
+
+const tabs = [
+  { id: 'fhir', label: 'FHIR Server 設定' },
+  { id: 'rules', label: '規則管理' },
+  { id: 'webhook', label: 'Webhook 設定' },
+  { id: 'notification', label: '通知偏好' },
+  { id: 'model', label: '模型管理' },
+];
+---
+
+<App title="系統設定" description="FHIR Server、規則、Webhook、通知偏好設定">
+  <h1>系統設定</h1>
+
+  <div class="tabs">
+    {tabs.map((tab, index) => (
+      <Fragment>
+        <input
+          type="radio"
+          id={`tab-${tab.id}`}
+          name="settings-tab"
+          class="tab-input"
+          checked={index === 0}
+        />
+        <label for={`tab-${tab.id}`} class="tab-label">{tab.label}</label>
+      </Fragment>
+    ))}
+
+    {tabs.map((tab) => (
+      <section id={`panel-${tab.id}`} class="tab-panel" aria-label={tab.label}>
+        <h2>{tab.label}</h2>
+        <div class="placeholder">
+          <!-- {tab.label} Svelte island will mount here -->
+          Svelte 元件載入中…
+        </div>
+      </section>
+    ))}
+  </div>
+</App>
+
+<style>
+  h1 {
+    margin-bottom: var(--space-6);
+  }
+
+  .tabs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0;
+    border-bottom: 1px solid var(--border-default);
+  }
+
+  .tab-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+
+  .tab-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s ease, border-color 0.2s ease;
+    text-align: center;
+  }
+
+  .tab-label:hover {
+    color: var(--color-text-base);
+  }
+
+  .tab-panel {
+    display: none;
+    grid-column: 1 / -1;
+    padding: var(--space-6) 0;
+  }
+
+  .tab-panel h2 {
+    font-size: var(--text-xl);
+    line-height: var(--lh-xl);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--space-4);
+  }
+
+  /* CSS-only tab activation */
+  #tab-fhir:checked ~ #panel-fhir,
+  #tab-rules:checked ~ #panel-rules,
+  #tab-webhook:checked ~ #panel-webhook,
+  #tab-notification:checked ~ #panel-notification,
+  #tab-model:checked ~ #panel-model {
+    display: block;
+  }
+
+  #tab-fhir:checked ~ label[for="tab-fhir"],
+  #tab-rules:checked ~ label[for="tab-rules"],
+  #tab-webhook:checked ~ label[for="tab-webhook"],
+  #tab-notification:checked ~ label[for="tab-notification"],
+  #tab-model:checked ~ label[for="tab-model"] {
+    color: var(--color-accent);
+    border-bottom-color: var(--color-accent);
+  }
+
+  .placeholder {
+    padding: var(--space-8);
+    text-align: center;
+    color: var(--color-text-subtle);
+    font-size: var(--text-sm);
+    border: 1px dashed var(--border-default);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-surface);
+  }
+</style>

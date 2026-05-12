@@ -1,0 +1,243 @@
+---
+import App from '../layouts/App.astro';
+
+const features = [
+  { title: '智慧預警引擎', description: '即時偵測兒童健康指標異常，自動分級預警' },
+  { title: '趨勢分析圖表', description: '直覺化呈現體溫、心率、血氧等指標趨勢' },
+  { title: '衛教資源整合', description: '依預警類型自動推播對應衛教內容' },
+  { title: 'SMART on FHIR 整合', description: '可直接嵌入醫院 EHR 系統使用' },
+  { title: 'PDF 報告匯出', description: '一鍵產生兒童健康趨勢報告' },
+  { title: '完全離線運算', description: '所有邏輯在瀏覽器端執行，保護病患隱私' },
+];
+
+const faqs = [
+  {
+    question: '這個系統需要安裝什麼軟體嗎？',
+    answer: '不需要。CDSS 兒科臨床決策輔助系統是一個純瀏覽器端應用程式，只需要現代瀏覽器（Chrome、Firefox、Safari、Edge）即可使用。所有運算邏輯在瀏覽器執行，無需安裝額外軟體或維護後端伺服器。',
+  },
+  {
+    question: '如何連接醫院的 FHIR Server？',
+    answer: '系統支援兩種連線模式：Standalone Launch 與 EHR Launch。Standalone 模式下，您可以在設定頁面輸入 FHIR Server 位址進行連線。EHR Launch 模式下，醫院 EHR 系統會自動透過 SMART on FHIR 協議啟動本系統並傳入病患資料。',
+  },
+  {
+    question: '病患資料會被傳送到外部伺服器嗎？',
+    answer: '不會。本系統採用「隱私優先」設計，所有資料僅在您的瀏覽器與醫院 FHIR Server 之間流動。我們不收集、不儲存、不轉傳任何病患資料。系統本身為靜態網頁，部署後不需要任何後端伺服器。',
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    },
+  })),
+};
+---
+
+<App title="關於" description="CDSS 兒科臨床決策輔助系統使用說明">
+  <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
+
+  <h1>關於 CDSS 兒科臨床決策輔助系統</h1>
+
+  <section class="about-section" aria-label="系統介紹">
+    <h2>系統介紹</h2>
+    <p>
+      CDSS 兒科臨床決策輔助系統是一套開源的兒科臨床決策輔助工具，
+      以 SMART on FHIR 標準運行於瀏覽器端。系統能即時分析兒童健康指標，
+      提供智慧預警與衛教建議，協助醫護人員及家長做出更好的健康決策。
+    </p>
+  </section>
+
+  <section class="about-section" aria-label="功能概覽">
+    <h2>功能概覽</h2>
+    <div class="feature-list">
+      {features.map((feature) => (
+        <div class="feature-item">
+          <h3>{feature.title}</h3>
+          <p>{feature.description}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="about-section" aria-label="技術架構">
+    <h2>技術架構簡述</h2>
+    <p>
+      本系統採用 Astro 5 靜態網站生成框架，搭配 Svelte 5 做為互動元件的島嶼架構。
+      前端以 SMART on FHIR 標準與醫院 FHIR Server 通訊，所有臨床決策邏輯
+      （規則引擎、趨勢分析、風險評估）皆在瀏覽器端以 Web Worker 執行，
+      確保效能與隱私兼顧。靜態資產部署於 GitHub Pages，無需後端伺服器。
+    </p>
+  </section>
+
+  <section class="about-section" aria-label="使用方式">
+    <h2>使用方式</h2>
+    <div class="usage-modes">
+      <div class="usage-card">
+        <h3>Standalone Launch</h3>
+        <p>
+          獨立啟動模式。開啟系統後，於設定頁面輸入 FHIR Server 位址，
+          系統將透過 SMART on FHIR 協議取得授權並載入病患資料。
+          適合測試、研究或獨立使用的情境。
+        </p>
+      </div>
+      <div class="usage-card">
+        <h3>EHR Launch</h3>
+        <p>
+          由醫院 EHR 系統啟動。醫護人員在 EHR 中點選本系統連結，
+          EHR 自動傳入目前病患的 context，系統直接載入該病患的健康資料。
+          適合整合至現有醫院工作流程。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-section" aria-label="常見問題">
+    <h2>常見問題</h2>
+    <div class="faq-list">
+      {faqs.map((faq) => (
+        <details class="faq-item">
+          <summary class="faq-question">{faq.question}</summary>
+          <p class="faq-answer">{faq.answer}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+</App>
+
+<style>
+  h1 {
+    margin-bottom: var(--space-6);
+  }
+
+  .about-section {
+    margin-bottom: var(--space-8);
+  }
+
+  .about-section h2 {
+    font-size: var(--text-2xl);
+    line-height: var(--lh-2xl);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--space-4);
+    color: var(--color-text-base);
+  }
+
+  .about-section p {
+    font-size: var(--text-base);
+    line-height: var(--lh-base);
+    color: var(--color-text-muted);
+    max-width: 72ch;
+  }
+
+  /* ---------- Feature list ---------- */
+  .feature-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-5);
+  }
+
+  .feature-item {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+  }
+
+  .feature-item h3 {
+    font-size: var(--text-lg);
+    line-height: var(--lh-lg);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--space-2);
+    color: var(--color-text-base);
+  }
+
+  .feature-item p {
+    font-size: var(--text-sm);
+    line-height: var(--lh-sm);
+    color: var(--color-text-muted);
+  }
+
+  /* ---------- Usage modes ---------- */
+  .usage-modes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-6);
+  }
+
+  .usage-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+  }
+
+  .usage-card h3 {
+    font-size: var(--text-lg);
+    line-height: var(--lh-lg);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--space-3);
+    color: var(--color-accent);
+  }
+
+  .usage-card p {
+    font-size: var(--text-sm);
+    line-height: var(--lh-sm);
+  }
+
+  /* ---------- FAQ ---------- */
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .faq-item {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .faq-question {
+    padding: var(--space-4) var(--space-5);
+    font-size: var(--text-base);
+    font-weight: var(--font-medium);
+    color: var(--color-text-base);
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .faq-question::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-question::after {
+    content: '+';
+    font-size: var(--text-xl);
+    line-height: 1;
+    color: var(--color-text-subtle);
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+  }
+
+  .faq-item[open] .faq-question::after {
+    content: '-';
+  }
+
+  .faq-answer {
+    padding: 0 var(--space-5) var(--space-5);
+    font-size: var(--text-sm);
+    line-height: var(--lh-sm);
+    color: var(--color-text-muted);
+    max-width: 72ch;
+  }
+</style>

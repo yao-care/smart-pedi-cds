@@ -1,0 +1,40 @@
+---
+import App from '../layouts/App.astro';
+---
+
+<App title="SMART on FHIR 連線" description="連線至醫院 FHIR Server">
+  <h1>SMART on FHIR 連線</h1>
+  <p>選擇啟動模式以連線至您的 FHIR Server。</p>
+  <div id="launch-app" class="launch-container">
+    <noscript>此功能需要 JavaScript 支援。</noscript>
+    <!-- LaunchSelector.svelte will be mounted here via client:load -->
+  </div>
+</App>
+
+<style>
+  h1 {
+    margin-bottom: var(--space-4);
+  }
+
+  p {
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-6);
+  }
+
+  .launch-container {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    padding: var(--space-8);
+    min-height: 320px;
+  }
+
+  noscript {
+    display: block;
+    padding: var(--space-4);
+    text-align: center;
+    color: var(--color-risk-warning);
+    background-color: var(--color-risk-warning-bg);
+    border-radius: var(--radius-md);
+  }
+</style>

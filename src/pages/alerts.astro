@@ -1,0 +1,50 @@
+---
+import App from '../layouts/App.astro';
+---
+
+<App title="預警管理" description="預警列表篩選與批量操作">
+  <h1>預警管理</h1>
+
+  <section class="alert-filters" aria-label="預警篩選">
+    <h2>篩選條件</h2>
+    <!-- AlertFilter.svelte will mount here -->
+    <div class="placeholder">Svelte 元件載入中…</div>
+  </section>
+
+  <section class="alert-list" aria-label="預警列表">
+    <h2>預警列表</h2>
+    <!-- AlertCard.svelte list will mount here -->
+    <div class="placeholder">Svelte 元件載入中…</div>
+  </section>
+</App>
+
+<style>
+  h1 {
+    margin-bottom: var(--space-6);
+  }
+
+  section {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    margin-bottom: var(--space-6);
+  }
+
+  section h2 {
+    font-size: var(--text-lg);
+    line-height: var(--lh-lg);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--space-4);
+    color: var(--color-text-base);
+  }
+
+  .placeholder {
+    padding: var(--space-8);
+    text-align: center;
+    color: var(--color-text-subtle);
+    font-size: var(--text-sm);
+    border: 1px dashed var(--border-default);
+    border-radius: var(--radius-md);
+  }
+</style>

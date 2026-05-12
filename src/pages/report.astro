@@ -1,0 +1,73 @@
+---
+import App from '../layouts/App.astro';
+---
+
+<App title="健康趨勢報告" description="CDSS 兒童健康趨勢 PDF 報告預覽與下載">
+  <h1>兒童健康趨勢報告</h1>
+  <p class="page-description">選擇病患與報告期間，預覽並下載 PDF 報告。</p>
+
+  <section class="report-controls" aria-label="報告設定">
+    <h2>報告設定</h2>
+    <!-- ReportExport.svelte will mount here -->
+    <div class="placeholder">Svelte 元件載入中…</div>
+  </section>
+
+  <section class="report-preview" aria-label="報告預覽">
+    <h2>報告預覽</h2>
+    <!-- PDF preview area -->
+    <div class="preview-area">
+      <p class="preview-hint">報告預覽將在設定完成後顯示於此區域。</p>
+    </div>
+  </section>
+</App>
+
+<style>
+  h1 {
+    margin-bottom: var(--space-3);
+  }
+
+  .page-description {
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-6);
+  }
+
+  section {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    margin-bottom: var(--space-6);
+  }
+
+  section h2 {
+    font-size: var(--text-lg);
+    line-height: var(--lh-lg);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--space-4);
+    color: var(--color-text-base);
+  }
+
+  .placeholder {
+    padding: var(--space-8);
+    text-align: center;
+    color: var(--color-text-subtle);
+    font-size: var(--text-sm);
+    border: 1px dashed var(--border-default);
+    border-radius: var(--radius-md);
+  }
+
+  .preview-area {
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed var(--border-default);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-base);
+  }
+
+  .preview-hint {
+    color: var(--color-text-subtle);
+    font-size: var(--text-sm);
+  }
+</style>

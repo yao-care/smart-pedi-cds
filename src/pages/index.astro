@@ -1,14 +1,158 @@
 ---
-// Placeholder — will be replaced by P0-7
+import App from '../layouts/App.astro';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'CDSS 兒科臨床決策輔助系統',
+  applicationCategory: 'HealthApplication',
+  operatingSystem: 'Web Browser',
+  description:
+    '以 SMART on FHIR 標準運行於瀏覽器端的兒科臨床決策輔助系統',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'TWD',
+  },
+  featureList: [
+    '零後端 — 所有邏輯在瀏覽器執行',
+    '即插即用 — 接上 FHIR Server 即可運作',
+    '隱私優先 — 資料僅在瀏覽器與 FHIR Server 之間流動',
+  ],
+};
+
+const features = [
+  {
+    title: '零後端',
+    description: '所有邏輯在瀏覽器執行，無需維護伺服器',
+  },
+  {
+    title: '即插即用',
+    description: '接上醫院 FHIR Server 即可運作',
+  },
+  {
+    title: '隱私優先',
+    description: '資料僅在瀏覽器與 FHIR Server 之間流動',
+  },
+];
 ---
-<html lang="zh-TW">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>CDSS 兒科臨床決策輔助系統</title>
-  </head>
-  <body>
+
+<App title="首頁" description="開源兒科臨床決策輔助系統 — SMART on FHIR 瀏覽器端 CDS">
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <section class="hero" aria-label="主視覺">
     <h1>CDSS 兒科臨床決策輔助系統</h1>
-    <p>Smart Pediatric CDS — SMART on FHIR</p>
-  </body>
-</html>
+    <p class="hero-subtitle">
+      以 SMART on FHIR 標準運行於瀏覽器端的兒科臨床決策輔助系統
+    </p>
+    <div class="hero-actions">
+      <a href="/smart-pedi-cds/launch/" class="btn btn-primary">開始使用</a>
+      <a href="/smart-pedi-cds/about/" class="btn btn-secondary">了解更多</a>
+    </div>
+  </section>
+
+  <section class="features" aria-label="功能特色">
+    <h2 class="sr-only">功能特色</h2>
+    <div class="features-grid">
+      {features.map((feature) => (
+        <article class="feature-card">
+          <h3 class="feature-title">{feature.title}</h3>
+          <p class="feature-description">{feature.description}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+</App>
+
+<style>
+  /* ---------- Hero ---------- */
+  .hero {
+    text-align: center;
+    padding: var(--space-12) 0 var(--space-10);
+  }
+
+  .hero h1 {
+    color: var(--color-text-base);
+    margin-bottom: var(--space-4);
+  }
+
+  .hero-subtitle {
+    font-size: var(--text-lg);
+    line-height: var(--lh-lg);
+    color: var(--color-text-muted);
+    max-width: 640px;
+    margin: 0 auto var(--space-8);
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: var(--space-4);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* ---------- Buttons ---------- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-3) var(--space-6);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .btn-primary {
+    background-color: var(--color-accent);
+    color: #ffffff;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-accent-hover);
+  }
+
+  .btn-secondary {
+    background-color: var(--bg-surface);
+    color: var(--color-text-base);
+    border: 1px solid var(--border-default);
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--bg-muted);
+    border-color: var(--border-strong);
+  }
+
+  /* ---------- Features ---------- */
+  .features {
+    padding: var(--space-10) 0 var(--space-12);
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-6);
+  }
+
+  .feature-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    padding: var(--space-7);
+  }
+
+  .feature-title {
+    font-size: var(--text-xl);
+    line-height: var(--lh-xl);
+    font-weight: var(--font-bold);
+    color: var(--color-text-base);
+    margin-bottom: var(--space-3);
+  }
+
+  .feature-description {
+    font-size: var(--text-sm);
+    line-height: var(--lh-sm);
+    color: var(--color-text-muted);
+  }
+</style>
