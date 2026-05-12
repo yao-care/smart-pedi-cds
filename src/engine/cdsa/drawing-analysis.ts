@@ -1,3 +1,73 @@
+const SHAPE_CLASSES = ['circle', 'cross', 'square', 'triangle', 'diamond', 'unknown'] as const;
+
+/**
+ * Classify a drawing image using the ONNX CNN model.
+ * Input: PNG/JPEG Blob from canvas.toBlob()
+ * Output: predicted class + confidence
+ */
+export async function classifyDrawingOnnx(
+  imageBlob: Blob,
+): Promise<{ predicted: string; confidence: number; probabilities: Record<string, number> } | null> {
+  try {
+    const ort = await import('onnxruntime-web');
+
+    // Load model (cached after first load)
+    const modelUrl = '/smart-pedi-cds/models/drawing-classifier.onnx';
+    const session = await ort.InferenceSession.create(modelUrl, {
+      executionProviders: ['wasm'],
+    });
+
+    // Convert image blob to 100x100 grayscale tensor
+    const imageBitmap = await createImageBitmap(imageBlob);
+    const canvas = new OffscreenCanvas(100, 100);
+    const ctx = canvas.getContext('2d')!;
+    ctx.drawImage(imageBitmap, 0, 0, 100, 100);
+    const imageData = ctx.getImageData(0, 0, 100, 100);
+
+    // Convert to grayscale float32 [1, 1, 100, 100]
+    const input = new Float32Array(100 * 100);
+    for (let i = 0; i < 100 * 100; i++) {
+      // Average RGB channels, normalize to 0-1, invert (drawing is dark on light)
+      const r = imageData.data[i * 4];
+      const g = imageData.data[i * 4 + 1];
+      const b = imageData.data[i * 4 + 2];
+      input[i] = 1.0 - (r + g + b) / (3 * 255);
+    }
+
+    const tensor = new ort.Tensor('float32', input, [1, 1, 100, 100]);
+    const inputName = session.inputNames[0] ?? 'input';
+    const results = await session.run({ [inputName]: tensor });
+    const outputName = session.outputNames[0] ?? 'output';
+    const outputData = results[outputName].data as Float32Array;
+
+    // Map to classes
+    const probabilities: Record<string, number> = {};
+    let maxIdx = 0;
+    let maxProb = -1;
+    for (let i = 0; i < SHAPE_CLASSES.length && i < outputData.length; i++) {
+      probabilities[SHAPE_CLASSES[i]] = outputData[i];
+      if (outputData[i] > maxProb) {
+        maxProb = outputData[i];
+        maxIdx = i;
+      }
+    }
+
+    return {
+      predicted: SHAPE_CLASSES[maxIdx],
+      confidence: maxProb,
+      probabilities,
+    };
+  } catch {
+    return null; // ONNX not available or failed
+  }
+}
+
+export interface OnnxClassification {
+  predicted: string;
+  confidence: number;
+  probabilities: Record<string, number>;
+}
+
 export interface DrawingFeatures {
   shapeId: string;
   closedness: number;       // 0-1, how closed the shape is
@@ -13,10 +83,12 @@ export interface DrawingAnalysisResult {
   shapes: DrawingFeatures[];
   overallScore: number;     // 0-100
   maturityLevel: 'above_expected' | 'age_appropriate' | 'below_expected';
+  onnxClassification?: OnnxClassification;
 }
 
 export function analyzeDrawing(
   drawingEvents: Array<{ data: Record<string, unknown> }>,
+  onnxResults?: OnnxClassification | null,
 ): DrawingAnalysisResult {
   const shapes: DrawingFeatures[] = [];
 
@@ -98,9 +170,15 @@ export function analyzeDrawing(
   const featureScores = shapes.map(s =>
     s.closedness * 0.3 + s.smoothness * 0.3 + s.symmetry * 0.2 + s.sizeConsistency * 0.2
   );
-  const overallScore = featureScores.length > 0
+  let overallScore = featureScores.length > 0
     ? Math.round((featureScores.reduce((s, v) => s + v, 0) / featureScores.length) * 100)
     : 0;
+
+  // Boost score if ONNX classification confirms a recognizable shape with high confidence
+  if (onnxResults && onnxResults.predicted !== 'unknown' && onnxResults.confidence > 0.6) {
+    const onnxBonus = Math.round(onnxResults.confidence * 10);
+    overallScore = Math.min(100, overallScore + onnxBonus);
+  }
 
   const maturityLevel = overallScore >= 70
     ? 'above_expected'
@@ -108,5 +186,10 @@ export function analyzeDrawing(
     ? 'age_appropriate'
     : 'below_expected';
 
-  return { shapes, overallScore, maturityLevel };
+  return {
+    shapes,
+    overallScore,
+    maturityLevel,
+    ...(onnxResults ? { onnxClassification: onnxResults } : {}),
+  };
 }
