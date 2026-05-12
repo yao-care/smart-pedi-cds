@@ -1,0 +1,581 @@
+<script lang="ts">
+  import { authStore } from '../../lib/stores/auth.svelte';
+  import { getTenantId, getTenantDisplayName } from '../../lib/utils/tenant';
+  import {
+    getAllCustomEducation,
+    createCustomEducation,
+    updateCustomEducation,
+    deleteCustomEducation,
+    toggleCustomEducation,
+  } from '../../lib/db/custom-education';
+  import type { CustomEducation } from '../../lib/db/schema';
+
+  let items = $state<CustomEducation[]>([]);
+  let isLoading = $state(true);
+  let showForm = $state(false);
+  let editingId = $state<string | null>(null);
+
+  // Form state
+  let formTitle = $state('');
+  let formSummary = $state('');
+  let formCategory = $state('general');
+  let formAgeGroups = $state<string[]>(['infant', 'toddler', 'preschool']);
+  let formFormat = $state<'article' | 'video'>('article');
+  let formContent = $state('');
+  let formVideoUrl = $state('');
+  let formTriggerIndicators = $state('');
+
+  const tenantId = $derived(getTenantId(authStore.fhirBaseUrl));
+  const tenantName = $derived(getTenantDisplayName(authStore.fhirBaseUrl));
+  const isConnected = $derived(authStore.isAuthenticated);
+
+  const categories = [
+    { value: 'diet', label: '飲食營養' },
+    { value: 'sleep', label: '睡眠' },
+    { value: 'respiratory', label: '呼吸照護' },
+    { value: 'exercise', label: '運動發展' },
+    { value: 'milestone', label: '發展里程碑' },
+    { value: 'general', label: '一般衛教' },
+  ];
+
+  const ageGroupOptions = [
+    { value: 'infant', label: '嬰兒 (0-1歲)' },
+    { value: 'toddler', label: '幼兒 (1-3歲)' },
+    { value: 'preschool', label: '學齡前 (3-6歲)' },
+  ];
+
+  $effect(() => {
+    loadItems();
+  });
+
+  async function loadItems() {
+    isLoading = true;
+    try {
+      items = await getAllCustomEducation(tenantId);
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  function resetForm() {
+    formTitle = '';
+    formSummary = '';
+    formCategory = 'general';
+    formAgeGroups = ['infant', 'toddler', 'preschool'];
+    formFormat = 'article';
+    formContent = '';
+    formVideoUrl = '';
+    formTriggerIndicators = '';
+    editingId = null;
+    showForm = false;
+  }
+
+  function editItem(item: CustomEducation) {
+    formTitle = item.title;
+    formSummary = item.summary;
+    formCategory = item.category;
+    formAgeGroups = [...item.ageGroup];
+    formFormat = item.format;
+    formContent = item.content;
+    formVideoUrl = item.videoUrl ?? '';
+    formTriggerIndicators = item.triggerIndicators.join(', ');
+    editingId = item.id;
+    showForm = true;
+  }
+
+  async function handleSubmit() {
+    const data = {
+      title: formTitle,
+      summary: formSummary,
+      category: formCategory,
+      ageGroup: formAgeGroups,
+      format: formFormat,
+      content: formContent,
+      videoUrl: formFormat === 'video' ? formVideoUrl : undefined,
+      triggerIndicators: formTriggerIndicators
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean),
+    };
+
+    if (editingId) {
+      await updateCustomEducation(editingId, data);
+    } else {
+      await createCustomEducation(tenantId, data);
+    }
+
+    resetForm();
+    await loadItems();
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm('確定要刪除此衛教內容嗎？')) return;
+    await deleteCustomEducation(id);
+    await loadItems();
+  }
+
+  async function handleToggle(id: string, currentActive: boolean) {
+    await toggleCustomEducation(id, !currentActive);
+    await loadItems();
+  }
+
+  function toggleAgeGroup(value: string) {
+    if (formAgeGroups.includes(value)) {
+      formAgeGroups = formAgeGroups.filter((v) => v !== value);
+    } else {
+      formAgeGroups = [...formAgeGroups, value];
+    }
+  }
+</script>
+
+<div class="edu-manager">
+  <div class="manager-header">
+    <div>
+      <h3>衛教內容管理</h3>
+      <p class="tenant-info">
+        {#if isConnected}
+          目前醫院：<strong>{tenantName}</strong>
+        {:else}
+          未連線（編輯預設內容）
+        {/if}
+      </p>
+    </div>
+    <button class="btn-add" onclick={() => { resetForm(); showForm = true; }}>
+      + 新增衛教內容
+    </button>
+  </div>
+
+  {#if showForm}
+    <form class="edu-form" onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+      <h4>{editingId ? '編輯衛教內容' : '新增衛教內容'}</h4>
+
+      <div class="field">
+        <label for="edu-title">標題 *</label>
+        <input id="edu-title" type="text" bind:value={formTitle} required />
+      </div>
+
+      <div class="field">
+        <label for="edu-summary">摘要 *</label>
+        <input id="edu-summary" type="text" bind:value={formSummary} required />
+      </div>
+
+      <div class="field">
+        <label for="edu-category">分類</label>
+        <select id="edu-category" bind:value={formCategory}>
+          {#each categories as cat}
+            <option value={cat.value}>{cat.label}</option>
+          {/each}
+        </select>
+      </div>
+
+      <div class="field">
+        <label>適用年齡</label>
+        <div class="checkbox-group">
+          {#each ageGroupOptions as ag}
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                checked={formAgeGroups.includes(ag.value)}
+                onchange={() => toggleAgeGroup(ag.value)}
+              />
+              {ag.label}
+            </label>
+          {/each}
+        </div>
+      </div>
+
+      <div class="field">
+        <label>格式</label>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="format" value="article" bind:group={formFormat} />
+            文章
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="format" value="video" bind:group={formFormat} />
+            影片
+          </label>
+        </div>
+      </div>
+
+      {#if formFormat === 'video'}
+        <div class="field">
+          <label for="edu-video">YouTube 網址 *</label>
+          <input
+            id="edu-video"
+            type="url"
+            bind:value={formVideoUrl}
+            placeholder="https://youtube.com/..."
+            required
+          />
+        </div>
+      {/if}
+
+      <div class="field">
+        <label for="edu-content">{formFormat === 'article' ? '內容（Markdown）' : '說明文字'}</label>
+        <textarea
+          id="edu-content"
+          bind:value={formContent}
+          rows={formFormat === 'article' ? 10 : 3}
+        ></textarea>
+      </div>
+
+      <div class="field">
+        <label for="edu-triggers">觸發指標（逗號分隔）</label>
+        <input
+          id="edu-triggers"
+          type="text"
+          bind:value={formTriggerIndicators}
+          placeholder="sugar_intake, sleep_quality"
+        />
+        <small>可用指標：sugar_intake, sleep_quality, spo2, activity_level, heart_rate, temperature, respiratory_rate</small>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" onclick={resetForm}>取消</button>
+        <button type="submit" class="btn-save">{editingId ? '更新' : '建立'}</button>
+      </div>
+    </form>
+  {/if}
+
+  {#if isLoading}
+    <p class="loading">載入中...</p>
+  {:else if items.length === 0}
+    <p class="empty">尚無自訂衛教內容。預設內容仍可供使用。</p>
+  {:else}
+    <div class="edu-list">
+      {#each items as item (item.id)}
+        <div class="edu-item" class:inactive={!item.isActive}>
+          <div class="item-info">
+            <span class="item-format">{item.format === 'video' ? '\uD83C\uDFAC' : '\uD83D\uDCC4'}</span>
+            <div>
+              <strong>{item.title}</strong>
+              <p class="item-summary">{item.summary}</p>
+              <div class="item-tags">
+                <span class="tag">{categories.find((c) => c.value === item.category)?.label ?? item.category}</span>
+                {#each item.ageGroup as ag}
+                  <span class="tag">{ageGroupOptions.find((o) => o.value === ag)?.label ?? ag}</span>
+                {/each}
+                {#if !item.isActive}
+                  <span class="tag inactive-tag">已停用</span>
+                {/if}
+              </div>
+            </div>
+          </div>
+          <div class="item-actions">
+            <button
+              class="btn-toggle"
+              onclick={() => handleToggle(item.id, item.isActive)}
+              title={item.isActive ? '停用' : '啟用'}
+            >
+              {item.isActive ? '停用' : '啟用'}
+            </button>
+            <button class="btn-edit" onclick={() => editItem(item)}>編輯</button>
+            <button class="btn-delete" onclick={() => handleDelete(item.id)}>刪除</button>
+          </div>
+        </div>
+      {/each}
+    </div>
+  {/if}
+</div>
+
+<style>
+  .edu-manager {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .manager-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+
+  .manager-header h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-base);
+    margin: 0;
+  }
+
+  .tenant-info {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    margin: var(--space-1) 0 0 0;
+  }
+
+  .btn-add {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: #fff;
+    background: var(--color-accent);
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .btn-add:hover {
+    opacity: 0.85;
+  }
+
+  /* Form */
+  .edu-form {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .edu-form h4 {
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
+    color: var(--color-text-base);
+    margin: 0;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .field > label {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text-base);
+  }
+
+  .field input[type='text'],
+  .field input[type='url'],
+  .field select,
+  .field textarea {
+    font-size: var(--text-sm);
+    min-height: 44px;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    background: var(--bg-base);
+    color: var(--color-text-base);
+    font-family: inherit;
+    transition: border-color 0.15s ease;
+  }
+
+  .field input[type='text']:focus,
+  .field input[type='url']:focus,
+  .field select:focus,
+  .field textarea:focus {
+    outline: none;
+    border-color: var(--color-accent);
+  }
+
+  .field textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  .field small {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+
+  .checkbox-group,
+  .radio-group {
+    display: flex;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+
+  .checkbox-label,
+  .radio-label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-text-base);
+    cursor: pointer;
+    min-height: 44px;
+  }
+
+  .checkbox-label input,
+  .radio-label input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--color-accent);
+    cursor: pointer;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: var(--space-3);
+    justify-content: flex-end;
+    padding-top: var(--space-2);
+  }
+
+  .btn-cancel {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text-muted);
+    background: var(--bg-muted);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: color 0.15s ease;
+  }
+
+  .btn-cancel:hover {
+    color: var(--color-text-base);
+  }
+
+  .btn-save {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: var(--space-2) var(--space-5);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: #fff;
+    background: var(--color-accent);
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+  }
+
+  .btn-save:hover {
+    opacity: 0.85;
+  }
+
+  /* List */
+  .edu-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .edu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    flex-wrap: wrap;
+    transition: opacity 0.2s ease;
+  }
+
+  .edu-item.inactive {
+    opacity: 0.6;
+  }
+
+  .item-info {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    flex: 1;
+    min-width: 0;
+  }
+
+  .item-format {
+    font-size: var(--text-lg);
+    flex-shrink: 0;
+    line-height: 1;
+    padding-top: 2px;
+  }
+
+  .item-info strong {
+    font-size: var(--text-sm);
+    font-weight: var(--font-bold);
+    color: var(--color-text-base);
+  }
+
+  .item-summary {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    margin: var(--space-1) 0;
+  }
+
+  .item-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .tag {
+    display: inline-block;
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    background: var(--bg-muted);
+    border-radius: var(--radius-sm);
+  }
+
+  .inactive-tag {
+    color: var(--color-risk-warning);
+    background: var(--color-risk-warning-bg);
+  }
+
+  .item-actions {
+    display: flex;
+    gap: var(--space-2);
+    flex-shrink: 0;
+  }
+
+  .item-actions button {
+    min-height: 44px;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    background: var(--bg-base);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .item-actions button:hover {
+    color: var(--color-text-base);
+    border-color: var(--color-text-muted);
+  }
+
+  .item-actions .btn-delete {
+    color: var(--color-risk-critical);
+  }
+
+  .item-actions .btn-delete:hover {
+    color: var(--color-risk-critical);
+    border-color: var(--color-risk-critical);
+  }
+
+  /* States */
+  .loading,
+  .empty {
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    padding: var(--space-8) var(--space-4);
+    border: 1px dashed var(--border-default);
+    border-radius: var(--radius-md);
+    background: var(--bg-surface);
+    margin: 0;
+  }
+</style>

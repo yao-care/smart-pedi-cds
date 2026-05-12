@@ -5,6 +5,7 @@ import RuleEditor from '../components/settings/RuleEditor.svelte';
 import WebhookConfig from '../components/settings/WebhookConfig.svelte';
 import NotificationPrefs from '../components/settings/NotificationPrefs.svelte';
 import ModelManager from '../components/settings/ModelManager.svelte';
+import EducationManager from '../components/settings/EducationManager.svelte';
 
 const tabs = [
   { id: 'fhir', label: 'FHIR Server 設定' },
@@ -12,6 +13,7 @@ const tabs = [
   { id: 'webhook', label: 'Webhook 設定' },
   { id: 'notification', label: '通知偏好' },
   { id: 'model', label: '模型管理' },
+  { id: 'education', label: '衛教管理' },
 ];
 ---
 
@@ -52,6 +54,10 @@ const tabs = [
     <section id="panel-model" class="tab-panel" aria-label="模型管理">
       <h2>模型管理</h2>
       <ModelManager client:idle />
+    </section>
+    <section id="panel-education" class="tab-panel" aria-label="衛教管理">
+      <h2>衛教管理</h2>
+      <EducationManager client:idle />
     </section>
   </div>
 </App>
@@ -126,7 +132,8 @@ const tabs = [
   #tab-rules:checked ~ #panel-rules,
   #tab-webhook:checked ~ #panel-webhook,
   #tab-notification:checked ~ #panel-notification,
-  #tab-model:checked ~ #panel-model {
+  #tab-model:checked ~ #panel-model,
+  #tab-education:checked ~ #panel-education {
     display: block;
   }
 
@@ -134,7 +141,8 @@ const tabs = [
   #tab-rules:checked ~ label[for="tab-rules"],
   #tab-webhook:checked ~ label[for="tab-webhook"],
   #tab-notification:checked ~ label[for="tab-notification"],
-  #tab-model:checked ~ label[for="tab-model"] {
+  #tab-model:checked ~ label[for="tab-model"],
+  #tab-education:checked ~ label[for="tab-education"] {
     color: var(--color-accent);
     border-bottom-color: var(--color-accent);
   }

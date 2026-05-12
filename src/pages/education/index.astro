@@ -1,6 +1,7 @@
 ---
 import App from '../../layouts/App.astro';
 import { getCollection } from 'astro:content';
+import CustomEducationList from '../../components/education/CustomEducationList.svelte';
 
 const allEducation = await getCollection('education');
 
@@ -43,6 +44,8 @@ const ageGroupLabels: Record<string, string> = {
       </article>
     ))}
   </div>
+
+  <CustomEducationList client:idle />
 </App>
 
 <style>
