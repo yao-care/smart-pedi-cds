@@ -5,8 +5,14 @@
   import GameModule from './GameModule.svelte';
   import VoiceModule from './VoiceModule.svelte';
   import VideoModule from './VideoModule.svelte';
+  import DrawingModule from './DrawingModule.svelte';
+  import ResultView from './ResultView.svelte';
   import { assessmentStore } from '../../lib/stores/assessment.svelte';
   import { getIncompleteAssessments } from '../../lib/db/assessments';
+  import { analyzeAssessment, type AssessmentAnalysisResult } from '../../engine/cdsa/assessment-analyzer';
+
+  let analysisResult = $state<AssessmentAnalysisResult | null>(null);
+  let analysisError = $state<string | null>(null);
   import type { Assessment } from '../../lib/db/schema';
 
   const STEP_LABELS = ['基本資料', '問卷', '互動遊戲', '語音互動', '影片錄製', '繪圖測試', '分析中', '評估結果'];
@@ -18,6 +24,22 @@
     getIncompleteAssessments().then(list => {
       incompleteAssessments = list;
     });
+  });
+
+  // Auto-trigger AI analysis when entering 'analyzing' step
+  $effect(() => {
+    if (assessmentStore.currentStep === 'analyzing' && assessmentStore.assessment && assessmentStore.ageGroup) {
+      analysisResult = null;
+      analysisError = null;
+      analyzeAssessment(assessmentStore.assessment.id, assessmentStore.ageGroup)
+        .then(result => {
+          analysisResult = result;
+          assessmentStore.nextStep();
+        })
+        .catch(err => {
+          analysisError = err instanceof Error ? err.message : 'Analysis failed';
+        });
+    }
   });
 
   async function handleResume(id: string) {
@@ -67,33 +89,34 @@
       <VideoModule />
 
     {:else if assessmentStore.currentStep === 'drawing'}
-      <div class="module-placeholder">
-        <div class="module-icon">✏️</div>
-        <h2>繪圖測試</h2>
-        <p>描繪幾何圖形以評估細動作發展</p>
-        <p class="dev-note">（模組開發中 — Sub-plan G）</p>
-        <button class="btn-skip" onclick={() => assessmentStore.nextStep()}>跳過此步驟 →</button>
-      </div>
+      <DrawingModule />
 
     {:else if assessmentStore.currentStep === 'analyzing'}
-      <div class="module-placeholder analyzing">
-        <div class="spinner"></div>
-        <h2>AI 分析中…</h2>
-        <p>正在分析評估資料，請稍候</p>
-        <p class="dev-note">（模組開發中 — Sub-plan H）</p>
-        <button class="btn-skip" onclick={() => assessmentStore.nextStep()}>跳過 →</button>
-      </div>
+      {#if analysisError}
+        <div class="module-placeholder">
+          <h2>分析發生錯誤</h2>
+          <p>{analysisError}</p>
+          <button class="btn-skip" onclick={() => assessmentStore.nextStep()}>繼續查看結果 →</button>
+        </div>
+      {:else}
+        <div class="module-placeholder analyzing">
+          <div class="spinner"></div>
+          <h2>AI 分析中…</h2>
+          <p>正在分析評估資料，請稍候</p>
+        </div>
+      {/if}
 
     {:else if assessmentStore.currentStep === 'result'}
-      <div class="module-placeholder">
-        <div class="module-icon">📊</div>
-        <h2>評估完成</h2>
-        <p>感謝您完成評估！結果將顯示於此。</p>
-        <p class="dev-note">（模組開發中 — Sub-plan I）</p>
-        <button class="btn-restart" onclick={() => { assessmentStore.reset(); showResume = true; }}>
-          返回首頁
-        </button>
-      </div>
+      {#if analysisResult}
+        <ResultView triageResult={analysisResult.triageResult} />
+      {:else}
+        <div class="module-placeholder">
+          <div class="module-icon">📊</div>
+          <h2>評估完成</h2>
+          <p>感謝您完成評估！</p>
+          <a href="/smart-pedi-cds/" class="btn-restart">返回首頁</a>
+        </div>
+      {/if}
     {/if}
 
     <!-- Bottom navigation -->
