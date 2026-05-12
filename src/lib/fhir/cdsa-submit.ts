@@ -1,6 +1,7 @@
-import { getClient, isAuthorized } from './client';
+import { isAuthorized, getAccessToken } from './client';
 import { buildAssessmentObservations, buildTriageDiagnosticReport } from './cdsa-resources';
 import { markFhirSubmitted } from '../db/assessments';
+import { authStore } from '../stores/auth.svelte';
 import type { Assessment } from '../db/schema';
 import type { TriageResult } from '../../engine/cdsa/triage';
 
@@ -9,6 +10,26 @@ export interface SubmitResult {
   observationIds: string[];
   diagnosticReportId: string | null;
   error?: string;
+}
+
+/** POST a FHIR resource using fetch (avoids fhirclient type issues). */
+async function postFhirResource(
+  baseUrl: string,
+  resourceType: string,
+  resource: object,
+  accessToken: string,
+): Promise<{ id: string } | null> {
+  const url = `${baseUrl.replace(/\/$/, '')}/${resourceType}`;
+  const resp = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/fhir+json',
+      'Authorization': `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(resource),
+  });
+  if (!resp.ok) throw new Error(`FHIR POST ${resourceType} failed: ${resp.status}`);
+  return resp.json();
 }
 
 /**
@@ -20,11 +41,12 @@ export async function submitAssessmentToFhir(
   childId: string,
   triageResult: TriageResult,
 ): Promise<SubmitResult> {
-  if (!isAuthorized()) {
+  if (!isAuthorized() || !authStore.fhirBaseUrl) {
     return { success: false, observationIds: [], diagnosticReportId: null, error: '未連線 FHIR Server' };
   }
 
-  const client = getClient();
+  const baseUrl = authStore.fhirBaseUrl;
+  const token = getAccessToken();
   const observationIds: string[] = [];
 
   try {
@@ -32,12 +54,7 @@ export async function submitAssessmentToFhir(
     const observations = buildAssessmentObservations(assessment, childId, triageResult);
 
     for (const obs of observations) {
-      const result = await client.request<{ id: string }>('Observation', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/fhir+json' },
-        body: JSON.stringify(obs),
-      });
-
+      const result = await postFhirResource(baseUrl, 'Observation', obs, token);
       if (result?.id) {
         observationIds.push(result.id);
       }
@@ -45,13 +62,7 @@ export async function submitAssessmentToFhir(
 
     // 2. Create DiagnosticReport referencing the Observations
     const report = buildTriageDiagnosticReport(assessment, childId, triageResult, observationIds);
-
-    const reportResult = await client.request<{ id: string }>('DiagnosticReport', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/fhir+json' },
-      body: JSON.stringify(report),
-    });
-
+    const reportResult = await postFhirResource(baseUrl, 'DiagnosticReport', report, token);
     const diagnosticReportId = reportResult?.id ?? null;
 
     // 3. Mark assessment as submitted
