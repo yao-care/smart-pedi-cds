@@ -45,7 +45,7 @@
   const progressPct = $derived(totalQuestions > 0 ? Math.round((answeredCount / totalQuestions) * 100) : 0);
 
   // ---- Domain summary ----
-  const domainSummary = $derived(() => {
+  const domainSummary = $derived.by(() => {
     const domains: Record<string, { label: string; score: number; max: number }> = {};
     for (const q of questions) {
       if (!domains[q.domain]) {
@@ -185,7 +185,7 @@
       <p class="summary-desc">以下是各發展領域的作答摘要</p>
 
       <div class="domain-bars">
-        {#each domainSummary() as d (d.domain)}
+        {#each domainSummary as d (d.domain)}
           <div class="domain-row">
             <span class="domain-name">{d.label}</span>
             <div class="bar-track">
