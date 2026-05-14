@@ -78,7 +78,34 @@ E2E 測試後（2026-05-14）發現 4 個頁面在資訊架構與基本實作上
 
 - 路由：`/workspace/result/[id]/`
 - 進入方式：醫師工作台 patient detail page 內連結；歷史頁的「看詳細」若 `authStore.isAuthenticated` 為 true 連到此頁，否則連到家長簡視頁
-- 未登入 FHIR 時，導向家長簡視頁（在 `[id].astro` frontmatter 用 `Astro.redirect` 是 SSG 不可行；改在 page 載入後 client-side 用 `$effect` 檢查並 `window.location.replace`）
+- 未登入 FHIR 時，導向家長簡視頁（SSG 環境用 client-side `$effect` 檢查並 `window.location.replace`）
+
+#### 資料來源（**重要：跨裝置情境**）
+
+Astro SSG 純前端、家長端評估資料只存在**家長那台裝置**的 IndexedDB。醫師裝置上不會有原始 Assessment。因此 1B 必須走雙軌：
+
+```
+讀取 Assessment by id：
+  1. 先試 db.assessments.get(id)（同裝置情境）
+  2. 失敗 → 從 FHIR server 拉
+     - GET DiagnosticReport?identifier=cdsa-{id}（依現有 submit 慣例反查）
+     - 取 DiagnosticReport.result[] → batch GET Observation/{ref}
+     - 反序列化 Observation.valueQuantity / valueString 為 metric rows
+     - 不會還原 raw event timeline（FHIR submit 只送 metrics + triage，未送 event-level data）
+  3. 兩者都失敗 → 顯示「找不到此評估」+ 返回連結
+```
+
+**資料完整度說明（顯示在頁面頂）**：
+- IDB 來源：完整 metric + event timeline + 雷達圖
+- FHIR 來源：完整 metric + 分流結果，**無 event timeline**（FHIR 不送原始事件流；timeline 顯示「此資料來自 FHIR server，無原始事件紀錄」）
+
+#### 新增模組
+
+- `src/lib/fhir/assessment-fetch.ts`：`fetchAssessmentFromFhir(id, fhirClient): Promise<Assessment | null>`
+  - 內部走 DiagnosticReport → Observation references → 重組為 Assessment-shape 物件
+  - 標記資料來源 (`source: 'fhir'`)
+- `src/lib/db/assessment-resolver.ts`：`resolveAssessment(id): Promise<{ assessment, source: 'idb' | 'fhir' }>`
+  - 統一 entry point 給 1B 頁與歷史比較使用
 
 ---
 
@@ -173,6 +200,23 @@ E2E 測試後（2026-05-14）發現 4 個頁面在資訊架構與基本實作上
 ### 目標
 
 家長看到時間軸 + 可重下 PDF；醫師看到病人歷次評估趨勢。
+
+### 資料來源（跨裝置情境）
+
+歷史頁兩種來源依登入狀態切換：
+
+| 情境 | 列表來源 | 詳細展開 |
+|------|---------|---------|
+| 未登入 FHIR（家長端） | `db.assessments.where('childId').equals(id)` | 同 IDB |
+| 已登入 FHIR（醫師工作台） | `GET DiagnosticReport?subject=Patient/{fhirId}&category=cdsa` 取列表 | 點開時走 1B 同款 resolver |
+
+醫師端來源切換用 store 屬性（如 `assessmentStore.dataSource = 'fhir' | 'idb'`）並在頁面顯示來源 badge（「來自 FHIR Server」/「本地紀錄」）。
+
+### 必要前提
+
+`src/lib/fhir/assessment-fetch.ts` 內額外加：
+- `listAssessmentsFromFhir(patientId): Promise<AssessmentSummary[]>` — 回 list view 所需的 summary（id / date / category / age）。不一次拉所有 Observation，列表頁只取 DiagnosticReport.conclusion 與 effectiveDateTime。
+- 比較模式選 2 筆時才 batch-fetch 完整 metric。
 
 ### 資訊架構
 
@@ -270,7 +314,9 @@ E2E 測試後（2026-05-14）發現 4 個頁面在資訊架構與基本實作上
 | 1B 醫師詳視 | `src/pages/workspace/result/[id].astro`（新）+ `src/components/patient/ResultDetail.svelte`（新） |
 | 2 衛教列表 | `src/pages/education/index.astro` 大改（filter 邏輯） |
 | 3 圖卡審核 | `src/pages/admin/card-review.astro` 中改（filter + bug 修） |
-| 4 評估歷史 | `src/pages/history.astro` + `src/components/assess/AssessmentHistory.svelte` 大改（empty state + timeline + 比較） |
+| 4 評估歷史 | `src/pages/history.astro` + `src/components/assess/AssessmentHistory.svelte` 大改（empty state + timeline + 比較 + FHIR 來源切換） |
+| 跨裝置資料層 | `src/lib/fhir/assessment-fetch.ts`（新，fetchAssessmentFromFhir / listAssessmentsFromFhir） + `src/lib/db/assessment-resolver.ts`（新，雙來源 entry point） |
+| Schema | `src/lib/db/schema.ts` 升 v5：`Assessment.physicianNote`、`Assessment.physicianNoteUpdatedAt` |
 
 新增測試（可選 / 視時間）：
 - 衛教 filter 純函式測試
