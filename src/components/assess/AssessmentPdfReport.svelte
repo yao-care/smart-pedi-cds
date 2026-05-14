@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Assessment, Child } from '../../lib/db/schema';
   import { ageInMonths } from '../../lib/utils/age-groups';
+  import { loadChineseFontInto } from '../../lib/pdf/font-loader';
 
   interface Props {
     assessment: Assessment;
@@ -13,16 +14,16 @@
   let generating = $state(false);
   let error = $state<string | null>(null);
 
-  const categoryLabelsEn: Record<string, string> = {
-    normal: 'Normal',
-    monitor: 'Monitor',
-    refer: 'Refer',
-  };
-
   const categoryLabelsCn: Record<string, string> = {
     normal: '正常',
     monitor: '追蹤觀察',
     refer: '建議轉介',
+  };
+
+  const statusLabelsCn: Record<string, string> = {
+    in_progress: '進行中',
+    completed: '已完成',
+    interrupted: '已中斷',
   };
 
   function formatDate(d: Date | string): string {
@@ -56,16 +57,16 @@
     try {
       const { jsPDF } = await import('jspdf');
       const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      await loadChineseFontInto(doc);
 
       const pageWidth = doc.internal.pageSize.getWidth();
       const margin = 20;
       const contentWidth = pageWidth - margin * 2;
       let y = margin;
 
-      // Helper: draw text line and advance y
       function drawLine(text: string, fontSize: number, fontStyle: 'normal' | 'bold' = 'normal', align: 'left' | 'center' = 'left') {
         doc.setFontSize(fontSize);
-        doc.setFont('helvetica', fontStyle);
+        doc.setFont('NotoSansTC', fontStyle);
         const x = align === 'center' ? pageWidth / 2 : margin;
         doc.text(text, x, y, { align });
         y += fontSize * 0.5 + 2;
@@ -78,14 +79,12 @@
       }
 
       // ===== Title =====
-      drawLine('CDSA - Child Development Smart Assessment', 16, 'bold', 'center');
-      // Chinese subtitle
-      drawLine('(Er Tong Fa Zhan Zhi Hui Ping Gu Bao Gao)', 10, 'normal', 'center');
+      drawLine('兒童發展智慧評估報告', 16, 'bold', 'center');
       y += 4;
       drawSeparator();
 
       // ===== Basic Info =====
-      drawLine('Assessment Information', 12, 'bold');
+      drawLine('評估資訊', 12, 'bold');
       y += 2;
 
       const assessDate = assessment.completedAt
@@ -93,23 +92,27 @@
         : formatDate(assessment.startedAt);
       const monthsAtAssess = ageInMonths(child.birthDate);
 
-      drawLine(`Child ID: ${abbreviateId(child.id)}`, 10);
-      drawLine(`Assessment Date: ${assessDate}`, 10);
-      drawLine(`Age at Assessment: ${monthsAtAssess} months`, 10);
-      drawLine(`Status: ${assessment.status}`, 10);
+      drawLine(`兒童識別碼：${abbreviateId(child.id)}`, 10);
+      drawLine(`評估日期：${assessDate}`, 10);
+      drawLine(`評估時月齡:${monthsAtAssess} 個月`, 10);
+      drawLine(`狀態：${statusLabelsCn[assessment.status] ?? assessment.status}`, 10);
       y += 4;
       drawSeparator();
 
       // ===== Triage Result =====
       const triage = assessment.triageResult;
       if (triage) {
-        drawLine('Triage Result', 12, 'bold');
+        drawLine('分流結果', 12, 'bold');
         y += 2;
 
-        const catLabel = `${categoryLabelsEn[triage.category] ?? triage.category} (${categoryLabelsCn[triage.category] ?? triage.category})`;
-        drawLine(`Category: ${catLabel}`, 10);
-        drawLine(`Confidence: ${Math.round(triage.confidence * 100)}%`, 10);
-        drawLine(`Summary: ${triage.summary}`, 10);
+        const catLabel = categoryLabelsCn[triage.category] ?? triage.category;
+        drawLine(`分類：${catLabel}`, 10);
+        drawLine(`信心度：${Math.round(triage.confidence * 100)}%`, 10);
+        const summaryLines = doc.splitTextToSize(`摘要：${triage.summary}`, contentWidth);
+        doc.setFontSize(10);
+        doc.setFont('NotoSansTC', 'normal');
+        doc.text(summaryLines, margin, y);
+        y += summaryLines.length * 5 + 2;
         y += 4;
         drawSeparator();
       }
@@ -117,12 +120,12 @@
       // ===== Disclaimer =====
       y += 4;
       doc.setFontSize(9);
-      doc.setFont('helvetica', 'bold');
-      doc.text('DISCLAIMER', pageWidth / 2, y, { align: 'center' });
+      doc.setFont('NotoSansTC', 'bold');
+      doc.text('免責聲明', pageWidth / 2, y, { align: 'center' });
       y += 5;
-      doc.setFont('helvetica', 'normal');
+      doc.setFont('NotoSansTC', 'normal');
       doc.setFontSize(8);
-      const disclaimer = 'This assessment result is for reference only and does not constitute a medical diagnosis. (Ben Ping Gu Jie Guo Jin Gong Can Kao, Bu Gou Cheng Yi Liao Zhen Duan.)';
+      const disclaimer = '本評估結果僅供參考，不構成醫療診斷。如有疑慮請諮詢專業醫療人員。';
       const disclaimerLines = doc.splitTextToSize(disclaimer, contentWidth);
       doc.text(disclaimerLines, margin, y);
       y += disclaimerLines.length * 4 + 6;
@@ -130,12 +133,11 @@
       // ===== Footer =====
       drawSeparator();
       doc.setFontSize(8);
-      doc.setFont('helvetica', 'normal');
+      doc.setFont('NotoSansTC', 'normal');
       doc.setTextColor(150, 150, 150);
-      doc.text(`Generated: ${formatTimestamp(new Date())}`, margin, y);
-      doc.text('CDSA - Smart Pediatric CDS', pageWidth - margin, y, { align: 'right' });
+      doc.text(`產製時間：${formatTimestamp(new Date())}`, margin, y);
+      doc.text('CDSA 兒童發展智慧評估系統', pageWidth - margin, y, { align: 'right' });
 
-      // Download
       const filename = `cdsa-report-${abbreviateId(assessment.id)}-${assessDate.replace(/\//g, '')}.pdf`;
       doc.save(filename);
 
