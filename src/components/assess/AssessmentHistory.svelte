@@ -101,7 +101,7 @@
       <div class="empty-icon">📋</div>
       <h2>尚無評估紀錄</h2>
       <p>開始第一次評估，了解孩子的發展狀況。</p>
-      <a href="/smart-pedi-cds/" class="btn-start">開始新評估</a>
+      <a href="/" class="btn-start">開始新評估</a>
     </div>
 
   {:else}
@@ -169,7 +169,7 @@
   {/if}
 
   <div class="history-nav">
-    <a href="/smart-pedi-cds/" class="btn-back">返回評估</a>
+    <a href="/" class="btn-back">返回評估</a>
   </div>
 </div>
 

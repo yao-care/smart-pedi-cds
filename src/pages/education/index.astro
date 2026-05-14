@@ -31,7 +31,7 @@ const ageGroupLabels: Record<string, string> = {
   <div class="education-grid">
     {allEducation.map((entry) => (
       <article class="education-card">
-        <a href={`/smart-pedi-cds/education/${entry.id}/`} class="card-link">
+        <a href={`/education/${entry.id}/`} class="card-link">
           <span class="card-badge">{categoryLabels[entry.data.category] ?? entry.data.category}</span>
           <h2 class="card-title">{entry.data.title}</h2>
           <p class="card-summary">{entry.data.summary}</p>

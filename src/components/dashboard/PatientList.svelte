@@ -37,7 +37,7 @@
 
   function selectPatient(id: string) {
     patientStore.selectPatient(id);
-    window.location.href = `/smart-pedi-cds/patients/${id}/`;
+    window.location.href = `/patients/${id}/`;
   }
 </script>
 

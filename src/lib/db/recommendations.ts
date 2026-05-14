@@ -171,7 +171,7 @@ export async function resolveItemDisplay(
   }
   if (item.source === 'internal') {
     return {
-      href: `/smart-pedi-cds/education/${item.slug}/`,
+      href: `/education/${item.slug}/`,
       title: item.title ?? item.slug ?? '',
       summary: item.summary ?? '',
       isExternal: false,
@@ -183,7 +183,7 @@ export async function resolveItemDisplay(
     const found = all.find((c) => c.id === item.customId);
     if (found) {
       return {
-        href: found.videoUrl ?? `/smart-pedi-cds/education/custom/${found.id}/`,
+        href: found.videoUrl ?? `/education/custom/${found.id}/`,
         title: item.title ?? found.title,
         summary: item.summary ?? found.summary,
         isExternal: !!found.videoUrl,

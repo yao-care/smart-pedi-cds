@@ -2,14 +2,14 @@
 const currentPath = Astro.url.pathname;
 
 const navLinks = [
-  { label: '首頁', href: '/smart-pedi-cds/' },
-  { label: '衛教', href: '/smart-pedi-cds/education/' },
-  { label: '關於', href: '/smart-pedi-cds/about/' },
+  { label: '首頁', href: '/' },
+  { label: '衛教', href: '/education/' },
+  { label: '關於', href: '/about/' },
 ];
 
 function isActive(href: string): boolean {
-  if (href === '/smart-pedi-cds/') {
-    return currentPath === '/smart-pedi-cds/' || currentPath === '/smart-pedi-cds';
+  if (href === '/') {
+    return currentPath === '/';
   }
   return currentPath.startsWith(href);
 }
@@ -17,7 +17,7 @@ function isActive(href: string): boolean {
 
 <header class="site-header">
   <div class="header-inner container">
-    <a href="/smart-pedi-cds/" class="site-title">CDSS 兒科臨床決策輔助系統</a>
+    <a href="/" class="site-title">CDSS 兒科臨床決策輔助系統</a>
 
     <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-hidden="true" />
     <label for="nav-toggle" class="nav-toggle-label" aria-label="開啟導覽選單">

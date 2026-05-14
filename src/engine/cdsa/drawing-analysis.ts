@@ -12,7 +12,7 @@ export async function classifyDrawingOnnx(
     const ort = await import('onnxruntime-web');
 
     // Load model (cached after first load)
-    const modelUrl = '/smart-pedi-cds/models/drawing-classifier.onnx';
+    const modelUrl = '/models/drawing-classifier.onnx';
     const session = await ort.InferenceSession.create(modelUrl, {
       executionProviders: ['wasm'],
     });

@@ -12,7 +12,7 @@ export async function GET(context: APIContext) {
       title: entry.data.title,
       description: entry.data.summary,
       pubDate: entry.data.publishedAt,
-      link: `/smart-pedi-cds/education/${entry.id}/`,
+      link: `/education/${entry.id}/`,
     })),
     customData: '<language>zh-TW</language>',
   });

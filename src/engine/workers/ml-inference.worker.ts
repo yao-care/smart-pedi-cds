@@ -40,7 +40,7 @@ async function getSession(modelUrl: string): Promise<ort.InferenceSession> {
 
   try {
     // Set WASM paths for onnxruntime-web
-    ort.env.wasm.wasmPaths = '/smart-pedi-cds/';
+    ort.env.wasm.wasmPaths = '/';
 
     session = await ort.InferenceSession.create(modelUrl, {
       executionProviders: ['wasm'],

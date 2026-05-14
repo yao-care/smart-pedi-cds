@@ -76,7 +76,7 @@
   {/if}
 
   <div class="feed-footer">
-    <a href="/smart-pedi-cds/alerts/" class="view-all" aria-label="查看所有預警">
+    <a href="/alerts/" class="view-all" aria-label="查看所有預警">
       查看全部
     </a>
   </div>

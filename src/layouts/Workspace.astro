@@ -14,12 +14,12 @@ const { title, description = 'CDSS 臨床監測工作台' } = Astro.props;
   <div class="workspace-layout">
     <header class="workspace-header">
       <div class="header-left">
-        <a href="/smart-pedi-cds/" class="back-link" aria-label="返回首頁">←</a>
+        <a href="/" class="back-link" aria-label="返回首頁">←</a>
         <span class="workspace-title">臨床監測工作台</span>
       </div>
       <div class="header-right">
         <ConnectionStatus client:load isConnected={false} isSyncing={false} lastSyncTime={null} />
-        <a href="/smart-pedi-cds/settings/" class="icon-btn" aria-label="系統設定" title="設定">⚙</a>
+        <a href="/settings/" class="icon-btn" aria-label="系統設定" title="設定">⚙</a>
       </div>
     </header>
     <div class="workspace-body">

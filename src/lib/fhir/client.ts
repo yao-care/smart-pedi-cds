@@ -22,7 +22,7 @@ export async function initStandalone(
     iss: fhirBaseUrl,
     clientId,
     scope: scopes,
-    redirectUri: redirectUri ?? window.location.origin + '/smart-pedi-cds/launch/',
+    redirectUri: redirectUri ?? window.location.origin + '/launch/',
     pkceMode: 'ifSupported',
   });
 }

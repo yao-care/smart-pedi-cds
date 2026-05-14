@@ -44,7 +44,7 @@ export class RiskAnalyzer {
   private mlWorker: Worker | null = null;
   private _modelUrl: string;
 
-  constructor(modelUrl = '/smart-pedi-cds/models/risk-model.onnx') {
+  constructor(modelUrl = '/models/risk-model.onnx') {
     this._modelUrl = modelUrl;
   }
 

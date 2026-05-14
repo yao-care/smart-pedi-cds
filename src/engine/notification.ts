@@ -78,7 +78,7 @@ export class NotificationManager {
 
     new Notification(title, {
       body,
-      icon: '/smart-pedi-cds/favicon.svg',
+      icon: '/favicon.svg',
       tag: `cdss-${Date.now()}`,
     });
   }
