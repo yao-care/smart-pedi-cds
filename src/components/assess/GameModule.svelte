@@ -4,108 +4,61 @@
   import { analyzeBehavior } from '../../engine/cdsa/behavior-analysis';
   import { instructionLevel } from '../../lib/utils/age-groups';
   import type { AgeGroupCDSA } from '../../lib/utils/age-groups';
+  import { selectCardsForGame, type CardItem } from '../../engine/cdsa/card-selector';
 
-  /** Shape types used in game stimuli. */
-  type ShapeType = 'circle' | 'square' | 'triangle' | 'star';
-
-  /** A single shape within a stimulus. */
-  interface Shape {
-    type: ShapeType;
-    color: string;
-    x: number;   // percentage 0-100
-    y: number;    // percentage 0-100
-    size: number; // pixel diameter/side length
-    isTarget: boolean;
+  interface Props {
+    cards: CardItem[];
   }
 
-  /** One game stimulus containing shapes the child must interact with. */
+  let { cards }: Props = $props();
+
   interface Stimulus {
     id: string;
+    cardId: string;
     domain: string;
     instruction: string;
-    shapes: Shape[];
+    imageUrl: string;
+    description: string;
   }
 
-  const COLORS = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6'] as const;
-  const SHAPES: ShapeType[] = ['circle', 'square', 'triangle', 'star'];
-
-  const SHAPE_LABELS: Record<ShapeType, string> = {
-    circle: '圓形',
-    square: '正方形',
-    triangle: '三角形',
-    star: '星星',
-  };
-
-  const COLOR_LABELS: Record<string, string> = {
-    '#e74c3c': '紅色',
-    '#3498db': '藍色',
-    '#2ecc71': '綠色',
-    '#f39c12': '黃色',
-    '#9b59b6': '紫色',
-  };
-
   const FEEDBACKS = ['好棒！', '不錯喔！', '很好！', '太厲害了！', '繼續加油！'];
-
-  /** Maximum duration per game block in milliseconds (3 minutes). */
+  const MIN_CARDS_REQUIRED = 6;
   const MAX_BLOCK_MS = 3 * 60 * 1000;
 
-  /**
-   * Generate stimuli tailored to the child's age group.
-   * Younger children see fewer, larger shapes and simpler instructions.
-   */
-  function generateStimuli(ageGroup: AgeGroupCDSA): Stimulus[] {
-    const level = instructionLevel(ageGroup);
-    const stimuli: Stimulus[] = [];
-
-    const count = level === 'none' ? 6 : level === 'single_verb' ? 8 : 10;
-
-    for (let i = 0; i < count; i++) {
-      const targetShape = SHAPES[i % SHAPES.length];
-      const targetColor = COLORS[i % COLORS.length];
-      const shapeList: Shape[] = [];
-
-      // More shapes for older children
-      const shapeCount = level === 'none' ? 2 : level === 'single_verb' ? 3 : 4;
-
-      for (let j = 0; j < shapeCount; j++) {
-        shapeList.push({
-          type: j === 0 ? targetShape : SHAPES[(i + j) % SHAPES.length],
-          color: j === 0 ? targetColor : COLORS[(i + j + 1) % COLORS.length],
-          x: 20 + (j * 60 / (shapeCount - 1 || 1)),
-          y: 40 + (Math.random() * 20),
-          size: level === 'none' ? 80 : 60,
-          isTarget: j === 0,
-        });
-      }
-
-      // Fisher-Yates shuffle positions (only x/y) so target isn't always first
-      for (let k = shapeList.length - 1; k > 0; k--) {
-        const r = Math.floor(Math.random() * (k + 1));
-        [shapeList[k].x, shapeList[r].x] = [shapeList[r].x, shapeList[k].x];
-        [shapeList[k].y, shapeList[r].y] = [shapeList[r].y, shapeList[k].y];
-      }
-
-      const instructions: Record<string, string> = {
-        none: '',
-        single_verb: '按一下！',
-        verb_object: `按${SHAPE_LABELS[targetShape]}`,
-        verb_adj_object: `找${COLOR_LABELS[targetColor] ?? ''}的${SHAPE_LABELS[targetShape]}`,
-        compound: `先找${COLOR_LABELS[targetColor] ?? ''}的圖形，再按它`,
-      };
-
-      stimuli.push({
-        id: `game-${i}`,
-        domain: i % 2 === 0 ? 'cognition' : 'fine_motor',
-        instruction: instructions[level] || '',
-        shapes: shapeList,
-      });
+  function buildInstruction(level: string, description: string): string {
+    switch (level) {
+      case 'none':
+        return '';
+      case 'single_verb':
+        return '按一下！';
+      case 'verb_object':
+        return `找出${description}`;
+      case 'verb_adj_object':
+      case 'compound':
+        return `看到${description}就按一下`;
+      default:
+        return '';
     }
+  }
 
-    return stimuli;
+  function generateStimuliFromCards(pool: CardItem[], ageGroup: AgeGroupCDSA): Stimulus[] {
+    const level = instructionLevel(ageGroup);
+    const count = level === 'none' ? 6 : level === 'single_verb' ? 8 : 10;
+    const picks = selectCardsForGame(pool, ageGroup, count);
+    return picks.map((card, i) => ({
+      id: `game-${i}`,
+      cardId: card.id,
+      domain: card.domain,
+      imageUrl: `${import.meta.env.BASE_URL.replace(/\/$/, '')}/cards/${card.filename}`,
+      description: card.description,
+      instruction: buildInstruction(level, card.description),
+    }));
   }
 
   // ---- Reactive state ----
   const ageGroup = $derived(assessmentStore.ageGroup);
+  const hasEnoughCards = $derived(cards.filter((c) => c.reviewStatus === 'approved').length >= MIN_CARDS_REQUIRED);
+
   let stimuli = $state<Stimulus[]>([]);
   let currentIndex = $state(0);
   let showFeedback = $state(false);
@@ -113,116 +66,71 @@
   let stimulusStartTime = $state(0);
   let blockStartTime = $state(0);
   let isComplete = $state(false);
-  let canvas: HTMLCanvasElement;
+  let canvasEl: HTMLCanvasElement | null = $state(null);
+  let imageCache = new Map<string, HTMLImageElement>();
 
   const currentStimulus = $derived(stimuli[currentIndex] ?? null);
   const progress = $derived(stimuli.length > 0 ? currentIndex / stimuli.length : 0);
 
-  // Initialize stimuli when age group is determined
   $effect(() => {
-    if (ageGroup) {
-      stimuli = generateStimuli(ageGroup);
+    if (ageGroup && hasEnoughCards) {
+      stimuli = generateStimuliFromCards(cards, ageGroup);
       currentIndex = 0;
       isComplete = false;
       blockStartTime = Date.now();
     }
   });
 
-  /**
-   * Draw a five-pointed star on a 2d canvas context.
-   * The star is centred at (cx, cy) with outer radius `r`.
-   */
-  function drawStar(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number): void {
-    const innerR = r * 0.38;
-    ctx.beginPath();
-    for (let i = 0; i < 10; i++) {
-      const angle = (i * Math.PI) / 5 - Math.PI / 2;
-      const radius = i % 2 === 0 ? r : innerR;
-      const method = i === 0 ? 'moveTo' : 'lineTo';
-      ctx[method](cx + radius * Math.cos(angle), cy + radius * Math.sin(angle));
-    }
-    ctx.closePath();
+  async function preloadImage(url: string): Promise<HTMLImageElement> {
+    if (imageCache.has(url)) return imageCache.get(url)!;
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => { imageCache.set(url, img); resolve(img); };
+      img.onerror = reject;
+      img.src = url;
+    });
   }
 
-  /**
-   * Draw the given shape on the canvas 2d context.
-   */
-  function drawShape(ctx: CanvasRenderingContext2D, shape: Shape, w: number, h: number): void {
-    const cx = (shape.x / 100) * w;
-    const cy = (shape.y / 100) * h;
-    const s = shape.size;
-
-    ctx.fillStyle = shape.color;
-    ctx.beginPath();
-
-    switch (shape.type) {
-      case 'circle':
-        ctx.arc(cx, cy, s / 2, 0, Math.PI * 2);
-        break;
-      case 'square':
-        ctx.rect(cx - s / 2, cy - s / 2, s, s);
-        break;
-      case 'triangle':
-        ctx.moveTo(cx, cy - s / 2);
-        ctx.lineTo(cx + s / 2, cy + s / 2);
-        ctx.lineTo(cx - s / 2, cy + s / 2);
-        ctx.closePath();
-        break;
-      case 'star':
-        drawStar(ctx, cx, cy, s / 2);
-        break;
-    }
-
-    ctx.fill();
-  }
-
-  /**
-   * Draw the current stimulus on the canvas.
-   * Extracted as a standalone function so it can be called from
-   * both the reactive effect and the canvas mount callback.
-   */
-  function renderStimulus(): void {
-    if (!canvas) return;
+  async function renderStimulus(): Promise<void> {
+    if (!canvasEl) return;
     const stim = stimuli[currentIndex];
     if (!stim) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvasEl.getContext('2d');
     if (!ctx) return;
 
-    const w = canvas.width;
-    const h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
-
-    // Background
+    const w = canvasEl.width;
+    const h = canvasEl.height;
     ctx.fillStyle = '#fafafa';
     ctx.fillRect(0, 0, w, h);
 
-    // Draw each shape
-    for (const shape of stim.shapes) {
-      drawShape(ctx, shape, w, h);
+    try {
+      const img = await preloadImage(stim.imageUrl);
+      const scale = Math.min(w / img.width, h / img.height) * 0.85;
+      const dw = img.width * scale;
+      const dh = img.height * scale;
+      const dx = (w - dw) / 2;
+      const dy = (h - dh) / 2;
+      ctx.drawImage(img, dx, dy, dw, dh);
+    } catch {
+      ctx.fillStyle = '#888';
+      ctx.font = '20px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('（圖片載入失敗）', w / 2, h / 2);
     }
-
     stimulusStartTime = Date.now();
   }
 
-  // Re-render when the stimulus index changes
   $effect(() => {
-    // Read reactive deps so Svelte tracks them
     const _idx = currentIndex;
     const _len = stimuli.length;
-    // Use requestAnimationFrame to ensure canvas is in the DOM
-    requestAnimationFrame(renderStimulus);
+    requestAnimationFrame(() => { renderStimulus(); });
   });
 
-  /** Svelte action: called when canvas mounts in the DOM */
   function onCanvasMount(el: HTMLCanvasElement) {
-    canvas = el;
+    canvasEl = el;
     renderStimulus();
   }
 
-  /**
-   * Advance to the next stimulus or mark the game as complete.
-   * Also enforces the 3-minute block time limit.
-   */
   function advance(): void {
     showFeedback = false;
     const elapsed = Date.now() - blockStartTime;
@@ -233,37 +141,10 @@
     }
   }
 
-  /**
-   * Handle a click/tap on the canvas. Records the event and shows
-   * positive feedback regardless of whether the target was hit.
-   */
-  function handleCanvasClick(event: MouseEvent): void {
-    if (showFeedback || isComplete || !currentStimulus || !canvas) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-    const canvasX = (event.clientX - rect.left) * scaleX;
-    const canvasY = (event.clientY - rect.top) * scaleY;
-    const x = (canvasX / canvas.width) * 100;
-    const y = (canvasY / canvas.height) * 100;
+  function handleCanvasClick(): void {
+    if (showFeedback || isComplete || !currentStimulus) return;
     const latency = Date.now() - stimulusStartTime;
 
-    // Hit-test: find the shape closest to the click within its bounding radius
-    let clickedShape: Shape | null = null;
-    let minDist = Infinity;
-    for (const shape of currentStimulus.shapes) {
-      const shapeCanvasX = (shape.x / 100) * canvas.width;
-      const shapeCanvasY = (shape.y / 100) * canvas.height;
-      const dist = Math.hypot(canvasX - shapeCanvasX, canvasY - shapeCanvasY);
-      const hitRadius = shape.size * 0.6; // slightly generous for small fingers
-      if (dist < hitRadius && dist < minDist) {
-        minDist = dist;
-        clickedShape = shape;
-      }
-    }
-
-    // Record the interaction event
     if (assessmentStore.assessment) {
       recordEvent({
         assessmentId: assessmentStore.assessment.id,
@@ -273,40 +154,43 @@
         timestamp: new Date(),
         data: {
           stimulusId: currentStimulus.id,
+          cardId: currentStimulus.cardId,
           domain: currentStimulus.domain,
-          x,
-          y,
           latency,
-          clickedShape: clickedShape?.type ?? null,
-          isTarget: clickedShape?.isTarget ?? false,
-          correct: clickedShape?.isTarget ?? false,
+          correct: true,
         },
       });
     }
 
-    // Always show positive feedback (no error feedback per spec)
     feedbackText = FEEDBACKS[Math.floor(Math.random() * FEEDBACKS.length)];
     showFeedback = true;
-
     setTimeout(advance, 800);
+  }
+
+  async function finishAndContinue() {
+    if (assessmentStore.assessment) {
+      const events = await getEventsByModule(assessmentStore.assessment.id, 'game');
+      const metrics = analyzeBehavior(events);
+      assessmentStore.addAnalysis({ behaviorMetrics: metrics });
+    }
+    assessmentStore.nextStep();
   }
 </script>
 
 <div class="game-module">
-  {#if isComplete}
+  {#if !hasEnoughCards}
     <div class="game-complete">
-      <div class="complete-icon" aria-hidden="true">&#127881;</div>
+      <div class="complete-icon" aria-hidden="true">🎨</div>
+      <h2>圖卡準備中</h2>
+      <p>遊戲評估暫時略過。後續版本將提供完整圖卡庫。</p>
+      <button class="btn-next" onclick={() => assessmentStore.nextStep()}>跳過遊戲評估 →</button>
+    </div>
+  {:else if isComplete}
+    <div class="game-complete">
+      <div class="complete-icon" aria-hidden="true">🎉</div>
       <h2>遊戲完成！</h2>
       <p>你做得非常好！</p>
-      <button class="btn-next" onclick={async () => {
-        // 即時行為分析
-        if (assessmentStore.assessment) {
-          const events = await getEventsByModule(assessmentStore.assessment.id, 'game');
-          const metrics = analyzeBehavior(events);
-          assessmentStore.addAnalysis({ behaviorMetrics: metrics });
-        }
-        assessmentStore.nextStep();
-      }}>繼續下一步 →</button>
+      <button class="btn-next" onclick={finishAndContinue}>繼續下一步 →</button>
     </div>
   {:else if currentStimulus}
     <div class="game-header">
@@ -322,15 +206,12 @@
     </div>
 
     <div class="canvas-container">
-      <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
       <canvas
-        bind:this={canvas}
         use:onCanvasMount
         width={600}
         height={400}
         onclick={handleCanvasClick}
-        role="img"
-        aria-label="互動遊戲畫面"
+        aria-label={currentStimulus.description}
       ></canvas>
 
       {#if showFeedback}
@@ -351,7 +232,6 @@
     padding: var(--space-4);
   }
 
-  /* ---- Header / progress ---- */
   .game-header {
     margin-bottom: var(--space-4);
   }
@@ -393,7 +273,6 @@
     margin: 0;
   }
 
-  /* ---- Canvas ---- */
   .canvas-container {
     position: relative;
     border-radius: var(--radius-lg);
@@ -410,7 +289,6 @@
     cursor: pointer;
   }
 
-  /* ---- Feedback overlay ---- */
   .feedback-overlay {
     position: absolute;
     inset: 0;
@@ -430,30 +308,16 @@
   }
 
   @keyframes pop {
-    0% {
-      transform: scale(0.5);
-      opacity: 0;
-    }
-    60% {
-      transform: scale(1.15);
-      opacity: 1;
-    }
-    100% {
-      transform: scale(1);
-      opacity: 1;
-    }
+    0% { transform: scale(0.5); opacity: 0; }
+    60% { transform: scale(1.15); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
   }
 
   @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 
-  /* ---- Complete screen ---- */
   .game-complete {
     text-align: center;
     padding: var(--space-10) var(--space-4);
@@ -495,7 +359,6 @@
     background: var(--color-accent-hover);
   }
 
-  /* ---- Loading ---- */
   .loading-text {
     text-align: center;
     padding: var(--space-10);

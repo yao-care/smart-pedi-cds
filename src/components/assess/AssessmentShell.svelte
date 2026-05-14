@@ -10,6 +10,13 @@
   import { assessmentStore } from '../../lib/stores/assessment.svelte';
   import { getIncompleteAssessments } from '../../lib/db/assessments';
   import type { Assessment } from '../../lib/db/schema';
+  import type { CardItem } from '../../engine/cdsa/card-selector';
+
+  interface Props {
+    cards?: CardItem[];
+  }
+
+  let { cards = [] }: Props = $props();
 
   const STEP_LABELS = ['基本資料', '問卷', '互動遊戲', '語音互動', '影片錄製', '繪圖測試', '評估結果'];
 
@@ -61,7 +68,7 @@
       <QuestionnaireModule />
 
     {:else if assessmentStore.currentStep === 'game'}
-      <GameModule />
+      <GameModule {cards} />
 
     {:else if assessmentStore.currentStep === 'voice'}
       <VoiceModule />

@@ -1,0 +1,144 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const cards = await getCollection('cards');
+const sorted = [...cards].sort((a, b) => {
+  if (a.data.domain !== b.data.domain) return a.data.domain.localeCompare(b.data.domain);
+  return a.id.localeCompare(b.id);
+});
+
+const counts = {
+  total: cards.length,
+  pending: cards.filter((c) => c.data.reviewStatus === 'pending').length,
+  approved: cards.filter((c) => c.data.reviewStatus === 'approved').length,
+  rejected: cards.filter((c) => c.data.reviewStatus === 'rejected').length,
+};
+---
+
+<Base title="圖卡審核" description="人工檢視所有圖卡，編輯 src/data/cards/index.json 修改 reviewStatus">
+  <main class="page">
+    <h1>圖卡審核（唯讀檢視）</h1>
+    <p class="intro">
+      實際變更狀態請直接編輯 <code>src/data/cards/index.json</code> 並 commit。
+      審核要點：(a) 不含可辨識真人臉部 (b) 兒童安全（普遍級） (c) 主體清晰。
+    </p>
+
+    <div class="stats">
+      <span>總數 <strong>{counts.total}</strong></span>
+      <span class="stat-pending">待審 <strong>{counts.pending}</strong></span>
+      <span class="stat-approved">通過 <strong>{counts.approved}</strong></span>
+      <span class="stat-rejected">退回 <strong>{counts.rejected}</strong></span>
+    </div>
+
+    <div class="card-grid">
+      {sorted.map((card) => (
+        <article class={`card card-${card.data.reviewStatus}`}>
+          <div class="thumb">
+            <img src={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/cards/${card.data.filename}`}
+                 alt={card.data.description}
+                 loading="lazy"
+                 width="200" height="200" />
+          </div>
+          <div class="meta">
+            <span class="status status-{card.data.reviewStatus}">{card.data.reviewStatus}</span>
+            <strong class="id">{card.id}</strong>
+            <span class="domain">{card.data.domain}</span>
+            <p class="desc">{card.data.description}</p>
+            {card.data.attribution && <p class="attr">{card.data.attribution}</p>}
+          </div>
+        </article>
+      ))}
+    </div>
+  </main>
+</Base>
+
+<style>
+  .page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--space-6) var(--space-4);
+  }
+
+  h1 {
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-2);
+  }
+
+  .intro {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-4);
+  }
+
+  code {
+    background: var(--bg-muted);
+    padding: 0 0.25em;
+    border-radius: 4px;
+  }
+
+  .stats {
+    display: flex;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-6);
+    font-size: var(--text-sm);
+  }
+
+  .stat-pending strong { color: var(--color-risk-advisory); }
+  .stat-approved strong { color: var(--color-risk-normal); }
+  .stat-rejected strong { color: var(--color-risk-critical); }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .card {
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--bg-surface);
+  }
+
+  .card-approved { border-color: var(--color-risk-normal); }
+  .card-rejected { opacity: 0.5; }
+
+  .thumb img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+    display: block;
+  }
+
+  .meta {
+    padding: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    font-size: var(--text-xs);
+  }
+
+  .status {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.65rem;
+  }
+
+  .status-pending { background: var(--color-risk-advisory-bg); color: var(--color-risk-advisory); }
+  .status-approved { background: var(--color-risk-normal-bg); color: var(--color-risk-normal); }
+  .status-rejected { background: var(--color-risk-critical-bg); color: var(--color-risk-critical); }
+
+  .id { color: var(--color-text-base); }
+  .domain { color: var(--color-text-muted); }
+  .desc { color: var(--color-text-base); margin: var(--space-1) 0; }
+  .attr { color: var(--color-text-subtle); font-size: 0.7rem; margin: 0; }
+</style>

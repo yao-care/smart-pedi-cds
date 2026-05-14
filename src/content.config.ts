@@ -98,9 +98,32 @@ const educationCollection = defineCollection({
   }),
 });
 
+// ---------- cards collection (file loader, array JSON) ----------
+// Array JSON: each element is an entry with required `id` field.
+// Schema describes a single card (not the array).
+const cardsCollection = defineCollection({
+  loader: file('./src/data/cards/index.json'),
+  schema: z.object({
+    domain: z.enum([
+      'gross_motor', 'fine_motor', 'language_comp',
+      'language_expr', 'cognition', 'social_emotional',
+    ]),
+    filename: z.string(),
+    description: z.string(),
+    ageGroups: z.array(z.string()).optional(),
+    source: z.enum(['storyset', 'undraw', 'pexels', 'openverse', 'manual']),
+    sourceUrl: z.string().url(),
+    attribution: z.string().optional(),
+    license: z.enum(['CC0', 'CC-BY', 'Pexels', 'MIT', 'custom']),
+    reviewStatus: z.enum(['pending', 'approved', 'rejected']),
+    reviewedAt: z.string().optional(),
+  }),
+});
+
 // ---------- export ----------
 export const collections = {
   rules: rulesCollection,
   baselines: baselinesCollection,
   education: educationCollection,
+  cards: cardsCollection,
 };
