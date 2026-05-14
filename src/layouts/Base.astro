@@ -1,4 +1,7 @@
 ---
+import OfflineBanner from '../components/common/OfflineBanner.svelte';
+import { BASE_PATH } from '../../scripts/base.mjs';
+
 interface Props {
   title: string;
   description: string;
@@ -10,6 +13,7 @@ const canonicalURL = canonical
   ? new URL(canonical, Astro.site)
   : new URL(Astro.url.pathname, Astro.site);
 const fullTitle = `${title} | CDSS 兒科臨床決策輔助系統`;
+const base = BASE_PATH;
 
 import '../styles/global.css';
 ---
@@ -19,9 +23,13 @@ import '../styles/global.css';
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Security-Policy" content="frame-src https://www.youtube-nocookie.com;" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL.href} />
+    <link rel="manifest" href={base + '/manifest.json'} />
+    <link rel="apple-touch-icon" href={base + '/icons/icon-192.png'} />
+    <meta name="theme-color" content="#2563eb" />
 
     <!-- Open Graph -->
     <meta property="og:title" content={fullTitle} />
@@ -39,6 +47,8 @@ import '../styles/global.css';
   </head>
   <body>
     <a href="#main-content" class="skip-to-content">跳至主要內容</a>
+    <OfflineBanner client:idle />
     <slot />
+    <script src="../lib/sw/register-entry.ts"></script>
   </body>
 </html>

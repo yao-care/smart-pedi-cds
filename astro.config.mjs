@@ -3,12 +3,13 @@ import svelte from '@astrojs/svelte';
 import sitemap from '@astrojs/sitemap';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { BASE_PATH } from './scripts/base.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   site: 'https://yao-care.github.io',
-  base: '/smart-pedi-cds',
+  base: BASE_PATH,
   integrations: [svelte(), sitemap()],
   output: 'static',
   vite: {

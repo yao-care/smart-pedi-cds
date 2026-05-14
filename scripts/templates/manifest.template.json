@@ -1,0 +1,13 @@
+{
+  "name": "CDSA 兒童發展智慧評估",
+  "short_name": "CDSA",
+  "start_url": "__BASE_PATH__/",
+  "scope": "__BASE_PATH__/",
+  "display": "standalone",
+  "theme_color": "__THEME_COLOR__",
+  "background_color": "#ffffff",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable any" }
+  ]
+}
