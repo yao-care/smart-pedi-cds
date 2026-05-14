@@ -1,6 +1,7 @@
 <script lang="ts">
   import { authStore } from '../../lib/stores/auth.svelte';
   import { getTenantId } from '../../lib/utils/tenant';
+  import { toEmbedUrl } from '../../lib/utils/youtube';
   import { getCustomEducation } from '../../lib/db/custom-education';
   import type { CustomEducation } from '../../lib/db/schema';
 
@@ -34,7 +35,20 @@
           <h3>{item.title}</h3>
           <p>{item.summary}</p>
           {#if item.format === 'video' && item.videoUrl}
-            <a href={item.videoUrl} target="_blank" rel="noopener noreferrer" class="video-link">觀看影片 &rarr;</a>
+            {@const embed = toEmbedUrl(item.videoUrl)}
+            {#if embed}
+              <div class="video-embed">
+                <iframe
+                  src={embed}
+                  title={item.title}
+                  class="video-iframe"
+                  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen
+                ></iframe>
+              </div>
+            {:else}
+              <a href={item.videoUrl} target="_blank" rel="noopener noreferrer" class="video-link">以原始連結開啟 &rarr;</a>
+            {/if}
           {/if}
         </article>
       {/each}
@@ -90,6 +104,21 @@
     font-size: var(--text-xs);
     color: var(--color-text-muted);
     margin-bottom: var(--space-3);
+  }
+
+  .video-embed {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin-top: var(--space-2);
+  }
+
+  .video-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
   }
 
   .video-link {

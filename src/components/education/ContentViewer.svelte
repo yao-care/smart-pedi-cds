@@ -1,5 +1,6 @@
 <script lang="ts">
   import { db } from '$lib/db/schema';
+  import { toEmbedUrl } from '$lib/utils/youtube';
   import InteractionTracker from './InteractionTracker.svelte';
 
   interface Props {
@@ -7,10 +8,10 @@
     title: string;
     format: 'article' | 'video' | 'questionnaire';
     videoUrl?: string;
-    body?: string; // HTML or plain-text content for article format
   }
 
-  let { slug, title, format, videoUrl = '', body = '' }: Props = $props();
+  let { slug, title, format, videoUrl = '' }: Props = $props();
+  const embedUrl = $derived(format === 'video' ? toEmbedUrl(videoUrl) : null);
 
   let isRead = $state(false);
   let markingRead = $state(false);
@@ -64,34 +65,14 @@
   </header>
 
   <div class="viewer-body">
-    {#if format === 'article'}
-      {#if body}
-        <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-        <div class="article-content">{@html body}</div>
-      {:else}
-        <p class="placeholder-text">文章內容載入中...</p>
-      {/if}
-
-      {#if !isRead}
-        <div class="read-action">
-          <button
-            class="mark-read-btn"
-            onclick={markAsRead}
-            disabled={markingRead}
-          >
-            {markingRead ? '標記中...' : '標記為已讀'}
-          </button>
-        </div>
-      {/if}
-
-    {:else if format === 'video'}
+    {#if format === 'video'}
       <div class="video-container">
-        {#if videoUrl}
+        {#if embedUrl}
           <iframe
-            src={videoUrl}
+            src={embedUrl}
             title={title}
             class="video-iframe"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen
           ></iframe>
         {:else}
@@ -99,7 +80,12 @@
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <polygon points="5 3 19 12 5 21 5 3"/>
             </svg>
-            <p>影片連結未設定</p>
+            <p>{videoUrl ? '影片無法載入' : '影片連結未設定'}</p>
+            {#if videoUrl}
+              <a href={videoUrl} target="_blank" rel="noopener noreferrer" class="fallback-link">
+                以原始連結開啟 →
+              </a>
+            {/if}
           </div>
         {/if}
       </div>
@@ -266,6 +252,16 @@
   .video-placeholder p {
     margin: 0;
     font-size: 0.9rem;
+  }
+
+  .fallback-link {
+    color: var(--color-accent);
+    font-size: 0.85rem;
+    text-decoration: none;
+  }
+
+  .fallback-link:hover {
+    text-decoration: underline;
   }
 
   .questionnaire-placeholder {
