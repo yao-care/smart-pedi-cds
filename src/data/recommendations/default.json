@@ -1,0 +1,79 @@
+{
+  "version": "1.0",
+  "description": "預設推薦清單範本。每筆代表評估完成後依分流結果 (category) × 異常領域 (domain) 顯示的衛教媒體。醫院可在 /settings/recommendations 為任一格自訂。",
+  "matrix": {
+    "normal": {
+      "gross_motor": [],
+      "fine_motor": [],
+      "language_comp": [],
+      "language_expr": [],
+      "cognition": [],
+      "social_emotional": [],
+      "behavior": [],
+      "diet": []
+    },
+    "monitor": {
+      "gross_motor": [
+        { "source": "internal", "slug": "gross-motor-activities", "title": "粗動作發展促進活動", "summary": "各年齡層的粗動作訓練遊戲與居家活動" },
+        { "source": "internal", "slug": "exercise-guide", "title": "兒童運動建議", "summary": "適齡運動與活動建議" }
+      ],
+      "fine_motor": [
+        { "source": "internal", "slug": "fine-motor-activities", "title": "精細動作發展促進活動", "summary": "手部精細動作與手眼協調居家活動" }
+      ],
+      "language_comp": [
+        { "source": "internal", "slug": "language-stimulation", "title": "語言發展促進技巧", "summary": "促進語言理解的親子互動方式" }
+      ],
+      "language_expr": [
+        { "source": "internal", "slug": "language-stimulation", "title": "語言發展促進技巧", "summary": "鼓勵語言表達的日常互動" }
+      ],
+      "cognition": [
+        { "source": "internal", "slug": "cognitive-play", "title": "認知發展遊戲建議", "summary": "分類、配對、因果理解遊戲" }
+      ],
+      "social_emotional": [
+        { "source": "internal", "slug": "social-emotional-guide", "title": "社會情緒發展引導", "summary": "社交互動與情緒管理建議" }
+      ],
+      "behavior": [
+        { "source": "internal", "slug": "sleep-hygiene", "title": "生活作息建議", "summary": "良好生活習慣支持整體發展" }
+      ],
+      "diet": [
+        { "source": "internal", "slug": "diet-control", "title": "兒童飲食控制衛教", "summary": "合理飲食結構與醣類攝取建議" },
+        { "source": "internal", "slug": "nutrition-grow-tall", "title": "🎬 長高三要件", "summary": "蛋白質、鈣＋日光、鉀的營養關鍵" }
+      ]
+    },
+    "refer": {
+      "gross_motor": [
+        { "source": "internal", "slug": "gross-motor-activities", "title": "粗動作發展促進活動", "summary": "各年齡層的粗動作訓練遊戲與居家活動" },
+        { "source": "internal", "slug": "exercise-guide", "title": "兒童運動建議", "summary": "適齡運動與活動建議" },
+        { "source": "internal", "slug": "when-to-seek-help", "title": "何時該尋求專業協助", "summary": "發展警訊與轉介流程說明" }
+      ],
+      "fine_motor": [
+        { "source": "internal", "slug": "fine-motor-activities", "title": "精細動作發展促進活動", "summary": "手部精細動作與手眼協調居家活動" },
+        { "source": "internal", "slug": "when-to-seek-help", "title": "何時該尋求專業協助", "summary": "發展警訊與轉介流程說明" }
+      ],
+      "language_comp": [
+        { "source": "internal", "slug": "language-stimulation", "title": "語言發展促進技巧", "summary": "促進語言理解的親子互動方式" },
+        { "source": "internal", "slug": "when-to-seek-help", "title": "何時該尋求專業協助", "summary": "發展警訊與轉介流程說明" }
+      ],
+      "language_expr": [
+        { "source": "internal", "slug": "language-stimulation", "title": "語言發展促進技巧", "summary": "鼓勵語言表達的日常互動" },
+        { "source": "internal", "slug": "when-to-seek-help", "title": "何時該尋求專業協助", "summary": "發展警訊與轉介流程說明" }
+      ],
+      "cognition": [
+        { "source": "internal", "slug": "cognitive-play", "title": "認知發展遊戲建議", "summary": "分類、配對、因果理解遊戲" },
+        { "source": "internal", "slug": "when-to-seek-help", "title": "何時該尋求專業協助", "summary": "發展警訊與轉介流程說明" }
+      ],
+      "social_emotional": [
+        { "source": "internal", "slug": "social-emotional-guide", "title": "社會情緒發展引導", "summary": "社交互動與情緒管理建議" },
+        { "source": "internal", "slug": "when-to-seek-help", "title": "何時該尋求專業協助", "summary": "發展警訊與轉介流程說明" }
+      ],
+      "behavior": [
+        { "source": "internal", "slug": "sleep-hygiene", "title": "生活作息建議", "summary": "良好生活習慣支持整體發展" },
+        { "source": "internal", "slug": "when-to-seek-help", "title": "何時該尋求專業協助", "summary": "發展警訊與轉介流程說明" }
+      ],
+      "diet": [
+        { "source": "internal", "slug": "diet-control", "title": "兒童飲食控制衛教", "summary": "合理飲食結構與醣類攝取建議" },
+        { "source": "internal", "slug": "when-to-seek-help", "title": "何時該尋求專業協助", "summary": "發展警訊與轉介流程說明" }
+      ]
+    }
+  }
+}

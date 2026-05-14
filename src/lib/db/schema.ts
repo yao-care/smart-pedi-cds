@@ -196,6 +196,36 @@ export interface TenantSettings {
   updatedAt: Date;
 }
 
+/** Triage category × domain recommendation overlay (one row per cell). */
+export type RecommendationCategory = 'normal' | 'monitor' | 'refer';
+export type RecommendationSource = 'internal' | 'custom' | 'external';
+
+export interface RecommendationItem {
+  source: RecommendationSource;
+  /** For source: 'internal' — slug under /education/{slug}/ */
+  slug?: string;
+  /** For source: 'custom' — id of a CustomEducation row */
+  customId?: string;
+  /** For source: 'external' — full URL (e.g. YouTube, hospital page) */
+  url?: string;
+  /** Display title; required for external, optional for internal/custom (falls back to source content) */
+  title?: string;
+  /** Display summary (one-liner) */
+  summary?: string;
+}
+
+export interface RecommendationOverlay {
+  /** Composite id: `${tenantId}::${category}::${domain}` */
+  id: string;
+  tenantId: string;
+  category: RecommendationCategory;
+  domain: string;
+  items: RecommendationItem[];
+  /** When true, items are appended to the default list; when false, items replace the default. */
+  mergeWithDefault: boolean;
+  updatedAt: Date;
+}
+
 export class CdssDatabase extends Dexie {
   patients!: Table<Patient>;
   observations!: Table<Observation>;
@@ -213,6 +243,7 @@ export class CdssDatabase extends Dexie {
   normThresholds!: Table<NormThreshold>;
   customEducation!: Table<CustomEducation>;
   tenantSettings!: Table<TenantSettings>;
+  recommendationOverlays!: Table<RecommendationOverlay>;
 
   constructor() {
     super('cdss-pediatric');
@@ -264,6 +295,27 @@ export class CdssDatabase extends Dexie {
       // New v3 stores
       customEducation: 'id, tenantId, category, isActive, [tenantId+isActive]',
       tenantSettings: 'id, tenantId',
+    });
+    this.version(4).stores({
+      // Repeat ALL v3 stores exactly as they are
+      patients: 'id, ageGroup, currentRiskLevel, lastSyncedAt',
+      observations: 'id, patientId, indicator, effectiveDateTime, [patientId+indicator]',
+      alerts: 'id, patientId, riskLevel, status, createdAt, [patientId+status]',
+      baselines: '[patientId+indicator], patientId, updatedAt',
+      syncQueue: 'id, createdAt',
+      serverConfigs: 'id, lastUsedAt',
+      educationInteractions: 'id, contentSlug, createdAt',
+      ruleVersions: 'id, createdAt',
+      webhookHistory: 'id, webhookId, alertId, createdAt',
+      children: 'id, createdAt',
+      assessments: 'id, childId, status, createdAt, [childId+status]',
+      assessmentEvents: 'id, assessmentId, childId, moduleType, timestamp, [assessmentId+moduleType]',
+      mediaFiles: 'id, assessmentId, childId, fileType, createdAt, [assessmentId+fileType]',
+      normThresholds: 'id, ageGroup, metric, [ageGroup+metric]',
+      customEducation: 'id, tenantId, category, isActive, [tenantId+isActive]',
+      tenantSettings: 'id, tenantId',
+      // New v4 store
+      recommendationOverlays: 'id, tenantId, category, domain, [tenantId+category+domain]',
     });
   }
 }

@@ -1,76 +1,69 @@
 <script lang="ts">
+  import { authStore } from '../../lib/stores/auth.svelte';
+  import { getTenantId } from '../../lib/utils/tenant';
+  import {
+    mergeRecommendationsForDomains,
+    resolveItemDisplay,
+  } from '../../lib/db/recommendations';
+  import type { RecommendationCategory } from '../../lib/db/schema';
+
   interface Props {
+    category: RecommendationCategory;
     domains: string[];
   }
 
-  let { domains }: Props = $props();
+  let { category, domains }: Props = $props();
 
-  // Static mapping: anomaly domain -> education content slugs and descriptions
-  const EDUCATION_MAP: Record<string, Array<{ slug: string; title: string; summary: string }>> = {
-    gross_motor: [
-      { slug: 'gross-motor-activities', title: '粗動作發展促進活動', summary: '各年齡層的粗動作訓練遊戲與居家活動' },
-      { slug: 'exercise-guide', title: '兒童運動建議', summary: '適齡運動與活動建議' },
-      { slug: 'nutrition-grow-tall', title: '🎬 長高三要件', summary: '蛋白質、鈣＋日光、鉀的營養關鍵' },
-    ],
-    fine_motor: [
-      { slug: 'fine-motor-activities', title: '精細動作發展促進活動', summary: '手部精細動作與手眼協調居家活動' },
-    ],
-    language: [
-      { slug: 'language-stimulation', title: '語言發展促進技巧', summary: '親子互動促進語言能力的方法' },
-    ],
-    language_comprehension: [
-      { slug: 'language-stimulation', title: '語言發展促進技巧', summary: '促進語言理解的親子互動方式' },
-    ],
-    language_expression: [
-      { slug: 'language-stimulation', title: '語言發展促進技巧', summary: '鼓勵語言表達的日常互動' },
-    ],
-    cognition: [
-      { slug: 'cognitive-play', title: '認知發展遊戲建議', summary: '分類、配對、因果理解遊戲' },
-    ],
-    social_emotional: [
-      { slug: 'social-emotional-guide', title: '社會情緒發展引導', summary: '社交互動與情緒管理建議' },
-    ],
-    behavior: [
-      { slug: 'sleep-hygiene', title: '生活作息建議', summary: '良好生活習慣支持整體發展' },
-    ],
-    diet: [
-      { slug: 'diet-control', title: '兒童飲食控制衛教', summary: '合理飲食結構與醣類攝取建議' },
-      { slug: 'nutrition-grow-tall', title: '🎬 長高三要件', summary: '蛋白質、鈣＋日光、鉀' },
-      { slug: 'nutrition-calcium-tofu', title: '🎬 補鈣看豆腐凝固劑', summary: '輕鬆判斷豆腐鈣含量' },
-      { slug: 'nutrition-vitamin-d-mushroom', title: '🎬 曬香菇補維生素 D', summary: '15 分鐘提升維生素 D' },
-      { slug: 'nutrition-garlic-tip', title: '🎬 大蒜拍碎要等一下', summary: '讓蒜素充分生成' },
-      { slug: 'nutrition-okra-cooking', title: '🎬 秋葵正確烹調法', summary: '整根燙、擦乾再炒' },
-    ],
-  };
+  const tenantId = $derived(getTenantId(authStore.fhirBaseUrl));
 
-  const recommendations = $derived.by(() => {
-    const seen = new Set<string>();
-    const results: Array<{ slug: string; title: string; summary: string }> = [];
-    for (const domain of domains) {
-      const items = EDUCATION_MAP[domain] ?? [];
-      for (const item of items) {
-        if (!seen.has(item.slug)) {
-          seen.add(item.slug);
-          results.push(item);
-        }
-      }
-    }
-    // Always add "when to seek help" when there are anomaly domains
-    if (domains.length > 0) {
-      results.push({ slug: 'when-to-seek-help', title: '何時該尋求專業協助', summary: '發展警訊與轉介流程說明' });
-    }
-    return results;
+  interface ResolvedItem {
+    href: string;
+    title: string;
+    summary: string;
+    isExternal: boolean;
+  }
+
+  let resolved = $state<ResolvedItem[]>([]);
+  let loading = $state(true);
+
+  $effect(() => {
+    // Snapshot reactive deps before async boundary
+    const cat = category;
+    const ds = domains;
+    const tid = tenantId;
+    loading = true;
+    (async () => {
+      const items = await mergeRecommendationsForDomains(tid, cat, ds);
+      const display = await Promise.all(items.map((i) => resolveItemDisplay(i, tid)));
+      resolved = display;
+      loading = false;
+    })();
   });
 </script>
 
-{#if recommendations.length > 0}
+{#if loading}
+  <p class="loading">推薦清單載入中…</p>
+{:else if resolved.length > 0}
   <div class="education-match">
-    {#each recommendations as rec}
-      <a href="/smart-pedi-cds/education/{rec.slug}/" class="edu-card">
-        <h4>{rec.title}</h4>
-        <p>{rec.summary}</p>
-        <span class="read-link">閱讀 →</span>
-      </a>
+    {#each resolved as rec}
+      {#if rec.isExternal}
+        <a
+          href={rec.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="edu-card"
+        >
+          <h4>{rec.title}</h4>
+          <p>{rec.summary}</p>
+          <span class="read-link">前往 ↗</span>
+        </a>
+      {:else}
+        <a href={rec.href} class="edu-card">
+          <h4>{rec.title}</h4>
+          <p>{rec.summary}</p>
+          <span class="read-link">閱讀 →</span>
+        </a>
+      {/if}
     {/each}
   </div>
 {:else}
@@ -78,6 +71,13 @@
 {/if}
 
 <style>
+  .loading {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    text-align: center;
+    padding: var(--space-4);
+  }
+
   .education-match {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
