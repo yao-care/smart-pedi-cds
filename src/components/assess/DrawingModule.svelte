@@ -166,7 +166,6 @@
         ontouchmove={moveStroke}
         ontouchend={endStroke}
         style="touch-action: none;"
-        role="img"
         aria-label="繪圖區域 — {currentShape.guide}"
       ></canvas>
     </div>

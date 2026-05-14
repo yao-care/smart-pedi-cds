@@ -175,15 +175,23 @@
 
       <div class="recording-controls">
         {#if isRecording}
-          <button class="btn-stop-circle" onclick={stopRecording}>
+          <button
+            class="btn-stop-circle"
+            onclick={stopRecording}
+            aria-label="停止錄製"
+          >
             <span class="stop-icon"></span>
           </button>
-          <p class="control-label">停止錄製</p>
+          <p class="control-label" aria-hidden="true">停止錄製</p>
         {:else}
-          <button class="btn-record-circle" onclick={startRecording}>
+          <button
+            class="btn-record-circle"
+            onclick={startRecording}
+            aria-label="開始錄製"
+          >
             <span class="record-icon"></span>
           </button>
-          <p class="control-label">開始錄製</p>
+          <p class="control-label" aria-hidden="true">開始錄製</p>
         {/if}
       </div>
     </div>

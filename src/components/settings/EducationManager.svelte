@@ -168,8 +168,8 @@
         </select>
       </div>
 
-      <div class="field">
-        <label>適用年齡</label>
+      <fieldset class="field">
+        <legend>適用年齡</legend>
         <div class="checkbox-group">
           {#each ageGroupOptions as ag}
             <label class="checkbox-label">
@@ -182,10 +182,10 @@
             </label>
           {/each}
         </div>
-      </div>
+      </fieldset>
 
-      <div class="field">
-        <label>格式</label>
+      <fieldset class="field">
+        <legend>格式</legend>
         <div class="radio-group">
           <label class="radio-label">
             <input type="radio" name="format" value="article" bind:group={formFormat} />
@@ -196,7 +196,7 @@
             影片
           </label>
         </div>
-      </div>
+      </fieldset>
 
       {#if formFormat === 'video'}
         <div class="field">

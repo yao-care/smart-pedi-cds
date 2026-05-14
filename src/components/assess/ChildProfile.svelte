@@ -48,8 +48,8 @@
     {/if}
   </div>
 
-  <div class="field">
-    <label>性別 <span class="required">*</span></label>
+  <fieldset class="field">
+    <legend>性別 <span class="required">*</span></legend>
     <div class="gender-pills">
       <label class="pill" class:selected={gender === 'male'}>
         <input type="radio" name="gender" value="male" bind:group={gender} />
@@ -64,7 +64,7 @@
         其他
       </label>
     </div>
-  </div>
+  </fieldset>
 
   <div class="field">
     <label for="nickName">暱稱（選填）</label>

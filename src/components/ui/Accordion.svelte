@@ -9,6 +9,9 @@
 
   let { title, defaultOpen = false, children }: Props = $props();
 
+  // svelte-ignore state_referenced_locally
+  // `defaultOpen` is used as the initial value only; further changes should not
+  // re-open the accordion. The warning flags this pattern but it is intended here.
   let open = $state(defaultOpen);
 
   function toggle() {
