@@ -10,7 +10,15 @@
     "preview": "astro preview",
     "check": "astro check && svelte-check --tsconfig ./tsconfig.json",
     "lint": "eslint src/",
-    "postbuild": "pagefind --site dist"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "rebuild:pdf-font": "node scripts/build-pdf-font.mjs",
+    "download:cards": "node scripts/download-illustration-cards.mjs",
+    "generate:cards": "node scripts/generate-placeholder-cards.mjs",
+    "generate:icons": "node scripts/generate-pwa-icons.mjs",
+    "postbuild": "pagefind --site dist && node scripts/build-sw.mjs && node scripts/build-manifest.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.18",
@@ -38,6 +46,11 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
     "@eslint/js": "^10.0.1",
+    "@fontsource/noto-sans-tc": "^5.2.9",
+    "@sveltejs/vite-plugin-svelte": "6.2.4",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/svelte": "^5.3.1",
+    "@testing-library/user-event": "^14.6.1",
     "@types/d3-array": "^3.2.2",
     "@types/d3-axis": "^3.0.6",
     "@types/d3-format": "^3.0.4",
@@ -47,10 +60,16 @@
     "@types/d3-time": "^3.0.4",
     "@types/d3-time-format": "^4.0.3",
     "@types/js-yaml": "^4.0.9",
+    "@vitest/ui": "^4.1.6",
     "eslint": "^10.3.0",
+    "fake-indexeddb": "^6.2.5",
+    "jsdom": "^29.1.1",
     "pagefind": "^1.5.2",
+    "sharp": "^0.34.5",
+    "subset-font": "^2.5.0",
     "svelte-check": "^4.4.8",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.59.3"
+    "typescript-eslint": "^8.59.3",
+    "vitest": "^4.1.6"
   }
 }

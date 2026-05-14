@@ -6,3 +6,14 @@ dist/
 .env
 .env.*
 !.env.example
+
+# Local PDF font sources (subset products are committed)
+scripts/fonts/*.ttf
+scripts/fonts/*.otf
+
+# Local test/dev database
+mydatabase.db
+*.db-journal
+
+# Vitest coverage
+coverage/
