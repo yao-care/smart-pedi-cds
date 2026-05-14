@@ -1,0 +1,134 @@
+import { describe, it, expect } from 'vitest';
+import { computeTriage, type TriageInput } from '../../src/engine/cdsa/triage';
+import type { BehaviorMetrics } from '../../src/engine/cdsa/behavior-analysis';
+import type { VoiceMetrics } from '../../src/engine/cdsa/voice-analysis';
+import type { DrawingAnalysisResult } from '../../src/engine/cdsa/drawing-analysis';
+
+function makeBehavior(overrides: Partial<BehaviorMetrics> = {}): BehaviorMetrics {
+  return {
+    responseTimeDistribution: { p50: 1500, p95: 3000, std: 500 },
+    interactionRhythm: 0.5,
+    operationConsistency: 0.75,
+    retryCount: 1,
+    interruptionPattern: 0.05,
+    reactionLatency: 2000,
+    completionRate: 0.8,
+    ...overrides,
+  };
+}
+
+function makeVoice(overrides: Partial<VoiceMetrics> = {}): VoiceMetrics {
+  return {
+    voiceDurationTotal: 10,
+    pitchMean: 200,
+    pitchStd: 30,
+    energyMean: 0.5,
+    energyStd: 0.1,
+    mfccMean: [],
+    silenceRatio: 0.2,
+    voiceActivityCount: 5,
+    ...overrides,
+  };
+}
+
+function makeDrawing(overrides: Partial<DrawingAnalysisResult> = {}): DrawingAnalysisResult {
+  return {
+    overallScore: 60,
+    strokeCount: 5,
+    closure: 0.8,
+    smoothness: 0.7,
+    classification: 'typical',
+    confidence: 0.85,
+    ...overrides,
+  };
+}
+
+const baseInput: TriageInput = {
+  ageGroup: '25-36m',
+  behavior: makeBehavior(),
+  voice: makeVoice(),
+  drawing: makeDrawing(),
+};
+
+describe('computeTriage', () => {
+  it('returns normal when no metrics breach thresholds', async () => {
+    const result = await computeTriage(baseInput);
+    expect(result.category).toBe('normal');
+    expect(result.anomalyCount).toBe(0);
+    expect(result.summary).toContain('正常範圍');
+  });
+
+  it('returns monitor when 1-2 anomalies present', async () => {
+    const result = await computeTriage({
+      ...baseInput,
+      // Push completion rate well below normal
+      behavior: makeBehavior({ completionRate: 0.2 }),
+    });
+    expect(['monitor', 'refer']).toContain(result.category);
+    expect(result.anomalyCount).toBeGreaterThanOrEqual(1);
+  });
+
+  it('returns refer with >=3 anomalies', async () => {
+    const result = await computeTriage({
+      ...baseInput,
+      behavior: makeBehavior({
+        completionRate: 0.1,
+        operationConsistency: 0.2,
+        reactionLatency: 8000,
+      }),
+      drawing: makeDrawing({ overallScore: 10 }),
+    });
+    expect(result.category).toBe('refer');
+    expect(result.anomalyCount).toBeGreaterThanOrEqual(3);
+    expect(result.summary).toContain('專業評估');
+  });
+
+  it('confidence rises with more anomalies', async () => {
+    const normalResult = await computeTriage(baseInput);
+    const referResult = await computeTriage({
+      ...baseInput,
+      behavior: makeBehavior({
+        completionRate: 0.1,
+        operationConsistency: 0.2,
+        reactionLatency: 8000,
+      }),
+      drawing: makeDrawing({ overallScore: 5 }),
+    });
+    expect(referResult.confidence).toBeGreaterThan(normalResult.confidence);
+  });
+
+  it('includes drawing detail in result', async () => {
+    const result = await computeTriage(baseInput);
+    const drawingDetail = result.details.find((d) => d.metric === 'drawingScore');
+    expect(drawingDetail).toBeDefined();
+    expect(drawingDetail?.value).toBe(60);
+  });
+
+  it('skips voice metrics when voiceDurationTotal is 0', async () => {
+    const result = await computeTriage({
+      ...baseInput,
+      voice: makeVoice({ voiceDurationTotal: 0 }),
+    });
+    expect(result.details.find((d) => d.metric === 'voiceDuration')).toBeUndefined();
+  });
+
+  it('flags gross_motor anomaly when classification === delayed', async () => {
+    const result = await computeTriage({
+      ...baseInput,
+      grossMotor: { classification: 'delayed', confidence: 0.9, features: {} },
+    });
+    const gmDetail = result.details.find((d) => d.domain === 'gross_motor');
+    expect(gmDetail?.isAnomaly).toBe(true);
+  });
+
+  it('includes questionnaire anomaly when score below 50% of max', async () => {
+    const result = await computeTriage({
+      ...baseInput,
+      questionnaireScores: { cognition: 3, language: 8 },
+    });
+    const cognitionDetail = result.details.find((d) => d.domain === 'cognition' && d.metric === 'questionnaireScore');
+    expect(cognitionDetail?.isAnomaly).toBe(true);
+    const langDetail = result.details.find((d) => d.domain === 'language' && d.metric === 'questionnaireScore');
+    expect(langDetail?.isAnomaly).toBe(false);
+  });
+});
