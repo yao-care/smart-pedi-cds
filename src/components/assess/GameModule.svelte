@@ -25,20 +25,41 @@
   const MIN_CARDS_REQUIRED = 6;
   const MAX_BLOCK_MS = 3 * 60 * 1000;
 
+  /** Strip the "領域：" prefix from generated placeholder descriptions
+   *  ("認知：圓形（亮）" → "圓形（亮）"). Real-illustration descriptions
+   *  without the colon pass through unchanged. */
+  function shortLabel(description: string): string {
+    const idx = description.indexOf('：');
+    return idx >= 0 ? description.slice(idx + 1) : description;
+  }
+
   function buildInstruction(level: string, description: string): string {
+    const label = shortLabel(description);
     switch (level) {
       case 'none':
         return '';
       case 'single_verb':
-        return '按一下！';
+        return `看到「${label}」就按一下！`;
       case 'verb_object':
-        return `找出${description}`;
+        return `找出「${label}」`;
       case 'verb_adj_object':
       case 'compound':
-        return `看到${description}就按一下`;
+        return `看到「${label}」就按一下`;
       default:
         return '';
     }
+  }
+
+  /** Web Speech API: speak the instruction. Cancels any pending utterance
+   *  so the next stimulus's prompt isn't queued behind the previous one. */
+  function speak(text: string): void {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    if (!text) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'zh-TW';
+    u.rate = 0.9;
+    window.speechSynthesis.speak(u);
   }
 
   function generateStimuliFromCards(pool: CardItem[], ageGroup: AgeGroupCDSA): Stimulus[] {
@@ -124,6 +145,8 @@
     const _idx = currentIndex;
     const _len = stimuli.length;
     requestAnimationFrame(() => { renderStimulus(); });
+    const stim = stimuli[currentIndex];
+    if (stim?.instruction) speak(stim.instruction);
   });
 
   function onCanvasMount(el: HTMLCanvasElement) {
@@ -220,6 +243,8 @@
         </div>
       {/if}
     </div>
+
+    <p class="card-label" aria-hidden="true">{currentStimulus.description}</p>
   {:else}
     <p class="loading-text">正在準備遊戲…</p>
   {/if}
@@ -271,6 +296,14 @@
     color: var(--color-text-base);
     font-weight: var(--font-medium);
     margin: 0;
+  }
+
+  .card-label {
+    margin-top: var(--space-2);
+    text-align: center;
+    font-size: var(--text-base);
+    color: var(--color-text-muted);
+    line-height: 1.5;
   }
 
   .canvas-container {
