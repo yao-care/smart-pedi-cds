@@ -33,6 +33,14 @@ export interface TriageResult {
      *  treat all metrics uniformly. null when zScore is null (e.g. questionnaire).
      */
     directionalZ: number | null;
+    /** Norm mean/std this metric was scored against (null for non-z metrics).
+     *  Exposed so the physician detail view can show what the value was
+     *  compared to without re-loading norms client-side. */
+    normMean?: number | null;
+    normStd?: number | null;
+    /** Per-metric maximum used to compute isAnomaly for questionnaire rows
+     *  (null for z-based metrics). */
+    maxScore?: number | null;
     isAnomaly: boolean;
   }>;
 }
@@ -98,6 +106,8 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
       value: m.value,
       zScore: z,
       directionalZ: isReversed ? -z : z, // negative = worse than norm; uniform across metrics
+      normMean: norm.mean,
+      normStd: norm.std,
       isAnomaly: effectiveZ >= 1.5, // 1.5 SD worse than mean
     });
   }
@@ -111,6 +121,8 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
     value: input.drawing.overallScore,
     zScore: drawingZ,
     directionalZ: drawingZ,
+    normMean: drawingNorm.mean,
+    normStd: drawingNorm.std,
     isAnomaly: drawingZ <= -1.5,
   });
 
@@ -124,6 +136,8 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
       value: input.voice.voiceDurationTotal,
       zScore: voiceZ,
       directionalZ: voiceZ,
+      normMean: voiceNorm.mean,
+      normStd: voiceNorm.std,
       isAnomaly: voiceZ <= -1.5,
     });
   }
@@ -141,6 +155,7 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
         value: score,
         zScore: null,
         directionalZ: null, // questionnaire has no z concept; radar skips these
+        maxScore,
         isAnomaly: normalized < 0.5,
       });
     }

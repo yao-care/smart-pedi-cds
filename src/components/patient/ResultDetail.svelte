@@ -4,6 +4,35 @@
   import type { Assessment } from '../../lib/db/schema';
   import { db } from '../../lib/db/schema';
 
+  const DOMAIN_LABELS: Record<string, string> = {
+    behavior: '行為',
+    gross_motor: '粗動作',
+    fine_motor: '細動作',
+    language: '語言',
+    language_comprehension: '語言理解',
+    language_expression: '語言表達',
+    cognition: '認知',
+    social_emotional: '社交情緒',
+    diet: '飲食',
+  };
+
+  const METRIC_LABELS: Record<string, string> = {
+    completionRate: '完成率',
+    operationConsistency: '操作一致性',
+    reactionLatency: '反應延遲 (ms)',
+    interactionRhythm: '互動節奏',
+    drawingScore: '繪圖總分',
+    voiceDuration: '發聲總時長 (秒)',
+    questionnaireScore: '問卷得分',
+    poseClassification: '動作分類信心',
+  };
+
+  const CATEGORY_LABELS: Record<string, string> = {
+    normal: '正常',
+    monitor: '追蹤觀察',
+    refer: '建議轉介',
+  };
+
   // Physician-facing detail view. Loads assessment via the cross-device
   // resolver (IDB first, FHIR fallback), enforces auth gate before
   // rendering any clinical data, and surfaces explicit error states.
@@ -113,6 +142,25 @@
       </div>
     </header>
 
+    <section aria-label="分流判定">
+      <h3>分流判定</h3>
+      <div class="triage-summary">
+        <span class="triage-cat triage-{triage.category}">{CATEGORY_LABELS[triage.category]}</span>
+        <span class="muted">信心度 {Math.round(triage.confidence * 100)}%</span>
+        <span class="muted">·</span>
+        <span class="muted">異常 metric {triage.details?.filter((d) => d.isAnomaly).length ?? 0} 項 / {triage.details?.length ?? 0} 項</span>
+      </div>
+      <details class="rule-detail">
+        <summary>分流判定規則</summary>
+        <ul>
+          <li><strong>refer</strong>：≥ 3 個異常 metric 且 ≥ 2 個 domain 受影響</li>
+          <li><strong>monitor</strong>：≥ 1 個異常 metric（未達轉介門檻）</li>
+          <li><strong>normal</strong>：無任何異常 metric</li>
+          <li>異常 metric 判定：z-score ≤ -1.5（反向 metric 則 ≥ 1.5）；問卷得分 / 上限 &lt; 50%</li>
+        </ul>
+      </details>
+    </section>
+
     <section aria-label="完整指標">
       <h3>完整指標</h3>
       {#if triage.details && triage.details.length > 0}
@@ -122,6 +170,7 @@
               <th>領域</th>
               <th>指標</th>
               <th>數值</th>
+              <th>常模 / 上限</th>
               <th>Z-score</th>
               <th>方向 Z</th>
               <th>狀態</th>
@@ -130,16 +179,28 @@
           <tbody>
             {#each triage.details as d}
               <tr class:anomaly={d.isAnomaly}>
-                <td>{d.domain}</td>
-                <td>{d.metric}</td>
+                <td>{DOMAIN_LABELS[d.domain] ?? d.domain}</td>
+                <td>{METRIC_LABELS[d.metric] ?? d.metric}</td>
                 <td class="num">{typeof d.value === 'number' ? d.value.toFixed(2) : d.value}</td>
+                <td class="num norm">
+                  {#if d.normMean != null && d.normStd != null}
+                    {d.normMean.toFixed(2)} ± {d.normStd.toFixed(2)}
+                  {:else if d.maxScore != null}
+                    上限 {d.maxScore}
+                  {:else}
+                    —
+                  {/if}
+                </td>
                 <td class="num">{d.zScore !== null ? d.zScore.toFixed(2) : '—'}</td>
                 <td class="num">{d.directionalZ !== null && d.directionalZ !== undefined ? d.directionalZ.toFixed(2) : '—'}</td>
-                <td>{d.isAnomaly ? '偏離' : '正常'}</td>
+                <td><span class="status-pill status-{d.isAnomaly ? 'anomaly' : 'normal'}">{d.isAnomaly ? '偏離' : '正常'}</span></td>
               </tr>
             {/each}
           </tbody>
         </table>
+        <p class="muted small">
+          常模 = 該年齡層該指標的平均值 ± 標準差，目前使用內建預設值。可在「設定 → 常模管理」改為醫院本地常模。
+        </p>
       {:else}
         <p class="muted">此評估未保留 metric 細節，可能來自舊版或精簡 FHIR 紀錄。</p>
       {/if}
@@ -252,6 +313,59 @@
   .metric-table tr.anomaly {
     background: var(--color-risk-critical-bg);
   }
+
+  .metric-table td.norm {
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+  }
+
+  .triage-summary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    font-size: var(--text-sm);
+  }
+
+  .triage-cat {
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    font-weight: var(--font-bold);
+    font-size: var(--text-sm);
+  }
+
+  .triage-normal { background: var(--color-risk-normal-bg); color: var(--color-risk-normal); }
+  .triage-monitor { background: var(--color-risk-warning-bg); color: var(--color-risk-warning); }
+  .triage-refer { background: var(--color-risk-critical-bg); color: var(--color-risk-critical); }
+
+  .rule-detail {
+    margin-top: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+
+  .rule-detail summary {
+    cursor: pointer;
+    color: var(--color-accent);
+    margin-bottom: var(--space-1);
+  }
+
+  .rule-detail ul {
+    margin: var(--space-2) 0 0;
+    padding-left: var(--space-5);
+    line-height: 1.6;
+  }
+
+  .status-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-size: 0.7rem;
+    font-weight: var(--font-medium);
+  }
+
+  .status-pill.status-normal { background: var(--color-risk-normal-bg); color: var(--color-risk-normal); }
+  .status-pill.status-anomaly { background: var(--color-risk-critical-bg); color: var(--color-risk-critical); }
 
   .muted {
     color: var(--color-text-muted);

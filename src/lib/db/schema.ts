@@ -133,6 +133,9 @@ export interface Assessment {
       value: number;
       zScore: number | null;
       directionalZ: number | null;
+      normMean?: number | null;
+      normStd?: number | null;
+      maxScore?: number | null;
       isAnomaly: boolean;
     }>;
     anomalyCount?: number;
