@@ -30,6 +30,61 @@ function shuffle<T>(array: T[], rng: () => number): T[] {
 }
 
 /**
+ * Pick distractor cards for a multi-choice stimulus.
+ *
+ * Priority order:
+ *   1. Same domain, different description (different shape/variant) — preferred
+ *   2. Same domain, different id (allow same description)
+ *   3. Any approved card different from the target — last resort
+ *
+ * When the pool is small enough that fewer than `count` distractors exist,
+ * returns whatever is available (caller treats it as a smaller-options
+ * stimulus). All inputs must already be filtered to approved cards.
+ */
+export function selectDistractors(
+  pool: CardItem[],
+  target: CardItem,
+  count: number,
+  rng: () => number = Math.random,
+): CardItem[] {
+  const seen = new Set<string>([target.id]);
+  const ordered: CardItem[] = [];
+
+  const tier1 = pool.filter(
+    (c) => c.domain === target.domain && c.id !== target.id && c.description !== target.description,
+  );
+  for (const c of shuffle(tier1, rng)) {
+    if (ordered.length >= count) break;
+    if (!seen.has(c.id)) {
+      seen.add(c.id);
+      ordered.push(c);
+    }
+  }
+
+  if (ordered.length < count) {
+    const tier2 = pool.filter((c) => c.domain === target.domain && !seen.has(c.id));
+    for (const c of shuffle(tier2, rng)) {
+      if (ordered.length >= count) break;
+      if (!seen.has(c.id)) {
+        seen.add(c.id);
+        ordered.push(c);
+      }
+    }
+  }
+
+  if (ordered.length < count) {
+    const tier3 = pool.filter((c) => !seen.has(c.id));
+    for (const c of shuffle(tier3, rng)) {
+      if (ordered.length >= count) break;
+      seen.add(c.id);
+      ordered.push(c);
+    }
+  }
+
+  return ordered;
+}
+
+/**
  * Select cards for one game block.
  * - Only `approved` cards are considered.
  * - Cards whose `ageGroups` list is non-empty must include the target group.

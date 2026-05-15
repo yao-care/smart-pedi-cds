@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { selectCardsForGame, type CardItem, type CardDomain } from '../../src/engine/cdsa/card-selector';
+import { selectCardsForGame, selectDistractors, type CardItem, type CardDomain } from '../../src/engine/cdsa/card-selector';
 
 const DOMAINS: CardDomain[] = [
   'gross_motor', 'fine_motor', 'language_comp',
@@ -95,5 +95,65 @@ describe('selectCardsForGame', () => {
     ];
     const out = selectCardsForGame(tainted, '25-36m', 10);
     expect(out.find((c) => c.id === 'bad')).toBeUndefined();
+  });
+});
+
+describe('selectDistractors', () => {
+  const target = makeCard('cog-circle-light', 'cognition', {
+    description: '認知：圓形（亮）',
+  });
+  const sameDomainDifferent = [
+    makeCard('cog-square-light', 'cognition', { description: '認知：方形（亮）' }),
+    makeCard('cog-triangle-light', 'cognition', { description: '認知：三角形（亮）' }),
+    makeCard('cog-star-light', 'cognition', { description: '認知：星形（亮）' }),
+  ];
+  const sameDomainSameDescription = [
+    makeCard('cog-circle-dup', 'cognition', { description: '認知：圓形（亮）' }),
+  ];
+  const otherDomain = [
+    makeCard('gm-running', 'gross_motor', { description: '粗動作：跑步' }),
+    makeCard('gm-jumping', 'gross_motor', { description: '粗動作：跳' }),
+  ];
+
+  it('returns same-domain different-description cards first', () => {
+    const pool = [target, ...sameDomainDifferent, ...otherDomain];
+    const distractors = selectDistractors(pool, target, 2);
+    expect(distractors).toHaveLength(2);
+    for (const d of distractors) {
+      expect(d.domain).toBe('cognition');
+      expect(d.description).not.toBe(target.description);
+    }
+  });
+
+  it('never includes the target itself', () => {
+    const pool = [target, ...sameDomainDifferent];
+    const distractors = selectDistractors(pool, target, 3);
+    expect(distractors.find((d) => d.id === target.id)).toBeUndefined();
+  });
+
+  it('falls back to same-domain same-description when tier 1 is exhausted', () => {
+    const pool = [target, sameDomainDifferent[0], ...sameDomainSameDescription];
+    const distractors = selectDistractors(pool, target, 2);
+    expect(distractors).toHaveLength(2);
+    expect(distractors.map((d) => d.id).sort()).toContain('cog-circle-dup');
+  });
+
+  it('falls back to other domains as last resort', () => {
+    const pool = [target, ...otherDomain];
+    const distractors = selectDistractors(pool, target, 2);
+    expect(distractors).toHaveLength(2);
+    expect(distractors.every((d) => d.domain === 'gross_motor')).toBe(true);
+  });
+
+  it('returns fewer than requested when the pool is too small', () => {
+    const distractors = selectDistractors([target], target, 3);
+    expect(distractors).toHaveLength(0);
+  });
+
+  it('never returns duplicates', () => {
+    const pool = [target, ...sameDomainDifferent];
+    const distractors = selectDistractors(pool, target, 3);
+    const ids = new Set(distractors.map((d) => d.id));
+    expect(ids.size).toBe(distractors.length);
   });
 });

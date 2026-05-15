@@ -4,7 +4,11 @@
   import { analyzeBehavior } from '../../engine/cdsa/behavior-analysis';
   import { instructionLevel } from '../../lib/utils/age-groups';
   import type { AgeGroupCDSA } from '../../lib/utils/age-groups';
-  import { selectCardsForGame, type CardItem } from '../../engine/cdsa/card-selector';
+  import {
+    selectCardsForGame,
+    selectDistractors,
+    type CardItem,
+  } from '../../engine/cdsa/card-selector';
 
   interface Props {
     cards: CardItem[];
@@ -12,13 +16,19 @@
 
   let { cards }: Props = $props();
 
+  interface StimulusOption {
+    cardId: string;
+    imageUrl: string;
+    isTarget: boolean;
+  }
+
   interface Stimulus {
     id: string;
-    cardId: string;
+    targetCardId: string;
     domain: string;
     instruction: string;
-    imageUrl: string;
-    description: string;
+    description: string;        // target's description
+    options: StimulusOption[];  // shuffled — target sits anywhere in the array
   }
 
   const FEEDBACKS = ['好棒！', '不錯喔！', '很好！', '太厲害了！', '繼續加油！'];
@@ -79,18 +89,59 @@
     window.speechSynthesis.speak(u);
   }
 
+  /** Map instruction level → number of options shown per stimulus.
+   *  none / single_verb: 1 option (passive observation / pure reaction).
+   *  verb_object: 2-choice, verb_adj_object: 3-choice, compound: 4-choice. */
+  function optionsForLevel(level: string): number {
+    switch (level) {
+      case 'verb_object': return 2;
+      case 'verb_adj_object': return 3;
+      case 'compound': return 4;
+      default: return 1;
+    }
+  }
+
+  function cardImageUrl(card: CardItem): string {
+    return `${import.meta.env.BASE_URL.replace(/\/$/, '')}/cards/${card.filename}`;
+  }
+
+  function shuffle<T>(arr: T[]): T[] {
+    const out = [...arr];
+    for (let i = out.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [out[i], out[j]] = [out[j], out[i]];
+    }
+    return out;
+  }
+
   function generateStimuliFromCards(pool: CardItem[], ageGroup: AgeGroupCDSA): Stimulus[] {
     const level = instructionLevel(ageGroup);
-    const count = level === 'none' ? 6 : level === 'single_verb' ? 8 : 10;
-    const picks = selectCardsForGame(pool, ageGroup, count);
-    return picks.map((card, i) => ({
-      id: `game-${i}`,
-      cardId: card.id,
-      domain: card.domain,
-      imageUrl: `${import.meta.env.BASE_URL.replace(/\/$/, '')}/cards/${card.filename}`,
-      description: card.description,
-      instruction: buildInstruction(level, card.description),
-    }));
+    const stimulusCount = level === 'none' ? 6 : level === 'single_verb' ? 8 : 10;
+    const optsPerStim = optionsForLevel(level);
+    const targets = selectCardsForGame(pool, ageGroup, stimulusCount);
+    const approved = pool.filter((c) => c.reviewStatus === 'approved');
+
+    return targets.map((target, i) => {
+      const distractors = optsPerStim > 1
+        ? selectDistractors(approved, target, optsPerStim - 1)
+        : [];
+      const options: StimulusOption[] = shuffle([
+        { cardId: target.id, imageUrl: cardImageUrl(target), isTarget: true },
+        ...distractors.map((d) => ({
+          cardId: d.id,
+          imageUrl: cardImageUrl(d),
+          isTarget: false,
+        })),
+      ]);
+      return {
+        id: `game-${i}`,
+        targetCardId: target.id,
+        domain: target.domain,
+        description: target.description,
+        instruction: buildInstruction(level, target.description),
+        options,
+      };
+    });
   }
 
   // ---- Reactive state ----
@@ -129,6 +180,26 @@
     });
   }
 
+  /** Grid layout for N options on the canvas.
+   *  1 → 1×1, 2 → 1×2, 3 → 1×3, 4 → 2×2. Returns the per-cell bounding box. */
+  function layoutFor(count: number, w: number, h: number) {
+    let cols = 1, rows = 1;
+    if (count === 2) { cols = 2; rows = 1; }
+    else if (count === 3) { cols = 3; rows = 1; }
+    else if (count === 4) { cols = 2; rows = 2; }
+    const cellW = w / cols;
+    const cellH = h / rows;
+    const cells: Array<{ x: number; y: number; w: number; h: number }> = [];
+    for (let i = 0; i < count; i++) {
+      const c = i % cols;
+      const r = Math.floor(i / cols);
+      cells.push({ x: c * cellW, y: r * cellH, w: cellW, h: cellH });
+    }
+    return cells;
+  }
+
+  let optionCells = $state<Array<{ x: number; y: number; w: number; h: number }>>([]);
+
   async function renderStimulus(): Promise<void> {
     if (!canvasEl) return;
     const stim = stimuli[currentIndex];
@@ -141,19 +212,33 @@
     ctx.fillStyle = '#fafafa';
     ctx.fillRect(0, 0, w, h);
 
-    try {
-      const img = await preloadImage(stim.imageUrl);
-      const scale = Math.min(w / img.width, h / img.height) * 0.85;
-      const dw = img.width * scale;
-      const dh = img.height * scale;
-      const dx = (w - dw) / 2;
-      const dy = (h - dh) / 2;
-      ctx.drawImage(img, dx, dy, dw, dh);
-    } catch {
-      ctx.fillStyle = '#888';
-      ctx.font = '20px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('（圖片載入失敗）', w / 2, h / 2);
+    const cells = layoutFor(stim.options.length, w, h);
+    optionCells = cells;
+
+    for (let i = 0; i < stim.options.length; i++) {
+      const opt = stim.options[i];
+      const cell = cells[i];
+      // Cell background + subtle separator
+      ctx.strokeStyle = '#e5e7eb';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(cell.x, cell.y, cell.w, cell.h);
+      try {
+        const img = await preloadImage(opt.imageUrl);
+        const padding = 8;
+        const maxW = cell.w - padding * 2;
+        const maxH = cell.h - padding * 2;
+        const scale = Math.min(maxW / img.width, maxH / img.height);
+        const dw = img.width * scale;
+        const dh = img.height * scale;
+        const dx = cell.x + (cell.w - dw) / 2;
+        const dy = cell.y + (cell.h - dh) / 2;
+        ctx.drawImage(img, dx, dy, dw, dh);
+      } catch {
+        ctx.fillStyle = '#888';
+        ctx.font = '16px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('（載入失敗）', cell.x + cell.w / 2, cell.y + cell.h / 2);
+      }
     }
     stimulusStartTime = Date.now();
   }
@@ -181,9 +266,31 @@
     }
   }
 
-  function handleCanvasClick(): void {
+  /** Hit-test the click against the option grid cells. Returns the clicked
+   *  option index, or -1 when the click landed in a gap (treated as miss). */
+  function hitTest(clientX: number, clientY: number): number {
+    if (!canvasEl) return -1;
+    const rect = canvasEl.getBoundingClientRect();
+    const scaleX = canvasEl.width / rect.width;
+    const scaleY = canvasEl.height / rect.height;
+    const x = (clientX - rect.left) * scaleX;
+    const y = (clientY - rect.top) * scaleY;
+    return optionCells.findIndex(
+      (c) => x >= c.x && x < c.x + c.w && y >= c.y && y < c.y + c.h,
+    );
+  }
+
+  function handleCanvasClick(ev: MouseEvent): void {
     if (showFeedback || isComplete || !currentStimulus) return;
     const latency = Date.now() - stimulusStartTime;
+    const idx = hitTest(ev.clientX, ev.clientY);
+    const clickedOption = idx >= 0 ? currentStimulus.options[idx] : null;
+    // For pure-reaction levels (single option) every click is correct.
+    // For multi-choice, correct only when the click lands on the target cell.
+    const isMultiChoice = currentStimulus.options.length > 1;
+    const correct = isMultiChoice
+      ? clickedOption?.isTarget === true
+      : true;
 
     if (assessmentStore.assessment) {
       recordEvent({
@@ -194,14 +301,18 @@
         timestamp: new Date(),
         data: {
           stimulusId: currentStimulus.id,
-          cardId: currentStimulus.cardId,
+          cardId: currentStimulus.targetCardId,
+          clickedCardId: clickedOption?.cardId ?? null,
           domain: currentStimulus.domain,
           latency,
-          correct: true,
+          correct,
+          optionCount: currentStimulus.options.length,
         },
       });
     }
 
+    // Always-positive feedback per CDSA spec — never tell the child they
+    // were wrong. behavior-analysis still records correctness for triage.
     feedbackText = FEEDBACKS[Math.floor(Math.random() * FEEDBACKS.length)];
     showFeedback = true;
     setTimeout(advance, 800);
@@ -261,7 +372,9 @@
       {/if}
     </div>
 
-    <p class="card-label" aria-hidden="true">{currentStimulus.description}</p>
+    {#if currentStimulus.options.length === 1}
+      <p class="card-label" aria-hidden="true">{currentStimulus.description}</p>
+    {/if}
   {:else}
     <p class="loading-text">正在準備遊戲…</p>
   {/if}
