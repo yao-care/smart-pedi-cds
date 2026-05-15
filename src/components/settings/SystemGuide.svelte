@@ -1,0 +1,227 @@
+<script lang="ts">
+  /**
+   * /settings/ 系統說明 — 給「導入這個系統的醫院」看。
+   * 解釋多租戶機制、評分邏輯、各 settings tab 的用途、PHI 注意事項、部署期限。
+   * 純文字頁，無資料依賴。
+   */
+</script>
+
+<article class="guide">
+  <h2>系統運作說明</h2>
+  <p class="lede">這份說明寫給導入本系統的醫院技術窗口與臨床主管。內容涵蓋系統定位、多租戶設計、評分邏輯、各設定 tab 的用途與資料治理重點。</p>
+
+  <section>
+    <h3>系統定位</h3>
+    <p>
+      CDSA 兒童發展智慧評估系統採用 <strong>Astro 5 SSG + Svelte 5 + IndexedDB</strong>，
+      所有頁面在 build 時靜態產出，部署在 GitHub Pages 上、零後端。
+      家長端評估過程的事件、繪圖筆跡、分流結果都儲存在
+      <strong>使用者瀏覽器的 IndexedDB</strong>，不會送到任何第三方。
+    </p>
+    <p>
+      跨裝置共享靠 <strong>SMART on FHIR</strong>：家長完成評估後可選擇將結果以
+      <code>Observation + DiagnosticReport</code> 推送到醫院的 FHIR Server，
+      醫師端工作台再從 Server 拉回展示。
+    </p>
+  </section>
+
+  <section>
+    <h3>多租戶機制</h3>
+    <p>
+      系統用<strong>連線中的 FHIR base URL</strong> 作為 tenant 識別碼。
+      `tenantSettings`、`customEducation`、`recommendationOverlays`、
+      `normThresholds` 全部以此 ID 做 partition。
+    </p>
+    <p>
+      醫院 A 跟醫院 B 即使共用同一台裝置（瀏覽器）開啟，切換 FHIR Server 後設定不會混淆。
+      未連線時走「預設租戶」（tenant id = <code>default</code>），用內建衛教與系統預設規則。
+    </p>
+  </section>
+
+  <section>
+    <h3>評分邏輯（CDSA 分流）</h3>
+    <ol>
+      <li>
+        <strong>各 metric 偵測</strong>：
+        遊戲行為（反應延遲、完成率、操作一致性、互動節奏）→ z-score；
+        繪圖 / 語音 → z-score；
+        問卷 → 得分 ÷ 上限；
+        姿態分析 → 二元分類。
+      </li>
+      <li>
+        <strong>異常判定</strong>：z-score ≤ -1.5（反向 metric ≥ +1.5）視為偏離；
+        問卷得分比 &lt; 50% 視為偏離。
+      </li>
+      <li>
+        <strong>三類分流</strong>：
+        <ul>
+          <li><strong>refer（建議轉介）</strong>：≥ 3 個異常 metric 且異常分布在 ≥ 2 個 domain</li>
+          <li><strong>monitor（追蹤觀察）</strong>：≥ 1 個異常 metric（未達轉介門檻）</li>
+          <li><strong>normal（正常）</strong>：無任何異常 metric</li>
+        </ul>
+      </li>
+      <li>
+        <strong>信心度</strong>：refer 用 <code>min(0.95, 0.7 + 0.04×count + 0.05×domains)</code>，
+        monitor 用 <code>min(0.90, 0.6 + 0.08×count + 0.04×domains)</code>，
+        normal 固定 0.85。
+      </li>
+    </ol>
+    <p class="caveat">
+      常模目前為系統內建預設值。建議部署時到「常模管理」tab 改成醫院本地常模，分流結果才能反映真實族群。
+    </p>
+  </section>
+
+  <section>
+    <h3>各設定 Tab 的用途</h3>
+    <dl class="tab-list">
+      <dt>FHIR Server 設定</dt>
+      <dd>新增、編輯醫院 FHIR Server（base URL、Client ID、scopes）。儲存後到 /workspace/ 即可連線。</dd>
+
+      <dt>規則管理</dt>
+      <dd>生命徵象警示閾值（正常 / 注意 / 警告）的 YAML 規則。覆寫系統預設、影響所有預警觸發。</dd>
+
+      <dt>Webhook 設定</dt>
+      <dd>當預警產生時，向外部系統（醫院 HIS、Slack、訊息中介）發送 webhook 的 URL 與簽章。</dd>
+
+      <dt>通知偏好</dt>
+      <dd>瀏覽器通知、聲音、批次間隔。儲存在本機，不同裝置獨立設定。</dd>
+
+      <dt>模型管理</dt>
+      <dd>檢視 / 更新本機 ONNX 模型（繪圖分類、姿態判斷）的版本與發佈日期。</dd>
+
+      <dt>衛教管理</dt>
+      <dd>醫院自上傳的衛教內容（文章 / 影片），會出現在 <code>/education/</code> 列表與評估後推薦。</dd>
+
+      <dt>評估推薦</dt>
+      <dd>per category × domain 自訂評估後給家長看的衛教清單。可選「合併系統預設」或「完全取代」。</dd>
+
+      <dt>常模管理</dt>
+      <dd>per ageGroup × metric 編輯 mean / std，分流引擎優先採用，缺值回退到系統預設。建議部署時逐項評估後填入。</dd>
+
+      <dt>系統說明</dt>
+      <dd>本頁。</dd>
+    </dl>
+  </section>
+
+  <section>
+    <h3>PHI 與資料治理</h3>
+    <ul>
+      <li><strong>家長端 IndexedDB</strong>：包含兒童基本資料、評估事件、PII。屬於該裝置的本地資料，<strong>不會自動上傳任何位置</strong>。家長清除瀏覽器資料即刪除。</li>
+      <li><strong>FHIR 上傳</strong>：只有家長明確按下「傳送結果至醫院」才會推送，且僅傳 Observation + DiagnosticReport（分數、結論），不傳原始事件 timeline。</li>
+      <li><strong>URL 安全</strong>：所有 assessment id 都是隨機 UUID v4，不含 PII；結果頁加 <code>referrer no-referrer</code> 避免外洩。</li>
+      <li><strong>多 child 設備</strong>：本系統假設「一台裝置一個 child」（家用情境）。診所共用裝置請確保每次評估前清空本機。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h3>部署注意事項</h3>
+    <ul>
+      <li>部署為純靜態網站；GitHub Pages、Vercel、Cloudflare Pages、Nginx 皆可。</li>
+      <li>建議 HTTPS + custom domain。SMART on FHIR 通常要求 HTTPS redirect_uri。</li>
+      <li><code>scripts/base.mjs</code> 控制 base path；部署於子目錄需改 <code>BASE_PATH</code>。</li>
+      <li>無 server 端日誌；錯誤回報可考慮接 Sentry / 自家 Webhook。</li>
+      <li>常模 / 規則 / 衛教 / 推薦 都存在使用者裝置的 IndexedDB — 建議搭配 export / import 功能（未來迭代）做備援。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h3>已知限制 / 未來工作</h3>
+    <ul>
+      <li>常模沒有 UI 匯入 CSV / JSON，目前只能逐項手動填。</li>
+      <li>多 child 切換、家庭模式尚未實作。</li>
+      <li>FHIR 端的 DiagnosticReport 反查不含原始事件 timeline。</li>
+      <li>i18n 目前只支援 zh-TW。</li>
+    </ul>
+  </section>
+
+  <section class="footer-note">
+    <p>
+      原始碼：
+      <a href="https://github.com/yao-care/smart-pedi-cds" target="_blank" rel="noopener noreferrer">github.com/yao-care/smart-pedi-cds</a>。
+      授權：MIT。
+    </p>
+  </section>
+</article>
+
+<style>
+  .guide {
+    max-width: 760px;
+    line-height: 1.7;
+    color: var(--color-text-base);
+  }
+
+  .guide h2 {
+    font-size: var(--text-2xl);
+    margin: 0 0 var(--space-3);
+  }
+
+  .lede {
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-6);
+  }
+
+  .guide section {
+    margin-bottom: var(--space-7);
+  }
+
+  .guide h3 {
+    font-size: var(--text-lg);
+    margin: 0 0 var(--space-2);
+  }
+
+  .guide p,
+  .guide ul,
+  .guide ol,
+  .guide dl {
+    margin: 0 0 var(--space-3);
+  }
+
+  .guide ul,
+  .guide ol {
+    padding-left: var(--space-6);
+  }
+
+  .guide :global(ol ul) {
+    margin: var(--space-1) 0;
+    padding-left: var(--space-5);
+  }
+
+  .guide a {
+    color: var(--color-accent);
+  }
+
+  .guide code {
+    background: var(--bg-muted);
+    padding: 0 0.3em;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+
+  .tab-list dt {
+    font-weight: var(--font-bold);
+    margin-top: var(--space-2);
+  }
+
+  .tab-list dd {
+    margin: 0 0 var(--space-2);
+    color: var(--color-text-muted);
+    padding-left: var(--space-4);
+  }
+
+  .caveat {
+    padding: var(--space-3);
+    background: var(--color-risk-advisory-bg);
+    border-left: 3px solid var(--color-risk-advisory);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-base);
+    font-size: var(--text-sm);
+  }
+
+  .footer-note {
+    margin-top: var(--space-8);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border-default);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+</style>
