@@ -171,17 +171,41 @@ export async function markFhirSubmitted(id: string, fhirDiagnosticReportId: stri
 
 ### 1.7 effectivePeriod 對未完成評估降級（**NEW-M-B 修正**）
 
-submit 端：若 `assessment.completedAt` 為 `undefined`，**改寫 `effectiveDateTime` 而非 `effectivePeriod`**（避免送出 `end: undefined` 觸發 server 400）：
+submit 端：若 `assessment.completedAt` 為 `undefined`，**改寫 `effectiveDateTime` 而非 `effectivePeriod`**（避免送出 `end: undefined` 觸發 server 400）。
+
+`buildTriageDiagnosticReport` 函式內部結構：
 
 ```ts
-const effective = assessment.completedAt
-  ? { effectivePeriod: { start: assessment.startedAt.toISOString(), end: assessment.completedAt.toISOString() } }
-  : { effectiveDateTime: assessment.startedAt.toISOString() };
+export function buildTriageDiagnosticReport(
+  assessment: Assessment,
+  childId: string,
+  triageResult: TriageResult,
+  observationIds: string[],
+): FhirDiagnosticReport {
+  const effective = assessment.completedAt
+    ? { effectivePeriod: {
+        start: assessment.startedAt.toISOString(),
+        end: assessment.completedAt.toISOString(),
+      } }
+    : { effectiveDateTime: assessment.startedAt.toISOString() };
 
-return { ...baseReport, ...effective };
+  return {
+    resourceType: 'DiagnosticReport',
+    identifier: [{ system: ID_SYSTEM, value: assessment.id }],
+    status: 'final',
+    code: { coding: [REPORT_CODE] },
+    subject: { reference: `Patient/${childId}` },
+    ...effective,                       // spread effectivePeriod 或 effectiveDateTime
+    issued: new Date().toISOString(),
+    result: observationIds.map(id => ({ reference: `Observation/${id}` })),
+    extension: [{ url: CONFIDENCE_EXT_URL, valueDecimal: triageResult.confidence }],
+    conclusion: triageResult.summary,
+    conclusionCode: [/* 既有 SNOMED mapping */],
+  };
+}
 ```
 
-反序列化端 `bundleToAssessment` 兩者都試（v4 已有）。
+反序列化端 `bundleToAssessment` 兩者都試（v4 已實作於 fetch 段）。
 
 ### 1.8 extension 與 effective 在第三方 server 的相容性（**NEW-M-B 提醒**）
 
@@ -238,7 +262,9 @@ return { ...baseReport, ...effective };
    - 語義：directionalZ = 0（同常模）→ 50；directionalZ = -1.5（明顯落後）→ 35；directionalZ = +1.5（明顯領先）→ 65
    - 異常 domain（`directionalZ ≤ -1.5`，等同既有 `isAnomaly`）用紅點 + 粗線標示
 
-   **per-domain 聚合**：一個 domain 有多個 metric（例如 behavior 有 4 個），雷達圖一個 domain 一個值，取所有 metric `directionalZ` 平均（簡單聚合，後續可調權重）。
+   **per-domain 聚合**：一個 domain 有多個 metric（例如 behavior 有 4 個），雷達圖一個 domain 一個值，取所有 metric `directionalZ` 平均。
+
+   **null 處理**：`questionnaireScore` 與 `poseClassification` 在 `triage.ts` 留 `zScore: null`（沒有 z 概念），對應 `directionalZ: null`。聚合時 skip null（不參與平均），若一個 domain 所有 metric 都是 null → score 取 50（中性）。
 3. **為您挑選的衛教** — 沿用 EducationMatch，視覺升級
 4. **行動按鈕區**
    - 主：下載 PDF 報告
@@ -456,7 +482,11 @@ function parseObservationCode(text: string): { domain: string; metric: string } 
 
 實測 fhirclient v2 **不會**在 `client.request()` 401 時自動 refresh，必須呼叫端 catch + `refreshToken()`（`src/lib/fhir/client.ts:86`）+ retry 一次。Resolver 已實作（見上）。Retry 仍失敗才 surface `token_expired`。
 
-UI relaunch link 不直接到 `/launch/`（需 `iss` + `clientId` query），改到 `/workspace/`：該頁有 `<ServerConfig>` 元件可從 `serverConfigs` IDB store 重新發起 SMART launch。Spec 不重複設計 relaunch flow。
+UI relaunch link 不直接到 `/launch/`（需 `iss` + `clientId` query），改到 `/workspace/?return=/workspace/result/?id={id}`：
+
+- `/workspace/` 的 ServerConfig 元件登入成功後讀 `?return=` query 並 `window.location.href = decoded(returnUrl)`，把醫師送回原本要看的頁
+- ServerConfig 元件需小改：完成 auth 後若 URL 帶 `?return=`，redirect；否則維持原行為
+- spec 接受這個小改動為實作步驟之一，列入受影響檔案
 
 ### 資訊架構
 
@@ -675,6 +705,7 @@ Observation code.text 涉及的 metric 名稱（由 `triage.ts` 與 PartialAnaly
 ### 自動驗證
 
 - `pnpm check && pnpm lint && pnpm test`
+- **先跑既有測試**：`pnpm test tests/engine/triage.test.ts` — 新增 `directionalZ` 屬於 additive 變動，既有 25 個測試不應破壞；先確認基線再開始改 UI
 - `pnpm build && pnpm preview` 開瀏覽器
 - DevTools mobile viewport 確認響應式
 - Console 無新 error
@@ -705,7 +736,9 @@ Observation code.text 涉及的 metric 名稱（由 `triage.ts` 與 PartialAnaly
 |------|---------|
 | FHIR identifier round-trip | `src/lib/fhir/cdsa-resources.ts` 改 + `src/lib/fhir/cdsa-submit.ts` 改 |
 | 雙來源 resolver | `src/lib/fhir/assessment-fetch.ts`（新）+ `src/lib/db/assessment-resolver.ts`（新） |
-| Schema | `src/lib/db/schema.ts` 加 3 個欄位（**不升 version**：`fhirDiagnosticReportId`、`physicianNote`、`physicianNoteUpdatedAt`） |
+| Schema | `src/lib/db/schema.ts` 加 4 個欄位（**不升 version**：`fhirDiagnosticReportId`、`physicianNote`、`physicianNoteUpdatedAt`、`_source`） |
+| Triage | `src/engine/cdsa/triage.ts`：`details[]` 加 `directionalZ: number \| null`（null 處理見下） |
+| FHIR submit | `src/lib/db/assessments.ts:58` `markFhirSubmitted` 加 `fhirDiagnosticReportId` 參數；`src/lib/fhir/cdsa-submit.ts:69` call site 同步 |
 | 圖卡 ASCII 化 | `scripts/generate-placeholder-cards.mjs` 改 + `pnpm generate:cards` 重產 + `src/data/cards/index.json` |
 | 1A 家長簡視 | `src/pages/result/index.astro`（新）+ `src/components/assess/ResultView.svelte` 大改 + `RadarChart.svelte` 修綁定 |
 | 1B 醫師詳視 | `src/pages/workspace/result/index.astro`（新）+ `src/components/patient/ResultDetail.svelte`（新） |
