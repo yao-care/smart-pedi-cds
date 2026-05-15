@@ -339,8 +339,8 @@
   }
 
   .model-section h3 {
-    font-size: 1rem;
-    font-weight: 600;
+    font-size: var(--text-base);
+    font-weight: var(--font-bold);
     color: var(--color-text-base);
     margin: 0 0 var(--space-3) 0;
   }
@@ -366,9 +366,9 @@
   }
 
   .model-filename {
-    font-weight: 600;
-    font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
-    font-size: 0.9375rem;
+    font-weight: var(--font-bold);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
     color: var(--color-text-base);
   }
 
@@ -382,7 +382,7 @@
   .meta-row {
     display: flex;
     gap: var(--space-3);
-    font-size: 0.8125rem;
+    font-size: var(--text-xs);
   }
 
   .meta-row dt {
@@ -397,14 +397,14 @@
   }
 
   .mono {
-    font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
+    font-family: var(--font-mono);
   }
 
   .no-model {
     padding: var(--space-6);
     text-align: center;
     color: var(--color-text-muted);
-    font-size: 0.875rem;
+    font-size: var(--text-xs);
     border: 1px dashed var(--border-default);
     border-radius: var(--radius-md);
     background: var(--bg-surface);
@@ -446,13 +446,13 @@
   }
 
   .upload-text {
-    font-size: 0.9375rem;
-    font-weight: 500;
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
     color: var(--color-text-base);
   }
 
   .upload-hint {
-    font-size: 0.8125rem;
+    font-size: var(--text-xs);
     color: var(--color-text-muted);
   }
 
@@ -477,7 +477,7 @@
 
   .metrics-note {
     margin: 0;
-    font-size: 0.8125rem;
+    font-size: var(--text-xs);
     color: var(--color-text-muted);
   }
 
@@ -500,16 +500,16 @@
   }
 
   .metric-card dt {
-    font-size: 0.75rem;
-    font-weight: 500;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     color: var(--color-text-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
 
   .metric-value {
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: var(--text-xl);
+    font-weight: var(--font-bold);
     color: var(--color-text-base);
     margin: 0;
   }
@@ -520,7 +520,7 @@
 
   .sample-count {
     margin: var(--space-3) 0 0 0;
-    font-size: 0.8125rem;
+    font-size: var(--text-xs);
     color: var(--color-text-muted);
   }
 
@@ -560,15 +560,15 @@
   }
 
   .version-filename {
-    font-weight: 500;
-    font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
-    font-size: 0.875rem;
+    font-weight: var(--font-medium);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
     color: var(--color-text-base);
     word-break: break-all;
   }
 
   .version-meta {
-    font-size: 0.75rem;
+    font-size: var(--text-xs);
     color: var(--color-text-muted);
   }
 
@@ -581,8 +581,8 @@
   /* Export */
   .export-description {
     margin: 0 0 var(--space-3) 0;
-    font-size: 0.875rem;
+    font-size: var(--text-xs);
     color: var(--color-text-muted);
-    line-height: 1.6;
+    line-height: var(--lh-xs);
   }
 </style>

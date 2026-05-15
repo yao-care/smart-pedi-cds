@@ -335,7 +335,7 @@ rules:
   }
 
   .section-header h3 {
-    font-size: 1rem;
+    font-size: var(--text-base);
     font-weight: 600;
     color: var(--color-text-base);
     margin: 0;
@@ -368,7 +368,7 @@ rules:
     border: 1px solid var(--border-default);
     border-radius: var(--radius-md);
     padding: var(--space-4);
-    font-size: 0.8125rem;
+    font-size: var(--text-xs);
     font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
     line-height: 1.6;
     color: var(--color-text-base);
@@ -391,7 +391,7 @@ rules:
   }
 
   .form-label {
-    font-size: 0.875rem;
+    font-size: var(--text-xs);
     font-weight: 500;
     color: var(--color-text-base);
   }
@@ -403,7 +403,7 @@ rules:
     border-radius: var(--radius-md);
     background: var(--bg-base);
     color: var(--color-text-base);
-    font-size: 0.875rem;
+    font-size: var(--text-xs);
     font-family: inherit;
     transition: border-color 0.15s ease;
   }
@@ -422,7 +422,7 @@ rules:
     border-radius: var(--radius-md);
     background: var(--bg-base);
     color: var(--color-text-base);
-    font-size: 0.8125rem;
+    font-size: var(--text-xs);
     font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
     line-height: 1.6;
     resize: vertical;
@@ -438,7 +438,7 @@ rules:
   .validation-result {
     padding: var(--space-3);
     border-radius: var(--radius-md);
-    font-size: 0.875rem;
+    font-size: var(--text-xs);
   }
 
   .validation-result.valid {
@@ -488,7 +488,7 @@ rules:
     display: flex;
     gap: var(--space-3);
     margin-bottom: var(--space-1);
-    font-size: 0.8125rem;
+    font-size: var(--text-xs);
   }
 
   .history-date {
@@ -502,13 +502,13 @@ rules:
 
   .history-reason {
     margin: 0;
-    font-size: 0.875rem;
+    font-size: var(--text-xs);
     color: var(--color-text-base);
   }
 
   .empty-state {
     color: var(--color-text-subtle);
-    font-size: 0.875rem;
+    font-size: var(--text-xs);
     text-align: center;
     padding: var(--space-4) 0;
     margin: 0;

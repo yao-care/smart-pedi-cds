@@ -393,7 +393,7 @@
   }
 
   .section-header h3 {
-    font-size: 1rem;
+    font-size: var(--text-base);
     font-weight: 600;
     color: var(--color-text-base);
     margin: 0;
@@ -409,7 +409,7 @@
     border-radius: var(--radius-md);
     background: var(--bg-surface);
     color: var(--color-text-muted);
-    font-size: 0.875rem;
+    font-size: var(--text-xs);
   }
 
   .empty-state p {
@@ -464,13 +464,13 @@
   }
 
   .webhook-name {
-    font-size: 1rem;
+    font-size: var(--text-base);
     font-weight: 600;
     color: var(--color-text-base);
   }
 
   .webhook-url {
-    font-size: 0.8125rem;
+    font-size: var(--text-xs);
     color: var(--color-text-muted);
     font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
     word-break: break-all;
@@ -510,7 +510,7 @@
   }
 
   .form-label {
-    font-size: 0.875rem;
+    font-size: var(--text-xs);
     font-weight: 500;
     color: var(--color-text-base);
   }
@@ -522,7 +522,7 @@
     border-radius: var(--radius-md);
     background: var(--bg-base);
     color: var(--color-text-base);
-    font-size: 0.875rem;
+    font-size: var(--text-xs);
     font-family: inherit;
     transition: border-color 0.15s ease;
   }
@@ -542,7 +542,7 @@
 
   .form-legend {
     padding: 0 var(--space-2);
-    font-size: 0.875rem;
+    font-size: var(--text-xs);
     font-weight: 500;
     color: var(--color-text-base);
   }
@@ -571,7 +571,7 @@
 
   .form-error {
     margin: 0;
-    font-size: 0.875rem;
+    font-size: var(--text-xs);
     color: var(--color-risk-critical);
     background: var(--color-risk-critical-bg);
     padding: var(--space-2) var(--space-3);
@@ -616,7 +616,7 @@
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #fff;
+    background: var(--color-text-inverse);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     transition: transform 0.2s ease;
     pointer-events: none;
@@ -640,7 +640,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-3);
-    font-size: 0.8125rem;
+    font-size: var(--text-xs);
     flex-wrap: wrap;
   }
 
@@ -657,7 +657,7 @@
 
   .empty-history {
     margin: 0;
-    font-size: 0.875rem;
+    font-size: var(--text-xs);
     color: var(--color-text-subtle);
   }
 </style>

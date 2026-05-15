@@ -296,7 +296,7 @@
   }
 
   .manager-header h3 {
-    font-size: 1rem;
+    font-size: var(--text-base);
     font-weight: 600;
     color: var(--color-text-base);
     margin: 0;
@@ -315,7 +315,7 @@
     padding: var(--space-2) var(--space-4);
     font-size: var(--text-sm);
     font-weight: 500;
-    color: #fff;
+    color: var(--color-text-inverse);
     background: var(--color-accent);
     border: none;
     border-radius: var(--radius-md);
@@ -450,7 +450,7 @@
     padding: var(--space-2) var(--space-5);
     font-size: var(--text-sm);
     font-weight: 500;
-    color: #fff;
+    color: var(--color-text-inverse);
     background: var(--color-accent);
     border: none;
     border-radius: var(--radius-md);

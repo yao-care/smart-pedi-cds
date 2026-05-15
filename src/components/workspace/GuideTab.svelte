@@ -137,15 +137,23 @@
     font-size: 0.9em;
   }
 
+  .tab-list {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    column-gap: var(--space-4);
+    row-gap: var(--space-2);
+    align-items: baseline;
+  }
+
   .tab-list dt {
     font-weight: var(--font-bold);
-    margin-top: var(--space-2);
+    margin: 0;
   }
 
   .tab-list dd {
-    margin: 0 0 var(--space-2);
+    margin: 0;
     color: var(--color-text-muted);
-    padding-left: var(--space-4);
+    padding-left: 0;
   }
 
   details {

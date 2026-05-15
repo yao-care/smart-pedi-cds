@@ -220,8 +220,8 @@
 
   .fieldset-legend {
     padding: 0 var(--space-2);
-    font-size: 0.875rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-bold);
     color: var(--color-text-base);
   }
 
@@ -249,17 +249,17 @@
 
   .pref-label {
     display: block;
-    font-size: 0.9375rem;
-    font-weight: 500;
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
     color: var(--color-text-base);
     margin-bottom: var(--space-1);
   }
 
   .pref-description {
     margin: 0;
-    font-size: 0.8125rem;
+    font-size: var(--text-xs);
     color: var(--color-text-muted);
-    line-height: 1.5;
+    line-height: var(--lh-xs);
   }
 
   .perm-warning {
@@ -310,8 +310,8 @@
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    background: var(--color-text-inverse);
+    box-shadow: 0 1px 3px color-mix(in srgb, var(--color-text-base) 20%, transparent);
     transition: transform 0.2s ease;
     pointer-events: none;
   }
@@ -328,7 +328,7 @@
     border-radius: var(--radius-md);
     background: var(--bg-base);
     color: var(--color-text-base);
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
     font-family: inherit;
     text-align: right;
     flex-shrink: 0;

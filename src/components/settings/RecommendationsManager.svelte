@@ -467,7 +467,7 @@
   }
 
   .badge {
-    font-size: 0.7rem;
+    font-size: var(--text-xs);
     padding: 2px 8px;
     border-radius: var(--radius-full);
     font-weight: var(--font-bold);
@@ -595,7 +595,7 @@
 
   .btn-save {
     background: var(--color-accent);
-    color: #fff;
+    color: var(--color-text-inverse);
     border-color: var(--color-accent);
   }
 
