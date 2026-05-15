@@ -4,6 +4,9 @@ import { CODE_SYSTEM, ID_SYSTEM, CONFIDENCE_EXT_URL } from './cdsa-resources';
 export interface AssessmentSummary {
   id: string;
   fhirReportId: string;
+  /** FHIR Patient reference (e.g. "Patient/abc123"). Useful for the
+   *  cross-patient workspace list to show which subject each row is for. */
+  patientRef: string;
   date: Date;
   category: 'normal' | 'monitor' | 'refer';
   summary: string;
@@ -119,17 +122,21 @@ export async function fetchAssessmentFromFhir(
 }
 
 /**
- * List a patient's CDSA assessments on the FHIR server. Returns a summary
- * row per DiagnosticReport — full metric values are not loaded here; the
- * detail page calls resolveAssessment(id) when the user opens one.
+ * List CDSA assessments on the FHIR server.
+ * - With `patientId`: scoped to that patient (per-patient history view).
+ * - Without `patientId`: every CDSA report the user can read (workspace
+ *   roster view, grouped by triage category).
+ * Returns a summary row per DiagnosticReport — full metric values are
+ * not loaded here; the detail page calls resolveAssessment(id) on click.
  */
 export async function listAssessmentsFromFhir(
-  patientId: string,
+  patientId: string | undefined,
   client: FhirClient,
 ): Promise<AssessmentSummary[]> {
+  const subjectClause = patientId ? `subject=Patient/${patientId}&` : '';
   const bundle = (await client.request(
-    `DiagnosticReport?subject=Patient/${patientId}` +
-      `&code=${CODE_SYSTEM}|cdsa-assessment` +
+    `DiagnosticReport?${subjectClause}` +
+      `code=${CODE_SYSTEM}|cdsa-assessment` +
       `&_sort=-date`,
   )) as Bundle;
   return (bundle.entry ?? []).map((e) => {
@@ -139,9 +146,11 @@ export async function listAssessmentsFromFhir(
     const period = r.effectivePeriod as { start?: string } | undefined;
     const dateStr = period?.start ?? (r.effectiveDateTime as string | undefined);
     const conclusionCode = r.conclusionCode?.[0]?.coding?.[0]?.code as string | undefined;
+    const patientRef = (r.subject as { reference?: string } | undefined)?.reference ?? '';
     return {
       id: idVal,
       fhirReportId: r.id as string,
+      patientRef,
       date: new Date(dateStr ?? 0),
       category: snomedToCategory(conclusionCode),
       summary: stripLegacyConclusionPrefix((r.conclusion as string) ?? ''),

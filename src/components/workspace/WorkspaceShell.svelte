@@ -4,11 +4,12 @@
   import PatientView from '../patient/PatientView.svelte';
   import AlertFeed from '../dashboard/AlertFeed.svelte';
   import AlertManager from '../alerts/AlertManager.svelte';
+  import AssessmentsTab from './AssessmentsTab.svelte';
   import { patientStore } from '../../lib/stores/patients.svelte';
   import StandaloneLaunch from '../fhir/StandaloneLaunch.svelte';
   import { authStore } from '../../lib/stores/auth.svelte';
 
-  let activeTab = $state<'overview' | 'patient' | 'alerts'>('overview');
+  let activeTab = $state<'overview' | 'patient' | 'alerts' | 'assessments'>('overview');
   let sidebarOpen = $state(true);
 
   const hasSelectedPatient = $derived(patientStore.selectedPatientId !== null);
@@ -70,6 +71,13 @@
         >
           預警
         </button>
+        <button
+          class="tab-btn"
+          class:active={activeTab === 'assessments'}
+          onclick={() => activeTab = 'assessments'}
+        >
+          評估
+        </button>
       </nav>
 
       <div class="workspace-content">
@@ -79,6 +87,8 @@
           <PatientView />
         {:else if activeTab === 'alerts'}
           <AlertManager />
+        {:else if activeTab === 'assessments'}
+          <AssessmentsTab />
         {/if}
       </div>
     </main>
