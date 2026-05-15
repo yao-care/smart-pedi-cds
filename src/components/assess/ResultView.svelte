@@ -71,21 +71,27 @@
     });
   });
 
+  // Per-domain score for the radar: average of directionalZ across the
+  // domain's metrics, then `score = clamp(50 + 10 * z, 0, 100)`.
+  // Metrics without a z concept (questionnaireScore, poseClassification)
+  // contribute only `hasAnomaly`; a domain with no z metrics falls back
+  // to score 50 (neutral).
   const domainScores = $derived.by(() => {
     if (!triageResult) return [];
-    const scores: Record<string, { total: number; count: number; hasAnomaly: boolean }> = {};
+    const buckets: Record<string, { zSum: number; zCount: number; hasAnomaly: boolean }> = {};
     for (const d of triageResult.details) {
-      if (!scores[d.domain]) scores[d.domain] = { total: 0, count: 0, hasAnomaly: false };
-      const normalizedValue = d.zScore !== null
-        ? Math.max(0, Math.min(100, 50 + d.zScore * 15))
-        : d.value * 100;
-      scores[d.domain].total += normalizedValue;
-      scores[d.domain].count++;
-      if (d.isAnomaly) scores[d.domain].hasAnomaly = true;
+      if (!buckets[d.domain]) buckets[d.domain] = { zSum: 0, zCount: 0, hasAnomaly: false };
+      if (d.directionalZ !== null && d.directionalZ !== undefined) {
+        buckets[d.domain].zSum += d.directionalZ;
+        buckets[d.domain].zCount++;
+      }
+      if (d.isAnomaly) buckets[d.domain].hasAnomaly = true;
     }
-    return Object.entries(scores).map(([domain, s]) => ({
-      domain, score: Math.round(s.total / s.count), hasAnomaly: s.hasAnomaly,
-    }));
+    return Object.entries(buckets).map(([domain, b]) => {
+      const avgZ = b.zCount > 0 ? b.zSum / b.zCount : 0;
+      const score = Math.max(0, Math.min(100, Math.round(50 + 10 * avgZ)));
+      return { domain, score, hasAnomaly: b.hasAnomaly };
+    });
   });
 
   const anomalyDomains = $derived(
@@ -98,6 +104,8 @@
       category: result.category,
       confidence: result.confidence,
       summary: result.summary,
+      details: result.details,
+      anomalyCount: result.anomalyCount,
     });
     await assessmentStore.complete();
   }
@@ -147,22 +155,6 @@
       <RadarChart data={domainScores} />
     </section>
   {/if}
-
-  <section class="details-section" aria-label="詳細指標">
-    <h3>詳細指標</h3>
-    <div class="details-grid">
-      {#each triageResult.details as detail}
-        <div class="detail-item" class:anomaly={detail.isAnomaly}>
-          <span class="detail-domain">{detail.domain}</span>
-          <span class="detail-metric">{detail.metric}</span>
-          <span class="detail-value">{typeof detail.value === 'number' ? detail.value.toFixed(2) : detail.value}</span>
-          {#if detail.isAnomaly}
-            <span class="anomaly-badge">偏離</span>
-          {/if}
-        </div>
-      {/each}
-    </div>
-  </section>
 
   {#if triageResult && (anomalyDomains.length > 0 || triageResult.category !== 'normal')}
     <section class="education-section" aria-label="衛教建議">
@@ -251,60 +243,7 @@
     margin-bottom: var(--space-4);
   }
 
-  /* Details section */
-  .details-section h3 {
-    font-size: var(--text-lg);
-    margin-bottom: var(--space-4);
-  }
-
-  .details-grid {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-  }
-
-  .detail-item {
-    display: grid;
-    grid-template-columns: 1fr 1fr auto auto;
-    align-items: center;
-    gap: var(--space-3);
-    padding: var(--space-3) var(--space-4);
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
-    border-radius: var(--radius-md);
-    font-size: var(--text-xs);
-  }
-
-  .detail-item.anomaly {
-    border-color: var(--color-risk-critical);
-    background: var(--color-risk-critical-bg);
-  }
-
-  .detail-domain {
-    font-weight: var(--font-medium);
-    color: var(--color-text-base);
-  }
-
-  .detail-metric {
-    color: var(--color-text-muted);
-  }
-
-  .detail-value {
-    font-family: var(--font-mono);
-    color: var(--color-text-base);
-    text-align: right;
-  }
-
-  .anomaly-badge {
-    display: inline-block;
-    padding: var(--space-1) var(--space-2);
-    background: var(--color-risk-critical);
-    color: #fff;
-    border-radius: var(--radius-full);
-    font-size: 14px;
-    font-weight: var(--font-medium);
-    line-height: 1;
-  }
+  /* (Detail-table CSS removed — raw metric section moved to physician detail view.) */
 
   /* Education section */
   .education-section h3 {

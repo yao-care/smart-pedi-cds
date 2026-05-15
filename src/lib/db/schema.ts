@@ -123,6 +123,19 @@ export interface Assessment {
     category: 'normal' | 'monitor' | 'refer';
     confidence: number;
     summary: string;
+    /** Optional full per-metric breakdown. Populated by the parent flow so
+     *  the standalone /result/?id= page can render the radar without
+     *  recomputing triage. Older records (saved before this field was
+     *  added) won't have it; UI should fall back to a summary-only view. */
+    details?: Array<{
+      domain: string;
+      metric: string;
+      value: number;
+      zScore: number | null;
+      directionalZ: number | null;
+      isAnomaly: boolean;
+    }>;
+    anomalyCount?: number;
   };
   fhirSubmitted: boolean;
   fhirDiagnosticReportId?: string;
