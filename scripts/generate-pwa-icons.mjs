@@ -1,5 +1,18 @@
-// Generate PWA icons (192/512) — maskable-safe with 80% inner safe zone.
-// Pure SVG → PNG via sharp. CC0.
+// Generate PWA icons (192 / 512) — maskable-safe with 80% inner safe zone.
+// Pure SVG → PNG via sharp.
+//
+// Brand mark: growth ring. A nearly-closed circular stroke (gap at upper-right
+// ~12-2 o'clock) with a small filled dot at center.
+//   - Ring  = ongoing observation / development tracking
+//   - Gap   = the child's growth that is still to come (not yet completed)
+//   - Dot   = the child being observed at the center of attention
+//
+// Palette matches tokens.css fallback hex:
+//   rose stroke  --color-accent          #b81759
+//   cream bg     --bg-base               #fbf8f2
+//   center dot   --color-accent-strong   #7e0e3d
+//
+// SPDX-License-Identifier: MIT
 
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -8,42 +21,36 @@ import sharp from 'sharp';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(__dirname, '..');
 
-// Glyph: 「兒」character traced as paths so it works without system fonts.
-// Width-512 viewBox. Single-stroke geometric mark.
 function makeSvg(size) {
   const cx = size / 2;
-  const r = size * 0.4; // safe-zone radius (80% of half)
-  const stroke = size * 0.04;
+  const ringR = size * 0.32;           // ring radius (inside the 80% safe zone)
+  const stroke = size * 0.08;          // bold stroke, visible at 16px favicon
+  const dotR = size * 0.06;            // center dot
+  const ringCirc = 2 * Math.PI * ringR;
+  const gapFraction = 0.18;            // 18% of the ring is the open gap
+  const dashLen = ringCirc * (1 - gapFraction);
+  const gapLen = ringCirc * gapFraction;
+  // dashoffset rotates the dash start; with rotate(-90) the stroke starts at
+  // 12 o'clock, so to place the gap at ~1-2 o'clock we shift the dash back
+  // a touch (negative offset). Adjusted empirically for the rotation below.
+  const dashOffset = -ringCirc * 0.04;
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#e91e63"/>
-      <stop offset="100%" stop-color="#c2185b"/>
-    </linearGradient>
-  </defs>
-  <!-- Full-bleed background (covers safe + bleed zones for maskable) -->
-  <rect width="${size}" height="${size}" fill="url(#bg)"/>
-  <!-- Safe-zone inner ring -->
-  <circle cx="${cx}" cy="${cx}" r="${r}" fill="none" stroke="white" stroke-opacity="0.18" stroke-width="${stroke}"/>
-  <!-- Pediatric mark: stylized parent + child silhouettes -->
-  <g fill="white">
-    <!-- Parent (left) head -->
-    <circle cx="${cx - size * 0.13}" cy="${cx - size * 0.15}" r="${size * 0.06}"/>
-    <!-- Parent body -->
-    <rect x="${cx - size * 0.19}" y="${cx - size * 0.08}" width="${size * 0.12}" height="${size * 0.22}" rx="${size * 0.04}"/>
-    <!-- Child (right) head -->
-    <circle cx="${cx + size * 0.13}" cy="${cx - size * 0.06}" r="${size * 0.045}"/>
-    <!-- Child body -->
-    <rect x="${cx + size * 0.085}" y="${cx - size * 0.005}" width="${size * 0.09}" height="${size * 0.14}" rx="${size * 0.03}"/>
-    <!-- Connecting heart -->
-    <path d="M ${cx} ${cx + size * 0.04}
-             c ${-size * 0.025} ${-size * 0.04}, ${-size * 0.09} ${-size * 0.02}, ${-size * 0.04} ${size * 0.04}
-             c ${size * 0.02} ${size * 0.025}, ${size * 0.04} ${size * 0.045}, ${size * 0.04} ${size * 0.045}
-             c 0 0, ${size * 0.02} ${-size * 0.02}, ${size * 0.04} ${-size * 0.045}
-             c ${size * 0.05} ${-size * 0.06}, ${-size * 0.015} ${-size * 0.08}, ${-size * 0.04} ${-size * 0.04} z"
-          fill="#fef3c7"/>
-  </g>
+  <!-- Cream full-bleed background (covers maskable safe + bleed zones) -->
+  <rect width="${size}" height="${size}" fill="#fbf8f2"/>
+  <!-- Growth ring: rose stroke with a gap at upper-right -->
+  <circle
+    cx="${cx}" cy="${cx}" r="${ringR}"
+    fill="none"
+    stroke="#b81759"
+    stroke-width="${stroke}"
+    stroke-linecap="round"
+    stroke-dasharray="${dashLen} ${gapLen}"
+    stroke-dashoffset="${dashOffset}"
+    transform="rotate(-90 ${cx} ${cx})"
+  />
+  <!-- Center dot: deeper rose for contrast against the cream field -->
+  <circle cx="${cx}" cy="${cx}" r="${dotR}" fill="#7e0e3d"/>
 </svg>`;
 }
 
