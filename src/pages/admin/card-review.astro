@@ -14,6 +14,19 @@ const counts = {
   approved: cards.filter((c) => c.data.reviewStatus === 'approved').length,
   rejected: cards.filter((c) => c.data.reviewStatus === 'rejected').length,
 };
+
+const domainLabels: Record<string, string> = {
+  gross_motor: '粗動作',
+  fine_motor: '精細動作',
+  language_comp: '語言理解',
+  language_expr: '語言表達',
+  cognition: '認知',
+  social_emotional: '社會情緒',
+  behavior: '生活行為',
+  diet: '飲食',
+};
+
+const presentDomains = Array.from(new Set(sorted.map((c) => c.data.domain))).sort();
 ---
 
 <Base title="圖卡審核" description="人工檢視所有圖卡，編輯 src/data/cards/index.json 修改 reviewStatus">
@@ -31,9 +44,38 @@ const counts = {
       <span class="stat-rejected">退回 <strong>{counts.rejected}</strong></span>
     </div>
 
+    <div class="filters" role="toolbar" aria-label="圖卡篩選">
+      <div class="filter-row">
+        <span class="filter-label">狀態</span>
+        <div class="chips">
+          <button type="button" class="chip active" data-status-filter="all">全部</button>
+          <button type="button" class="chip" data-status-filter="pending">待審</button>
+          <button type="button" class="chip" data-status-filter="approved">通過</button>
+          <button type="button" class="chip" data-status-filter="rejected">退回</button>
+        </div>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">領域</span>
+        <div class="chips">
+          <button type="button" class="chip active" data-domain-filter="all">全部</button>
+          {presentDomains.map((domain) => (
+            <button type="button" class="chip" data-domain-filter={domain}>
+              {domainLabels[domain] ?? domain}
+            </button>
+          ))}
+        </div>
+      </div>
+      <p class="empty-msg" hidden>無符合條件的圖卡。</p>
+    </div>
+
     <div class="card-grid">
       {sorted.map((card) => (
-        <article class={`card card-${card.data.reviewStatus}`}>
+        <article
+          class={`card card-${card.data.reviewStatus}`}
+          data-card
+          data-status={card.data.reviewStatus}
+          data-domain={card.data.domain}
+        >
           <div class="thumb">
             <img src={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/cards/${card.data.filename}`}
                  alt={card.data.description}
@@ -41,17 +83,56 @@ const counts = {
                  width="200" height="200" />
           </div>
           <div class="meta">
-            <span class="status status-{card.data.reviewStatus}">{card.data.reviewStatus}</span>
-            <strong class="id">{card.id}</strong>
-            <span class="domain">{card.data.domain}</span>
-            <p class="desc">{card.data.description}</p>
+            <span class={`status status-${card.data.reviewStatus}`}>{card.data.reviewStatus}</span>
+            <strong class="title">{card.data.description}</strong>
+            <span class="id-line">{card.id} · {domainLabels[card.data.domain] ?? card.data.domain}</span>
             {card.data.attribution && <p class="attr">{card.data.attribution}</p>}
+            <span class="license">授權：{card.data.license}</span>
           </div>
         </article>
       ))}
     </div>
   </main>
 </Base>
+
+<script>
+  // Plain DOM filtering on the SSG grid: no fetch, no rerender.
+  const statusButtons = document.querySelectorAll<HTMLButtonElement>('[data-status-filter]');
+  const domainButtons = document.querySelectorAll<HTMLButtonElement>('[data-domain-filter]');
+  const cards = document.querySelectorAll<HTMLElement>('[data-card]');
+  const emptyMsg = document.querySelector<HTMLElement>('.empty-msg');
+
+  let activeStatus = 'all';
+  let activeDomain = 'all';
+
+  function applyFilter() {
+    let visible = 0;
+    cards.forEach((card) => {
+      const matchStatus = activeStatus === 'all' || card.dataset.status === activeStatus;
+      const matchDomain = activeDomain === 'all' || card.dataset.domain === activeDomain;
+      const show = matchStatus && matchDomain;
+      card.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    if (emptyMsg) emptyMsg.hidden = visible > 0;
+  }
+
+  statusButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      activeStatus = btn.dataset.statusFilter ?? 'all';
+      statusButtons.forEach((b) => b.classList.toggle('active', b === btn));
+      applyFilter();
+    });
+  });
+
+  domainButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      activeDomain = btn.dataset.domainFilter ?? 'all';
+      domainButtons.forEach((b) => b.classList.toggle('active', b === btn));
+      applyFilter();
+    });
+  });
+</script>
 
 <style>
   .page {
@@ -84,13 +165,71 @@ const counts = {
     background: var(--bg-surface);
     border: 1px solid var(--border-default);
     border-radius: var(--radius-md);
-    margin-bottom: var(--space-6);
+    margin-bottom: var(--space-4);
     font-size: var(--text-sm);
   }
 
   .stat-pending strong { color: var(--color-risk-advisory); }
   .stat-approved strong { color: var(--color-risk-normal); }
   .stat-rejected strong { color: var(--color-risk-critical); }
+
+  .filters {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-bottom: var(--space-6);
+    padding: var(--space-3) var(--space-4);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+  }
+
+  .filter-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .filter-label {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    min-width: 36px;
+  }
+
+  .chips {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  .chip {
+    border: 1px solid var(--border-default);
+    background: var(--bg-base);
+    padding: 4px 12px;
+    min-height: 32px;
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    cursor: pointer;
+    color: var(--color-text-muted);
+  }
+
+  .chip.active {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: #fff;
+  }
+
+  .chip:hover:not(.active) {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .empty-msg {
+    margin: var(--space-2) 0 0;
+    color: var(--color-text-muted);
+    font-size: var(--text-xs);
+  }
 
   .card-grid {
     display: grid;
@@ -131,14 +270,15 @@ const counts = {
     font-weight: 600;
     text-transform: uppercase;
     font-size: 0.65rem;
+    align-self: flex-start;
   }
 
   .status-pending { background: var(--color-risk-advisory-bg); color: var(--color-risk-advisory); }
   .status-approved { background: var(--color-risk-normal-bg); color: var(--color-risk-normal); }
   .status-rejected { background: var(--color-risk-critical-bg); color: var(--color-risk-critical); }
 
-  .id { color: var(--color-text-base); }
-  .domain { color: var(--color-text-muted); }
-  .desc { color: var(--color-text-base); margin: var(--space-1) 0; }
+  .title { color: var(--color-text-base); }
+  .id-line { color: var(--color-text-muted); font-size: 0.7rem; }
   .attr { color: var(--color-text-subtle); font-size: 0.7rem; margin: 0; }
+  .license { color: var(--color-text-subtle); font-size: 0.7rem; }
 </style>
