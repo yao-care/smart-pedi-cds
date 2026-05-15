@@ -104,7 +104,8 @@ async function generate() {
         seq++;
         const shape = SHAPES[s];
         const variant = VARIANTS[v];
-        const variantTag = v === 0 ? '亮' : '透';
+        const variantTag = v === 0 ? 'light' : 'transparent';
+        const variantLabel = v === 0 ? '亮' : '透';
         const filename = `${domain}/${String(seq).padStart(2, '0')}-${shape}-${variantTag}.webp`;
         const destPath = resolve(repoRoot, 'public/cards', filename);
 
@@ -115,7 +116,7 @@ async function generate() {
           id: `${domain}-${String(seq).padStart(2, '0')}`,
           domain,
           filename,
-          description: `${def.label}：${DESC[shape]}（${variantTag}）`,
+          description: `${def.label}：${DESC[shape]}（${variantLabel}）`,
           source: 'manual',
           sourceUrl: 'https://github.com/yao-care/smart-pedi-cds',
           attribution: 'Generated placeholder (geometric flat)',
