@@ -106,8 +106,164 @@
   });
 
   const compareRows = $derived(
-    allAssessments.filter(({ assessment }) => compareIds.has(assessment.id)),
+    // newest first for radar overlay (matches timeline order — easier to read trend)
+    allAssessments
+      .filter(({ assessment }) => compareIds.has(assessment.id))
+      .sort((a, b) => {
+        const ta = new Date(a.assessment.completedAt ?? a.assessment.startedAt).getTime();
+        const tb = new Date(b.assessment.completedAt ?? b.assessment.startedAt).getTime();
+        return ta - tb; // oldest → newest for "before / after" reading
+      }),
   );
+
+  const DOMAIN_LABELS: Record<string, string> = {
+    gross_motor: '粗動作',
+    fine_motor: '細動作',
+    language_comprehension: '語言理解',
+    language_expression: '語言表達',
+    cognitive: '認知',
+    social_emotional: '社交情緒',
+    behavior: '行為',
+    sensory_processing: '感官處理',
+  };
+
+  const METRIC_LABELS: Record<string, string> = {
+    completionRate: '完成率',
+    operationConsistency: '操作一致性',
+    reactionLatency: '反應延遲',
+    interactionRhythm: '互動節奏',
+    drawingScore: '繪圖總分',
+    voiceDuration: '發聲總時長',
+    questionnaireScore: '問卷得分',
+    poseClassification: '姿態分析',
+  };
+
+  const SERIES_COLORS = ['#2563eb', '#db2777', '#16a34a', '#f59e0b'];
+
+  function domainLabel(d: string): string {
+    return DOMAIN_LABELS[d] ?? d;
+  }
+
+  function metricLabel(m: string): string {
+    return METRIC_LABELS[m] ?? m;
+  }
+
+  /** Average directionalZ per domain for one assessment. null when the domain
+   *  has no z-based metric (e.g. questionnaire-only). */
+  function perDomainZ(assessment: Assessment): Record<string, number | null> {
+    const out: Record<string, number[]> = {};
+    if (!assessment.triageResult) return {};
+    for (const d of assessment.triageResult.details ?? []) {
+      if (d.directionalZ === null) continue;
+      (out[d.domain] ??= []).push(d.directionalZ);
+    }
+    const result: Record<string, number | null> = {};
+    for (const dom of Object.keys(out)) {
+      const arr = out[dom];
+      result[dom] = arr.reduce((a, b) => a + b, 0) / arr.length;
+    }
+    return result;
+  }
+
+  /** Convert directionalZ → 0-100 score for radar plotting.
+   *  z=0 (on norm) → 50, z=+2 → 70, z=-2 → 30, clamped. */
+  function zToScore(z: number | null): number {
+    if (z === null) return 50;
+    return Math.max(0, Math.min(100, 50 + 10 * z));
+  }
+
+  /** Union of all domains across compared assessments, in a stable order. */
+  const compareDomains = $derived.by(() => {
+    const seen = new Set<string>();
+    for (const row of compareRows) {
+      if (!row.assessment.triageResult) continue;
+      for (const d of row.assessment.triageResult.details ?? []) {
+        seen.add(d.domain);
+      }
+    }
+    // preserve DOMAIN_LABELS order for known domains, append unknowns after
+    const known = Object.keys(DOMAIN_LABELS).filter((d) => seen.has(d));
+    const extra = [...seen].filter((d) => !DOMAIN_LABELS[d]);
+    return [...known, ...extra];
+  });
+
+  /** Metric × series matrix for the diff table. */
+  const compareMetricRows = $derived.by(() => {
+    const map = new Map<string, { domain: string; metric: string; cells: Array<{ value: number; directionalZ: number | null }> }>();
+    compareRows.forEach((row, seriesIdx) => {
+      if (!row.assessment.triageResult) return;
+      for (const d of row.assessment.triageResult.details ?? []) {
+        const key = `${d.domain}::${d.metric}`;
+        let entry = map.get(key);
+        if (!entry) {
+          entry = { domain: d.domain, metric: d.metric, cells: [] };
+          map.set(key, entry);
+        }
+        // pad to seriesIdx then fill
+        while (entry.cells.length < seriesIdx) {
+          entry.cells.push({ value: NaN, directionalZ: null });
+        }
+        entry.cells.push({ value: d.value, directionalZ: d.directionalZ });
+      }
+    });
+    // pad trailing
+    for (const entry of map.values()) {
+      while (entry.cells.length < compareRows.length) {
+        entry.cells.push({ value: NaN, directionalZ: null });
+      }
+    }
+    return [...map.values()].sort((a, b) => {
+      const da = Object.keys(DOMAIN_LABELS).indexOf(a.domain);
+      const db = Object.keys(DOMAIN_LABELS).indexOf(b.domain);
+      return (da === -1 ? 99 : da) - (db === -1 ? 99 : db);
+    });
+  });
+
+  /** Days between oldest and newest selected. */
+  const compareSpanDays = $derived.by(() => {
+    if (compareRows.length < 2) return 0;
+    const first = new Date(compareRows[0].assessment.completedAt ?? compareRows[0].assessment.startedAt).getTime();
+    const last = new Date(
+      compareRows[compareRows.length - 1].assessment.completedAt ?? compareRows[compareRows.length - 1].assessment.startedAt,
+    ).getTime();
+    return Math.round((last - first) / (1000 * 60 * 60 * 24));
+  });
+
+  function trendSymbol(delta: number): { glyph: string; klass: string } {
+    if (delta > 0.3) return { glyph: '↗', klass: 'trend-up' };
+    if (delta < -0.3) return { glyph: '↘', klass: 'trend-down' };
+    return { glyph: '→', klass: 'trend-flat' };
+  }
+
+  function formatValue(v: number): string {
+    if (Number.isNaN(v)) return '—';
+    if (Math.abs(v) >= 1000) return v.toFixed(0);
+    if (Math.abs(v) >= 10) return v.toFixed(1);
+    return v.toFixed(2);
+  }
+
+  /** SVG geometry */
+  const RADAR = { size: 360, cx: 180, cy: 180, radius: 140 } as const;
+
+  function axisAngle(i: number, total: number): number {
+    // start at top, go clockwise
+    return -Math.PI / 2 + (i * 2 * Math.PI) / Math.max(total, 1);
+  }
+
+  function polarPoint(score: number, angle: number): { x: number; y: number } {
+    const r = (score / 100) * RADAR.radius;
+    return { x: RADAR.cx + r * Math.cos(angle), y: RADAR.cy + r * Math.sin(angle) };
+  }
+
+  function radarPolygonPath(scores: number[]): string {
+    if (scores.length === 0) return '';
+    return scores
+      .map((s, i) => {
+        const p = polarPoint(s, axisAngle(i, scores.length));
+        return `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`;
+      })
+      .join(' ') + ' Z';
+  }
 </script>
 
 <div class="history-container">
@@ -205,24 +361,157 @@
   {#if showCompare && compareRows.length >= 2}
     <section class="compare-view" aria-label="比較結果">
       <div class="compare-header">
-        <h2>比較結果</h2>
+        <h2>比較結果（{compareRows.length} 筆，間隔 {compareSpanDays} 天）</h2>
         <button type="button" class="btn-close" onclick={() => (showCompare = false)}>✕ 關閉</button>
       </div>
-      <div class="compare-grid">
-        {#each compareRows as row}
-          <article class="compare-card">
-            <h3>{formatDate(row.assessment.completedAt ?? row.assessment.startedAt)}</h3>
-            <p class="compare-age">{computeAgeAtAssessment(row.child, row.assessment)} 個月</p>
-            {#if row.assessment.triageResult}
-              <span class="badge {categoryClasses[row.assessment.triageResult.category] ?? ''}">
-                {categoryLabels[row.assessment.triageResult.category]}
-              </span>
-              <p class="compare-summary">{row.assessment.triageResult.summary}</p>
-              <a href={detailLink(row.assessment.id)} class="action-link">看完整詳細 →</a>
+
+      <!-- Series legend / meta row: one chip per compared assessment -->
+      <ol class="compare-meta">
+        {#each compareRows as row, i}
+          {@const cat = row.assessment.triageResult?.category}
+          <li class="meta-chip" style="--series-color: {SERIES_COLORS[i % SERIES_COLORS.length]}">
+            <span class="meta-swatch" aria-hidden="true"></span>
+            <span class="meta-date">{formatDate(row.assessment.completedAt ?? row.assessment.startedAt)}</span>
+            <span class="meta-age">{computeAgeAtAssessment(row.child, row.assessment)} 個月</span>
+            {#if cat}
+              <span class="badge {categoryClasses[cat] ?? ''}">{categoryLabels[cat]}</span>
             {/if}
-          </article>
+            <a href={detailLink(row.assessment.id)} class="meta-link">詳細 →</a>
+          </li>
+        {/each}
+      </ol>
+
+      <!-- Trajectory line: category progression across all selected assessments -->
+      <div class="trajectory" aria-label="分流變化">
+        {#each compareRows as row, i}
+          {@const cat = row.assessment.triageResult?.category}
+          {#if i > 0}<span class="trajectory-arrow" aria-hidden="true">→</span>{/if}
+          <span class="badge {cat ? categoryClasses[cat] : ''}">
+            {cat ? categoryLabels[cat] : '—'}
+          </span>
         {/each}
       </div>
+
+      <!-- Overlay radar: per-domain directionalZ avg → score 0-100 -->
+      {#if compareDomains.length > 0}
+        <figure class="radar-figure">
+          <figcaption>各領域分數軌跡（50 = 常模、越高越好）</figcaption>
+          <svg
+            class="radar-svg"
+            viewBox="0 0 {RADAR.size} {RADAR.size}"
+            role="img"
+            aria-label="重疊雷達圖 — 每筆評估一個多邊形"
+          >
+            <!-- concentric grid: 25 / 50 / 75 / 100 -->
+            {#each [25, 50, 75, 100] as lvl}
+              <circle
+                cx={RADAR.cx}
+                cy={RADAR.cy}
+                r={(lvl / 100) * RADAR.radius}
+                fill="none"
+                stroke="var(--border-default, #e5e7eb)"
+                stroke-dasharray={lvl === 50 ? '0' : '4 4'}
+              />
+            {/each}
+            <!-- axis lines + labels -->
+            {#each compareDomains as dom, i}
+              {@const a = axisAngle(i, compareDomains.length)}
+              {@const p100 = polarPoint(100, a)}
+              {@const pLabel = polarPoint(118, a)}
+              <line
+                x1={RADAR.cx}
+                y1={RADAR.cy}
+                x2={p100.x}
+                y2={p100.y}
+                stroke="var(--border-default, #e5e7eb)"
+              />
+              <text
+                class="radar-axis-label"
+                x={pLabel.x}
+                y={pLabel.y}
+                text-anchor="middle"
+                dominant-baseline="middle"
+              >{domainLabel(dom)}</text>
+            {/each}
+            <!-- one polygon per series -->
+            {#each compareRows as row, i}
+              {@const zMap = perDomainZ(row.assessment)}
+              {@const scores = compareDomains.map((d) => zToScore(zMap[d] ?? null))}
+              {@const color = SERIES_COLORS[i % SERIES_COLORS.length]}
+              <path
+                d={radarPolygonPath(scores)}
+                fill={color}
+                fill-opacity="0.12"
+                stroke={color}
+                stroke-width="2"
+              />
+              {#each scores as s, j}
+                {@const p = polarPoint(s, axisAngle(j, compareDomains.length))}
+                <circle cx={p.x} cy={p.y} r="3.5" fill={color} />
+              {/each}
+            {/each}
+          </svg>
+        </figure>
+      {/if}
+
+      <!-- Per-metric diff table -->
+      {#if compareMetricRows.length > 0}
+        <div class="diff-table-wrap">
+          <table class="diff-table">
+            <thead>
+              <tr>
+                <th scope="col">指標</th>
+                <th scope="col">領域</th>
+                {#each compareRows as row, i}
+                  <th
+                    scope="col"
+                    class="series-col"
+                    style="--series-color: {SERIES_COLORS[i % SERIES_COLORS.length]}"
+                  >
+                    {formatDate(row.assessment.completedAt ?? row.assessment.startedAt)}
+                  </th>
+                {/each}
+                <th scope="col">趨勢</th>
+              </tr>
+            </thead>
+            <tbody>
+              {#each compareMetricRows as mrow}
+                {@const firstZ = mrow.cells[0]?.directionalZ}
+                {@const lastZ = mrow.cells[mrow.cells.length - 1]?.directionalZ}
+                {@const delta = firstZ !== null && lastZ !== null ? lastZ - firstZ : null}
+                {@const trend = delta !== null ? trendSymbol(delta) : null}
+                <tr>
+                  <th scope="row">{metricLabel(mrow.metric)}</th>
+                  <td class="muted">{domainLabel(mrow.domain)}</td>
+                  {#each mrow.cells as cell}
+                    <td class="value-cell" class:value-missing={Number.isNaN(cell.value)}>
+                      <span class="cell-value">{formatValue(cell.value)}</span>
+                      {#if cell.directionalZ !== null}
+                        <span class="cell-z" class:z-bad={cell.directionalZ < -1.5}>
+                          z={cell.directionalZ.toFixed(2)}
+                        </span>
+                      {/if}
+                    </td>
+                  {/each}
+                  <td class="trend-cell">
+                    {#if trend}
+                      <span class={trend.klass} title="Δz = {delta!.toFixed(2)}">{trend.glyph}</span>
+                    {:else}
+                      <span class="muted">—</span>
+                    {/if}
+                  </td>
+                </tr>
+              {/each}
+            </tbody>
+          </table>
+          <p class="diff-legend">
+            <span class="trend-up">↗</span> 進步（Δz ≥ +0.3）·
+            <span class="trend-flat">→</span> 持平 ·
+            <span class="trend-down">↘</span> 退步（Δz ≤ -0.3）·
+            <span class="z-bad">紅 z</span> 該次該指標 ≤ -1.5
+          </p>
+        </div>
+      {/if}
     </section>
   {/if}
 
@@ -506,35 +795,166 @@
     font-size: var(--text-sm);
   }
 
-  .compare-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: var(--space-3);
+  .compare-meta {
+    list-style: none;
+    margin: 0 0 var(--space-3);
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
   }
 
-  .compare-card {
-    padding: var(--space-3);
-    border: 1px solid var(--border-default);
-    border-radius: var(--radius-md);
+  .meta-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-3);
     background: var(--bg-base);
+    border: 1px solid var(--border-default);
+    border-left: 4px solid var(--series-color, var(--color-accent));
+    border-radius: var(--radius-md);
+    font-size: var(--text-xs);
   }
 
-  .compare-card h3 {
-    margin: 0 0 var(--space-1);
+  .meta-swatch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--series-color, var(--color-accent));
+  }
+
+  .meta-date {
+    font-weight: var(--font-medium);
+  }
+
+  .meta-age {
+    color: var(--color-text-muted);
+  }
+
+  .meta-link {
+    color: var(--color-accent);
+    text-decoration: none;
+    margin-left: var(--space-1);
+  }
+
+  .trajectory {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    padding: var(--space-3);
+    background: var(--bg-base);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-4);
     font-size: var(--text-sm);
   }
 
-  .compare-age {
+  .trajectory-arrow {
     color: var(--color-text-muted);
-    font-size: var(--text-xs);
-    margin: 0 0 var(--space-2);
+    font-size: 1.2em;
   }
 
-  .compare-summary {
+  .radar-figure {
+    margin: 0 0 var(--space-4);
+    text-align: center;
+  }
+
+  .radar-figure figcaption {
     font-size: var(--text-xs);
-    color: var(--color-text-base);
-    line-height: 1.5;
-    margin: var(--space-2) 0;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-2);
+  }
+
+  .radar-svg {
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+  }
+
+  :global(.radar-axis-label) {
+    font-size: 12px;
+    fill: var(--color-text-base);
+  }
+
+  .diff-table-wrap {
+    overflow-x: auto;
+  }
+
+  .diff-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-xs);
+    min-width: 480px;
+  }
+
+  .diff-table th,
+  .diff-table td {
+    padding: var(--space-2) var(--space-2);
+    border-bottom: 1px solid var(--border-default);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .diff-table thead th {
+    background: var(--bg-muted);
+    font-weight: var(--font-medium);
+    color: var(--color-text-muted);
+  }
+
+  .diff-table .series-col {
+    border-bottom: 3px solid var(--series-color, var(--color-accent));
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .value-cell {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .value-cell.value-missing {
+    color: var(--color-text-muted);
+  }
+
+  .cell-value {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+  }
+
+  .cell-z {
+    display: block;
+    font-size: 10px;
+    color: var(--color-text-muted);
+  }
+
+  .cell-z.z-bad {
+    color: var(--color-risk-critical);
+  }
+
+  .trend-cell {
+    text-align: center;
+    font-size: 1.3em;
+  }
+
+  .trend-up { color: var(--color-risk-normal, #16a34a); }
+  .trend-flat { color: var(--color-text-muted); }
+  .trend-down { color: var(--color-risk-critical, #dc2626); }
+  .z-bad { color: var(--color-risk-critical, #dc2626); }
+
+  .diff-legend {
+    margin: var(--space-3) 0 0;
+    font-size: 11px;
+    color: var(--color-text-muted);
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .muted {
+    color: var(--color-text-muted);
   }
 
   .history-nav {
