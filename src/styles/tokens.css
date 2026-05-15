@@ -1,51 +1,74 @@
 /* ==========================================================================
    Design Tokens — Pediatric CDSS
-   OKLCH color system with hex fallback for older browsers.
+   Warm-clinical rose palette.
+
+   Hue strategy:
+   - neutrals (bg/text/border): hue 60–85 (warm ivory)
+   - accent / brand: hue 350 (rose) — primary interaction, CTA, focus
+   - risk semantic: 145 green / 195 teal / 70 warm-amber / 25 warm-red
+     teal advisory replaces classic cold-blue so the palette holds one
+     temperature across all risk levels without losing legibility.
+
+   All colors are authored in OKLCH with hex fallback for browsers that
+   don't support oklch(). Hex values are sRGB approximations — fine for
+   fallback but not pixel-identical to the modern path.
    ========================================================================== */
 
 /* ---------- Hex fallback (browsers without OKLCH support) ---------- */
 :root {
-  /* Background */
-  --bg-base: #f5f5f5;
-  --bg-surface: #ebebeb;
-  --bg-muted: #e0e0e0;
+  /* Background — warm ivory family */
+  --bg-base: #fbf8f2;
+  --bg-surface: #f5efe5;
+  --bg-muted: #ece2d1;
 
-  /* Text */
-  --color-text-base: #303030;
-  --color-text-muted: #6b6b6b;
-  --color-text-subtle: #8a8a8a;
+  /* Text — warm dark / muted browns */
+  --color-text-base: #33291d;
+  --color-text-muted: #736554;
+  --color-text-subtle: #9a8e7b;
   --color-text-inverse: #ffffff;
 
   /* Border */
-  --border-default: #cfcfcf;
-  --border-strong: #a3a3a3;
+  --border-default: #dccfb8;
+  --border-strong: #b3a283;
 
-  /* Risk levels — foreground */
-  --color-risk-normal: #3a8a3a;
-  --color-risk-advisory: #2b6cb0;
-  --color-risk-warning: #b87a1a;
-  --color-risk-critical: #c43a2b;
+  /* Risk levels — foreground (AA-pass against the matching *-bg) */
+  --color-risk-normal: #327a4e;
+  --color-risk-advisory: #1e7480;
+  --color-risk-warning: #b06d1a;
+  --color-risk-critical: #b62b1f;
 
   /* Risk levels — light background */
-  --color-risk-normal-bg: #edf7ed;
-  --color-risk-advisory-bg: #ebf1fa;
-  --color-risk-warning-bg: #faf3e6;
-  --color-risk-critical-bg: #fbeaea;
+  --color-risk-normal-bg: #e4f1e5;
+  --color-risk-advisory-bg: #d4ecef;
+  --color-risk-warning-bg: #f6ead3;
+  --color-risk-critical-bg: #fadcd3;
 
-  /* Accent — rose family (hue 350).
-     - base: AA-pass dark rose, the primary interaction color (buttons, links, focus border).
-     - hover: one step darker.
-     - light: the L=0.85 tone the brand asked for — soft chips, badges, gentle highlights.
-     - soft: very light tint for selected rows and hover-on-surface backgrounds. */
-  --color-accent: #c2185b;
-  --color-accent-hover: #9d1450;
-  --color-accent-light: #f5b7c4;
-  --color-accent-soft: #fde7ec;
+  /* Accent — rose (hue 350). Base = AA-pass primary. */
+  --color-accent: #b81759;
+  --color-accent-hover: #971248;
+  --color-accent-strong: #7e0e3d;
+  --color-accent-light: #f0a8bd;
+  --color-accent-soft: #fbe6ec;
+
+  /* State colors */
+  --state-focus-ring: rgba(184, 23, 89, 0.45);
+  --state-selected-bg: #fbe6ec;
+  --state-hover-surface: #f0e8d8;
+  --state-disabled-bg: #e8e0d0;
+  --state-disabled-text: #a8a191;
+
+  /* Shadows — built on warm text base (oklch 0.22 0.015 60) so elevation
+     reads warm, not cold-gray. Approximated as #33291d alpha for fallback. */
+  --shadow-sm: 0 1px 2px rgba(51, 41, 29, 0.05), 0 1px 3px rgba(51, 41, 29, 0.08);
+  --shadow-md: 0 2px 4px rgba(51, 41, 29, 0.06), 0 4px 8px rgba(51, 41, 29, 0.10);
+  --shadow-lg: 0 4px 8px rgba(51, 41, 29, 0.08), 0 12px 24px rgba(51, 41, 29, 0.12);
+  --shadow-xl: 0 8px 16px rgba(51, 41, 29, 0.10), 0 24px 48px rgba(51, 41, 29, 0.18);
 
   /* ---------- Spacing scale (4px base) ---------- */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
+  --space-3-5: 14px;
   --space-4: 16px;
   --space-5: 20px;
   --space-6: 24px;
@@ -57,47 +80,71 @@
   --space-12: 96px;
 
   /* ---------- Border radius ---------- */
+  --radius-xs: 2px;
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
+  --radius-xl: 16px;
   --radius-full: 9999px;
 }
 
 /* ---------- OKLCH colors (modern browsers) ---------- */
 @supports (color: oklch(0 0 0)) {
   :root {
-    /* Background (L 0.90–0.97) */
-    --bg-base: oklch(0.97 0.005 260);
-    --bg-surface: oklch(0.94 0.005 260);
-    --bg-muted: oklch(0.90 0.005 260);
+    /* Background (L 0.93–0.985, hue 70–85 — warm ivory) */
+    --bg-base: oklch(0.985 0.006 85);
+    --bg-surface: oklch(0.965 0.008 75);
+    --bg-muted: oklch(0.93 0.012 70);
 
-    /* Text (L 0.20–0.60) */
-    --color-text-base: oklch(0.20 0.02 260);
-    --color-text-muted: oklch(0.45 0.02 260);
-    --color-text-subtle: oklch(0.60 0.02 260);
+    /* Text (L 0.22–0.60, hue 60 — warm dark to light) */
+    --color-text-base: oklch(0.22 0.015 60);
+    --color-text-muted: oklch(0.46 0.015 60);
+    --color-text-subtle: oklch(0.60 0.012 60);
     --color-text-inverse: oklch(1 0 0);
 
-    /* Border */
-    --border-default: oklch(0.85 0.005 260);
-    --border-strong: oklch(0.70 0.01 260);
+    /* Border (hue 65 — same family as neutrals) */
+    --border-default: oklch(0.86 0.012 65);
+    --border-strong: oklch(0.70 0.018 65);
 
-    /* Risk levels — foreground (L 0.45–0.55, WCAG AA 4.5:1+ on light bg) */
-    --color-risk-normal: oklch(0.50 0.15 145);
-    --color-risk-advisory: oklch(0.48 0.15 250);
-    --color-risk-warning: oklch(0.55 0.18 75);
-    --color-risk-critical: oklch(0.50 0.20 25);
+    /* Risk levels — foreground */
+    --color-risk-normal: oklch(0.48 0.14 150);
+    --color-risk-advisory: oklch(0.48 0.10 195);
+    --color-risk-warning: oklch(0.55 0.16 70);
+    --color-risk-critical: oklch(0.48 0.20 25);
 
-    /* Risk levels — light background (L ~0.95) */
-    --color-risk-normal-bg: oklch(0.95 0.04 145);
-    --color-risk-advisory-bg: oklch(0.95 0.04 250);
+    /* Risk levels — light background */
+    --color-risk-normal-bg: oklch(0.95 0.035 150);
+    --color-risk-advisory-bg: oklch(0.93 0.04 200);
     --color-risk-warning-bg: oklch(0.95 0.04 75);
-    --color-risk-critical-bg: oklch(0.95 0.04 25);
+    --color-risk-critical-bg: oklch(0.93 0.045 25);
 
-    /* Accent — rose family (hue 350). See hex fallback above for usage. */
-    --color-accent: oklch(0.55 0.18 350);        /* AA-pass dark rose: primary interaction */
-    --color-accent-hover: oklch(0.48 0.18 350);  /* one step darker for hover */
-    --color-accent-light: oklch(0.85 0.10 350);  /* brand's L=0.85 tone: chips, badges */
-    --color-accent-soft: oklch(0.95 0.04 350);   /* very light tint: selected rows */
+    /* Accent (hue 350 — rose). See hex fallback above for usage. */
+    --color-accent: oklch(0.52 0.18 350);
+    --color-accent-hover: oklch(0.45 0.18 350);
+    --color-accent-strong: oklch(0.40 0.17 350);
+    --color-accent-light: oklch(0.83 0.10 350);
+    --color-accent-soft: oklch(0.95 0.035 350);
+
+    /* State colors */
+    --state-focus-ring: oklch(0.55 0.20 350 / 0.45);
+    --state-selected-bg: oklch(0.95 0.035 350);
+    --state-hover-surface: oklch(0.95 0.012 70);
+    --state-disabled-bg: oklch(0.93 0.008 70);
+    --state-disabled-text: oklch(0.65 0.008 60);
+
+    /* Shadows — alpha layers of text-base oklch */
+    --shadow-sm:
+      0 1px 2px oklch(0.22 0.015 60 / 0.05),
+      0 1px 3px oklch(0.22 0.015 60 / 0.08);
+    --shadow-md:
+      0 2px 4px oklch(0.22 0.015 60 / 0.06),
+      0 4px 8px oklch(0.22 0.015 60 / 0.10);
+    --shadow-lg:
+      0 4px 8px oklch(0.22 0.015 60 / 0.08),
+      0 12px 24px oklch(0.22 0.015 60 / 0.12);
+    --shadow-xl:
+      0 8px 16px oklch(0.22 0.015 60 / 0.10),
+      0 24px 48px oklch(0.22 0.015 60 / 0.18);
   }
 }
 
