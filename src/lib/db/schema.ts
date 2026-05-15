@@ -125,6 +125,12 @@ export interface Assessment {
     summary: string;
   };
   fhirSubmitted: boolean;
+  fhirDiagnosticReportId?: string;
+  physicianNote?: string | null;
+  physicianNoteUpdatedAt?: Date | null;
+  /** Origin of the record. Undefined / 'idb' = produced on this device.
+   *  'fhir-cache' = pulled from FHIR server by the cross-device resolver and cached locally. */
+  _source?: 'idb' | 'fhir-cache';
   createdAt: Date;
   updatedAt: Date;
 }
