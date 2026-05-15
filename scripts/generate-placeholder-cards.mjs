@@ -10,11 +10,14 @@ import sharp from 'sharp';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(__dirname, '..');
 
-// 5 shape types × 2 colour variants = 10 per domain
+// 5 shape types × 2 colour variants = 10 per domain.
+// Two-colour variants (yellow / purple) keep the variant easy to name
+// out loud ("按紫色的圓") and distinct under the always-white inner ring,
+// which decouples shape colour from the domain-coloured background.
 const SHAPES = ['circle', 'square', 'triangle', 'star', 'hexagon'];
 const VARIANTS = [
-  { primary: '#fff', accent: 'rgba(0,0,0,0.15)' },
-  { primary: 'rgba(255,255,255,0.85)', accent: 'rgba(255,255,255,0.35)' },
+  { tag: 'yellow', label: '黃', primary: '#fbbf24', accent: 'rgba(255,255,255,0.92)' },
+  { tag: 'purple', label: '紫', primary: '#a855f7', accent: 'rgba(255,255,255,0.92)' },
 ];
 
 const DOMAINS = {
@@ -104,8 +107,8 @@ async function generate() {
         seq++;
         const shape = SHAPES[s];
         const variant = VARIANTS[v];
-        const variantTag = v === 0 ? 'light' : 'transparent';
-        const variantLabel = v === 0 ? '亮' : '透';
+        const variantTag = variant.tag;
+        const variantLabel = variant.label;
         const filename = `${domain}/${String(seq).padStart(2, '0')}-${shape}-${variantTag}.webp`;
         const destPath = resolve(repoRoot, 'public/cards', filename);
 
