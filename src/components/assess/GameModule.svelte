@@ -25,26 +25,43 @@
   const MIN_CARDS_REQUIRED = 6;
   const MAX_BLOCK_MS = 3 * 60 * 1000;
 
-  /** Strip the "領域：" prefix from generated placeholder descriptions
-   *  ("認知：圓形（亮）" → "圓形（亮）"). Real-illustration descriptions
-   *  without the colon pass through unchanged. */
-  function shortLabel(description: string): string {
-    const idx = description.indexOf('：');
-    return idx >= 0 ? description.slice(idx + 1) : description;
+  /** Parse a card description into shape + modifier parts for graded prompts.
+   *  Placeholder format: "領域：形狀（變體）" → shape "圓形", modifier "亮"
+   *  Real-illustration format: "小朋友跑步" → shape = whole string, modifier = ''
+   *  The compound-instruction levels only render the modifier when available;
+   *  cards without one fall through to a simpler shape-only prompt. */
+  function parseCardParts(description: string): { shape: string; modifier: string } {
+    const afterPrefix = description.includes('：')
+      ? description.slice(description.indexOf('：') + 1)
+      : description;
+    const m = afterPrefix.match(/^(.+?)（(.+?)）$/);
+    return m ? { shape: m[1], modifier: m[2] } : { shape: afterPrefix, modifier: '' };
   }
 
+  /** Build a graded instruction:
+   *    none           → ''                              (2-12m)
+   *    single_verb    → 按一下！                         (13-24m)
+   *    verb_object    → 按{shape}                        (25-36m)
+   *    verb_adj_object→ 按{modifier}的{shape}             (37-48m)
+   *    compound       → 先找{modifier}的{shape}，再按一下 (49-72m)
+   *  Falls back to simpler forms when modifier or shape is missing. */
   function buildInstruction(level: string, description: string): string {
-    const label = shortLabel(description);
+    const { shape, modifier } = parseCardParts(description);
     switch (level) {
       case 'none':
         return '';
       case 'single_verb':
-        return `看到「${label}」就按一下！`;
+        return '按一下！';
       case 'verb_object':
-        return `找出「${label}」`;
+        return shape ? `按${shape}` : '按一下！';
       case 'verb_adj_object':
+        return modifier && shape
+          ? `按${modifier}的${shape}`
+          : (shape ? `按${shape}` : '按一下！');
       case 'compound':
-        return `看到「${label}」就按一下`;
+        return modifier && shape
+          ? `先找${modifier}的${shape}，再按一下`
+          : (shape ? `先找${shape}，再按一下` : '按一下！');
       default:
         return '';
     }
