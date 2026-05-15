@@ -8,9 +8,9 @@
 //   - Dot   = the child being observed at the center of attention
 //
 // Palette matches tokens.css fallback hex:
-//   rose stroke  --color-accent          #b81759
+//   rose stroke  --color-accent          #c34a5e (warm dusty rose, hue 15)
 //   cream bg     --bg-base               #fbf8f2
-//   center dot   --color-accent-strong   #7e0e3d
+//   center dot   --color-accent-strong   #862e3e
 //
 // SPDX-License-Identifier: MIT
 
@@ -42,7 +42,7 @@ function makeSvg(size) {
   <circle
     cx="${cx}" cy="${cx}" r="${ringR}"
     fill="none"
-    stroke="#b81759"
+    stroke="#c34a5e"
     stroke-width="${stroke}"
     stroke-linecap="round"
     stroke-dasharray="${dashLen} ${gapLen}"
@@ -50,7 +50,7 @@ function makeSvg(size) {
     transform="rotate(-90 ${cx} ${cx})"
   />
   <!-- Center dot: deeper rose for contrast against the cream field -->
-  <circle cx="${cx}" cy="${cx}" r="${dotR}" fill="#7e0e3d"/>
+  <circle cx="${cx}" cy="${cx}" r="${dotR}" fill="#862e3e"/>
 </svg>`;
 }
 

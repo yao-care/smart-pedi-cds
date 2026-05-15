@@ -33,26 +33,29 @@
 
   /* Risk levels — foreground (AA-pass against the matching *-bg) */
   --color-risk-normal: #327a4e;
-  --color-risk-advisory: #1e7480;
+  --color-risk-advisory: #4a8088;
   --color-risk-warning: #b06d1a;
   --color-risk-critical: #b62b1f;
 
   /* Risk levels — light background */
   --color-risk-normal-bg: #e4f1e5;
-  --color-risk-advisory-bg: #d4ecef;
+  --color-risk-advisory-bg: #dee8e9;
   --color-risk-warning-bg: #f6ead3;
   --color-risk-critical-bg: #fadcd3;
 
-  /* Accent — rose (hue 350). Base = AA-pass primary. */
-  --color-accent: #b81759;
-  --color-accent-hover: #971248;
-  --color-accent-strong: #7e0e3d;
-  --color-accent-light: #f0a8bd;
-  --color-accent-soft: #fbe6ec;
+  /* Accent — warm dusty rose (hue 15). Moved off the cool magenta 350
+     so the brand colour sits in the same warm family as the ivory
+     neutrals (hue 60-85). hue 350 read as "wine/berry" against the
+     warm background; hue 15 reads as "dusty rose" — softer and on-tone. */
+  --color-accent: #c34a5e;
+  --color-accent-hover: #a23a4d;
+  --color-accent-strong: #862e3e;
+  --color-accent-light: #f1b9bf;
+  --color-accent-soft: #fbe5e6;
 
   /* State colors */
-  --state-focus-ring: rgba(184, 23, 89, 0.45);
-  --state-selected-bg: #fbe6ec;
+  --state-focus-ring: rgba(195, 74, 94, 0.45);
+  --state-selected-bg: #fbe5e6;
   --state-hover-surface: #f0e8d8;
   --state-disabled-bg: #e8e0d0;
   --state-disabled-text: #a8a191;
@@ -108,26 +111,26 @@
 
     /* Risk levels — foreground */
     --color-risk-normal: oklch(0.48 0.14 150);
-    --color-risk-advisory: oklch(0.48 0.10 195);
+    --color-risk-advisory: oklch(0.55 0.08 195);  /* softened from 0.48 0.10 — less abrupt against warm bg */
     --color-risk-warning: oklch(0.55 0.16 70);
     --color-risk-critical: oklch(0.48 0.20 25);
 
     /* Risk levels — light background */
     --color-risk-normal-bg: oklch(0.95 0.035 150);
-    --color-risk-advisory-bg: oklch(0.93 0.04 200);
+    --color-risk-advisory-bg: oklch(0.94 0.025 195);
     --color-risk-warning-bg: oklch(0.95 0.04 75);
     --color-risk-critical-bg: oklch(0.93 0.045 25);
 
-    /* Accent (hue 350 — rose). See hex fallback above for usage. */
-    --color-accent: oklch(0.52 0.18 350);
-    --color-accent-hover: oklch(0.45 0.18 350);
-    --color-accent-strong: oklch(0.40 0.17 350);
-    --color-accent-light: oklch(0.83 0.10 350);
-    --color-accent-soft: oklch(0.95 0.035 350);
+    /* Accent — warm dusty rose (hue 15). See hex fallback above for usage. */
+    --color-accent: oklch(0.55 0.16 15);
+    --color-accent-hover: oklch(0.48 0.16 15);
+    --color-accent-strong: oklch(0.42 0.15 15);
+    --color-accent-light: oklch(0.85 0.09 15);
+    --color-accent-soft: oklch(0.95 0.03 15);
 
     /* State colors */
-    --state-focus-ring: oklch(0.55 0.20 350 / 0.45);
-    --state-selected-bg: oklch(0.95 0.035 350);
+    --state-focus-ring: oklch(0.58 0.18 15 / 0.45);
+    --state-selected-bg: oklch(0.95 0.03 15);
     --state-hover-surface: oklch(0.95 0.012 70);
     --state-disabled-bg: oklch(0.93 0.008 70);
     --state-disabled-text: oklch(0.65 0.008 60);
