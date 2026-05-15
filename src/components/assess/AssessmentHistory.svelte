@@ -877,7 +877,7 @@
   }
 
   :global(.radar-axis-label) {
-    font-size: 12px;
+    font-size: var(--text-caption);
     fill: var(--color-text-base);
   }
 

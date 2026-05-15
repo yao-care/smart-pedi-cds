@@ -30,7 +30,15 @@
     'Courier New',
     monospace;
 
-  /* ---------- Font sizes (min 18px) / line-height ---------- */
+  /* ---------- Font sizes / line-height ----------
+     Body / UI text minimum is 18px (--text-xs). --text-caption (16px)
+     is an exception reserved for non-body chrome — chart axis labels,
+     tooltips, dense table footnotes — where readability is already
+     mediated by position / aria-label and the 18px floor would force
+     visual clutter. Do not use --text-caption for prose. */
+  --text-caption: 16px;
+  --lh-caption: 1.5;
+
   --text-xs: 18px;
   --lh-xs: 1.5;
 
@@ -51,6 +59,10 @@
 
   --text-3xl: 40px;
   --lh-3xl: 1.2;
+
+  /* Hero / marketing display — letter-spacing tightened, single line */
+  --text-display: 48px;
+  --lh-display: 1.15;
 
   /* ---------- Font weights ---------- */
   --font-normal: 400;
