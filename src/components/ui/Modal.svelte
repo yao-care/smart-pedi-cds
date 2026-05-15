@@ -59,7 +59,8 @@
   .backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.45);
+    background: oklch(0.22 0.015 60 / 0.55);
+    backdrop-filter: blur(6px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -67,10 +68,17 @@
     padding: var(--space-4);
   }
 
+  /* Fallback for browsers without oklch support */
+  @supports not (color: oklch(0 0 0)) {
+    .backdrop {
+      background: rgba(51, 41, 29, 0.55);
+    }
+  }
+
   .modal {
     background: var(--bg-base);
     border-radius: var(--radius-lg);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-xl);
     width: 100%;
     max-width: 540px;
     max-height: 90vh;

@@ -291,7 +291,7 @@
       left: 0;
       bottom: 0;
       z-index: 5;
-      box-shadow: 4px 0 12px rgba(0, 0, 0, 0.1);
+      box-shadow: var(--shadow-lg);
     }
 
     .workspace-content {

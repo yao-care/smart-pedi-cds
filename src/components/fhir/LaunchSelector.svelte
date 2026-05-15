@@ -138,7 +138,7 @@
   .launch-option:hover {
     border-color: var(--color-accent);
     background: var(--bg-base);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-md);
   }
 
   .launch-option:focus-visible {

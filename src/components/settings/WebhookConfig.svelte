@@ -617,7 +617,7 @@
     height: 20px;
     border-radius: 50%;
     background: var(--color-text-inverse);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-sm);
     transition: transform 0.2s ease;
     pointer-events: none;
   }

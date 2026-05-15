@@ -48,8 +48,8 @@
     align-items: flex-start;
     gap: var(--space-3);
     padding: var(--space-3) var(--space-4);
-    border-radius: var(--radius-md);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
     min-width: 280px;
     max-width: 420px;
     animation: slide-in 0.2s ease-out;
