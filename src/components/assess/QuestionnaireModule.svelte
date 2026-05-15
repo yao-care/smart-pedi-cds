@@ -192,8 +192,8 @@
     <div class="summary">
       <div class="summary-icon" aria-hidden="true">
         <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="28" cy="28" r="28" fill="#edf7ed"/>
-          <path d="M16 28.5l8 8 16-16" stroke="#3a8a3a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="28" cy="28" r="28" style="fill: var(--color-risk-normal-bg);"/>
+          <path d="M16 28.5l8 8 16-16" style="stroke: var(--color-risk-normal);" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
       <h2 class="summary-title">問卷完成！</h2>
@@ -415,7 +415,7 @@
     width: 100%;
     padding: var(--space-4);
     background: var(--color-accent);
-    color: #fff;
+    color: var(--color-text-inverse);
     border: none;
     border-radius: var(--radius-md);
     font-size: var(--text-lg);

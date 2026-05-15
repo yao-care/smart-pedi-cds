@@ -273,7 +273,7 @@
   .btn-save {
     padding: var(--space-2) var(--space-5);
     background: var(--color-accent);
-    color: #fff;
+    color: var(--color-text-inverse);
     border: 1px solid var(--color-accent);
     border-radius: var(--radius-md);
     font-size: var(--text-sm);

@@ -66,7 +66,7 @@ select {
   z-index: 9999;
   padding: var(--space-2) var(--space-4);
   background: var(--color-accent);
-  color: #fff;
+  color: var(--color-text-inverse);
   font-weight: var(--font-bold);
   font-size: var(--text-sm);
   border-radius: var(--radius-md);

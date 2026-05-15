@@ -206,7 +206,7 @@
   .mark-read-btn {
     padding: var(--space-2) var(--space-5);
     background: var(--color-risk-normal);
-    color: #fff;
+    color: var(--color-text-inverse);
     border: none;
     border-radius: var(--radius-sm);
     font-size: 0.875rem;

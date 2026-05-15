@@ -235,7 +235,7 @@
   canvas {
     border: 2px solid var(--border-default);
     border-radius: var(--radius-lg);
-    background: #ffffff;
+    background: var(--color-text-inverse);
     cursor: crosshair;
     max-width: 100%;
     height: auto;
@@ -265,7 +265,7 @@
   .btn-submit {
     padding: var(--space-3) var(--space-6);
     background: var(--color-accent);
-    color: #fff;
+    color: var(--color-text-inverse);
     border: none;
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
@@ -305,7 +305,7 @@
   .btn-next {
     padding: var(--space-3) var(--space-7);
     background: var(--color-accent);
-    color: #fff;
+    color: var(--color-text-inverse);
     border: none;
     border-radius: var(--radius-md);
     font-size: var(--text-sm);

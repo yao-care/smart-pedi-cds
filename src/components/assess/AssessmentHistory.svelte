@@ -138,7 +138,11 @@
     poseClassification: '姿態分析',
   };
 
-  const SERIES_COLORS = ['#2563eb', '#db2777', '#16a34a', '#f59e0b'];
+  // SVG palette for compare overlay. Distinct hues so multi-series stays
+  // legible; first slot matches the brand rose so a 2-series compare reads
+  // as "brand + accent". JS literal because SVG attrs can't read CSS vars
+  // across <each> blocks reliably.
+  const SERIES_COLORS = ['#c2185b', '#0d9488', '#f59e0b', '#7c3aed'];
 
   function domainLabel(d: string): string {
     return DOMAIN_LABELS[d] ?? d;
@@ -595,7 +599,7 @@
     justify-content: center;
     padding: var(--space-3) var(--space-7);
     background: var(--color-accent);
-    color: #fff;
+    color: var(--color-text-inverse);
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
     font-weight: var(--font-medium);
@@ -757,7 +761,7 @@
 
   .btn-compare {
     background: var(--color-accent);
-    color: #fff;
+    color: var(--color-text-inverse);
     border-color: var(--color-accent);
     margin-left: auto;
   }

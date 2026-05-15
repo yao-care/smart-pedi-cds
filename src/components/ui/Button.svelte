@@ -57,7 +57,7 @@
   /* Variants */
   .btn-primary {
     background: var(--color-accent);
-    color: #fff;
+    color: var(--color-text-inverse);
   }
   .btn-primary:hover:not(:disabled) {
     background: var(--color-accent-hover);
@@ -74,7 +74,7 @@
 
   .btn-danger {
     background: var(--color-risk-critical);
-    color: #fff;
+    color: var(--color-text-inverse);
   }
   .btn-danger:hover:not(:disabled) {
     opacity: 0.85;

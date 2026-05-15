@@ -249,7 +249,7 @@
   .add-btn {
     padding: var(--space-2) var(--space-4);
     background: var(--color-accent);
-    color: #fff;
+    color: var(--color-text-inverse);
     border: none;
     border-radius: var(--radius-sm);
     font-size: 0.875rem;
@@ -385,7 +385,7 @@
   .field-input:focus {
     outline: none;
     border-color: var(--color-accent);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 12%, transparent);
   }
 
   .field-textarea {
@@ -452,7 +452,7 @@
   .save-btn {
     padding: var(--space-2) var(--space-6);
     background: var(--color-accent);
-    color: #fff;
+    color: var(--color-text-inverse);
     border: none;
     border-radius: var(--radius-sm);
     font-size: 0.9rem;

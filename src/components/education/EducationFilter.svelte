@@ -168,7 +168,7 @@
   .chip.active {
     background: var(--color-accent);
     border-color: var(--color-accent);
-    color: #fff;
+    color: var(--color-text-inverse);
   }
 
   .chip:hover:not(.active) {

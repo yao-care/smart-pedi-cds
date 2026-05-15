@@ -217,7 +217,7 @@
     border-radius: var(--radius-md);
     font-size: 0.875rem;
     font-weight: 600;
-    color: #fff;
+    color: var(--color-text-inverse);
     background-color: var(--color-accent);
     cursor: pointer;
     transition: background-color 0.2s ease;

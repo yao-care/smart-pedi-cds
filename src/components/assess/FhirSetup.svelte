@@ -67,7 +67,7 @@
   .btn-connect {
     padding: var(--space-3) var(--space-6);
     background: var(--color-accent);
-    color: #fff;
+    color: var(--color-text-inverse);
     border: none;
     border-radius: var(--radius-md);
     font-size: var(--text-sm);

@@ -94,8 +94,7 @@
         .attr('y', yScale(bandTop))
         .attr('width', innerWidth)
         .attr('height', yScale(bandBottom) - yScale(bandTop))
-        .attr('fill', '#3a8a3a')
-        .attr('opacity', 0.2);
+        .attr('class', 'baseline-band');
 
       // Baseline mean dashed line
       g.append('line')
@@ -103,10 +102,7 @@
         .attr('y1', yScale(mean))
         .attr('x2', innerWidth)
         .attr('y2', yScale(mean))
-        .attr('stroke', '#3a8a3a')
-        .attr('stroke-width', 1.5)
-        .attr('stroke-dasharray', '6,4')
-        .attr('opacity', 0.7);
+        .attr('class', 'baseline-mean');
     }
 
     // Data line
@@ -137,7 +133,7 @@
         }
         return 'var(--color-accent)';
       })
-      .attr('stroke', '#fff')
+      .attr('stroke', 'var(--color-text-inverse)')
       .attr('stroke-width', 1.5)
       .style('cursor', 'pointer');
 
@@ -254,11 +250,11 @@
     position: absolute;
     pointer-events: none;
     background-color: var(--color-text-base);
-    color: #fff;
+    color: var(--color-text-inverse);
     padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-sm);
-    font-size: 0.75rem;
-    line-height: 1.4;
+    font-size: var(--text-xs);
+    line-height: var(--lh-xs);
     display: flex;
     flex-direction: column;
     transform: translate(-50%, -100%);
@@ -270,5 +266,18 @@
     text-align: center;
     color: var(--color-text-muted);
     padding: var(--space-8) 0;
+  }
+
+  /* d3-drawn baseline band + mean line. Selectors target classes set in JS. */
+  :global(.baseline-band) {
+    fill: var(--color-risk-normal);
+    opacity: 0.2;
+  }
+
+  :global(.baseline-mean) {
+    stroke: var(--color-risk-normal);
+    stroke-width: 1.5;
+    stroke-dasharray: 6 4;
+    opacity: 0.7;
   }
 </style>

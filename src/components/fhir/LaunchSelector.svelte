@@ -241,7 +241,7 @@
   .retry-btn {
     padding: var(--space-2) var(--space-4);
     background: var(--color-risk-critical);
-    color: #fff;
+    color: var(--color-text-inverse);
     border: none;
     border-radius: var(--radius-sm);
     cursor: pointer;

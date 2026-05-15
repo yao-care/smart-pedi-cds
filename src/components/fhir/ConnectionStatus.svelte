@@ -63,16 +63,16 @@
   }
 
   .dot--connected {
-    background: #3a8a3a;
+    background: var(--color-risk-normal);
   }
 
   .dot--syncing {
-    background: #b87a1a;
+    background: var(--color-risk-warning);
     animation: blink 1s ease-in-out infinite;
   }
 
   .dot--disconnected {
-    background: #c43a2b;
+    background: var(--color-risk-critical);
   }
 
   .status-label {

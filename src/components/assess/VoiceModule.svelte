@@ -380,7 +380,7 @@
     width: 100%;
     padding: var(--space-4);
     background: var(--color-accent);
-    color: #fff;
+    color: var(--color-text-inverse);
     border: none;
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
@@ -398,7 +398,7 @@
     width: 100%;
     padding: var(--space-4);
     background: var(--color-accent);
-    color: #fff;
+    color: var(--color-text-inverse);
     border: none;
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
@@ -415,7 +415,7 @@
     width: 100%;
     padding: var(--space-4);
     background: var(--color-risk-critical);
-    color: #fff;
+    color: var(--color-text-inverse);
     border: none;
     border-radius: var(--radius-md);
     font-size: var(--text-sm);

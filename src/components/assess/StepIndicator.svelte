@@ -82,13 +82,13 @@
   .step.completed .step-dot {
     background: var(--color-risk-normal);
     border-color: var(--color-risk-normal);
-    color: #fff;
+    color: var(--color-text-inverse);
   }
 
   .step.active .step-dot {
     background: var(--color-accent);
     border-color: var(--color-accent);
-    color: #fff;
+    color: var(--color-text-inverse);
   }
 
   .step-label {

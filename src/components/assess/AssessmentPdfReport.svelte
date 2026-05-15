@@ -182,7 +182,7 @@
   .btn-pdf:hover:not(:disabled) {
     border-color: var(--color-accent);
     background: var(--color-accent);
-    color: #fff;
+    color: var(--color-text-inverse);
   }
 
   .btn-pdf:disabled {

@@ -366,7 +366,7 @@
   }
 
   .btn-confirm {
-    color: #fff;
+    color: var(--color-text-inverse);
     background-color: var(--color-accent);
     border-color: var(--color-accent);
   }

@@ -275,7 +275,7 @@
     gap: var(--space-2);
     padding: var(--space-1) var(--space-3);
     background: rgba(0, 0, 0, 0.6);
-    color: #fff;
+    color: var(--color-text-inverse);
     border-radius: var(--radius-full);
     font-size: var(--text-xs);
     font-weight: var(--font-medium);
@@ -357,7 +357,7 @@
     justify-content: center;
     padding: var(--space-4) var(--space-7);
     background: var(--color-accent);
-    color: #fff;
+    color: var(--color-text-inverse);
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
     font-weight: var(--font-bold);
@@ -383,7 +383,7 @@
     width: 100%;
     padding: var(--space-4);
     background: var(--color-accent);
-    color: #fff;
+    color: var(--color-text-inverse);
     border: none;
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
@@ -401,7 +401,7 @@
     flex: 1;
     padding: var(--space-4);
     background: var(--color-accent);
-    color: #fff;
+    color: var(--color-text-inverse);
     border: none;
     border-radius: var(--radius-md);
     font-size: var(--text-sm);

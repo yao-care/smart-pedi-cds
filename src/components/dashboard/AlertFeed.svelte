@@ -112,7 +112,7 @@
     padding: 0 var(--space-2);
     border-radius: var(--radius-full);
     background-color: var(--color-risk-critical);
-    color: #fff;
+    color: var(--color-text-inverse);
     font-size: 0.8rem;
     font-weight: 700;
   }
