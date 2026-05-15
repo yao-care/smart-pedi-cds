@@ -18,8 +18,8 @@ function makeSvg(size) {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#3b82f6"/>
-      <stop offset="100%" stop-color="#2563eb"/>
+      <stop offset="0%" stop-color="#e91e63"/>
+      <stop offset="100%" stop-color="#c2185b"/>
     </linearGradient>
   </defs>
   <!-- Full-bleed background (covers safe + bleed zones for maskable) -->

@@ -14,6 +14,7 @@
   --color-text-base: #303030;
   --color-text-muted: #6b6b6b;
   --color-text-subtle: #8a8a8a;
+  --color-text-inverse: #ffffff;
 
   /* Border */
   --border-default: #cfcfcf;
@@ -31,9 +32,15 @@
   --color-risk-warning-bg: #faf3e6;
   --color-risk-critical-bg: #fbeaea;
 
-  /* Accent */
-  --color-accent: #2563eb;
-  --color-accent-hover: #1d4ed8;
+  /* Accent — rose family (hue 350).
+     - base: AA-pass dark rose, the primary interaction color (buttons, links, focus border).
+     - hover: one step darker.
+     - light: the L=0.85 tone the brand asked for — soft chips, badges, gentle highlights.
+     - soft: very light tint for selected rows and hover-on-surface backgrounds. */
+  --color-accent: #c2185b;
+  --color-accent-hover: #9d1450;
+  --color-accent-light: #f5b7c4;
+  --color-accent-soft: #fde7ec;
 
   /* ---------- Spacing scale (4px base) ---------- */
   --space-1: 4px;
@@ -68,6 +75,7 @@
     --color-text-base: oklch(0.20 0.02 260);
     --color-text-muted: oklch(0.45 0.02 260);
     --color-text-subtle: oklch(0.60 0.02 260);
+    --color-text-inverse: oklch(1 0 0);
 
     /* Border */
     --border-default: oklch(0.85 0.005 260);
@@ -85,9 +93,11 @@
     --color-risk-warning-bg: oklch(0.95 0.04 75);
     --color-risk-critical-bg: oklch(0.95 0.04 25);
 
-    /* Accent */
-    --color-accent: oklch(0.50 0.18 255);
-    --color-accent-hover: oklch(0.45 0.18 255);
+    /* Accent — rose family (hue 350). See hex fallback above for usage. */
+    --color-accent: oklch(0.55 0.18 350);        /* AA-pass dark rose: primary interaction */
+    --color-accent-hover: oklch(0.48 0.18 350);  /* one step darker for hover */
+    --color-accent-light: oklch(0.85 0.10 350);  /* brand's L=0.85 tone: chips, badges */
+    --color-accent-soft: oklch(0.95 0.04 350);   /* very light tint: selected rows */
   }
 }
 
