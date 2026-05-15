@@ -212,42 +212,39 @@
     {/each}
   </nav>
 
-  <div class="domain-grid">
+  <ul class="domain-tree">
     {#each DOMAINS as domain}
       {@const cell = cells[domain]}
       {@const defaults = getDefaultRecommendations(activeCategory, domain)}
-      <article class="domain-card" class:has-overlay={cell?.hasOverlay}>
-        <header class="card-header">
-          <h3>{DOMAIN_LABELS[domain]}</h3>
-          {#if cell?.hasOverlay}
-            <span class="badge badge-override">已自訂</span>
-          {:else}
-            <span class="badge badge-default">系統預設</span>
-          {/if}
-        </header>
-
+      {@const effectiveItems = cell?.hasOverlay && !cell.mergeWithDefault
+        ? cell.items
+        : [...defaults, ...(cell?.hasOverlay && cell.mergeWithDefault ? cell.items : [])]}
+      <li class="domain-row" class:has-overlay={cell?.hasOverlay} class:expanded={cell?.expanded}>
         {#if !cell || (cell && !cell.expanded)}
-          <ul class="preview-list">
-            {#if cell?.hasOverlay && !cell.mergeWithDefault}
-              {#each cell.items as item}
-                <li class="preview-item override">{item.title ?? item.slug ?? item.url ?? '(未命名)'}</li>
-              {/each}
-            {:else}
-              {#each defaults as item}
-                <li class="preview-item default-item">{item.title ?? item.slug ?? '(未命名)'}</li>
-              {/each}
-              {#if cell?.hasOverlay && cell.mergeWithDefault}
-                {#each cell.items as item}
-                  <li class="preview-item override">{item.title ?? item.slug ?? item.url ?? '(未命名)'}</li>
-                {/each}
+          <div class="row-header">
+            <button
+              type="button"
+              class="row-toggle"
+              onclick={() => startEdit(domain)}
+              aria-expanded="false"
+            >
+              <span class="row-caret" aria-hidden="true">▸</span>
+              <span class="row-title">{DOMAIN_LABELS[domain]}</span>
+              {#if cell?.hasOverlay}
+                <span class="badge badge-override">已自訂</span>
+              {:else}
+                <span class="badge badge-default">系統預設</span>
               {/if}
-              {#if defaults.length === 0 && !(cell?.hasOverlay)}
-                <li class="preview-empty">（無預設項目）</li>
-              {/if}
-            {/if}
-          </ul>
-          <div class="card-actions">
-            <button type="button" class="btn-link" onclick={() => startEdit(domain)}>編輯</button>
+              <span class="row-count">{effectiveItems.length} 項</span>
+              <span class="row-preview">
+                {#if effectiveItems.length === 0}
+                  <em>（無項目）</em>
+                {:else}
+                  {effectiveItems.slice(0, 3).map((i) => i.title ?? i.slug ?? i.url ?? '?').join('、')}
+                  {effectiveItems.length > 3 ? `…` : ''}
+                {/if}
+              </span>
+            </button>
             {#if cell?.hasOverlay}
               <button type="button" class="btn-link danger" onclick={() => reset(domain)} disabled={cell.saving}>
                 還原預設
@@ -340,9 +337,9 @@
             </div>
           </div>
         {/if}
-      </article>
+      </li>
     {/each}
-  </div>
+  </ul>
 </section>
 
 <style>
@@ -388,34 +385,85 @@
     border-bottom-color: var(--color-accent);
   }
 
-  .domain-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-    gap: var(--space-4);
+  .domain-tree {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
   }
 
-  .domain-card {
+  .domain-row {
     border: 1px solid var(--border-default);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     background: var(--bg-surface);
-    padding: var(--space-4);
+    overflow: hidden;
   }
 
-  .domain-card.has-overlay {
+  .domain-row.has-overlay {
     border-color: var(--color-accent);
   }
 
-  .card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: var(--space-3);
+  .domain-row.expanded {
+    padding: var(--space-4);
   }
 
-  .card-header h3 {
-    margin: 0;
-    font-size: var(--text-base);
+  .row-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding-right: var(--space-3);
+  }
+
+  .row-toggle {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    background: none;
+    border: none;
+    padding: var(--space-3) var(--space-3) var(--space-3) var(--space-2);
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    min-height: 44px;
+  }
+
+  .row-toggle:hover {
+    background: var(--bg-muted);
+  }
+
+  .row-caret {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    width: 16px;
+  }
+
+  .row-title {
     font-weight: var(--font-bold);
+    min-width: 80px;
+  }
+
+  .row-count {
+    color: var(--color-text-muted);
+    font-size: var(--text-xs);
+    margin-left: var(--space-2);
+  }
+
+  .row-preview {
+    color: var(--color-text-muted);
+    font-size: var(--text-xs);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+  }
+
+  .row-preview em {
+    font-style: italic;
+    opacity: 0.7;
   }
 
   .badge {
@@ -433,38 +481,6 @@
   .badge-override {
     background: var(--color-risk-advisory-bg);
     color: var(--color-risk-advisory);
-  }
-
-  .preview-list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 var(--space-3);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-    font-size: var(--text-xs);
-  }
-
-  .preview-item {
-    padding: 4px 8px;
-    border-radius: var(--radius-sm);
-    background: var(--bg-muted);
-    color: var(--color-text-base);
-  }
-
-  .preview-item.override {
-    background: var(--color-risk-advisory-bg);
-    color: var(--color-risk-advisory);
-  }
-
-  .preview-empty {
-    color: var(--color-text-subtle);
-    font-style: italic;
-  }
-
-  .card-actions {
-    display: flex;
-    gap: var(--space-3);
   }
 
   .btn-link {
