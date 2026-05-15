@@ -169,12 +169,25 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
     confidence = 0.85;
   }
 
-  // Summary
+  // Summary — translate domain ids to user-facing Chinese labels so the
+  // sentence doesn't leak technical identifiers like "behavior, fine_motor".
+  const DOMAIN_LABELS: Record<string, string> = {
+    behavior: '行為',
+    gross_motor: '粗動作',
+    fine_motor: '細動作',
+    language: '語言',
+    language_comprehension: '語言理解',
+    language_expression: '語言表達',
+    cognition: '認知',
+    social_emotional: '社交情緒',
+    diet: '飲食',
+  };
   const anomalyDomains = [...new Set(details.filter(d => d.isAnomaly).map(d => d.domain))];
+  const anomalyLabels = anomalyDomains.map(d => DOMAIN_LABELS[d] ?? d);
   const summaryMap: Record<TriageResult['category'], string> = {
     'normal': '各面向發展在正常範圍內。',
-    'monitor': `${anomalyDomains.join('、')}面向有待觀察。建議持續追蹤。`,
-    'refer': `${anomalyDomains.join('、')}面向顯示異常。建議進一步專業評估。`,
+    'monitor': `${anomalyLabels.join('、')}面向有待觀察。建議持續追蹤。`,
+    'refer': `${anomalyLabels.join('、')}面向顯示異常。建議進一步專業評估。`,
   };
 
   return {

@@ -120,18 +120,28 @@
     if (currentIndex < totalQuestions - 1) {
       currentIndex++;
     } else {
+      // Persist scores into the store immediately on the last answer so a
+      // distracted user / Playwright run that never reaches the summary
+      // "完成問卷" button still feeds the triage engine. The summary screen
+      // remains as a confirmation surface; pressing 完成問卷 only advances.
+      persistScoresToStore();
       phase = 'summary';
     }
   }
 
-  // ---- Finish ----
-  async function handleFinish() {
-    // 累積問卷分數到 store（即時分析）
+  function persistScoresToStore(): void {
     const scores: Record<string, number> = {};
     for (const s of domainSummary) {
       scores[s.domain] = s.score;
     }
     assessmentStore.addAnalysis({ questionnaireScores: scores });
+  }
+
+  // ---- Finish ----
+  async function handleFinish() {
+    // Re-write in case the user changed an earlier answer via back-nav;
+    // the call above already covered the happy path.
+    persistScoresToStore();
     await assessmentStore.nextStep();
   }
 </script>
