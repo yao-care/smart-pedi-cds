@@ -61,17 +61,27 @@ const { title, subtitle, ctaText, ctaHref } = Astro.props;
     align-items: center;
     justify-content: center;
     margin-top: var(--space-6);
-    padding: var(--space-3) var(--space-7);
+    padding: var(--space-4) var(--space-7);
+    min-height: 56px;
     font-size: var(--text-base);
     font-weight: var(--font-medium);
     color: var(--color-text-inverse);
     background-color: var(--color-accent);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
     text-decoration: none;
-    transition: background-color 0.2s ease;
+    transition:
+      background-color 0.18s ease,
+      box-shadow 0.18s ease,
+      transform 0.1s ease;
   }
 
   .hero-cta:hover {
     background-color: var(--color-accent-hover);
+    box-shadow: var(--shadow-md);
+  }
+
+  .hero-cta:active {
+    transform: translateY(1px);
   }
 </style>
