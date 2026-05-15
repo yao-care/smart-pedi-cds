@@ -1,11 +1,12 @@
-# 4 頁面重新規劃 — 設計文件（v4）
+# 4 頁面重新規劃 — 設計文件（v5）
 
 ## 修訂歷史
 
 - v1（commit 82bd571）：原始 4 頁重設計
 - v2（commit 821237e）：補 FHIR-vs-IndexedDB 雙來源 resolver
 - v3（commit 0dddb50）：第 1 輪審查後修 3 B + 6 M + 7 m
-- v4（本版）：第 2 輪審查後修 3 新 B + 7 新 M + 6 新 m。**核心改動：LOINC code 是 hallucinated，改用自有 system URI；補 Bundle ↔ Assessment 反序列化完整對應表；resolver cache；loading 死鎖修法**
+- v4（commit dbc5ec4）：第 2 輪審查後修 3 新 B + 7 新 M + 6 新 m
+- v5（本版）：第 3 輪審查後修 3 新 B + 7 新 M + 6 新 m。**核心改動：fhirClient API 對齊既有 client.ts 模組；雷達圖 z 方向處理（reactionLatency/interactionRhythm 反向）；source 進 schema 區分 IDB vs FHIR cache；markFhirSubmitted 簽名加 reportId；effectivePeriod 對未完成評估降級為 effectiveDateTime；家長頁加 referrer policy；childId 命名空間衝突處理**
 
 ## Context
 
@@ -78,7 +79,7 @@ function parseObservationCode(text: string): { domain: string; metric: string } 
 | `fhirDiagnosticReportId` | `DiagnosticReport.id`（server 配發） | submit response | N/A |
 | `triageResult.category` | `DiagnosticReport.conclusionCode[0].coding[0].code`（SNOMED 17621005 / 394848005 / 3457005） | 已有 | reverse map（不再 parse 中文 conclusion — NEW-m5） |
 | `triageResult.confidence` | `DiagnosticReport.extension[?url=CONFIDENCE_EXT_URL].valueDecimal` | 新增 | 直接讀（不再 regex 中文） |
-| `triageResult.summary` | `DiagnosticReport.conclusion` 去除「（信心度 X%）」前綴後的剩餘文字 | 已有 | strip prefix |
+| `triageResult.summary` | `DiagnosticReport.conclusion`（v5 起不含前綴） | 已有 | 直接讀。**舊資料相容**：若 conclusion 仍是舊格式「分類（信心度 X%）。summary」，反序列化端 strip `/^.+?（信心度\s*\d+%）。\s*/` 前綴後當 summary |
 | `status` | `DiagnosticReport.status`：`final = completed`，`preliminary = in_progress` | 已有（fixed `final`） | reverse map |
 | `startedAt` | `DiagnosticReport.effectivePeriod.start` | 新增（取代 `effectiveDateTime`） | 直接讀 |
 | `completedAt` | `DiagnosticReport.effectivePeriod.end` | 新增 | 直接讀 |
@@ -135,15 +136,56 @@ await db.assessments.update(assessment.id, {
 });
 ```
 
-### 1.5 `Assessment` interface 加欄位（**不升 schema version** — M6）
+### 1.5 `Assessment` interface 加欄位（**不升 schema version** — M6 + NEW-M-A 加 source）
 
 ```ts
 fhirDiagnosticReportId?: string;
 physicianNote?: string;
 physicianNoteUpdatedAt?: Date;
+_source?: 'idb' | 'fhir-cache';  // NEW-M-A：區分本地原生紀錄 vs resolver cache 回的 FHIR 紀錄
 ```
 
-**Migration**（NEW-M6）：既有資料這 3 欄為 `undefined`，所有 UI 必須容忍 `value ?? ''` / `?.` 訪問；本次不寫遷移腳本（無數據需要轉換）。
+**Migration**（NEW-M6）：既有資料這 4 欄為 `undefined`，所有 UI 必須容忍 `value ?? ''` / `?.` 訪問；本次不寫遷移腳本（無數據需要轉換）。`_source` 缺值 → 視為 `'idb'`（既有資料皆為本地產生）。
+
+### 1.6 `markFhirSubmitted` 簽名擴充（**NEW-M-E 修正**）
+
+既有 `src/lib/db/assessments.ts:58`：
+```ts
+export async function markFhirSubmitted(id: string): Promise<void> {
+  await db.assessments.update(id, { fhirSubmitted: true, updatedAt: new Date() });
+}
+```
+
+改為：
+```ts
+export async function markFhirSubmitted(id: string, fhirDiagnosticReportId: string): Promise<void> {
+  await db.assessments.update(id, {
+    fhirSubmitted: true,
+    fhirDiagnosticReportId,
+    updatedAt: new Date(),
+  });
+}
+```
+
+`submitAssessmentToFhir` 改為傳入 server 回應的 `reportResult.id`。
+
+### 1.7 effectivePeriod 對未完成評估降級（**NEW-M-B 修正**）
+
+submit 端：若 `assessment.completedAt` 為 `undefined`，**改寫 `effectiveDateTime` 而非 `effectivePeriod`**（避免送出 `end: undefined` 觸發 server 400）：
+
+```ts
+const effective = assessment.completedAt
+  ? { effectivePeriod: { start: assessment.startedAt.toISOString(), end: assessment.completedAt.toISOString() } }
+  : { effectiveDateTime: assessment.startedAt.toISOString() };
+
+return { ...baseReport, ...effective };
+```
+
+反序列化端 `bundleToAssessment` 兩者都試（v4 已有）。
+
+### 1.8 extension 與 effective 在第三方 server 的相容性（**NEW-M-B 提醒**）
+
+`DiagnosticReport.extension[CONFIDENCE_EXT_URL]` 在嚴格 profile-validating server（部分 Epic / Cerner sandbox）會被 reject。本 spec 接受此限制：**僅承諾在 HAPI 公開 server 與符合 R4 寬鬆 profile 的醫院 server 運作**。若日後對接特定醫院失敗，下一步是「申請註冊該 extension URL 或改用 contained Observation」。本 spec 不處理。
 
 ## 前置條件 2：圖卡檔名 ASCII 化（**Bug M5 修正**）
 
@@ -159,10 +201,11 @@ physicianNoteUpdatedAt?: Date;
 
 ## 頁面 1A：家長簡視 — `/result/?id={uuid}`
 
-### 路由（**Blocker B2/B3 修正**）
+### 路由（**Blocker B2/B3 + NEW-M-C 隱私修正**）
 
 - **新增** `src/pages/result/index.astro`（單一檔，不用 `[id].astro`；Astro SSG 不支援 unknown UUID 動態路由）
-- Client 從 `URLSearchParams.get('id')` 取 assessment id
+- Client 從 `URLSearchParams.get('id')` 取 assessment id；entry 加 UUID regex 檢查（NEW-M4，與醫師頁同款）
+- **隱私**：URL 含 assessment id，雖然 id 是 UUID v4（不可猜），結果頁仍包含個人發展指標。在 page `<head>` 加 `<meta name="referrer" content="no-referrer">` 防止 referer 洩漏 id 到第三方（YouTube embed、PDF lib CDN 等）
 - 進入方式：
   - 從評估流程結束時 → ``window.location.href = `/result/?id=${id}` ``（反引號模板字串，**NEW-m1 修正**）；取代目前 AssessmentShell 內直接 render `<ResultView>`
   - 從歷史頁「看詳細」→ `/result/?id={id}`（未登入醫師）
@@ -179,14 +222,23 @@ physicianNoteUpdatedAt?: Date;
    - 大字分流類別 + 對應顏色 + emoji
    - 一句解讀（例：「7 個面向需要關注，建議和兒科醫師談談」）
    - 信心度小字
-2. **雷達圖**（修資料綁定 + 公式明確 — m7 + NEW-m6 修正）
-   - 8 個 domain，分數 0-100 正規化
-   - 換算公式：`score = clamp(50 + 10 * (-z), 0, 100)`
-     - **語義**：z 是「相對常模的標準差距」。z 為**負**代表低於常模（發展落後）→ `(-z)` 為正 → score 高於 50 是反向；**這裡 score 表示「正常程度」，越高越好**
-     - 簡明：z = 0 → score 50（一般）；z = -1.5（明顯偏離）→ score 35；z = +1.5（高於常模）→ score 65
-   - 等等，反了 — 應改公式為 `score = clamp(50 + 10 * z, 0, 100)`：z=0 → 50；z=+1.5（領先）→ 65；z=-1.5（落後）→ 35。雷達圖「越大越好」一致。
-   - **採用**：`score = clamp(50 + 10 * z, 0, 100)`
-   - 異常 domain（z ≤ -1.5）用紅點 + 粗線標示
+2. **雷達圖**（**NEW-B-B 修正：解決 z 方向不一致**）
+   - 8 個 domain，分數 0-100，**越大越好**
+
+   **z 方向問題**：`src/engine/cdsa/triage.ts:83` 對 `reactionLatency` / `interactionRhythm` 設 `isReversed = true`（高 = 糟），其他 metric 低 = 糟。原始 `details[i].zScore` 沒做方向統一，直接套 `50 + 10z` 對 latency 會反向（越慢 z 越正、分數越高 = 錯）。
+
+   **修法**：擴充 `TriageResult.details` 加 `directionalZ`（永遠負代表「比常模糟」）：
+
+   ```ts
+   // 在 triage.ts 計算 details 時加：
+   directionalZ: isReversed ? -z : z,  // 統一語義：負 = 糟、正 = 好
+   ```
+
+   - **雷達圖換算**：`score = clamp(50 + 10 * directionalZ, 0, 100)`
+   - 語義：directionalZ = 0（同常模）→ 50；directionalZ = -1.5（明顯落後）→ 35；directionalZ = +1.5（明顯領先）→ 65
+   - 異常 domain（`directionalZ ≤ -1.5`，等同既有 `isAnomaly`）用紅點 + 粗線標示
+
+   **per-domain 聚合**：一個 domain 有多個 metric（例如 behavior 有 4 個），雷達圖一個 domain 一個值，取所有 metric `directionalZ` 平均（簡單聚合，後續可調權重）。
 3. **為您挑選的衛教** — 沿用 EducationMatch，視覺升級
 4. **行動按鈕區**
    - 主：下載 PDF 報告
@@ -272,34 +324,38 @@ physicianNoteUpdatedAt?: Date;
 type Source = 'idb' | 'fhir';
 type ResolveError = 'not_found' | 'token_expired' | 'forbidden' | 'network';
 
+// NEW-B-A 修正：fhirClient 來自 client.ts 模組單例，不在 authStore
+import { getClient, refreshToken, isAuthorized } from '$lib/fhir/client';
+
 export async function resolveAssessment(id: string): Promise<
   { ok: true; assessment: Assessment; source: Source } |
   { ok: false; error: ResolveError }
 > {
   // 1. 本地 IDB（同裝置情境）
   const local = await db.assessments.get(id);
-  if (local) return { ok: true, assessment: local, source: 'idb' };
+  if (local) {
+    return { ok: true, assessment: local, source: local._source === 'fhir-cache' ? 'fhir' : 'idb' };
+  }
 
   // 2. FHIR fallback（醫師跨裝置情境）
-  if (!authStore.isAuthenticated) return { ok: false, error: 'not_found' };
+  if (!isAuthorized()) return { ok: false, error: 'not_found' };
   try {
-    const a = await fetchAssessmentFromFhir(id, authStore.fhirClient);
+    const a = await fetchAssessmentFromFhir(id, getClient());
     if (!a) return { ok: false, error: 'not_found' };
 
-    // NEW-M3: cache 進 IDB，避免重複開同一筆每次都打 FHIR
-    // 標記 source 讓 UI 可顯示「資料來自 FHIR」(透過 cache miss 的第一筆查詢識別)
-    await db.assessments.put(a);
+    // NEW-M3: cache 進 IDB；標記 source 區分原生 vs FHIR cache（NEW-M-A）
+    await db.assessments.put({ ...a, _source: 'fhir-cache' });
 
     return { ok: true, assessment: a, source: 'fhir' };
   } catch (e: any) {
-    // NEW-m3: fhirclient v2 不會自動 refresh on 401，呼叫端必須處理
-    if (e?.status === 401 || e?.response?.status === 401) {
-      // 嘗試 refresh 一次
+    // NEW-m3: fhirclient v2 不自動 refresh on 401，呼叫端 catch + refreshToken + retry
+    const status = e?.status ?? e?.response?.status;
+    if (status === 401) {
       try {
-        await authStore.fhirClient.refresh();
-        const retry = await fetchAssessmentFromFhir(id, authStore.fhirClient);
+        await refreshToken();
+        const retry = await fetchAssessmentFromFhir(id, getClient());
         if (retry) {
-          await db.assessments.put(retry);
+          await db.assessments.put({ ...retry, _source: 'fhir-cache' });
           return { ok: true, assessment: retry, source: 'fhir' };
         }
         return { ok: false, error: 'not_found' };
@@ -307,8 +363,8 @@ export async function resolveAssessment(id: string): Promise<
         return { ok: false, error: 'token_expired' };
       }
     }
-    if (e?.status === 403) return { ok: false, error: 'forbidden' };
-    if (e?.status === 404) return { ok: false, error: 'not_found' };
+    if (status === 403) return { ok: false, error: 'forbidden' };
+    if (status === 404) return { ok: false, error: 'not_found' };
     return { ok: false, error: 'network' };
   }
 }
@@ -396,9 +452,11 @@ function parseObservationCode(text: string): { domain: string; metric: string } 
 }
 ```
 
-### 401 處理（**NEW-m3 修正**）
+### 401 處理（**NEW-m3 + NEW-m-E 修正**）
 
-實測 fhirclient v2 **不會**在 `client.request()` 401 時自動 refresh，必須呼叫端 catch + `client.refresh()` + retry 一次。Resolver 已實作（見上）。Retry 仍失敗才 surface `token_expired` 給 UI 顯示「Session 過期，請重新登入」+ relaunch link → `/launch/`。
+實測 fhirclient v2 **不會**在 `client.request()` 401 時自動 refresh，必須呼叫端 catch + `refreshToken()`（`src/lib/fhir/client.ts:86`）+ retry 一次。Resolver 已實作（見上）。Retry 仍失敗才 surface `token_expired`。
+
+UI relaunch link 不直接到 `/launch/`（需 `iss` + `clientId` query），改到 `/workspace/`：該頁有 `<ServerConfig>` 元件可從 `serverConfigs` IDB store 重新發起 SMART launch。Spec 不重複設計 relaunch flow。
 
 ### 資訊架構
 
@@ -426,11 +484,15 @@ function parseObservationCode(text: string): { domain: string; metric: string } 
        valueString: note,
      }
      ```
-   - **NEW-M7：只在 POST 成功後清空本地草稿**：
+   - **NEW-M7：只在 POST 成功後清空本地草稿**（NEW-m-C：Dexie update 用 `null` 不用 `undefined`）：
      ```ts
      try {
-       await client.create('Observation', payload);
-       await db.assessments.update(id, { physicianNote: undefined, physicianNoteUpdatedAt: undefined });
+       await getClient().create('Observation', payload);
+       // Dexie 不更新 value === undefined 的欄位，必須用 null 或 Dexie.delete()
+       await db.assessments.update(id, {
+         physicianNote: null as any,
+         physicianNoteUpdatedAt: null as any,
+       });
        toast.success('已儲存至 FHIR');
      } catch (e) {
        toast.error('儲存失敗，草稿保留');  // 草稿保留供下次重試
@@ -442,12 +504,15 @@ function parseObservationCode(text: string): { domain: string; metric: string } 
 
 ## 頁面 2：衛教列表 — `/education/`
 
-### 路由與 hydration（**m4 + NEW-M2 修正**）
+### 路由與 hydration（**m4 + NEW-M2 + NEW-M-D 修正：保留 SSR 卡片網格**）
 
-- `src/pages/education/index.astro` 整頁交給單一 Svelte 元件 `<EducationListPage client:only="svelte" />`
-- **為何用 `client:only` 而非 `client:load`**：深連結 `/education/?cat=diet` 時 SSG 預先 render 全列表會閃（FOUC）；改用 `client:only` 完全交給 client render，配合骨架屏（skeleton）首屏。
-- 衛教資料：build 階段把 `getCollection('education')` 結果序列化為 `public/education-index.json`（透過 Astro integration 或在 `getStaticPaths` 階段寫入），client 端 `fetch` 載入後 render + filter
-- URL query `?cat=diet&format=video` 由 client 端讀寫
+- `src/pages/education/index.astro` 走 SSG，**用 Astro 原生 render 卡片網格**（不交給 Svelte），保留 SEO 與無 JS fallback
+- Filter UI 用 `<EducationFilter client:load />` Svelte island，掛在卡片網格上方
+- Filter 工作方式：純 DOM 操作（`document.querySelectorAll('.edu-card')` + `display: none`），不重新 fetch；無 JS 環境就看全部卡片（足夠功能）
+- URL query `?cat=diet&format=video` 由 EducationFilter 元件讀寫
+- 深連結進站：頁面 SSG 顯示全列表 → Filter 元件 hydrate 後讀 URL 過濾 DOM → 短暫 FOUC 但內容對搜尋引擎與無 JS 可見，trade-off 接受
+
+不再產生 `public/education-index.json`（v4 提案），改回純 SSG。
 
 ### 資訊架構
 
@@ -516,9 +581,11 @@ function parseObservationCode(text: string): { domain: string; metric: string } 
 | 未登入 FHIR | `db.assessments.where('childId').equals(childId).reverse().sortBy('startedAt')` | IDB 直接展開 |
 | 已登入 FHIR | `listAssessmentsFromFhir(patientFhirId)` | 點開時呼叫 `resolveAssessment(id)` |
 
-**childId 來源**（消除 NEW-m2 歧義）：
+**childId 來源**（消除 NEW-m2 歧義，並修 NEW-B-A：fhirClient 取得路徑）：
 - 未登入：從 `assessmentStore.child?.id`（家長端 store 唯一活躍 child）或 URL query `?child={uuid}`
-- 已登入：從 FHIR context — `authStore.fhirClient.patient.id`
+- 已登入：從 fhirclient context — `getClient().patient.id`（從 `src/lib/fhir/client.ts`）
+
+**NEW-B-C 命名空間衝突處理**：家長端 `childId` 是 IDB 內隨機 UUID v4；FHIR 端 `Patient.id` 是醫院字串（任意格式）。兩者不會撞號（UUID v4 與醫院字串格式不重疊），但同一個小朋友在「家長裝置 IDB」與「FHIR server」會有不同 id，**list 結果不去重也不嘗試合併**——醫師端登入後一律走 FHIR list（看醫院視角），家長端不看 FHIR。Badge 顯示資料來源即可，不混合。
 
 來源顯示在頁面頂端 badge：「本地紀錄」/「醫院 FHIR Server」。
 
@@ -586,8 +653,20 @@ function parseObservationCode(text: string): { domain: string; metric: string } 
 - Pagefind 全文搜尋
 - 雷達圖 lib 升級
 - 醫師工作台首頁改造
-- i18n
+- i18n（**錯誤訊息硬編碼中文** — NEW-m-F 明確接受）
 - 圖卡審核 in-app approve workflow
+- PDF 生成 lib 改造（沿用既有 jsPDF；GitHub Pages 純 static，PDF 一律 client-side 生成，**無 SSR**）— NEW-M-G
+
+## 既有 metric 名單（**NEW-M-F 收斂**）
+
+Observation code.text 涉及的 metric 名稱（由 `triage.ts` 與 PartialAnalysis 推導）：
+- behavior: `completionRate`, `operationConsistency`, `reactionLatency`, `interactionRhythm`
+- fine_motor: `drawingScore`, `questionnaireScore`
+- gross_motor: `questionnaireScore`, `poseClassification`
+- language_comprehension / language_expression / cognition / social_emotional: `questionnaireScore`
+- language: `voiceDuration`
+
+全為 ASCII 駝峰，`\w+` 完全覆蓋。日後若加新 metric 含 `-` 或 `.`，**需同步調整 `parseObservationCode` regex**。
 
 ---
 
