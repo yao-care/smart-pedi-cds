@@ -1,0 +1,150 @@
+import type { Assessment } from '../db/schema';
+import { CODE_SYSTEM, ID_SYSTEM, CONFIDENCE_EXT_URL } from './cdsa-resources';
+
+export interface AssessmentSummary {
+  id: string;
+  fhirReportId: string;
+  date: Date;
+  category: 'normal' | 'monitor' | 'refer';
+  summary: string;
+}
+
+interface FhirClient {
+  request(query: string): Promise<unknown>;
+}
+
+/** Lightweight Bundle entry shape we rely on. */
+interface BundleEntry {
+  resource: Record<string, unknown>;
+}
+
+interface Bundle {
+  entry?: BundleEntry[];
+}
+
+/**
+ * Map SNOMED conclusionCode → triage category. Falls back to 'monitor'
+ * when the code is unrecognised so reverse-mapped reports stay usable.
+ */
+function snomedToCategory(code: string | undefined): 'normal' | 'monitor' | 'refer' {
+  switch (code) {
+    case '17621005': return 'normal';
+    case '394848005': return 'monitor';
+    case '3457005': return 'refer';
+    default: return 'monitor';
+  }
+}
+
+/** Strip backward-compat conclusion prefix「<分類>（信心度 X%）。 」if present. */
+function stripLegacyConclusionPrefix(conclusion: string): string {
+  return conclusion.replace(/^.+?（信心度\s*\d+%）。\s*/, '');
+}
+
+/**
+ * Parse Observation.code.text "CDSA gross_motor::reactionLatency" (new format)
+ * or "CDSA gross_motor: reactionLatency" (legacy). Returns null on miss.
+ */
+export function parseObservationCode(text: string): { domain: string; metric: string } | null {
+  const m = text.match(/^CDSA\s+(\w+)(?:::|:\s+)(\w+)$/);
+  return m ? { domain: m[1], metric: m[2] } : null;
+}
+
+/**
+ * Reconstruct a local-shape Assessment from a FHIR DiagnosticReport plus
+ * its Observation resources. Used by the physician detail view when the
+ * record is not in IndexedDB.
+ */
+export function bundleToAssessment(
+  report: Record<string, any>,
+  _observations: Record<string, any>[],
+): Assessment {
+  const identifiers = (report.identifier as Array<{ system?: string; value?: string }>) ?? [];
+  const idVal = identifiers.find((i) => i.system === ID_SYSTEM)?.value ?? report.id;
+
+  const conclusionCode = report.conclusionCode?.[0]?.coding?.[0]?.code as string | undefined;
+  const category = snomedToCategory(conclusionCode);
+
+  const extensions = (report.extension as Array<{ url?: string; valueDecimal?: number }>) ?? [];
+  const confidence = extensions.find((x) => x.url === CONFIDENCE_EXT_URL)?.valueDecimal ?? 0;
+
+  const period = report.effectivePeriod as { start?: string; end?: string } | undefined;
+  const startedAtStr = period?.start ?? report.effectiveDateTime;
+  const startedAt = startedAtStr ? new Date(startedAtStr) : new Date(0);
+  const completedAt = period?.end ? new Date(period.end) : undefined;
+
+  const conclusion = (report.conclusion as string | undefined) ?? '';
+  const summary = stripLegacyConclusionPrefix(conclusion);
+
+  const subjectRef = (report.subject as { reference?: string } | undefined)?.reference ?? '';
+  const childId = subjectRef.replace(/^Patient\//, '');
+
+  return {
+    id: idVal,
+    childId,
+    status: report.status === 'final' ? 'completed' : 'in_progress',
+    language: 'zh-TW',
+    currentStep: 7,
+    startedAt,
+    completedAt,
+    triageResult: {
+      category,
+      confidence,
+      summary,
+    },
+    fhirSubmitted: true,
+    fhirDiagnosticReportId: report.id,
+    createdAt: startedAt,
+    updatedAt: completedAt ?? startedAt,
+  } as Assessment;
+}
+
+/**
+ * Look up one assessment on the FHIR server by its CDSA UUID.
+ * Uses _include to fetch the referenced Observations in a single request.
+ */
+export async function fetchAssessmentFromFhir(
+  id: string,
+  client: FhirClient,
+): Promise<Assessment | null> {
+  const bundle = (await client.request(
+    `DiagnosticReport?identifier=${ID_SYSTEM}|${id}&_include=DiagnosticReport:result`,
+  )) as Bundle;
+  const entries = bundle.entry ?? [];
+  const reportEntry = entries.find((e) => e.resource.resourceType === 'DiagnosticReport');
+  if (!reportEntry) return null;
+  const observations = entries
+    .filter((e) => e.resource.resourceType === 'Observation')
+    .map((e) => e.resource as Record<string, any>);
+  return bundleToAssessment(reportEntry.resource as Record<string, any>, observations);
+}
+
+/**
+ * List a patient's CDSA assessments on the FHIR server. Returns a summary
+ * row per DiagnosticReport — full metric values are not loaded here; the
+ * detail page calls resolveAssessment(id) when the user opens one.
+ */
+export async function listAssessmentsFromFhir(
+  patientId: string,
+  client: FhirClient,
+): Promise<AssessmentSummary[]> {
+  const bundle = (await client.request(
+    `DiagnosticReport?subject=Patient/${patientId}` +
+      `&code=${CODE_SYSTEM}|cdsa-assessment` +
+      `&_sort=-date`,
+  )) as Bundle;
+  return (bundle.entry ?? []).map((e) => {
+    const r = e.resource as Record<string, any>;
+    const identifiers = (r.identifier as Array<{ system?: string; value?: string }>) ?? [];
+    const idVal = identifiers.find((i) => i.system === ID_SYSTEM)?.value ?? (r.id as string);
+    const period = r.effectivePeriod as { start?: string } | undefined;
+    const dateStr = period?.start ?? (r.effectiveDateTime as string | undefined);
+    const conclusionCode = r.conclusionCode?.[0]?.coding?.[0]?.code as string | undefined;
+    return {
+      id: idVal,
+      fhirReportId: r.id as string,
+      date: new Date(dateStr ?? 0),
+      category: snomedToCategory(conclusionCode),
+      summary: stripLegacyConclusionPrefix((r.conclusion as string) ?? ''),
+    };
+  });
+}
