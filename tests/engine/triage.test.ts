@@ -68,9 +68,10 @@ describe('computeTriage', () => {
     expect(result.anomalyCount).toBeGreaterThanOrEqual(1);
   });
 
-  it('returns refer with >=3 anomalies', async () => {
+  it('returns refer when >=3 anomalies span >=2 domains', async () => {
     const result = await computeTriage({
       ...baseInput,
+      // 3 behavior anomalies + 1 drawing anomaly = 2 domains
       behavior: makeBehavior({
         completionRate: 0.1,
         operationConsistency: 0.2,
@@ -81,6 +82,39 @@ describe('computeTriage', () => {
     expect(result.category).toBe('refer');
     expect(result.anomalyCount).toBeGreaterThanOrEqual(3);
     expect(result.summary).toContain('專業評估');
+  });
+
+  it('stays monitor when 3+ anomalies all live in the same domain', async () => {
+    const result = await computeTriage({
+      ...baseInput,
+      // 3 behavior-only anomalies, drawing fine → 1 domain affected
+      behavior: makeBehavior({
+        completionRate: 0.1,
+        operationConsistency: 0.2,
+        reactionLatency: 8000,
+      }),
+    });
+    // 3 anomalies but only 1 domain → caught by the dual-axis gate
+    expect(result.category).toBe('monitor');
+  });
+
+  it('honours questionnaireMaxScores when provided', async () => {
+    const result = await computeTriage({
+      ...baseInput,
+      questionnaireScores: { cognition: 8 },
+      questionnaireMaxScores: { cognition: 20 }, // 8/20 = 40% → anomaly
+    });
+    const cog = result.details.find((d) => d.metric === 'questionnaireScore');
+    expect(cog?.isAnomaly).toBe(true);
+  });
+
+  it('falls back to maxScore=10 when no questionnaireMaxScores supplied', async () => {
+    const result = await computeTriage({
+      ...baseInput,
+      questionnaireScores: { cognition: 8 }, // 8/10 = 80% → normal
+    });
+    const cog = result.details.find((d) => d.metric === 'questionnaireScore');
+    expect(cog?.isAnomaly).toBe(false);
   });
 
   it('confidence rises with more anomalies', async () => {

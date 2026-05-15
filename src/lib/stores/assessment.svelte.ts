@@ -14,6 +14,10 @@ export type AssessmentStep = typeof STEPS[number];
 /** 各模組即時產出的分析結果 */
 export interface PartialAnalysis {
   questionnaireScores?: Record<string, number>;
+  /** Per-domain max score for the questionnaire that produced
+   *  questionnaireScores. Lets triage compute the correct normalised
+   *  ratio instead of dividing by a hardcoded 10. */
+  questionnaireMaxScores?: Record<string, number>;
   behaviorMetrics?: BehaviorMetrics;
   voiceMetrics?: VoiceMetrics;
   drawingResult?: DrawingAnalysisResult;

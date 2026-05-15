@@ -51,6 +51,7 @@
       },
       drawing: pa.drawingResult ?? { shapes: [], overallScore: 0, maturityLevel: 'age_appropriate' },
       questionnaireScores: pa.questionnaireScores,
+      questionnaireMaxScores: pa.questionnaireMaxScores,
       grossMotor: pa.grossMotorResult ? {
         classification: pa.grossMotorResult.classification,
         confidence: pa.grossMotorResult.confidence,

@@ -10,6 +10,10 @@ export interface TriageInput {
   voice: VoiceMetrics;
   drawing: DrawingAnalysisResult;
   questionnaireScores?: Record<string, number>; // domain -> score
+  /** Domain → maximum possible score in the questionnaire (questions × 2).
+   *  When absent the engine falls back to a conservative 10/domain default
+   *  but the radar's normalisation may be inaccurate. */
+  questionnaireMaxScores?: Record<string, number>;
   grossMotor?: { classification: string; confidence: number; features: Record<string, number> };
 }
 
@@ -127,9 +131,10 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
   // Questionnaire scores (if available)
   if (input.questionnaireScores) {
     for (const [domain, score] of Object.entries(input.questionnaireScores)) {
-      // Simple threshold: score < 50% of max is anomaly
-      const maxScore = 10; // rough estimate
-      const normalized = score / maxScore;
+      // Use the actual per-domain maximum when caller supplies it
+      // (questions × 2). Fall back to 10 only when the caller didn't.
+      const maxScore = input.questionnaireMaxScores?.[domain] ?? 10;
+      const normalized = maxScore > 0 ? score / maxScore : 0;
       details.push({
         domain,
         metric: 'questionnaireScore',
@@ -153,17 +158,25 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
     });
   }
 
-  // Triage decision
-  const anomalyCount = details.filter(d => d.isAnomaly).length;
+  // Triage decision — gate by both number of anomalous metrics AND how
+  // many distinct domains they spread across. Six low scores all under
+  // "behavior" is one signal; six low scores across six domains is six
+  // independent signals. The dual-axis threshold avoids over-referring
+  // when a single domain misfires and under-referring when many domains
+  // each flag only one metric.
+  const anomalousDetails = details.filter((d) => d.isAnomaly);
+  const anomalyCount = anomalousDetails.length;
+  const anomalyDomainCount = new Set(anomalousDetails.map((d) => d.domain)).size;
+
   let category: TriageResult['category'];
   let confidence: number;
 
-  if (anomalyCount >= 3) {
+  if (anomalyCount >= 3 && anomalyDomainCount >= 2) {
     category = 'refer';
-    confidence = Math.min(0.95, 0.7 + anomalyCount * 0.05);
+    confidence = Math.min(0.95, 0.7 + 0.04 * anomalyCount + 0.05 * anomalyDomainCount);
   } else if (anomalyCount >= 1) {
     category = 'monitor';
-    confidence = Math.min(0.90, 0.6 + anomalyCount * 0.1);
+    confidence = Math.min(0.90, 0.6 + 0.08 * anomalyCount + 0.04 * anomalyDomainCount);
   } else {
     category = 'normal';
     confidence = 0.85;

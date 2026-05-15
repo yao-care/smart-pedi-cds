@@ -131,10 +131,15 @@
 
   function persistScoresToStore(): void {
     const scores: Record<string, number> = {};
+    const maxScores: Record<string, number> = {};
     for (const s of domainSummary) {
       scores[s.domain] = s.score;
+      maxScores[s.domain] = s.max;
     }
-    assessmentStore.addAnalysis({ questionnaireScores: scores });
+    assessmentStore.addAnalysis({
+      questionnaireScores: scores,
+      questionnaireMaxScores: maxScores,
+    });
   }
 
   // ---- Finish ----
