@@ -65,8 +65,10 @@ export async function submitAssessmentToFhir(
     const reportResult = await postFhirResource(baseUrl, 'DiagnosticReport', report, token);
     const diagnosticReportId = reportResult?.id ?? null;
 
-    // 3. Mark assessment as submitted
-    await markFhirSubmitted(assessment.id);
+    // 3. Mark assessment as submitted (records the FHIR report id for later resolution)
+    if (diagnosticReportId) {
+      await markFhirSubmitted(assessment.id, diagnosticReportId);
+    }
 
     return { success: true, observationIds, diagnosticReportId };
   } catch (err) {

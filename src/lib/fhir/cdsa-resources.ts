@@ -1,6 +1,20 @@
 import type { TriageResult } from '../../engine/cdsa/triage';
 import type { Assessment, Child } from '../db/schema';
 
+/** Project-owned coding/identifier systems.
+ *  Avoids the prior LOINC mapping which used codes that don't actually
+ *  exist in the LOINC code system. CDSA is an in-house instrument; codes
+ *  are namespaced under the project domain. */
+export const CODE_SYSTEM = 'https://smart-pedi-cds.yao.care/code';
+export const ID_SYSTEM = 'https://smart-pedi-cds.yao.care/assessment';
+export const CONFIDENCE_EXT_URL = 'https://smart-pedi-cds.yao.care/extension/triage-confidence';
+
+const REPORT_CODE = {
+  system: CODE_SYSTEM,
+  code: 'cdsa-assessment',
+  display: 'CDSA 兒童發展智慧評估',
+};
+
 /**
  * Build a FHIR Patient resource from CDSA Child data.
  * Note: minimal — only what's needed for the assessment context.
@@ -14,9 +28,19 @@ export function buildChildPatient(child: Child): object {
   };
 }
 
+function observationCode(domain: string, metric: string) {
+  return {
+    system: CODE_SYSTEM,
+    code: `cdsa-${domain}-${metric}`,
+    display: `CDSA ${domain}::${metric}`,
+  };
+}
+
 /**
  * Build FHIR Observation resources for each assessment metric.
- * Each detail from triage result becomes a separate Observation.
+ * Each detail from triage result becomes a separate Observation, identified
+ * by `${assessmentId}::${domain}::${metric}` under the project ID system so
+ * the resolver can reverse-map a Bundle back to an Assessment.
  */
 export function buildAssessmentObservations(
   assessment: Assessment,
@@ -28,6 +52,12 @@ export function buildAssessmentObservations(
   for (const detail of triageResult.details) {
     observations.push({
       resourceType: 'Observation',
+      identifier: [
+        {
+          system: ID_SYSTEM,
+          value: `${assessment.id}::${detail.domain}::${detail.metric}`,
+        },
+      ],
       status: 'final',
       category: [
         {
@@ -41,14 +71,8 @@ export function buildAssessmentObservations(
         },
       ],
       code: {
-        coding: [
-          {
-            system: 'http://loinc.org',
-            code: mapDomainToLoinc(detail.domain),
-            display: `${detail.domain} - ${detail.metric}`,
-          },
-        ],
-        text: `CDSA ${detail.domain}: ${detail.metric}`,
+        coding: [observationCode(detail.domain, detail.metric)],
+        text: `CDSA ${detail.domain}::${detail.metric}`,
       },
       subject: { reference: `Patient/${childId}` },
       effectiveDateTime: new Date().toISOString(),
@@ -78,6 +102,8 @@ export function buildAssessmentObservations(
 
 /**
  * Build a FHIR DiagnosticReport for the overall triage result.
+ * Carries identifier (so resolver can find it), confidence (extension),
+ * and effective period (so we can reconstruct startedAt / completedAt).
  */
 export function buildTriageDiagnosticReport(
   assessment: Assessment,
@@ -85,14 +111,31 @@ export function buildTriageDiagnosticReport(
   triageResult: TriageResult,
   observationIds: string[],
 ): object {
-  const conclusionMap = {
-    normal: '各面向發展在正常範圍內',
-    monitor: '部分面向需持續追蹤觀察',
-    refer: '建議進一步專業評估',
-  };
+  const startedAt = assessment.startedAt instanceof Date
+    ? assessment.startedAt
+    : new Date(assessment.startedAt);
+  const completedAt = assessment.completedAt
+    ? (assessment.completedAt instanceof Date
+        ? assessment.completedAt
+        : new Date(assessment.completedAt))
+    : null;
+
+  // FHIR requires effectivePeriod.end if present — degrade to effectiveDateTime
+  // when the assessment hasn't completed.
+  const effective = completedAt
+    ? {
+        effectivePeriod: {
+          start: startedAt.toISOString(),
+          end: completedAt.toISOString(),
+        },
+      }
+    : { effectiveDateTime: startedAt.toISOString() };
 
   return {
     resourceType: 'DiagnosticReport',
+    identifier: [
+      { system: ID_SYSTEM, value: assessment.id },
+    ],
     status: 'final',
     category: [
       {
@@ -105,23 +148,18 @@ export function buildTriageDiagnosticReport(
         ],
       },
     ],
-    code: {
-      coding: [
-        {
-          system: 'http://loinc.org',
-          code: '71446-2',
-          display: 'Developmental screening assessment',
-        },
-      ],
-      text: 'CDSA 兒童發展智慧評估報告',
-    },
+    code: { coding: [REPORT_CODE] },
     subject: { reference: `Patient/${childId}` },
-    effectiveDateTime: assessment.startedAt instanceof Date
-      ? assessment.startedAt.toISOString()
-      : new Date(assessment.startedAt).toISOString(),
+    ...effective,
     issued: new Date().toISOString(),
     result: observationIds.map(id => ({ reference: `Observation/${id}` })),
-    conclusion: `${conclusionMap[triageResult.category]}（信心度 ${Math.round(triageResult.confidence * 100)}%）。${triageResult.summary}`,
+    extension: [
+      {
+        url: CONFIDENCE_EXT_URL,
+        valueDecimal: triageResult.confidence,
+      },
+    ],
+    conclusion: triageResult.summary,
     conclusionCode: [
       {
         coding: [
@@ -138,21 +176,4 @@ export function buildTriageDiagnosticReport(
       },
     ],
   };
-}
-
-/**
- * Map CDSA domain names to approximate LOINC codes.
- */
-function mapDomainToLoinc(domain: string): string {
-  const map: Record<string, string> = {
-    gross_motor: '71441-3',      // Gross motor milestone
-    fine_motor: '71442-1',       // Fine motor milestone
-    language: '71443-9',         // Language milestone
-    language_comprehension: '71443-9',
-    language_expression: '71444-7',
-    cognition: '71445-4',        // Cognitive milestone
-    social_emotional: '71446-2', // Social-emotional milestone
-    behavior: '71447-0',         // Behavior observation
-  };
-  return map[domain] ?? '71446-2';
 }

@@ -55,8 +55,12 @@ export async function setTriageResult(id: string, result: Assessment['triageResu
   await db.assessments.update(id, { triageResult: result, updatedAt: new Date() });
 }
 
-export async function markFhirSubmitted(id: string): Promise<void> {
-  await db.assessments.update(id, { fhirSubmitted: true, updatedAt: new Date() });
+export async function markFhirSubmitted(id: string, fhirDiagnosticReportId: string): Promise<void> {
+  await db.assessments.update(id, {
+    fhirSubmitted: true,
+    fhirDiagnosticReportId,
+    updatedAt: new Date(),
+  });
 }
 
 export async function getIncompleteAssessments(): Promise<Assessment[]> {
