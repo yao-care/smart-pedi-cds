@@ -1,11 +1,17 @@
 <script lang="ts">
   /**
-   * Workspace "評估" tab: every CDSA DiagnosticReport the physician can
-   * read, grouped by triage category. Each row links into the per-id
-   * detail view via /workspace/result/?id=.
+   * Workspace "評估" tab: every CDSA assessment grouped by triage category.
+   *
+   * Two data paths:
+   *   1. FHIR-authenticated → listAssessmentsFromFhir() across the whole
+   *      server (every patient the user can read).
+   *   2. Demo mode (not authenticated) → all completed assessments in this
+   *      device's IndexedDB, so a clinician can browse the same surface
+   *      with parent-side test data before any FHIR integration.
    */
   import { listAssessmentsFromFhir, type AssessmentSummary } from '../../lib/fhir/assessment-fetch';
   import { getClient, isAuthorized } from '../../lib/fhir/client';
+  import { db } from '../../lib/db/schema';
 
   type Category = 'refer' | 'monitor' | 'normal';
 
@@ -20,16 +26,17 @@
   let loading = $state(true);
   let error = $state<string | null>(null);
   let rows = $state<AssessmentSummary[]>([]);
+  let demoMode = $state(false);
 
   $effect(() => {
     (async () => {
-      if (!isAuthorized()) {
-        error = '需要 FHIR Server 登入';
-        loading = false;
-        return;
-      }
+      demoMode = !isAuthorized();
       try {
-        rows = await listAssessmentsFromFhir(undefined, getClient());
+        if (demoMode) {
+          rows = await loadFromLocal();
+        } else {
+          rows = await listAssessmentsFromFhir(undefined, getClient());
+        }
       } catch (e: unknown) {
         const message = e instanceof Error ? e.message : '載入失敗';
         error = message;
@@ -38,6 +45,24 @@
       }
     })();
   });
+
+  /** Pull every completed local assessment in the same summary shape
+   *  the FHIR list returns, so the renderer is identical. */
+  async function loadFromLocal(): Promise<AssessmentSummary[]> {
+    const all = await db.assessments
+      .where('status').equals('completed')
+      .reverse().sortBy('completedAt');
+    return all
+      .filter((a) => a.triageResult)
+      .map((a) => ({
+        id: a.id,
+        fhirReportId: a.fhirDiagnosticReportId ?? a.id,
+        patientRef: `Local/${a.childId}`,
+        date: new Date(a.completedAt ?? a.startedAt),
+        category: a.triageResult!.category,
+        summary: a.triageResult!.summary,
+      }));
+  }
 
   const grouped = $derived.by(() => {
     const map: Record<Category, AssessmentSummary[]> = { refer: [], monitor: [], normal: [] };
@@ -52,14 +77,22 @@
   }
 
   function shortRef(ref: string): string {
-    const id = ref.replace(/^Patient\//, '');
+    const id = ref.replace(/^(Patient|Local)\//, '');
     return id.length > 8 ? `${id.slice(0, 8)}…` : id;
+  }
+
+  function detailHref(id: string): string {
+    // Same component handles FHIR and IDB sources via the resolver.
+    return `/workspace/result/?id=${encodeURIComponent(id)}`;
   }
 </script>
 
 <section class="assessments-tab" aria-label="所有評估清單">
   <header class="tab-header">
     <h2>所有 CDSA 評估</h2>
+    {#if demoMode}
+      <span class="mode-badge mode-demo">示範模式（本機資料）</span>
+    {/if}
     {#if rows.length > 0}
       <span class="count-total">共 {rows.length} 筆</span>
     {/if}
@@ -71,7 +104,12 @@
     <p class="status error">{error}</p>
   {:else if rows.length === 0}
     <div class="empty">
-      <p>FHIR Server 上目前沒有 CDSA 評估報告。</p>
+      {#if demoMode}
+        <p>本機尚無評估紀錄。完成一次家長端評估後會出現在這裡。</p>
+        <a href="/" class="empty-cta">前往評估流程 →</a>
+      {:else}
+        <p>FHIR Server 上目前沒有 CDSA 評估報告。</p>
+      {/if}
     </div>
   {:else}
     {#each CATEGORY_ORDER as cat}
@@ -86,11 +124,9 @@
             {#each list as row}
               <li class="row">
                 <span class="row-date">{formatDate(row.date)}</span>
-                <span class="row-patient">病人 {shortRef(row.patientRef)}</span>
+                <span class="row-patient">{demoMode ? '兒童' : '病人'} {shortRef(row.patientRef)}</span>
                 <span class="row-summary" title={row.summary}>{row.summary || '—'}</span>
-                <a class="row-link" href={`/workspace/result/?id=${encodeURIComponent(row.id)}`}>
-                  看詳細 →
-                </a>
+                <a class="row-link" href={detailHref(row.id)}>看詳細 →</a>
               </li>
             {/each}
           </ul>
@@ -121,6 +157,25 @@
   .count-total {
     color: var(--color-text-muted);
     font-size: var(--text-xs);
+  }
+
+  .mode-badge {
+    padding: 2px 10px;
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+  }
+
+  .mode-demo {
+    background: var(--color-risk-advisory-bg);
+    color: var(--color-risk-advisory);
+  }
+
+  .empty-cta {
+    display: inline-block;
+    margin-top: var(--space-3);
+    color: var(--color-accent);
+    text-decoration: none;
   }
 
   .status {
