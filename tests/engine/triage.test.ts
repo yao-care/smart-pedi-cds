@@ -121,6 +121,36 @@ describe('computeTriage', () => {
     expect(gmDetail?.isAnomaly).toBe(true);
   });
 
+  it('directionalZ is negative when reactionLatency is high (worse than norm)', async () => {
+    const result = await computeTriage({
+      ...baseInput,
+      behavior: makeBehavior({ reactionLatency: 6000 }), // far above mean 2000
+    });
+    const detail = result.details.find((d) => d.metric === 'reactionLatency');
+    expect(detail).toBeDefined();
+    expect(detail?.zScore).toBeGreaterThan(0); // raw z positive (high)
+    expect(detail?.directionalZ).toBeLessThan(0); // directionalZ flipped: negative = worse
+  });
+
+  it('directionalZ matches zScore for non-reversed metrics (drawingScore)', async () => {
+    const result = await computeTriage({
+      ...baseInput,
+      drawing: makeDrawing({ overallScore: 10 }), // far below mean 55
+    });
+    const detail = result.details.find((d) => d.metric === 'drawingScore');
+    expect(detail?.zScore).toBeLessThan(0);
+    expect(detail?.directionalZ).toBe(detail?.zScore); // same sign
+  });
+
+  it('questionnaireScore detail has directionalZ === null', async () => {
+    const result = await computeTriage({
+      ...baseInput,
+      questionnaireScores: { cognition: 3 },
+    });
+    const detail = result.details.find((d) => d.metric === 'questionnaireScore');
+    expect(detail?.directionalZ).toBeNull();
+  });
+
   it('includes questionnaire anomaly when score below 50% of max', async () => {
     const result = await computeTriage({
       ...baseInput,

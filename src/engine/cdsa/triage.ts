@@ -23,6 +23,12 @@ export interface TriageResult {
     metric: string;
     value: number;
     zScore: number | null;
+    /** Direction-normalised z-score. Negative = worse than norm, positive = better.
+     *  Differs from `zScore` because some metrics (reactionLatency, interactionRhythm)
+     *  are "higher is worse" — we flip their sign so the radar / summary code can
+     *  treat all metrics uniformly. null when zScore is null (e.g. questionnaire).
+     */
+    directionalZ: number | null;
     isAnomaly: boolean;
   }>;
 }
@@ -81,12 +87,13 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
     const z = zScore(m.value, norm.mean, norm.std);
     // For latency and rhythm, higher is worse (reverse direction)
     const isReversed = m.metric === 'reactionLatency' || m.metric === 'interactionRhythm';
-    const effectiveZ = isReversed ? z : -z; // negative z = worse
+    const effectiveZ = isReversed ? z : -z; // positive effectiveZ = worse
     details.push({
       domain: m.domain,
       metric: m.metric,
       value: m.value,
       zScore: z,
+      directionalZ: isReversed ? -z : z, // negative = worse than norm; uniform across metrics
       isAnomaly: effectiveZ >= 1.5, // 1.5 SD worse than mean
     });
   }
@@ -99,6 +106,7 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
     metric: 'drawingScore',
     value: input.drawing.overallScore,
     zScore: drawingZ,
+    directionalZ: drawingZ,
     isAnomaly: drawingZ <= -1.5,
   });
 
@@ -111,6 +119,7 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
       metric: 'voiceDuration',
       value: input.voice.voiceDurationTotal,
       zScore: voiceZ,
+      directionalZ: voiceZ,
       isAnomaly: voiceZ <= -1.5,
     });
   }
@@ -126,6 +135,7 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
         metric: 'questionnaireScore',
         value: score,
         zScore: null,
+        directionalZ: null, // questionnaire has no z concept; radar skips these
         isAnomaly: normalized < 0.5,
       });
     }
@@ -138,6 +148,7 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
       metric: 'poseClassification',
       value: input.grossMotor.confidence,
       zScore: null,
+      directionalZ: null, // classification, not a continuous z; radar skips
       isAnomaly: true,
     });
   }
