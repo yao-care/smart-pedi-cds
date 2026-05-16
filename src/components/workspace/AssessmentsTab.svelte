@@ -155,7 +155,7 @@
   }
 
   .count-total {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-xs);
   }
 
@@ -181,7 +181,7 @@
   .status {
     text-align: center;
     padding: var(--space-6);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .status.error {
@@ -191,7 +191,7 @@
   .empty {
     text-align: center;
     padding: var(--space-8);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     background: var(--surface);
     border: 1px dashed var(--line);
     border-radius: var(--radius-md);
@@ -212,7 +212,7 @@
   }
 
   .group-count {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-xs);
   }
 
@@ -268,7 +268,7 @@
   }
 
   .row-patient {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-family: var(--font-mono);
     font-size: var(--text-xs);
   }

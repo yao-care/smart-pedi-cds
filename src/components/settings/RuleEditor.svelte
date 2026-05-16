@@ -492,7 +492,7 @@ rules:
   }
 
   .history-date {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .history-author {
@@ -507,7 +507,7 @@ rules:
   }
 
   .empty-state {
-    color: var(--color-text-subtle);
+    color: color-mix(in srgb, var(--text), var(--bg) 45%);
     font-size: var(--text-xs);
     text-align: center;
     padding: var(--space-4) 0;

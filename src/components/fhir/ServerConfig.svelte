@@ -265,14 +265,14 @@
   .cancel-link {
     background: none;
     border: none;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     cursor: pointer;
     font-size: 0.875rem;
     text-decoration: underline;
   }
 
   .empty-msg {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: 0.9rem;
     padding: var(--space-8) 0;
     text-align: center;
@@ -314,7 +314,7 @@
   .server-url,
   .server-client {
     font-size: 0.75rem;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     word-break: break-all;
   }
 

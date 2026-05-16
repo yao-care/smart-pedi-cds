@@ -140,7 +140,7 @@
   .error-box {
     text-align: center;
     padding: var(--space-8);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .error-box a {
@@ -180,7 +180,7 @@
 
   .confidence {
     font-size: var(--text-sm);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     margin-bottom: var(--space-3);
   }
 

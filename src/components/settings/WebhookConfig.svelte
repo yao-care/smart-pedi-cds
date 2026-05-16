@@ -408,7 +408,7 @@
     border: 1px dashed var(--line);
     border-radius: var(--radius-md);
     background: var(--surface);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-xs);
   }
 
@@ -471,7 +471,7 @@
 
   .webhook-url {
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
     word-break: break-all;
   }
@@ -645,12 +645,12 @@
   }
 
   .history-time {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     flex-shrink: 0;
   }
 
   .history-url {
-    color: var(--color-text-subtle);
+    color: color-mix(in srgb, var(--text), var(--bg) 45%);
     font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
     word-break: break-all;
   }
@@ -658,6 +658,6 @@
   .empty-history {
     margin: 0;
     font-size: var(--text-xs);
-    color: var(--color-text-subtle);
+    color: color-mix(in srgb, var(--text), var(--bg) 45%);
   }
 </style>

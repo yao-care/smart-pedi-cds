@@ -115,7 +115,7 @@
   }
 
   .resume-prompt p {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     margin-bottom: var(--space-6);
   }
 
@@ -150,7 +150,7 @@
   }
 
   .resume-status {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-xs);
   }
 
@@ -164,7 +164,7 @@
     background: none;
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     cursor: pointer;
     font-size: var(--text-sm);
     min-height: 44px;
@@ -195,7 +195,7 @@
     background: none;
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     cursor: pointer;
     font-size: var(--text-sm);
     min-height: 44px;
@@ -205,7 +205,7 @@
     padding: var(--space-2) var(--space-5);
     background: none;
     border: none;
-    color: var(--color-text-subtle);
+    color: color-mix(in srgb, var(--text), var(--bg) 45%);
     cursor: pointer;
     font-size: var(--text-xs);
     min-height: 44px;

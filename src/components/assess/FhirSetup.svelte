@@ -52,7 +52,7 @@
   }
 
   .fhir-prompt p {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     margin-bottom: var(--space-6);
     font-size: var(--text-sm);
   }
@@ -83,7 +83,7 @@
   .btn-skip {
     padding: var(--space-3) var(--space-6);
     background: var(--surface);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
     font-size: var(--text-sm);

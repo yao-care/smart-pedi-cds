@@ -275,7 +275,7 @@
   .skip-notice p,
   .voice-complete p,
   .permission-prompt p {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-sm);
     margin-bottom: var(--space-6);
   }
@@ -310,7 +310,7 @@
 
   .progress-label {
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     white-space: nowrap;
   }
 
@@ -434,7 +434,7 @@
     background: none;
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-sm);
     cursor: pointer;
     min-height: 56px;
@@ -460,7 +460,7 @@
     padding: var(--space-3);
     background: none;
     border: none;
-    color: var(--color-text-subtle);
+    color: color-mix(in srgb, var(--text), var(--bg) 45%);
     font-size: var(--text-xs);
     cursor: pointer;
     min-height: 44px;
@@ -468,7 +468,7 @@
 
   .btn-skip:hover,
   .btn-skip-prompt:hover {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .error {

@@ -239,7 +239,7 @@
     padding: 2px var(--space-2);
     border-radius: var(--radius-full);
     border: 1px solid var(--line);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     background-color: var(--bg-muted);
   }
 
@@ -256,7 +256,7 @@
   }
 
   .status-false_positive {
-    color: var(--color-text-subtle);
+    color: color-mix(in srgb, var(--text), var(--bg) 45%);
   }
 
   .status-resolved {
@@ -267,7 +267,7 @@
 
   .timestamp {
     font-size: 0.75rem;
-    color: var(--color-text-subtle);
+    color: color-mix(in srgb, var(--text), var(--bg) 45%);
   }
 
   .card-body {
@@ -294,7 +294,7 @@
     padding: 2px var(--space-2);
     border-radius: var(--radius-full);
     background-color: var(--bg-muted);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     border: 1px solid var(--line);
   }
 
@@ -307,7 +307,7 @@
     margin: 0 0 var(--space-1) 0;
     font-size: 0.8rem;
     font-weight: 600;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .education-list {
@@ -362,7 +362,7 @@
   }
 
   .btn-false-positive {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .btn-confirm {
@@ -376,7 +376,7 @@
   }
 
   .btn-cancel {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .notes-section {
@@ -389,7 +389,7 @@
   .notes-label {
     font-size: 0.8rem;
     font-weight: 500;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .notes-input {

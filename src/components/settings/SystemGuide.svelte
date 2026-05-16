@@ -156,7 +156,7 @@
   }
 
   .lede {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     margin-bottom: var(--space-6);
   }
 
@@ -217,7 +217,7 @@
 
   .tab-list dd {
     margin: 0;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     padding-left: 0;
   }
 
@@ -236,6 +236,6 @@
     padding-top: var(--space-4);
     border-top: 1px solid var(--line);
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 </style>

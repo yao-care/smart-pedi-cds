@@ -357,7 +357,7 @@
   }
 
   .header-note {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-xs);
     margin-left: var(--space-2);
   }
@@ -374,7 +374,7 @@
     border-bottom: 2px solid transparent;
     padding: var(--space-3) var(--space-5);
     font-size: var(--text-sm);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     cursor: pointer;
     min-height: 44px;
     font-weight: var(--font-medium);
@@ -436,7 +436,7 @@
   }
 
   .row-caret {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-sm);
     width: 16px;
   }
@@ -447,13 +447,13 @@
   }
 
   .row-count {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-xs);
     margin-left: var(--space-2);
   }
 
   .row-preview {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-xs);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -475,7 +475,7 @@
 
   .badge-default {
     background: var(--bg-muted);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .badge-override {
@@ -563,7 +563,7 @@
     padding: 6px 12px;
     cursor: pointer;
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     min-height: 36px;
   }
 
@@ -590,7 +590,7 @@
 
   .btn-cancel {
     background: none;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .btn-save {
@@ -606,7 +606,7 @@
 
   .hint {
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     grid-column: 2 / 4;
   }
 </style>

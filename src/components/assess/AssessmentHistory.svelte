@@ -547,7 +547,7 @@
     padding: 4px 12px;
     border-radius: var(--radius-full);
     background: var(--bg-muted);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-xs);
   }
 
@@ -589,7 +589,7 @@
   }
 
   .empty-state p {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     margin-bottom: var(--space-6);
   }
 
@@ -627,7 +627,7 @@
 
   .stat-label {
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     margin-bottom: var(--space-1);
   }
 
@@ -657,7 +657,7 @@
   }
 
   .child-age {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-xs);
     font-weight: normal;
   }
@@ -697,7 +697,7 @@
   }
 
   .row-date { font-weight: var(--font-medium); min-width: 100px; }
-  .row-age { color: var(--color-text-muted); font-size: var(--text-xs); }
+  .row-age { color: color-mix(in srgb, var(--text), var(--bg) 30%); font-size: var(--text-xs); }
 
   .timeline-actions {
     display: flex;
@@ -719,7 +719,7 @@
     align-items: center;
     gap: 4px;
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     cursor: pointer;
   }
 
@@ -735,7 +735,7 @@
   .badge-normal { background: var(--color-risk-normal-bg); color: var(--accent); }
   .badge-monitor { background: var(--color-risk-warning-bg); color: var(--warn); }
   .badge-refer { background: var(--color-risk-critical-bg); color: var(--danger); }
-  .badge-incomplete { background: var(--surface); color: var(--color-text-subtle); border: 1px solid var(--line); }
+  .badge-incomplete { background: var(--surface); color: color-mix(in srgb, var(--text), var(--bg) 45%); border: 1px solid var(--line); }
 
   .compare-bar {
     position: sticky;
@@ -768,7 +768,7 @@
 
   .btn-clear {
     background: none;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .compare-view {
@@ -794,7 +794,7 @@
   .btn-close {
     background: none;
     border: none;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     cursor: pointer;
     font-size: var(--text-sm);
   }
@@ -833,7 +833,7 @@
   }
 
   .meta-age {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .meta-link {
@@ -855,7 +855,7 @@
   }
 
   .trajectory-arrow {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: 1.2em;
   }
 
@@ -866,7 +866,7 @@
 
   .radar-figure figcaption {
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     margin-bottom: var(--space-2);
   }
 
@@ -903,7 +903,7 @@
   .diff-table thead th {
     background: var(--bg-muted);
     font-weight: var(--font-medium);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .diff-table .series-col {
@@ -919,7 +919,7 @@
   }
 
   .value-cell.value-missing {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .cell-value {
@@ -931,7 +931,7 @@
   .cell-z {
     display: block;
     font-size: 10px;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .cell-z.z-bad {
@@ -944,21 +944,21 @@
   }
 
   .trend-up { color: var(--color-risk-normal, #16a34a); }
-  .trend-flat { color: var(--color-text-muted); }
+  .trend-flat { color: color-mix(in srgb, var(--text), var(--bg) 30%); }
   .trend-down { color: var(--color-risk-critical, #dc2626); }
   .z-bad { color: var(--color-risk-critical, #dc2626); }
 
   .diff-legend {
     margin: var(--space-3) 0 0;
     font-size: 11px;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     display: flex;
     gap: var(--space-3);
     flex-wrap: wrap;
   }
 
   .muted {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .history-nav {

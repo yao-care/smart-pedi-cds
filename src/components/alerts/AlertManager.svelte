@@ -77,7 +77,7 @@
     background: var(--surface);
     border-radius: var(--radius-md);
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .critical-count {
@@ -88,6 +88,6 @@
   .loading, .empty-state {
     text-align: center;
     padding: var(--space-8);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 </style>

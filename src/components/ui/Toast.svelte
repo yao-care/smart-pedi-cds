@@ -107,7 +107,7 @@
     margin: -10px -10px -10px 0;
     border: none;
     background: transparent;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     border-radius: var(--radius-md);
     cursor: pointer;
     transition: background-color 0.15s ease;

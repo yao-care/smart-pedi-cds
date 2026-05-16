@@ -223,7 +223,7 @@
   .video-complete p,
   .permission-prompt p,
   .file-import p {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-sm);
     margin-bottom: var(--space-4);
   }
@@ -235,7 +235,7 @@
 
   .hint {
     font-size: var(--text-xs);
-    color: var(--color-text-subtle);
+    color: color-mix(in srgb, var(--text), var(--bg) 45%);
     font-style: italic;
     margin-bottom: var(--space-6);
   }
@@ -347,7 +347,7 @@
 
   .control-label {
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   /* File import */
@@ -420,7 +420,7 @@
     background: none;
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-sm);
     cursor: pointer;
     min-height: 56px;
@@ -437,7 +437,7 @@
     background: none;
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-sm);
     cursor: pointer;
     min-height: 48px;
@@ -454,14 +454,14 @@
     padding: var(--space-2) var(--space-5);
     background: none;
     border: none;
-    color: var(--color-text-subtle);
+    color: color-mix(in srgb, var(--text), var(--bg) 45%);
     font-size: var(--text-xs);
     cursor: pointer;
     min-height: 44px;
   }
 
   .btn-back:hover {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .btn-skip {
@@ -469,14 +469,14 @@
     padding: var(--space-3);
     background: none;
     border: none;
-    color: var(--color-text-subtle);
+    color: color-mix(in srgb, var(--text), var(--bg) 45%);
     font-size: var(--text-xs);
     cursor: pointer;
     min-height: 44px;
   }
 
   .btn-skip:hover {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .error {

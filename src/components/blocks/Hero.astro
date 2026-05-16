@@ -52,7 +52,7 @@ const { title, subtitle, ctaText, ctaHref } = Astro.props;
   .hero-subtitle {
     font-size: var(--text-lg);
     line-height: var(--lh-lg);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     margin-top: var(--space-4);
   }
 

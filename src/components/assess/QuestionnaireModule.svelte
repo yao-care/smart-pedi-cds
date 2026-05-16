@@ -261,7 +261,7 @@
 
   .progress-label {
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   /* ---- Domain badge ---- */
@@ -351,7 +351,7 @@
   }
 
   .summary-desc {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-sm);
     margin-bottom: var(--space-7);
   }
@@ -374,7 +374,7 @@
 
   .domain-name {
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     white-space: nowrap;
   }
 
@@ -405,7 +405,7 @@
 
   .domain-score {
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     text-align: right;
     white-space: nowrap;
   }
@@ -432,7 +432,7 @@
   .empty-state {
     text-align: center;
     padding: var(--space-8);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .empty-state p {

@@ -130,7 +130,7 @@
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
     background: var(--surface);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     cursor: pointer;
     font-size: var(--text-xs);
   }
@@ -167,6 +167,6 @@
   .empty-state, .loading {
     text-align: center;
     padding: var(--space-8);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 </style>

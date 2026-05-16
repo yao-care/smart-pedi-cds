@@ -224,7 +224,7 @@
 
   .confidence {
     font-size: var(--text-sm);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     margin-bottom: var(--space-3);
   }
 

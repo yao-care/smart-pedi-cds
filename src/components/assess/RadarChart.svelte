@@ -65,7 +65,7 @@
     {@const end = polarToCartesian(angle, radius)}
     {@const labelPos = polarToCartesian(angle, radius + 25)}
     <line x1={center} y1={center} x2={end.x} y2={end.y} stroke="var(--line)" stroke-width="1" opacity="0.3" />
-    <text x={labelPos.x} y={labelPos.y} text-anchor="middle" dominant-baseline="middle" font-size="12" fill="var(--color-text-muted)">
+    <text x={labelPos.x} y={labelPos.y} text-anchor="middle" dominant-baseline="middle" font-size="12" fill="color-mix(in srgb, var(--text), var(--bg) 30%)">
       {domainLabels[d.domain] ?? d.domain}
     </text>
   {/each}

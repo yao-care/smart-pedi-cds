@@ -117,7 +117,7 @@
   }
 
   .search-input::placeholder {
-    color: var(--color-text-subtle);
+    color: color-mix(in srgb, var(--text), var(--bg) 45%);
   }
 
   .search-input:focus {
@@ -128,7 +128,7 @@
 
   .status-message {
     text-align: center;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     padding: var(--space-8) 0;
   }
 
@@ -202,7 +202,7 @@
     padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-full);
     background-color: var(--bg-muted);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     white-space: nowrap;
   }
 
@@ -215,7 +215,7 @@
 
   .patient-id {
     font-size: 0.8rem;
-    color: var(--color-text-subtle);
+    color: color-mix(in srgb, var(--text), var(--bg) 45%);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

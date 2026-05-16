@@ -72,7 +72,7 @@
 
 <style>
   .loading {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-sm);
     text-align: center;
     padding: var(--space-4);
@@ -108,7 +108,7 @@
 
   .edu-card p {
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     margin-bottom: var(--space-3);
   }
 
@@ -119,7 +119,7 @@
   }
 
   .no-recommendations {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-sm);
     text-align: center;
     padding: var(--space-4);

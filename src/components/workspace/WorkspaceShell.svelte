@@ -188,7 +188,7 @@
   .fhir-required {
     padding: var(--space-8);
     text-align: center;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .fhir-required h3 {
@@ -216,7 +216,7 @@
     display: none;
     align-items: center;
     justify-content: center;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .workspace-sidebar {
@@ -255,7 +255,7 @@
     border-bottom: 2px solid transparent;
     font-size: var(--text-sm);
     font-weight: var(--font-medium);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     cursor: pointer;
     min-height: 44px;
   }

@@ -74,7 +74,7 @@
     font-weight: var(--font-bold);
     border: 2px solid var(--line);
     background: var(--bg);
-    color: var(--color-text-subtle);
+    color: color-mix(in srgb, var(--text), var(--bg) 45%);
     position: relative;
     z-index: 1;
   }
@@ -94,7 +94,7 @@
   .step-label {
     margin-top: var(--space-2);
     font-size: 14px;
-    color: var(--color-text-subtle);
+    color: color-mix(in srgb, var(--text), var(--bg) 45%);
     text-align: center;
     white-space: nowrap;
   }

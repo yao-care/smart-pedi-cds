@@ -119,7 +119,7 @@
 
   .status-message {
     text-align: center;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     padding: var(--space-6) 0;
   }
 
@@ -149,7 +149,7 @@
 
   .timestamp {
     font-size: 0.75rem;
-    color: var(--color-text-subtle);
+    color: color-mix(in srgb, var(--text), var(--bg) 45%);
   }
 
   .risk-badge {
@@ -195,7 +195,7 @@
   .rationale {
     margin: 0;
     font-size: 0.8rem;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     line-height: 1.4;
   }
 

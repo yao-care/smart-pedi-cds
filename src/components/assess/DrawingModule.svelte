@@ -207,7 +207,7 @@
 
   .progress-text {
     font-size: var(--text-xs);
-    color: var(--color-text-subtle);
+    color: color-mix(in srgb, var(--text), var(--bg) 45%);
   }
 
   .shape-guide {
@@ -252,7 +252,7 @@
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     cursor: pointer;
     font-size: var(--text-sm);
     min-height: 48px;
@@ -298,7 +298,7 @@
   }
 
   .drawing-complete p {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     margin-bottom: var(--space-6);
   }
 

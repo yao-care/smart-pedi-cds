@@ -235,7 +235,7 @@
         <div class="upload-box" role="button" tabindex="0" aria-label="選擇 ONNX 模型檔案">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M12 16V4M8 8l4-4 4 4" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="var(--color-text-muted)" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="color-mix(in srgb, var(--text), var(--bg) 30%)" stroke-width="1.5" stroke-linecap="round"/>
           </svg>
           <span class="upload-text">點選上傳 .onnx 模型</span>
           <span class="upload-hint">僅接受 ONNX 格式</span>
@@ -386,7 +386,7 @@
   }
 
   .meta-row dt {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     min-width: 80px;
     flex-shrink: 0;
   }
@@ -403,7 +403,7 @@
   .no-model {
     padding: var(--space-6);
     text-align: center;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-xs);
     border: 1px dashed var(--line);
     border-radius: var(--radius-md);
@@ -453,7 +453,7 @@
 
   .upload-hint {
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .sr-only {
@@ -478,7 +478,7 @@
   .metrics-note {
     margin: 0;
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .metrics-grid {
@@ -502,7 +502,7 @@
   .metric-card dt {
     font-size: var(--text-xs);
     font-weight: var(--font-medium);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
@@ -521,7 +521,7 @@
   .sample-count {
     margin: var(--space-3) 0 0 0;
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   /* Versions list */
@@ -569,7 +569,7 @@
 
   .version-meta {
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .version-actions {
@@ -582,7 +582,7 @@
   .export-description {
     margin: 0 0 var(--space-3) 0;
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     line-height: var(--lh-xs);
   }
 </style>

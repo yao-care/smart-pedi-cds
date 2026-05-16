@@ -234,7 +234,7 @@
   .error-box {
     text-align: center;
     padding: var(--space-8);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .relaunch-link {
@@ -266,7 +266,7 @@
   .summary-bar .label {
     display: block;
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .summary-bar .value {
@@ -278,7 +278,7 @@
     padding: 2px 8px;
     border-radius: var(--radius-full);
     background: var(--bg-muted);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-xs);
   }
 
@@ -315,7 +315,7 @@
   }
 
   .metric-table td.norm {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: 0.75rem;
   }
 
@@ -341,7 +341,7 @@
   .rule-detail {
     margin-top: var(--space-2);
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .rule-detail summary {
@@ -368,7 +368,7 @@
   .status-pill.status-anomaly { background: var(--color-risk-critical-bg); color: var(--danger); }
 
   .muted {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-sm);
   }
 

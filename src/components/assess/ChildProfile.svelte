@@ -98,7 +98,7 @@
 
   .form-desc {
     text-align: center;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-sm);
     margin-bottom: var(--space-8);
   }

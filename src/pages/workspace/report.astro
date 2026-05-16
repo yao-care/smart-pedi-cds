@@ -26,7 +26,7 @@ import ReportExport from '../../components/patient/ReportExport.svelte';
   }
 
   .page-description {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     margin-bottom: var(--space-6);
   }
 
@@ -57,7 +57,7 @@ import ReportExport from '../../components/patient/ReportExport.svelte';
   }
 
   .preview-hint {
-    color: var(--color-text-subtle);
+    color: color-mix(in srgb, var(--text), var(--bg) 45%);
     font-size: var(--text-sm);
   }
 </style>

@@ -304,7 +304,7 @@
 
   .tenant-info {
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     margin: var(--space-1) 0 0 0;
   }
 
@@ -388,7 +388,7 @@
 
   .field small {
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .checkbox-group,
@@ -431,7 +431,7 @@
     padding: var(--space-2) var(--space-4);
     font-size: var(--text-sm);
     font-weight: 500;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     background: var(--bg-muted);
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
@@ -509,7 +509,7 @@
 
   .item-summary {
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     margin: var(--space-1) 0;
   }
 
@@ -523,7 +523,7 @@
     display: inline-block;
     padding: var(--space-1) var(--space-2);
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     background: var(--bg-muted);
     border-radius: var(--radius-sm);
   }
@@ -547,14 +547,14 @@
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
     background: var(--bg);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     cursor: pointer;
     transition: color 0.15s ease, border-color 0.15s ease;
   }
 
   .item-actions button:hover {
     color: var(--text);
-    border-color: var(--color-text-muted);
+    border-color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .item-actions .btn-delete {
@@ -570,7 +570,7 @@
   .loading,
   .empty {
     text-align: center;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-sm);
     padding: var(--space-8) var(--space-4);
     border: 1px dashed var(--line);

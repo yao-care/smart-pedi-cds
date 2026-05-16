@@ -208,7 +208,7 @@
   .header-note {
     margin: 0;
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .age-tabs {
@@ -224,7 +224,7 @@
     border: none;
     border-bottom: 2px solid transparent;
     font-size: var(--text-sm);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     cursor: pointer;
     min-height: 40px;
   }
@@ -260,7 +260,7 @@
   }
 
   .muted {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-xs);
   }
 

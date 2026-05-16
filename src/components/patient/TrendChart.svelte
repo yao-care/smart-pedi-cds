@@ -188,12 +188,12 @@
       .attr('transform', `translate(0,${innerHeight})`)
       .call(xAxis)
       .selectAll('text')
-      .attr('fill', 'var(--color-text-muted)');
+      .attr('fill', 'color-mix(in srgb, var(--text), var(--bg) 30%)');
 
     g.append('g')
       .call(yAxis)
       .selectAll('text')
-      .attr('fill', 'var(--color-text-muted)');
+      .attr('fill', 'color-mix(in srgb, var(--text), var(--bg) 30%)');
 
     // Y-axis label
     g.append('text')
@@ -202,7 +202,7 @@
       .attr('x', -innerHeight / 2)
       .attr('text-anchor', 'middle')
       .attr('font-size', '0.75rem')
-      .attr('fill', 'var(--color-text-subtle)')
+      .attr('fill', 'color-mix(in srgb, var(--text), var(--bg) 45%)')
       .text(unitLabel);
 
     // Style axis lines
@@ -264,7 +264,7 @@
 
   .no-data {
     text-align: center;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     padding: var(--space-8) 0;
   }
 

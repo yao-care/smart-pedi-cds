@@ -415,7 +415,7 @@
 
   .progress-text {
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     white-space: nowrap;
   }
 
@@ -432,7 +432,7 @@
     margin-top: var(--space-2);
     text-align: center;
     font-size: var(--text-base);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     line-height: 1.5;
   }
 
@@ -499,7 +499,7 @@
 
   .game-complete p {
     font-size: var(--text-base);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     margin-bottom: var(--space-6);
   }
 
@@ -525,7 +525,7 @@
   .loading-text {
     text-align: center;
     padding: var(--space-10);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-base);
   }
 </style>

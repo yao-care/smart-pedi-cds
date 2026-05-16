@@ -76,7 +76,7 @@
 
   .label {
     font-size: 0.875rem;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .risk-card-normal .count {

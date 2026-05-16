@@ -103,7 +103,7 @@
   }
 
   .lede {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     margin-bottom: var(--space-6);
   }
 
@@ -152,7 +152,7 @@
 
   .tab-list dd {
     margin: 0;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     padding-left: 0;
   }
 
@@ -171,7 +171,7 @@
 
   details p {
     margin: var(--space-2) 0 0;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-sm);
   }
 </style>

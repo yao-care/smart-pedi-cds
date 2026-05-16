@@ -52,7 +52,7 @@
     align-items: center;
     gap: var(--space-2);
     font-size: 0.8rem;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .dot {
@@ -81,7 +81,7 @@
   }
 
   .sync-time {
-    color: var(--color-text-subtle);
+    color: color-mix(in srgb, var(--text), var(--bg) 45%);
     border-left: 1px solid var(--line);
     padding-left: var(--space-2);
     max-width: 120px;

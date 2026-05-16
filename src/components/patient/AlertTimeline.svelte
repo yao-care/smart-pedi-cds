@@ -94,7 +94,7 @@
 
   .no-data {
     text-align: center;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     padding: var(--space-6) 0;
   }
 
@@ -159,7 +159,7 @@
 
   .entry-date {
     font-size: 0.8rem;
-    color: var(--color-text-subtle);
+    color: color-mix(in srgb, var(--text), var(--bg) 45%);
   }
 
   .risk-badge {
@@ -196,7 +196,7 @@
     padding: 2px var(--space-2);
     border-radius: var(--radius-full);
     border: 1px solid var(--line);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     background-color: var(--bg-muted);
   }
 
@@ -213,7 +213,7 @@
   }
 
   .status-false_positive {
-    color: var(--color-text-subtle);
+    color: color-mix(in srgb, var(--text), var(--bg) 45%);
     border-color: var(--line);
     background-color: var(--bg-muted);
   }

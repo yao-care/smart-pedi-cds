@@ -191,7 +191,7 @@
   }
 
   .placeholder-text {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: 0.9rem;
   }
 
@@ -271,7 +271,7 @@
     justify-content: center;
     gap: var(--space-3);
     padding: var(--space-10) 0;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     text-align: center;
   }
 
@@ -285,6 +285,6 @@
   .placeholder-sub {
     font-size: 0.82rem !important;
     font-weight: 400 !important;
-    color: var(--color-text-subtle) !important;
+    color: color-mix(in srgb, var(--text), var(--bg) 45%) !important;
   }
 </style>

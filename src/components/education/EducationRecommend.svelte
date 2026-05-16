@@ -117,7 +117,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--color-text-subtle);
+    color: color-mix(in srgb, var(--text), var(--bg) 45%);
     margin: 0;
   }
 
@@ -199,7 +199,7 @@
 
   .card-summary {
     font-size: 0.8rem;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     margin: 0;
     line-height: 1.5;
   }

@@ -86,7 +86,7 @@
   .accordion-chevron {
     display: flex;
     align-items: center;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     flex-shrink: 0;
   }
 

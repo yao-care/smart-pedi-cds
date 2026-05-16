@@ -172,7 +172,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: var(--color-text-subtle);
+    color: color-mix(in srgb, var(--text), var(--bg) 45%);
     margin: 0 0 var(--space-2);
   }
 
@@ -212,7 +212,7 @@
 
   .server-url {
     font-size: 0.75rem;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     word-break: break-all;
   }
 
@@ -268,7 +268,7 @@
 
   .field-hint {
     font-size: 0.75rem;
-    color: var(--color-text-subtle);
+    color: color-mix(in srgb, var(--text), var(--bg) 45%);
     margin: 0;
   }
 

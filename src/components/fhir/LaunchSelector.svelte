@@ -104,7 +104,7 @@
 
   .subtitle {
     font-size: 0.9rem;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     text-align: center;
     margin: 0 0 var(--space-7);
   }
@@ -174,7 +174,7 @@
 
   .option-desc {
     font-size: 0.82rem;
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     margin: 0;
     line-height: 1.5;
   }
@@ -184,7 +184,7 @@
     font-weight: 600;
     padding: var(--space-1) var(--space-2);
     background: var(--bg-muted);
-    color: var(--color-text-subtle);
+    color: color-mix(in srgb, var(--text), var(--bg) 45%);
     border-radius: var(--radius-full);
     letter-spacing: 0.02em;
   }

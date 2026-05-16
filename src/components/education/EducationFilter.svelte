@@ -144,7 +144,7 @@
 
   .row-label {
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
     min-width: 36px;
   }
 
@@ -182,6 +182,6 @@
   .count {
     margin: 0;
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 </style>
