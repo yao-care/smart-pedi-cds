@@ -413,7 +413,7 @@
                 cy={RADAR.cy}
                 r={(lvl / 100) * RADAR.radius}
                 fill="none"
-                stroke="var(--border-default, #e5e7eb)"
+                stroke="var(--line)"
                 stroke-dasharray={lvl === 50 ? '0' : '4 4'}
               />
             {/each}
@@ -427,7 +427,7 @@
                 y1={RADAR.cy}
                 x2={p100.x}
                 y2={p100.y}
-                stroke="var(--border-default, #e5e7eb)"
+                stroke="var(--line)"
               />
               <text
                 class="radar-axis-label"
@@ -943,10 +943,10 @@
     font-size: 1.3em;
   }
 
-  .trend-up { color: var(--color-risk-normal, #16a34a); }
+  .trend-up { color: var(--accent); }
   .trend-flat { color: color-mix(in srgb, var(--text), var(--bg) 30%); }
-  .trend-down { color: var(--color-risk-critical, #dc2626); }
-  .z-bad { color: var(--color-risk-critical, #dc2626); }
+  .trend-down { color: var(--danger); }
+  .z-bad { color: var(--danger); }
 
   .diff-legend {
     margin: var(--space-3) 0 0;

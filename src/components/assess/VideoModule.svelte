@@ -254,7 +254,7 @@
     max-height: 400px;
     border-radius: var(--radius-lg);
     overflow: hidden;
-    background: #000;
+    background: black;
     margin-bottom: var(--space-6);
   }
 
@@ -274,7 +274,7 @@
     align-items: center;
     gap: var(--space-2);
     padding: var(--space-1) var(--space-3);
-    background: rgba(0, 0, 0, 0.6);
+    background: oklch(0 0 0 / 0.6);
     color: white;
     border-radius: var(--radius-full);
     font-size: var(--text-xs);

@@ -71,6 +71,7 @@
   /* Fallback for browsers without oklch support */
   @supports not (color: oklch(0 0 0)) {
     .backdrop {
+      /* design-system-allow: rgba hex fallback inside @supports-not block; primary value is oklch above */
       background: rgba(51, 41, 29, 0.55);
     }
   }

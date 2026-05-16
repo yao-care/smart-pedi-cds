@@ -109,7 +109,7 @@
   .video-embed {
     width: 100%;
     aspect-ratio: 16 / 9;
-    background: #000;
+    background: black;
     border-radius: var(--radius-md);
     overflow: hidden;
     margin-top: var(--space-2);

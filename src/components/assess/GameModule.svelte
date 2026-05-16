@@ -441,7 +441,7 @@
     border-radius: var(--radius-lg);
     overflow: hidden;
     border: 1px solid var(--line);
-    background: #fafafa;
+    background: var(--bg);
   }
 
   canvas {
@@ -458,7 +458,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.7);
+    background: oklch(1 0 0 / 0.7);
     pointer-events: none;
     animation: fadeIn 0.15s ease-out;
   }

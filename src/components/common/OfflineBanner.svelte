@@ -64,9 +64,9 @@
   }
 
   .banner-update button {
-    background: rgba(255, 255, 255, 0.2);
+    background: oklch(1 0 0 / 0.2);
     color: white;
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    border: 1px solid oklch(1 0 0 / 0.4);
     border-radius: 4px;
     padding: 2px 8px;
     margin-left: 0.5rem;

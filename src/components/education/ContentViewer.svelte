@@ -227,7 +227,7 @@
   .video-container {
     width: 100%;
     aspect-ratio: 16 / 9;
-    background: #000;
+    background: black;
     border-radius: var(--radius-md);
     overflow: hidden;
   }
@@ -246,7 +246,7 @@
     align-items: center;
     justify-content: center;
     gap: var(--space-3);
-    color: #888;
+    color: color-mix(in srgb, var(--text), var(--bg) 40%);
   }
 
   .video-placeholder p {
