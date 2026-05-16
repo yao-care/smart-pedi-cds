@@ -285,7 +285,7 @@
     display: inline-block;
     width: 10px;
     height: 10px;
-    background: #ef4444;
+    background: var(--danger);
     border-radius: var(--radius-full);
     animation: pulse-rec 1s ease-in-out infinite;
   }
@@ -318,11 +318,11 @@
   }
 
   .btn-record-circle:hover {
-    border-color: #ef4444;
+    border-color: var(--danger);
   }
 
   .btn-stop-circle {
-    border-color: #ef4444;
+    border-color: var(--danger);
   }
 
   .btn-stop-circle:hover {
@@ -333,7 +333,7 @@
     display: block;
     width: 28px;
     height: 28px;
-    background: #ef4444;
+    background: var(--danger);
     border-radius: var(--radius-full);
   }
 
@@ -341,7 +341,7 @@
     display: block;
     width: 22px;
     height: 22px;
-    background: #ef4444;
+    background: var(--danger);
     border-radius: var(--radius-sm);
   }
 
