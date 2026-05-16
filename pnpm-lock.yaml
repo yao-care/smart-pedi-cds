@@ -135,6 +135,9 @@ importers:
       pagefind:
         specifier: ^1.5.2
         version: 1.5.2
+      postcss:
+        specifier: ^8.5.14
+        version: 8.5.14
       sharp:
         specifier: ^0.34.5
         version: 0.34.5
