@@ -164,18 +164,19 @@
   }
 
   .format-tag--article {
-    background: var(--color-risk-advisory-bg);
-    color: var(--color-risk-advisory);
+    background: var(--color-accent-soft);
+    color: var(--color-accent-strong);
   }
 
   .format-tag--video {
-    background: var(--color-risk-critical-bg);
-    color: var(--color-risk-critical);
+    background: var(--bg-muted);
+    color: var(--color-text-base);
   }
 
   .format-tag--questionnaire {
-    background: var(--color-risk-warning-bg);
-    color: var(--color-risk-warning);
+    background: var(--bg-surface);
+    color: var(--color-text-base);
+    border: 1px solid var(--border-default);
   }
 
   .read-tag {

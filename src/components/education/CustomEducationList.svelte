@@ -87,8 +87,8 @@
   .card-badge {
     display: inline-block;
     font-size: var(--text-xs);
-    color: var(--color-accent);
-    background: var(--color-risk-advisory-bg);
+    color: var(--color-accent-strong);
+    background: var(--color-accent-soft);
     padding: var(--space-1) var(--space-3);
     border-radius: var(--radius-full);
     margin-bottom: var(--space-3);

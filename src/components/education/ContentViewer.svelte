@@ -147,13 +147,13 @@
   }
 
   .format-badge--article {
-    background: var(--color-risk-advisory-bg);
-    color: var(--color-risk-advisory);
+    background: var(--color-accent-soft);
+    color: var(--color-accent-strong);
   }
 
   .format-badge--video {
-    background: var(--color-risk-critical-bg);
-    color: var(--color-risk-critical);
+    background: var(--bg-muted);
+    color: var(--color-text-base);
   }
 
   .format-badge--questionnaire {
