@@ -327,8 +327,8 @@
 
   .option-btn.selected {
     border-color: var(--accent);
-    background: color-mix(in srgb, var(--warn) 12%, var(--bg));
-    color: var(--warn);
+    background: color-mix(in srgb, var(--accent) 10%, var(--bg));
+    color: var(--accent);
   }
 
   .option-btn:disabled {
