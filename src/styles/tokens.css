@@ -1,168 +1,59 @@
 /* ==========================================================================
-   Design Tokens — Pediatric CDSS
-   Warm-clinical eucalyptus palette.
-
-   Hue strategy:
-   - neutrals (bg/text/border): hue 60–85 (warm ivory)
-   - accent / brand: hue 155 (deep eucalyptus green) — primary interaction,
-     CTA, focus. References Aesop's brand green and the modern paediatric
-     children's-hospital palette (Boston Children's, Lurie). Avoids the
-     rose / berry / brick traps that sit awkwardly against warm ivory.
-   - risk semantic: 150 normal-green / 65 amber-advisory / 70 warm-orange-
-     warning / 25 warm-red-critical. Advisory moved off teal because at
-     hue 195 it competed visually with accent hue 155 (only 40° apart);
-     amber 65 sits 90° from accent and reads cleanly as "watch this".
-
-   All colors are authored in OKLCH with hex fallback for browsers that
-   don't support oklch(). Hex values are sRGB approximations — fine for
-   fallback but not pixel-identical to the modern path.
+   Design Tokens — Smart Pedi CDSS
+   7 source-of-truth color tokens. Derived values via color-mix() at site.
+   See: docs/superpowers/specs/2026-05-16-design-system-spec.md
    ========================================================================== */
 
-/* ---------- Hex fallback (browsers without OKLCH support) ---------- */
 :root {
-  /* Background — warm ivory family */
-  --bg-base: #fbf8f2;
-  --bg-surface: #f5efe5;
-  --bg-muted: #ece2d1;
+  /* Color (7) — hex fallback */
+  --bg:       #fbf8f2;
+  --surface:  #f5efe5;
+  --text:     #33291d;
+  --line:     #c8b896;
+  --accent:   #3d6b54;
+  --warn:     #945a10;
+  --danger:   #b62b1f;
 
-  /* Text — warm dark / muted browns */
-  --color-text-base: #33291d;
-  --color-text-muted: #736554;
-  --color-text-subtle: #9a8e7b;
-  --color-text-inverse: #ffffff;
+  /* Native form-control accent (Pattern #18) — merged into main :root
+     so Test 5 sees a single canonical hex block. */
+  accent-color: var(--accent);
 
-  /* Border */
-  --border-default: #dccfb8;
-  --border-strong: #b3a283;
+  /* Spacing (existing — out of scope of color rework) */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px;  --space-3-5: 14px;
+  --space-4: 16px; --space-5: 20px; --space-6: 24px;  --space-7: 32px;
+  --space-8: 40px; --space-9: 48px; --space-10: 64px; --space-11: 80px;
+  --space-12: 96px;
 
-  /* Risk levels — foreground (AA-pass against the matching *-bg) */
-  --color-risk-normal: #327a4e;
-  --color-risk-advisory: #a87a2e;
-  --color-risk-warning: #b06d1a;
-  --color-risk-critical: #b62b1f;
+  /* Radius (existing) */
+  --radius-xs: 2px; --radius-sm: 4px; --radius-md: 8px;
+  --radius-lg: 12px; --radius-xl: 16px; --radius-full: 9999px;
 
-  /* Risk levels — light background */
-  --color-risk-normal-bg: #e4f1e5;
-  --color-risk-advisory-bg: #f0e3c5;
-  --color-risk-warning-bg: #f6ead3;
-  --color-risk-critical-bg: #fadcd3;
-
-  /* Accent — deep eucalyptus green (hue 155). Third-attempt brand colour
-     after rose hue 350 (berry) and hue 15 (brick) both failed against
-     the warm ivory background. Green at L 0.48 is far from the warm-red
-     trap zone and gives 6.8:1 contrast against white — no edge-case
-     concerns. References: Aesop, Mayo Clinic rebrand, Lurie Children's. */
-  --color-accent: #3d6b54;
-  --color-accent-hover: #325844;
-  --color-accent-strong: #264a37;
-  --color-accent-light: #d4e3da;
-  --color-accent-soft: #eaf1ec;
-
-  /* State colors */
-  --state-focus-ring: rgba(61, 107, 84, 0.45);
-  --state-selected-bg: #eaf1ec;
-  --state-hover-surface: #f0e8d8;
-  --state-disabled-bg: #e8e0d0;
-  --state-disabled-text: #a8a191;
-
-  /* Shadows — built on warm text base (oklch 0.22 0.015 60) so elevation
-     reads warm, not cold-gray. Approximated as #33291d alpha for fallback. */
+  /* Shadow (existing — warm shadows on text alpha) */
   --shadow-sm: 0 1px 2px rgba(51, 41, 29, 0.05), 0 1px 3px rgba(51, 41, 29, 0.08);
   --shadow-md: 0 2px 4px rgba(51, 41, 29, 0.06), 0 4px 8px rgba(51, 41, 29, 0.10);
   --shadow-lg: 0 4px 8px rgba(51, 41, 29, 0.08), 0 12px 24px rgba(51, 41, 29, 0.12);
   --shadow-xl: 0 8px 16px rgba(51, 41, 29, 0.10), 0 24px 48px rgba(51, 41, 29, 0.18);
-
-  /* ---------- Spacing scale (4px base) ---------- */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-3-5: 14px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-7: 32px;
-  --space-8: 40px;
-  --space-9: 48px;
-  --space-10: 64px;
-  --space-11: 80px;
-  --space-12: 96px;
-
-  /* ---------- Border radius ---------- */
-  --radius-xs: 2px;
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-full: 9999px;
 }
 
-/* ---------- OKLCH colors (modern browsers) ---------- */
 @supports (color: oklch(0 0 0)) {
   :root {
-    /* Background (L 0.93–0.985, hue 70–85 — warm ivory) */
-    --bg-base: oklch(0.985 0.006 85);
-    --bg-surface: oklch(0.965 0.008 75);
-    --bg-muted: oklch(0.93 0.012 70);
+    --bg:       oklch(0.985 0.006 85);
+    --surface:  oklch(0.965 0.008 75);
+    --text:     oklch(0.22  0.015 60);
+    --line:     oklch(0.78  0.020 65);
+    --accent:   oklch(0.48  0.08  155);
+    --warn:     oklch(0.48  0.14  65);
+    --danger:   oklch(0.48  0.20  25);
 
-    /* Text (L 0.22–0.60, hue 60 — warm dark to light) */
-    --color-text-base: oklch(0.22 0.015 60);
-    --color-text-muted: oklch(0.46 0.015 60);
-    --color-text-subtle: oklch(0.60 0.012 60);
-    --color-text-inverse: oklch(1 0 0);
-
-    /* Border (hue 65 — same family as neutrals) */
-    --border-default: oklch(0.86 0.012 65);
-    --border-strong: oklch(0.70 0.018 65);
-
-    /* Risk levels — foreground */
-    --color-risk-normal: oklch(0.48 0.14 150);
-    --color-risk-advisory: oklch(0.55 0.12 65);   /* amber: moved off teal 195 to avoid competing with accent hue 155 */
-    --color-risk-warning: oklch(0.55 0.16 70);
-    --color-risk-critical: oklch(0.48 0.20 25);
-
-    /* Risk levels — light background */
-    --color-risk-normal-bg: oklch(0.95 0.035 150);
-    --color-risk-advisory-bg: oklch(0.93 0.04 75);
-    --color-risk-warning-bg: oklch(0.95 0.04 75);
-    --color-risk-critical-bg: oklch(0.93 0.045 25);
-
-    /* Accent — deep eucalyptus green (hue 155). See hex fallback above. */
-    --color-accent: oklch(0.48 0.08 155);
-    --color-accent-hover: oklch(0.42 0.08 155);
-    --color-accent-strong: oklch(0.35 0.08 155);
-    --color-accent-light: oklch(0.88 0.04 155);
-    --color-accent-soft: oklch(0.94 0.02 155);
-
-    /* State colors */
-    --state-focus-ring: oklch(0.55 0.10 155 / 0.45);
-    --state-selected-bg: oklch(0.94 0.02 155);
-    --state-hover-surface: oklch(0.95 0.012 70);
-    --state-disabled-bg: oklch(0.93 0.008 70);
-    --state-disabled-text: oklch(0.65 0.008 60);
-
-    /* Shadows — alpha layers of text-base oklch */
-    --shadow-sm:
-      0 1px 2px oklch(0.22 0.015 60 / 0.05),
-      0 1px 3px oklch(0.22 0.015 60 / 0.08);
-    --shadow-md:
-      0 2px 4px oklch(0.22 0.015 60 / 0.06),
-      0 4px 8px oklch(0.22 0.015 60 / 0.10);
-    --shadow-lg:
-      0 4px 8px oklch(0.22 0.015 60 / 0.08),
-      0 12px 24px oklch(0.22 0.015 60 / 0.12);
-    --shadow-xl:
-      0 8px 16px oklch(0.22 0.015 60 / 0.10),
-      0 24px 48px oklch(0.22 0.015 60 / 0.18);
+    /* Shadow OKLCH */
+    --shadow-sm: 0 1px 2px oklch(0.22 0.015 60 / 0.05), 0 1px 3px oklch(0.22 0.015 60 / 0.08);
+    --shadow-md: 0 2px 4px oklch(0.22 0.015 60 / 0.06), 0 4px 8px oklch(0.22 0.015 60 / 0.10);
+    --shadow-lg: 0 4px 8px oklch(0.22 0.015 60 / 0.08), 0 12px 24px oklch(0.22 0.015 60 / 0.12);
+    --shadow-xl: 0 8px 16px oklch(0.22 0.015 60 / 0.10), 0 24px 48px oklch(0.22 0.015 60 / 0.18);
   }
 }
 
-/* ---------- Critical pulse animation ---------- */
 @keyframes pulse-critical {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.6;
-  }
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.6; }
 }
