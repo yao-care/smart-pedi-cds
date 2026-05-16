@@ -442,13 +442,13 @@ rules:
   }
 
   .validation-result.valid {
-    background: var(--color-risk-normal-bg);
+    background: color-mix(in srgb, var(--accent) 12%, var(--bg));
     color: var(--accent);
     border: 1px solid var(--accent);
   }
 
   .validation-result.invalid {
-    background: var(--color-risk-critical-bg);
+    background: color-mix(in srgb, var(--danger) 14%, var(--bg));
     color: var(--danger);
     border: 1px solid var(--danger);
   }

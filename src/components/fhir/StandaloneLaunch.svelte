@@ -275,7 +275,7 @@
   .error-msg {
     font-size: 0.875rem;
     color: var(--danger);
-    background: var(--color-risk-critical-bg);
+    background: color-mix(in srgb, var(--danger) 14%, var(--bg));
     padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-sm);
     margin: 0;

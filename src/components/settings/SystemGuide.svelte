@@ -223,7 +223,7 @@
 
   .caveat {
     padding: var(--space-3);
-    background: var(--color-risk-advisory-bg);
+    background: color-mix(in srgb, var(--warn) 12%, var(--bg));
     border-left: 3px solid var(--warn);
     border-radius: var(--radius-sm);
     color: var(--text);

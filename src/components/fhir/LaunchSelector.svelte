@@ -156,12 +156,12 @@
   }
 
   .ehr-icon {
-    background: var(--color-risk-advisory-bg);
+    background: color-mix(in srgb, var(--warn) 12%, var(--bg));
     color: var(--warn);
   }
 
   .standalone-icon {
-    background: var(--color-risk-normal-bg);
+    background: color-mix(in srgb, var(--accent) 12%, var(--bg));
     color: var(--accent);
   }
 
@@ -224,12 +224,12 @@
   }
 
   .status-card.launching {
-    background: var(--color-risk-advisory-bg);
+    background: color-mix(in srgb, var(--warn) 12%, var(--bg));
     color: var(--warn);
   }
 
   .status-card.error {
-    background: var(--color-risk-critical-bg);
+    background: color-mix(in srgb, var(--danger) 14%, var(--bg));
     color: var(--danger);
   }
 

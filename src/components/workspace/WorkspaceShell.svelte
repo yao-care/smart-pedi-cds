@@ -154,7 +154,7 @@
     align-items: center;
     gap: var(--space-3);
     padding: var(--space-3) var(--space-4);
-    background: var(--color-risk-advisory-bg);
+    background: color-mix(in srgb, var(--warn) 12%, var(--bg));
     border-bottom: 1px solid var(--warn);
     font-size: var(--text-sm);
   }

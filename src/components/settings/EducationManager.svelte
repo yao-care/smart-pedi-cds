@@ -530,7 +530,7 @@
 
   .inactive-tag {
     color: var(--warn);
-    background: var(--color-risk-warning-bg);
+    background: color-mix(in srgb, var(--warn) 12%, var(--bg));
   }
 
   .item-actions {

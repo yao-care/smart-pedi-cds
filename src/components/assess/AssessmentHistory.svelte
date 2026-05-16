@@ -552,7 +552,7 @@
   }
 
   .source-badge.source-fhir {
-    background: var(--color-risk-advisory-bg);
+    background: color-mix(in srgb, var(--warn) 12%, var(--bg));
     color: var(--warn);
   }
 
@@ -732,9 +732,9 @@
     line-height: 1;
   }
 
-  .badge-normal { background: var(--color-risk-normal-bg); color: var(--accent); }
-  .badge-monitor { background: var(--color-risk-warning-bg); color: var(--warn); }
-  .badge-refer { background: var(--color-risk-critical-bg); color: var(--danger); }
+  .badge-normal { background: color-mix(in srgb, var(--accent) 12%, var(--bg)); color: var(--accent); }
+  .badge-monitor { background: color-mix(in srgb, var(--warn) 12%, var(--bg)); color: var(--warn); }
+  .badge-refer { background: color-mix(in srgb, var(--danger) 14%, var(--bg)); color: var(--danger); }
   .badge-incomplete { background: var(--surface); color: color-mix(in srgb, var(--text), var(--bg) 45%); border: 1px solid var(--line); }
 
   .compare-bar {

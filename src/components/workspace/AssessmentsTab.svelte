@@ -167,7 +167,7 @@
   }
 
   .mode-demo {
-    background: var(--color-risk-advisory-bg);
+    background: color-mix(in srgb, var(--warn) 12%, var(--bg));
     color: var(--warn);
   }
 
@@ -224,17 +224,17 @@
   }
 
   .badge-refer {
-    background: var(--color-risk-critical-bg);
+    background: color-mix(in srgb, var(--danger) 14%, var(--bg));
     color: var(--danger);
   }
 
   .badge-monitor {
-    background: var(--color-risk-warning-bg);
+    background: color-mix(in srgb, var(--warn) 12%, var(--bg));
     color: var(--warn);
   }
 
   .badge-normal {
-    background: var(--color-risk-normal-bg);
+    background: color-mix(in srgb, var(--accent) 12%, var(--bg));
     color: var(--accent);
   }
 

@@ -192,7 +192,7 @@
     <div class="summary">
       <div class="summary-icon" aria-hidden="true">
         <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="28" cy="28" r="28" style="fill: var(--color-risk-normal-bg);"/>
+          <circle cx="28" cy="28" r="28" style="fill: color-mix(in srgb, var(--accent) 12%, var(--bg));"/>
           <path d="M16 28.5l8 8 16-16" style="stroke: var(--accent);" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
@@ -268,7 +268,7 @@
   .domain-badge {
     display: inline-block;
     padding: var(--space-1) var(--space-3);
-    background: var(--color-risk-advisory-bg);
+    background: color-mix(in srgb, var(--warn) 12%, var(--bg));
     color: var(--warn);
     border-radius: var(--radius-full);
     font-size: var(--text-xs);
@@ -287,7 +287,7 @@
 
   /* ---- Feedback ---- */
   .feedback-banner {
-    background: var(--color-risk-normal-bg);
+    background: color-mix(in srgb, var(--accent) 12%, var(--bg));
     color: var(--accent);
     border-radius: var(--radius-md);
     padding: var(--space-3) var(--space-4);
@@ -327,7 +327,7 @@
 
   .option-btn.selected {
     border-color: var(--accent);
-    background: var(--color-risk-advisory-bg);
+    background: color-mix(in srgb, var(--warn) 12%, var(--bg));
     color: var(--warn);
   }
 

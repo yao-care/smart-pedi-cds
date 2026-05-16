@@ -157,7 +157,7 @@
   }
 
   .format-badge--questionnaire {
-    background: var(--color-risk-warning-bg);
+    background: color-mix(in srgb, var(--warn) 12%, var(--bg));
     color: var(--warn);
   }
 
@@ -168,7 +168,7 @@
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.04em;
-    background: var(--color-risk-normal-bg);
+    background: color-mix(in srgb, var(--accent) 12%, var(--bg));
     color: var(--accent);
   }
 

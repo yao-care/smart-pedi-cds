@@ -172,22 +172,22 @@
 
   .risk-normal {
     color: var(--accent);
-    background-color: var(--color-risk-normal-bg);
+    background-color: color-mix(in srgb, var(--accent) 12%, var(--bg));
   }
 
   .risk-advisory {
     color: var(--warn);
-    background-color: var(--color-risk-advisory-bg);
+    background-color: color-mix(in srgb, var(--warn) 12%, var(--bg));
   }
 
   .risk-warning {
     color: var(--warn);
-    background-color: var(--color-risk-warning-bg);
+    background-color: color-mix(in srgb, var(--warn) 12%, var(--bg));
   }
 
   .risk-critical {
     color: var(--danger);
-    background-color: var(--color-risk-critical-bg);
+    background-color: color-mix(in srgb, var(--danger) 14%, var(--bg));
   }
 
   .status-badge {
@@ -203,13 +203,13 @@
   .status-open {
     color: var(--danger);
     border-color: var(--danger);
-    background-color: var(--color-risk-critical-bg);
+    background-color: color-mix(in srgb, var(--danger) 14%, var(--bg));
   }
 
   .status-acknowledged {
     color: var(--warn);
     border-color: var(--warn);
-    background-color: var(--color-risk-advisory-bg);
+    background-color: color-mix(in srgb, var(--warn) 12%, var(--bg));
   }
 
   .status-false_positive {
@@ -221,7 +221,7 @@
   .status-resolved {
     color: var(--accent);
     border-color: var(--accent);
-    background-color: var(--color-risk-normal-bg);
+    background-color: color-mix(in srgb, var(--accent) 12%, var(--bg));
   }
 
   .entry-rationale {

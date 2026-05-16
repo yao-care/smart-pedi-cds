@@ -273,9 +273,9 @@ const presentDomains = Array.from(new Set(sorted.map((c) => c.data.domain))).sor
     align-self: flex-start;
   }
 
-  .status-pending { background: var(--color-risk-advisory-bg); color: var(--warn); }
-  .status-approved { background: var(--color-risk-normal-bg); color: var(--accent); }
-  .status-rejected { background: var(--color-risk-critical-bg); color: var(--danger); }
+  .status-pending { background: color-mix(in srgb, var(--warn) 12%, var(--bg)); color: var(--warn); }
+  .status-approved { background: color-mix(in srgb, var(--accent) 12%, var(--bg)); color: var(--accent); }
+  .status-rejected { background: color-mix(in srgb, var(--danger) 14%, var(--bg)); color: var(--danger); }
 
   .title { color: var(--text); }
   .id-line { color: color-mix(in srgb, var(--text), var(--bg) 30%); font-size: 0.7rem; }

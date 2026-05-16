@@ -337,13 +337,13 @@
   }
 
   .edit-btn:hover {
-    background: var(--color-risk-advisory-bg);
+    background: color-mix(in srgb, var(--warn) 12%, var(--bg));
     border-color: var(--warn);
     color: var(--warn);
   }
 
   .delete-btn:hover {
-    background: var(--color-risk-critical-bg);
+    background: color-mix(in srgb, var(--danger) 14%, var(--bg));
     border-color: var(--danger);
     color: var(--danger);
   }
@@ -437,7 +437,7 @@
   .error-msg {
     font-size: 0.875rem;
     color: var(--danger);
-    background: var(--color-risk-critical-bg);
+    background: color-mix(in srgb, var(--danger) 14%, var(--bg));
     padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-sm);
     margin: 0;

@@ -573,7 +573,7 @@
     margin: 0;
     font-size: var(--text-xs);
     color: var(--danger);
-    background: var(--color-risk-critical-bg);
+    background: color-mix(in srgb, var(--danger) 14%, var(--bg));
     padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-md);
   }

@@ -283,7 +283,7 @@
   }
 
   .source-badge.source-fhir {
-    background: var(--color-risk-advisory-bg);
+    background: color-mix(in srgb, var(--warn) 12%, var(--bg));
     color: var(--warn);
   }
 
@@ -311,7 +311,7 @@
   }
 
   .metric-table tr.anomaly {
-    background: var(--color-risk-critical-bg);
+    background: color-mix(in srgb, var(--danger) 14%, var(--bg));
   }
 
   .metric-table td.norm {
@@ -334,9 +334,9 @@
     font-size: var(--text-sm);
   }
 
-  .triage-normal { background: var(--color-risk-normal-bg); color: var(--accent); }
-  .triage-monitor { background: var(--color-risk-warning-bg); color: var(--warn); }
-  .triage-refer { background: var(--color-risk-critical-bg); color: var(--danger); }
+  .triage-normal { background: color-mix(in srgb, var(--accent) 12%, var(--bg)); color: var(--accent); }
+  .triage-monitor { background: color-mix(in srgb, var(--warn) 12%, var(--bg)); color: var(--warn); }
+  .triage-refer { background: color-mix(in srgb, var(--danger) 14%, var(--bg)); color: var(--danger); }
 
   .rule-detail {
     margin-top: var(--space-2);
@@ -364,8 +364,8 @@
     font-weight: var(--font-medium);
   }
 
-  .status-pill.status-normal { background: var(--color-risk-normal-bg); color: var(--accent); }
-  .status-pill.status-anomaly { background: var(--color-risk-critical-bg); color: var(--danger); }
+  .status-pill.status-normal { background: color-mix(in srgb, var(--accent) 12%, var(--bg)); color: var(--accent); }
+  .status-pill.status-anomaly { background: color-mix(in srgb, var(--danger) 14%, var(--bg)); color: var(--danger); }
 
   .muted {
     color: color-mix(in srgb, var(--text), var(--bg) 30%);

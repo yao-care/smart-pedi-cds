@@ -27,9 +27,9 @@
   };
 
   const categoryBgColors: Record<string, string> = {
-    normal: 'var(--color-risk-normal-bg)',
-    monitor: 'var(--color-risk-warning-bg)',
-    refer: 'var(--color-risk-critical-bg)',
+    normal: 'color-mix(in srgb, var(--accent) 12%, var(--bg))',
+    monitor: 'color-mix(in srgb, var(--warn) 12%, var(--bg))',
+    refer: 'color-mix(in srgb, var(--danger) 14%, var(--bg))',
   };
 
   // 進入結果頁時，從 partialAnalysis 即時計算分流（<1 秒）
@@ -200,7 +200,7 @@
   /* Disclaimer banner */
   .disclaimer {
     padding: var(--space-3) var(--space-4);
-    background: var(--color-risk-warning-bg);
+    background: color-mix(in srgb, var(--warn) 12%, var(--bg));
     border: 1px solid var(--warn);
     border-radius: var(--radius-md);
     font-size: var(--text-xs);

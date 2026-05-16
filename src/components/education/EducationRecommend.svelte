@@ -185,7 +185,7 @@
     letter-spacing: 0.04em;
     padding: 2px var(--space-2);
     border-radius: var(--radius-full);
-    background: var(--color-risk-normal-bg);
+    background: color-mix(in srgb, var(--accent) 12%, var(--bg));
     color: var(--accent);
   }
 

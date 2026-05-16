@@ -145,7 +145,7 @@
     display: inline-block;
     margin-top: var(--space-2);
     padding: var(--space-1) var(--space-3);
-    background: var(--color-risk-normal-bg);
+    background: color-mix(in srgb, var(--accent) 12%, var(--bg));
     color: var(--accent);
     border-radius: var(--radius-full);
     font-size: var(--text-xs);
@@ -156,7 +156,7 @@
     display: inline-block;
     margin-top: var(--space-2);
     padding: var(--space-1) var(--space-3);
-    background: var(--color-risk-warning-bg);
+    background: color-mix(in srgb, var(--warn) 12%, var(--bg));
     color: var(--warn);
     border-radius: var(--radius-full);
     font-size: var(--text-xs);
