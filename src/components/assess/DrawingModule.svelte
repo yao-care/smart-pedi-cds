@@ -192,7 +192,7 @@
 
   .progress-bar {
     height: 8px;
-    background: var(--bg-muted);
+    background: color-mix(in srgb, var(--bg), var(--text) 5%);
     border-radius: var(--radius-full);
     overflow: hidden;
     margin-bottom: var(--space-2);
@@ -259,7 +259,7 @@
   }
 
   .btn-clear:hover {
-    background: var(--bg-muted);
+    background: color-mix(in srgb, var(--bg), var(--text) 5%);
   }
 
   .btn-submit {

@@ -351,7 +351,7 @@
 
   .manager-header {
     padding: var(--space-3) var(--space-4);
-    background: var(--bg-muted);
+    background: color-mix(in srgb, var(--bg), var(--text) 5%);
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
   }
@@ -432,7 +432,7 @@
   }
 
   .row-toggle:hover {
-    background: var(--bg-muted);
+    background: color-mix(in srgb, var(--bg), var(--text) 5%);
   }
 
   .row-caret {
@@ -474,7 +474,7 @@
   }
 
   .badge-default {
-    background: var(--bg-muted);
+    background: color-mix(in srgb, var(--bg), var(--text) 5%);
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 

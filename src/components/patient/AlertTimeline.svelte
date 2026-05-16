@@ -197,7 +197,7 @@
     border-radius: var(--radius-full);
     border: 1px solid var(--line);
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
-    background-color: var(--bg-muted);
+    background-color: var(--surface);
   }
 
   .status-open {
@@ -215,7 +215,7 @@
   .status-false_positive {
     color: color-mix(in srgb, var(--text), var(--bg) 45%);
     border-color: var(--line);
-    background-color: var(--bg-muted);
+    background-color: var(--surface);
   }
 
   .status-resolved {

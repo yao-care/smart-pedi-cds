@@ -80,6 +80,6 @@
   .date-input:disabled {
     opacity: 0.45;
     cursor: not-allowed;
-    background: var(--bg-muted);
+    background: color-mix(in srgb, var(--bg), var(--text) 5%);
   }
 </style>

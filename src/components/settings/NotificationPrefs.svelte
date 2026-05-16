@@ -277,7 +277,7 @@
     height: 28px;
     border-radius: var(--radius-full);
     border: none;
-    background: var(--bg-muted);
+    background: color-mix(in srgb, var(--bg), var(--text) 5%);
     cursor: pointer;
     flex-shrink: 0;
     transition: background-color 0.2s ease;

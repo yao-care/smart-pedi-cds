@@ -201,7 +201,7 @@
     font-size: 0.75rem;
     padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-full);
-    background-color: var(--bg-muted);
+    background-color: color-mix(in srgb, var(--bg), var(--text) 5%);
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
     white-space: nowrap;
   }

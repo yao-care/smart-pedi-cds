@@ -413,7 +413,7 @@
   }
 
   .test-btn:hover:not(:disabled) {
-    background: var(--bg-muted);
+    background: color-mix(in srgb, var(--bg), var(--text) 5%);
   }
 
   .test-btn:disabled {
@@ -483,6 +483,6 @@
   }
 
   .cancel-btn:hover {
-    background: var(--bg-muted);
+    background: color-mix(in srgb, var(--bg), var(--text) 5%);
   }
 </style>

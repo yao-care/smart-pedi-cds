@@ -201,7 +201,7 @@
 
   .manager-header {
     padding: var(--space-3) var(--space-4);
-    background: var(--bg-muted);
+    background: color-mix(in srgb, var(--bg), var(--text) 5%);
     border-radius: var(--radius-md);
   }
 

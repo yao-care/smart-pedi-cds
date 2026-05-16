@@ -169,7 +169,7 @@
   }
 
   .format-tag--video {
-    background: var(--bg-muted);
+    background: color-mix(in srgb, var(--bg), var(--text) 5%);
     color: var(--text);
   }
 

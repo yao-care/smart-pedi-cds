@@ -442,7 +442,7 @@
   .upload-label:hover .upload-box,
   .upload-label:focus-within .upload-box {
     border-color: var(--accent);
-    background: var(--bg-muted);
+    background: color-mix(in srgb, var(--bg), var(--text) 5%);
   }
 
   .upload-text {

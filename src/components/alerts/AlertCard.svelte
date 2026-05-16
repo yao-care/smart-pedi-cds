@@ -240,7 +240,7 @@
     border-radius: var(--radius-full);
     border: 1px solid var(--line);
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
-    background-color: var(--bg-muted);
+    background-color: var(--surface);
   }
 
   .status-open {
@@ -293,7 +293,7 @@
     font-size: 0.7rem;
     padding: 2px var(--space-2);
     border-radius: var(--radius-full);
-    background-color: var(--bg-muted);
+    background-color: var(--surface);
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
     border: 1px solid var(--line);
   }
@@ -344,7 +344,7 @@
   }
 
   .action-btn:hover {
-    background-color: var(--bg-muted);
+    background-color: color-mix(in srgb, var(--bg), var(--text) 5%);
   }
 
   .action-btn:focus-visible {

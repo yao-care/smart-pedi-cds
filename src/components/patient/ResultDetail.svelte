@@ -277,7 +277,7 @@
     margin-left: auto;
     padding: 2px 8px;
     border-radius: var(--radius-full);
-    background: var(--bg-muted);
+    background: color-mix(in srgb, var(--bg), var(--text) 5%);
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
     font-size: var(--text-xs);
   }

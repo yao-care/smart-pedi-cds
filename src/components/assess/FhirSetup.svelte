@@ -92,7 +92,7 @@
   }
 
   .btn-skip:hover {
-    background: var(--bg-muted);
+    background: color-mix(in srgb, var(--bg), var(--text) 5%);
   }
 
   .fhir-form {

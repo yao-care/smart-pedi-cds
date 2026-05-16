@@ -196,7 +196,7 @@
   }
 
   .guide code {
-    background: var(--bg-muted);
+    background: color-mix(in srgb, var(--bg), var(--text) 5%);
     padding: 0 0.3em;
     border-radius: 4px;
     font-size: 0.9em;

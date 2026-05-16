@@ -246,7 +246,7 @@
 
   .progress-bar-track {
     height: 6px;
-    background: var(--bg-muted);
+    background: color-mix(in srgb, var(--bg), var(--text) 5%);
     border-radius: var(--radius-full);
     overflow: hidden;
     margin-bottom: var(--space-2);
@@ -380,7 +380,7 @@
 
   .bar-track {
     height: 16px;
-    background: var(--bg-muted);
+    background: color-mix(in srgb, var(--bg), var(--text) 5%);
     border-radius: var(--radius-full);
     overflow: hidden;
   }

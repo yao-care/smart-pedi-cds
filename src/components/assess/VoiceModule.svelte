@@ -296,7 +296,7 @@
   .progress-bar {
     flex: 1;
     height: 8px;
-    background: var(--bg-muted);
+    background: color-mix(in srgb, var(--bg), var(--text) 5%);
     border-radius: var(--radius-full);
     overflow: hidden;
   }

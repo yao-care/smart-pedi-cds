@@ -27,7 +27,7 @@
   }
 
   .badge-default {
-    background: var(--bg-muted);
+    background: color-mix(in srgb, var(--bg), var(--text) 5%);
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 

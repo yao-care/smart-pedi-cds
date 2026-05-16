@@ -432,7 +432,7 @@
     font-size: var(--text-sm);
     font-weight: 500;
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
-    background: var(--bg-muted);
+    background: var(--surface);
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
     cursor: pointer;
@@ -524,7 +524,7 @@
     padding: var(--space-1) var(--space-2);
     font-size: var(--text-xs);
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
-    background: var(--bg-muted);
+    background: color-mix(in srgb, var(--bg), var(--text) 5%);
     border-radius: var(--radius-sm);
   }
 

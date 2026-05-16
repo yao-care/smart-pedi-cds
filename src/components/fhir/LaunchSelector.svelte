@@ -183,7 +183,7 @@
     font-size: 0.72rem;
     font-weight: 600;
     padding: var(--space-1) var(--space-2);
-    background: var(--bg-muted);
+    background: color-mix(in srgb, var(--bg), var(--text) 5%);
     color: color-mix(in srgb, var(--text), var(--bg) 45%);
     border-radius: var(--radius-full);
     letter-spacing: 0.02em;

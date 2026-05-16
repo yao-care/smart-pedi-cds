@@ -126,7 +126,7 @@ const formatLabels: Record<string, string> = {
 
   .card-format {
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
-    background-color: var(--bg-muted);
+    background-color: color-mix(in srgb, var(--bg), var(--text) 5%);
   }
 
   .card-title {
@@ -155,7 +155,7 @@ const formatLabels: Record<string, string> = {
     padding: var(--space-1) var(--space-2);
     font-size: var(--text-xs);
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
-    background-color: var(--bg-muted);
+    background-color: color-mix(in srgb, var(--bg), var(--text) 5%);
     border-radius: var(--radius-sm);
   }
 </style>

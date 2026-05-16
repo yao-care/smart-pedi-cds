@@ -114,7 +114,7 @@
   }
 
   .toast-close:hover {
-    background: var(--bg-muted);
+    background: color-mix(in srgb, var(--bg), var(--text) 5%);
   }
 
   .toast-close:focus-visible {
