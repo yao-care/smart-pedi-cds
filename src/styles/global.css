@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Global Styles — Pediatric CDSS
+   Global Styles — Smart Pedi CDSS
    Reset, prose, container utilities, accessibility helpers.
    ========================================================================== */
 
@@ -25,8 +25,8 @@ html {
 }
 
 body {
-  background-color: var(--bg-base);
-  color: var(--color-text-base);
+  background-color: var(--bg);
+  color: var(--text);
   font-family: var(--font-sans);
   font-size: var(--text-base);
   line-height: var(--lh-base);
@@ -50,12 +50,11 @@ select {
   color: inherit;
 }
 
-/* ---------- Focus ring ---------- */
+/* ---------- Focus ring — spec Pattern #12 ---------- */
 
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 3px solid color-mix(in srgb, var(--accent) 65%, transparent);
   outline-offset: 2px;
-  box-shadow: 0 0 0 3px var(--state-focus-ring);
 }
 
 /* ---------- Skip to content link ---------- */
@@ -66,8 +65,8 @@ select {
   top: var(--space-2);
   z-index: 9999;
   padding: var(--space-2) var(--space-4);
-  background: var(--color-accent);
-  color: var(--color-text-inverse);
+  background: var(--accent);
+  color: white;
   font-weight: var(--font-bold);
   font-size: var(--text-sm);
   border-radius: var(--radius-md);
@@ -132,33 +131,38 @@ select {
   margin-top: 0;
 }
 
+/* Link — spec Pattern #17 */
 .prose a {
-  color: var(--color-accent);
+  color: var(--accent);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
 .prose a:hover {
-  color: var(--color-accent-hover);
+  color: color-mix(in srgb, var(--accent) 85%, black);
+}
+
+.prose a:visited {
+  color: color-mix(in srgb, var(--accent), var(--text) 40%);
 }
 
 .prose blockquote {
-  border-left: 3px solid var(--border-strong);
+  border-left: 3px solid color-mix(in srgb, var(--line), var(--text) 33%);
   padding-left: var(--space-4);
-  color: var(--color-text-muted);
+  color: color-mix(in srgb, var(--text), var(--bg) 30%);
   font-style: italic;
 }
 
 .prose code {
   font-family: var(--font-mono);
   font-size: 0.9em;
-  background: var(--bg-muted);
+  background: color-mix(in srgb, var(--bg), var(--text) 5%);
   padding: 0.15em 0.35em;
   border-radius: var(--radius-sm);
 }
 
 .prose pre {
-  background: var(--bg-muted);
+  background: color-mix(in srgb, var(--bg), var(--text) 5%);
   padding: var(--space-4);
   border-radius: var(--radius-md);
   overflow-x: auto;
@@ -192,26 +196,22 @@ a,
   border-width: 0;
 }
 
-/* ---------- Utility: risk level classes ---------- */
+/* ---------- Utility: risk-level classes — spec Pattern #10 ---------- */
 
 .risk-normal {
-  background-color: var(--color-risk-normal-bg);
-  color: var(--color-risk-normal);
+  background: color-mix(in srgb, var(--accent) 12%, var(--bg));
+  color: var(--accent);
 }
 
-.risk-advisory {
-  background-color: var(--color-risk-advisory-bg);
-  color: var(--color-risk-advisory);
-}
-
+.risk-advisory,
 .risk-warning {
-  background-color: var(--color-risk-warning-bg);
-  color: var(--color-risk-warning);
+  background: color-mix(in srgb, var(--warn) 12%, var(--bg));
+  color: var(--warn);
 }
 
 .risk-critical {
-  background-color: var(--color-risk-critical-bg);
-  color: var(--color-risk-critical);
+  background: color-mix(in srgb, var(--danger) 14%, var(--bg));
+  color: var(--danger);
 }
 
 /* ---------- Utility: pulse animation ---------- */
