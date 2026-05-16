@@ -160,7 +160,7 @@
   }
 
   .banner-icon {
-    font-size: 1.3rem;
+    font-size: var(--text-base);
   }
 
   .banner-text {

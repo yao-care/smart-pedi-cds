@@ -161,15 +161,15 @@
   }
 
   .title {
-    font-size: 1.25rem;
-    font-weight: 700;
+    font-size: var(--text-sm);
+    font-weight: var(--font-bold);
     color: var(--text);
     margin: 0 0 var(--space-5);
   }
 
   .section-label {
-    font-size: 0.78rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: color-mix(in srgb, var(--text), var(--bg) 45%);
@@ -205,13 +205,13 @@
   }
 
   .server-name {
-    font-size: 0.875rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     color: var(--text);
   }
 
   .server-url {
-    font-size: 0.75rem;
+    font-size: var(--text-xs);
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
     word-break: break-all;
   }
@@ -235,8 +235,8 @@
   }
 
   .field-label {
-    font-size: 0.875rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     color: var(--text);
   }
 
@@ -249,7 +249,7 @@
     background: var(--bg);
     border: 1px solid var(--line);
     border-radius: var(--radius-sm);
-    font-size: 0.9rem;
+    font-size: var(--text-xs);
     color: var(--text);
     transition: border-color 0.12s ease;
     font-family: inherit;
@@ -267,13 +267,13 @@
   }
 
   .field-hint {
-    font-size: 0.75rem;
+    font-size: var(--text-xs);
     color: color-mix(in srgb, var(--text), var(--bg) 45%);
     margin: 0;
   }
 
   .error-msg {
-    font-size: 0.875rem;
+    font-size: var(--text-xs);
     color: var(--danger);
     background: color-mix(in srgb, var(--danger) 14%, var(--bg));
     padding: var(--space-3) var(--space-4);
@@ -291,8 +291,8 @@
     color: white;
     border: none;
     border-radius: var(--radius-sm);
-    font-size: 0.9rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     cursor: pointer;
     transition: background 0.12s ease;
     align-self: flex-start;

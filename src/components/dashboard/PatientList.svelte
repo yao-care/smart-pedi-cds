@@ -117,7 +117,7 @@
     padding: var(--space-3) var(--space-4);
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    font-size: 1rem;
+    font-size: var(--text-caption);
     color: var(--text);
     background-color: var(--surface);
     min-height: 44px;
@@ -200,12 +200,12 @@
   }
 
   .patient-name {
-    font-weight: 600;
+    font-weight: var(--font-medium);
     color: var(--text);
   }
 
   .age-badge {
-    font-size: 0.75rem;
+    font-size: var(--text-xs);
     padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-full);
     background-color: color-mix(in srgb, var(--bg), var(--text) 5%);
@@ -221,7 +221,7 @@
   }
 
   .patient-id {
-    font-size: 0.8rem;
+    font-size: var(--text-xs);
     color: color-mix(in srgb, var(--text), var(--bg) 45%);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -229,8 +229,8 @@
   }
 
   .risk-badge {
-    font-size: 0.75rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-full);
     white-space: nowrap;

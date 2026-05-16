@@ -207,8 +207,8 @@
   }
 
   .risk-badge {
-    font-size: 0.75rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     padding: 2px var(--space-2);
     border-radius: var(--radius-full);
     white-space: nowrap;
@@ -235,14 +235,14 @@
   }
 
   .patient-id {
-    font-weight: 600;
-    font-size: 0.875rem;
+    font-weight: var(--font-medium);
+    font-size: var(--text-xs);
     color: var(--text);
   }
 
   .status-badge {
-    font-size: 0.7rem;
-    font-weight: 500;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     padding: 2px var(--space-2);
     border-radius: var(--radius-full);
     border: 1px solid var(--line);
@@ -273,7 +273,7 @@
   }
 
   .timestamp {
-    font-size: 0.75rem;
+    font-size: var(--text-xs);
     color: color-mix(in srgb, var(--text), var(--bg) 45%);
   }
 
@@ -285,7 +285,7 @@
 
   .rationale {
     margin: 0;
-    font-size: 0.875rem;
+    font-size: var(--text-xs);
     color: var(--text);
     line-height: 1.5;
   }
@@ -297,7 +297,7 @@
   }
 
   .indicator-tag {
-    font-size: 0.7rem;
+    font-size: var(--text-xs);
     padding: 2px var(--space-2);
     border-radius: var(--radius-full);
     background-color: var(--surface);
@@ -312,15 +312,15 @@
 
   .education-title {
     margin: 0 0 var(--space-1) 0;
-    font-size: 0.8rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .education-list {
     margin: 0;
     padding-left: var(--space-5);
-    font-size: 0.8rem;
+    font-size: var(--text-xs);
     color: var(--text);
     line-height: 1.6;
   }
@@ -342,8 +342,8 @@
     padding: var(--space-2) var(--space-4);
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    font-size: 0.875rem;
-    font-weight: 500;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     cursor: pointer;
     background-color: var(--surface);
     color: var(--text);
@@ -394,8 +394,8 @@
   }
 
   .notes-label {
-    font-size: 0.8rem;
-    font-weight: 500;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
@@ -404,7 +404,7 @@
     padding: var(--space-2) var(--space-3);
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    font-size: 0.875rem;
+    font-size: var(--text-xs);
     font-family: inherit;
     color: var(--text);
     background-color: var(--bg);

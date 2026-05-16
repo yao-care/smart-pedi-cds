@@ -579,6 +579,7 @@
   }
 
   .empty-icon {
+    /* design-system-allow: emoji icon, 56px above token scale; no text token suitable */
     font-size: 56px;
     margin-bottom: var(--space-4);
   }
@@ -727,7 +728,7 @@
     display: inline-block;
     padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-full);
-    font-size: 12px;
+    font-size: var(--text-caption);
     font-weight: var(--font-medium);
     line-height: 1;
   }
@@ -930,7 +931,7 @@
 
   .cell-z {
     display: block;
-    font-size: 10px;
+    font-size: var(--text-caption);
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
@@ -950,7 +951,7 @@
 
   .diff-legend {
     margin: var(--space-3) 0 0;
-    font-size: 11px;
+    font-size: var(--text-caption);
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
     display: flex;
     gap: var(--space-3);

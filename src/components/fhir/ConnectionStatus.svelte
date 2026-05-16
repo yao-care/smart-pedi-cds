@@ -51,7 +51,7 @@
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
-    font-size: 0.8rem;
+    font-size: var(--text-xs);
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
@@ -76,7 +76,7 @@
   }
 
   .status-label {
-    font-weight: 600;
+    font-weight: var(--font-medium);
     color: var(--text);
   }
 

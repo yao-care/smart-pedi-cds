@@ -82,7 +82,7 @@
       cy={point.y}
       r="5"
       fill={data[i].hasAnomaly ? 'var(--danger)' : 'var(--accent)'}
-      stroke="#fff"
+      stroke="white"
       stroke-width="2"
     />
   {/each}

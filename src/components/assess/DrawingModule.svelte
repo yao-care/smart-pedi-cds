@@ -215,7 +215,7 @@
   }
 
   .shape-icon {
-    font-size: 48px;
+    font-size: var(--text-display);
     display: block;
     margin-bottom: var(--space-2);
   }
@@ -288,6 +288,7 @@
   }
 
   .complete-icon {
+    /* design-system-allow: emoji icon, 56px above token scale; no text token suitable */
     font-size: 56px;
     margin-bottom: var(--space-4);
   }

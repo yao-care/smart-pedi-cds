@@ -20,8 +20,8 @@
     justify-content: center;
     padding: 2px var(--space-2);
     border-radius: var(--radius-full);
-    font-size: 0.75rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     line-height: 1.4;
     white-space: nowrap;
   }

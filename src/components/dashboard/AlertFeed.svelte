@@ -104,8 +104,8 @@
   }
 
   .feed-title {
-    font-size: 1.125rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     color: var(--text);
     margin: 0;
   }
@@ -120,8 +120,8 @@
     border-radius: var(--radius-full);
     background-color: var(--danger);
     color: white;
-    font-size: 0.8rem;
-    font-weight: 700;
+    font-size: var(--text-xs);
+    font-weight: var(--font-bold);
   }
 
   .status-message {
@@ -155,13 +155,13 @@
   }
 
   .timestamp {
-    font-size: 0.75rem;
+    font-size: var(--text-xs);
     color: color-mix(in srgb, var(--text), var(--bg) 45%);
   }
 
   .risk-badge {
-    font-size: 0.7rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     padding: 2px var(--space-2);
     border-radius: var(--radius-full);
     white-space: nowrap;
@@ -194,14 +194,14 @@
   }
 
   .patient-id {
-    font-size: 0.8rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     color: var(--text);
   }
 
   .rationale {
     margin: 0;
-    font-size: 0.8rem;
+    font-size: var(--text-xs);
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
     line-height: 1.4;
   }
@@ -218,8 +218,8 @@
     min-height: 44px;
     padding: var(--space-2) var(--space-4);
     color: var(--accent);
-    font-size: 0.875rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     text-decoration: none;
     border-radius: var(--radius-md);
   }

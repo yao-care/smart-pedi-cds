@@ -93,7 +93,7 @@
 
   .step-label {
     margin-top: var(--space-2);
-    font-size: 14px;
+    font-size: var(--text-xs);
     color: color-mix(in srgb, var(--text), var(--bg) 45%);
     text-align: center;
     white-space: nowrap;

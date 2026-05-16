@@ -78,8 +78,8 @@
   }
 
   .accordion-title {
-    font-size: 0.9375rem;
-    font-weight: 600;
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
     color: var(--text);
   }
 

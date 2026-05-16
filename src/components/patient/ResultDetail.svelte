@@ -316,7 +316,7 @@
 
   .metric-table td.norm {
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
-    font-size: 0.75rem;
+    font-size: var(--text-xs);
   }
 
   .triage-summary {
@@ -360,7 +360,7 @@
     display: inline-block;
     padding: 2px 8px;
     border-radius: var(--radius-full);
-    font-size: 0.7rem;
+    font-size: var(--text-xs);
     font-weight: var(--font-medium);
   }
 

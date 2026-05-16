@@ -394,7 +394,7 @@
 
   .section-header h3 {
     font-size: var(--text-base);
-    font-weight: 600;
+    font-weight: var(--font-medium);
     color: var(--text);
     margin: 0;
   }
@@ -465,7 +465,7 @@
 
   .webhook-name {
     font-size: var(--text-base);
-    font-weight: 600;
+    font-weight: var(--font-medium);
     color: var(--text);
   }
 
@@ -511,7 +511,7 @@
 
   .form-label {
     font-size: var(--text-xs);
-    font-weight: 500;
+    font-weight: var(--font-medium);
     color: var(--text);
   }
 
@@ -543,7 +543,7 @@
   .form-legend {
     padding: 0 var(--space-2);
     font-size: var(--text-xs);
-    font-weight: 500;
+    font-weight: var(--font-medium);
     color: var(--text);
   }
 

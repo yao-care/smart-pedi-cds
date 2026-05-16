@@ -49,8 +49,8 @@
     z-index: 1000;
     padding: 0.5rem 1rem;
     text-align: center;
-    font-size: 0.875rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
   }
 
   .banner-offline {

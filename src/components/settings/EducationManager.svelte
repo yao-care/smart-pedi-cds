@@ -297,7 +297,7 @@
 
   .manager-header h3 {
     font-size: var(--text-base);
-    font-weight: 600;
+    font-weight: var(--font-medium);
     color: var(--text);
     margin: 0;
   }
@@ -314,7 +314,7 @@
     min-height: 44px;
     padding: var(--space-2) var(--space-4);
     font-size: var(--text-sm);
-    font-weight: 500;
+    font-weight: var(--font-medium);
     color: white;
     background: var(--accent);
     border: none;
@@ -354,7 +354,7 @@
 
   .field > label {
     font-size: var(--text-sm);
-    font-weight: 500;
+    font-weight: var(--font-medium);
     color: var(--text);
   }
 
@@ -430,7 +430,7 @@
     min-height: 44px;
     padding: var(--space-2) var(--space-4);
     font-size: var(--text-sm);
-    font-weight: 500;
+    font-weight: var(--font-medium);
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
     background: var(--surface);
     border: 1px solid var(--line);
@@ -449,7 +449,7 @@
     min-height: 44px;
     padding: var(--space-2) var(--space-5);
     font-size: var(--text-sm);
-    font-weight: 500;
+    font-weight: var(--font-medium);
     color: white;
     background: var(--accent);
     border: none;
@@ -543,7 +543,7 @@
     min-height: 44px;
     padding: var(--space-2) var(--space-3);
     font-size: var(--text-xs);
-    font-weight: 500;
+    font-weight: var(--font-medium);
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
     background: var(--bg);

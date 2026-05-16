@@ -281,6 +281,7 @@
   }
 
   .complete-icon {
+    /* design-system-allow: emoji icon, 56px above token scale; no text token suitable */
     font-size: 56px;
     margin-bottom: var(--space-4);
   }
@@ -324,6 +325,7 @@
   }
 
   .prompt-image {
+    /* design-system-allow: emoji prompt image, 96px above token scale; no text token suitable */
     font-size: 96px;
     line-height: 1;
     margin-bottom: var(--space-4);

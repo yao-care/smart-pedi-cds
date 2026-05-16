@@ -113,8 +113,8 @@
   }
 
   .section-title {
-    font-size: 0.85rem;
-    font-weight: 700;
+    font-size: var(--text-xs);
+    font-weight: var(--font-bold);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: color-mix(in srgb, var(--text), var(--bg) 45%);
@@ -156,8 +156,8 @@
   }
 
   .format-tag {
-    font-size: 0.7rem;
-    font-weight: 700;
+    font-size: var(--text-xs);
+    font-weight: var(--font-bold);
     letter-spacing: 0.04em;
     padding: 2px var(--space-2);
     border-radius: var(--radius-full);
@@ -180,8 +180,8 @@
   }
 
   .read-tag {
-    font-size: 0.7rem;
-    font-weight: 700;
+    font-size: var(--text-xs);
+    font-weight: var(--font-bold);
     letter-spacing: 0.04em;
     padding: 2px var(--space-2);
     border-radius: var(--radius-full);
@@ -190,23 +190,23 @@
   }
 
   .card-title {
-    font-size: 0.9rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     color: var(--text);
     margin: 0;
     line-height: 1.4;
   }
 
   .card-summary {
-    font-size: 0.8rem;
+    font-size: var(--text-xs);
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
     margin: 0;
     line-height: 1.5;
   }
 
   .read-link {
-    font-size: 0.82rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     color: var(--accent);
     text-decoration: none;
     align-self: flex-start;

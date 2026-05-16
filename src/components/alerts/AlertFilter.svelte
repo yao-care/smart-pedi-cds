@@ -64,8 +64,8 @@
   }
 
   .filter-label {
-    font-size: 0.8rem;
-    font-weight: 500;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
@@ -75,7 +75,7 @@
     padding: var(--space-2) var(--space-3);
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    font-size: 0.875rem;
+    font-size: var(--text-xs);
     color: var(--text);
     background-color: var(--surface);
     cursor: pointer;

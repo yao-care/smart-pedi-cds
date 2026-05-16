@@ -76,13 +76,13 @@
   }
 
   .count {
-    font-size: 2rem;
-    font-weight: 700;
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
     line-height: 1;
   }
 
   .label {
-    font-size: 0.875rem;
+    font-size: var(--text-xs);
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 

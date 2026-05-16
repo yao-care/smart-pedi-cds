@@ -92,7 +92,7 @@
   .toast-message {
     flex: 1;
     margin: 0;
-    font-size: 0.875rem;
+    font-size: var(--text-xs);
     line-height: 1.5;
     color: var(--text);
   }

@@ -49,8 +49,8 @@
   }
 
   .date-label {
-    font-size: 0.875rem;
-    font-weight: 500;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     color: var(--text);
   }
 
@@ -61,7 +61,7 @@
     border-radius: var(--radius-md);
     background: var(--bg);
     color: var(--text);
-    font-size: 0.875rem;
+    font-size: var(--text-xs);
     font-family: inherit;
     cursor: pointer;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;

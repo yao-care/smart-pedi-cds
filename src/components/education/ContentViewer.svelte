@@ -141,8 +141,8 @@
     display: inline-block;
     padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-full);
-    font-size: 0.72rem;
-    font-weight: 700;
+    font-size: var(--text-xs);
+    font-weight: var(--font-bold);
     letter-spacing: 0.04em;
   }
 
@@ -165,16 +165,16 @@
     display: inline-block;
     padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-full);
-    font-size: 0.72rem;
-    font-weight: 700;
+    font-size: var(--text-xs);
+    font-weight: var(--font-bold);
     letter-spacing: 0.04em;
     background: color-mix(in srgb, var(--accent) 12%, var(--bg));
     color: var(--accent);
   }
 
   .viewer-title {
-    font-size: 1.25rem;
-    font-weight: 700;
+    font-size: var(--text-sm);
+    font-weight: var(--font-bold);
     color: var(--text);
     margin: 0;
     line-height: 1.4;
@@ -185,14 +185,14 @@
   }
 
   .article-content {
-    font-size: 0.95rem;
+    font-size: var(--text-sm);
     color: var(--text);
     line-height: 1.7;
   }
 
   .placeholder-text {
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
-    font-size: 0.9rem;
+    font-size: var(--text-xs);
   }
 
   .read-action {
@@ -209,8 +209,8 @@
     color: white;
     border: none;
     border-radius: var(--radius-sm);
-    font-size: 0.875rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     cursor: pointer;
     transition: opacity 0.12s ease;
   }
@@ -251,12 +251,12 @@
 
   .video-placeholder p {
     margin: 0;
-    font-size: 0.9rem;
+    font-size: var(--text-xs);
   }
 
   .fallback-link {
     color: var(--accent);
-    font-size: 0.85rem;
+    font-size: var(--text-xs);
     text-decoration: none;
   }
 
@@ -277,14 +277,14 @@
 
   .questionnaire-placeholder p {
     margin: 0;
-    font-size: 0.9rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     color: var(--text);
   }
 
   .placeholder-sub {
-    font-size: 0.82rem !important;
-    font-weight: 400 !important;
+    font-size: var(--text-xs) !important;
+    font-weight: var(--font-normal) !important;
     color: color-mix(in srgb, var(--text), var(--bg) 45%) !important;
   }
 </style>

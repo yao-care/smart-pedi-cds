@@ -240,8 +240,8 @@
   }
 
   .title {
-    font-size: 1.25rem;
-    font-weight: 700;
+    font-size: var(--text-sm);
+    font-weight: var(--font-bold);
     color: var(--text);
     margin: 0;
   }
@@ -252,8 +252,8 @@
     color: white;
     border: none;
     border-radius: var(--radius-sm);
-    font-size: 0.875rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     cursor: pointer;
     transition: background 0.12s ease;
   }
@@ -267,13 +267,13 @@
     border: none;
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
     cursor: pointer;
-    font-size: 0.875rem;
+    font-size: var(--text-xs);
     text-decoration: underline;
   }
 
   .empty-msg {
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
-    font-size: 0.9rem;
+    font-size: var(--text-xs);
     padding: var(--space-8) 0;
     text-align: center;
   }
@@ -306,14 +306,14 @@
   }
 
   .server-name {
-    font-size: 0.9rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     color: var(--text);
   }
 
   .server-url,
   .server-client {
-    font-size: 0.75rem;
+    font-size: var(--text-xs);
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
     word-break: break-all;
   }
@@ -327,8 +327,8 @@
   .action-btn {
     padding: var(--space-1) var(--space-3);
     border-radius: var(--radius-sm);
-    font-size: 0.8rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     cursor: pointer;
     border: 1px solid var(--line);
     background: var(--bg);
@@ -362,8 +362,8 @@
   }
 
   .field-label {
-    font-size: 0.875rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     color: var(--text);
   }
 
@@ -376,7 +376,7 @@
     background: var(--bg);
     border: 1px solid var(--line);
     border-radius: var(--radius-sm);
-    font-size: 0.9rem;
+    font-size: var(--text-xs);
     color: var(--text);
     font-family: inherit;
     transition: border-color 0.12s ease;
@@ -405,8 +405,8 @@
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: var(--radius-sm);
-    font-size: 0.875rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     cursor: pointer;
     color: var(--text);
     transition: background 0.12s ease;
@@ -422,8 +422,8 @@
   }
 
   .test-msg {
-    font-size: 0.82rem;
-    font-weight: 500;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
   }
 
   .test-msg.ok {
@@ -435,7 +435,7 @@
   }
 
   .error-msg {
-    font-size: 0.875rem;
+    font-size: var(--text-xs);
     color: var(--danger);
     background: color-mix(in srgb, var(--danger) 14%, var(--bg));
     padding: var(--space-3) var(--space-4);
@@ -455,8 +455,8 @@
     color: white;
     border: none;
     border-radius: var(--radius-sm);
-    font-size: 0.9rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     cursor: pointer;
     transition: background 0.12s ease;
   }
@@ -475,8 +475,8 @@
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: var(--radius-sm);
-    font-size: 0.9rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     cursor: pointer;
     color: var(--text);
     transition: background 0.12s ease;

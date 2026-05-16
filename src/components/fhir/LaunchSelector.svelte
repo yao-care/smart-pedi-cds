@@ -95,15 +95,15 @@
   }
 
   .title {
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
     color: var(--text);
     margin: 0 0 var(--space-2);
     text-align: center;
   }
 
   .subtitle {
-    font-size: 0.9rem;
+    font-size: var(--text-xs);
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
     text-align: center;
     margin: 0 0 var(--space-7);
@@ -166,22 +166,22 @@
   }
 
   .option-title {
-    font-size: 1rem;
-    font-weight: 600;
+    font-size: var(--text-caption);
+    font-weight: var(--font-medium);
     color: var(--text);
     margin: 0;
   }
 
   .option-desc {
-    font-size: 0.82rem;
+    font-size: var(--text-xs);
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
     margin: 0;
     line-height: 1.5;
   }
 
   .option-badge {
-    font-size: 0.72rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     padding: var(--space-1) var(--space-2);
     background: color-mix(in srgb, var(--bg), var(--text) 5%);
     color: color-mix(in srgb, var(--text), var(--bg) 45%);
@@ -194,7 +194,7 @@
     border: none;
     color: var(--accent);
     cursor: pointer;
-    font-size: 0.875rem;
+    font-size: var(--text-xs);
     padding: 0;
     margin-bottom: var(--space-4);
     display: inline-flex;
@@ -235,7 +235,7 @@
 
   .error-msg {
     margin: 0;
-    font-size: 0.875rem;
+    font-size: var(--text-xs);
   }
 
   .retry-btn {
@@ -245,7 +245,7 @@
     border: none;
     border-radius: var(--radius-sm);
     cursor: pointer;
-    font-size: 0.875rem;
+    font-size: var(--text-xs);
   }
 
   .retry-btn:hover {

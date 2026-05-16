@@ -165,13 +165,13 @@
   }
 
   .entry-date {
-    font-size: 0.8rem;
+    font-size: var(--text-xs);
     color: color-mix(in srgb, var(--text), var(--bg) 45%);
   }
 
   .risk-badge {
-    font-size: 0.7rem;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     padding: 2px var(--space-2);
     border-radius: var(--radius-full);
     white-space: nowrap;
@@ -198,8 +198,8 @@
   }
 
   .status-badge {
-    font-size: 0.7rem;
-    font-weight: 500;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     padding: 2px var(--space-2);
     border-radius: var(--radius-full);
     border: 1px solid var(--line);
@@ -233,7 +233,7 @@
 
   .entry-rationale {
     margin: 0;
-    font-size: 0.85rem;
+    font-size: var(--text-xs);
     color: var(--text);
     line-height: 1.5;
   }
