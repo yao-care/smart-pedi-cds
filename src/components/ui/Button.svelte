@@ -52,7 +52,7 @@
   .btn:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
-    box-shadow: 0 0 0 4px var(--state-focus-ring);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 45%, transparent);
   }
 
   .btn:active:not(:disabled) {
@@ -83,7 +83,7 @@
     border: 1.5px solid color-mix(in srgb, var(--line), var(--text) 33%);
   }
   .btn-secondary:hover:not(:disabled) {
-    background: var(--state-hover-surface);
+    background: color-mix(in srgb, var(--accent) 4%, var(--bg));
     border-color: var(--accent);
     color: var(--accent);
   }
@@ -105,7 +105,7 @@
     color: var(--accent);
   }
   .btn-ghost:hover:not(:disabled) {
-    background: var(--state-hover-surface);
+    background: color-mix(in srgb, var(--accent) 4%, var(--bg));
   }
 
   /* Sizes */

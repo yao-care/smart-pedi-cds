@@ -686,7 +686,7 @@
 
   .timeline-row.selected {
     border-color: var(--accent);
-    background: var(--state-selected-bg);
+    background: color-mix(in srgb, var(--accent) 10%, var(--bg));
   }
 
   .timeline-main {

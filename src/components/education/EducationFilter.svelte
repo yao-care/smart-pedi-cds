@@ -174,7 +174,7 @@
   }
 
   .chip:hover:not(.active) {
-    background: var(--state-hover-surface);
+    background: color-mix(in srgb, var(--accent) 4%, var(--bg));
     border-color: var(--accent);
     color: var(--accent);
   }
