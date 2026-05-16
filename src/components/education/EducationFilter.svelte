@@ -155,14 +155,16 @@
   }
 
   .chip {
-    border: 1px solid var(--border-default);
+    border: 1.5px solid var(--border-strong);
     background: var(--bg-base);
-    padding: 4px 12px;
+    padding: var(--space-1) var(--space-3);
     min-height: 32px;
     border-radius: var(--radius-full);
     font-size: var(--text-xs);
+    font-weight: var(--font-medium);
     cursor: pointer;
-    color: var(--color-text-muted);
+    color: var(--color-text-base);
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
   }
 
   .chip.active {
@@ -172,6 +174,7 @@
   }
 
   .chip:hover:not(.active) {
+    background: var(--state-hover-surface);
     border-color: var(--color-accent);
     color: var(--color-accent);
   }

@@ -1,13 +1,17 @@
 /* ==========================================================================
    Design Tokens — Pediatric CDSS
-   Warm-clinical rose palette.
+   Warm-clinical eucalyptus palette.
 
    Hue strategy:
    - neutrals (bg/text/border): hue 60–85 (warm ivory)
-   - accent / brand: hue 350 (rose) — primary interaction, CTA, focus
-   - risk semantic: 145 green / 195 teal / 70 warm-amber / 25 warm-red
-     teal advisory replaces classic cold-blue so the palette holds one
-     temperature across all risk levels without losing legibility.
+   - accent / brand: hue 155 (deep eucalyptus green) — primary interaction,
+     CTA, focus. References Aesop's brand green and the modern paediatric
+     children's-hospital palette (Boston Children's, Lurie). Avoids the
+     rose / berry / brick traps that sit awkwardly against warm ivory.
+   - risk semantic: 150 normal-green / 65 amber-advisory / 70 warm-orange-
+     warning / 25 warm-red-critical. Advisory moved off teal because at
+     hue 195 it competed visually with accent hue 155 (only 40° apart);
+     amber 65 sits 90° from accent and reads cleanly as "watch this".
 
    All colors are authored in OKLCH with hex fallback for browsers that
    don't support oklch(). Hex values are sRGB approximations — fine for
@@ -33,29 +37,30 @@
 
   /* Risk levels — foreground (AA-pass against the matching *-bg) */
   --color-risk-normal: #327a4e;
-  --color-risk-advisory: #4a8088;
+  --color-risk-advisory: #a87a2e;
   --color-risk-warning: #b06d1a;
   --color-risk-critical: #b62b1f;
 
   /* Risk levels — light background */
   --color-risk-normal-bg: #e4f1e5;
-  --color-risk-advisory-bg: #dee8e9;
+  --color-risk-advisory-bg: #f0e3c5;
   --color-risk-warning-bg: #f6ead3;
   --color-risk-critical-bg: #fadcd3;
 
-  /* Accent — warm dusty rose (hue 15). Moved off the cool magenta 350
-     so the brand colour sits in the same warm family as the ivory
-     neutrals (hue 60-85). hue 350 read as "wine/berry" against the
-     warm background; hue 15 reads as "dusty rose" — softer and on-tone. */
-  --color-accent: #c34a5e;
-  --color-accent-hover: #a23a4d;
-  --color-accent-strong: #862e3e;
-  --color-accent-light: #f1b9bf;
-  --color-accent-soft: #fbe5e6;
+  /* Accent — deep eucalyptus green (hue 155). Third-attempt brand colour
+     after rose hue 350 (berry) and hue 15 (brick) both failed against
+     the warm ivory background. Green at L 0.48 is far from the warm-red
+     trap zone and gives 6.8:1 contrast against white — no edge-case
+     concerns. References: Aesop, Mayo Clinic rebrand, Lurie Children's. */
+  --color-accent: #3d6b54;
+  --color-accent-hover: #325844;
+  --color-accent-strong: #264a37;
+  --color-accent-light: #d4e3da;
+  --color-accent-soft: #eaf1ec;
 
   /* State colors */
-  --state-focus-ring: rgba(195, 74, 94, 0.45);
-  --state-selected-bg: #fbe5e6;
+  --state-focus-ring: rgba(61, 107, 84, 0.45);
+  --state-selected-bg: #eaf1ec;
   --state-hover-surface: #f0e8d8;
   --state-disabled-bg: #e8e0d0;
   --state-disabled-text: #a8a191;
@@ -111,26 +116,26 @@
 
     /* Risk levels — foreground */
     --color-risk-normal: oklch(0.48 0.14 150);
-    --color-risk-advisory: oklch(0.55 0.08 195);  /* softened from 0.48 0.10 — less abrupt against warm bg */
+    --color-risk-advisory: oklch(0.55 0.12 65);   /* amber: moved off teal 195 to avoid competing with accent hue 155 */
     --color-risk-warning: oklch(0.55 0.16 70);
     --color-risk-critical: oklch(0.48 0.20 25);
 
     /* Risk levels — light background */
     --color-risk-normal-bg: oklch(0.95 0.035 150);
-    --color-risk-advisory-bg: oklch(0.94 0.025 195);
+    --color-risk-advisory-bg: oklch(0.93 0.04 75);
     --color-risk-warning-bg: oklch(0.95 0.04 75);
     --color-risk-critical-bg: oklch(0.93 0.045 25);
 
-    /* Accent — warm dusty rose (hue 15). See hex fallback above for usage. */
-    --color-accent: oklch(0.55 0.16 15);
-    --color-accent-hover: oklch(0.48 0.16 15);
-    --color-accent-strong: oklch(0.42 0.15 15);
-    --color-accent-light: oklch(0.85 0.09 15);
-    --color-accent-soft: oklch(0.95 0.03 15);
+    /* Accent — deep eucalyptus green (hue 155). See hex fallback above. */
+    --color-accent: oklch(0.48 0.08 155);
+    --color-accent-hover: oklch(0.42 0.08 155);
+    --color-accent-strong: oklch(0.35 0.08 155);
+    --color-accent-light: oklch(0.88 0.04 155);
+    --color-accent-soft: oklch(0.94 0.02 155);
 
     /* State colors */
-    --state-focus-ring: oklch(0.58 0.18 15 / 0.45);
-    --state-selected-bg: oklch(0.95 0.03 15);
+    --state-focus-ring: oklch(0.55 0.10 155 / 0.45);
+    --state-selected-bg: oklch(0.94 0.02 155);
     --state-hover-surface: oklch(0.95 0.012 70);
     --state-disabled-bg: oklch(0.93 0.008 70);
     --state-disabled-text: oklch(0.65 0.008 60);

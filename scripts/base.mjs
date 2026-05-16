@@ -5,4 +5,4 @@
 // BASE_PATH = '' (empty) — site is hosted at root of smart-pedi-cds.yao.care.
 // Previously '/smart-pedi-cds' when served from yao-care.github.io/smart-pedi-cds/.
 export const BASE_PATH = '';
-export const THEME_COLOR = '#c34a5e'; // matches tokens.css --color-accent hex fallback (warm dusty rose, hue 15)
+export const THEME_COLOR = '#3d6b54'; // matches tokens.css --color-accent hex fallback (deep eucalyptus, hue 155)

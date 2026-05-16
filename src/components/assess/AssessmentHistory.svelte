@@ -142,7 +142,7 @@
   // legible; first slot matches the brand rose so a 2-series compare reads
   // as "brand + accent". JS literal because SVG attrs can't read CSS vars
   // across <each> blocks reliably.
-  const SERIES_COLORS = ['#c34a5e', '#0d9488', '#f59e0b', '#7c3aed'];
+  const SERIES_COLORS = ['#3d6b54', '#a87a2e', '#7c3aed', '#0d9488'];
 
   function domainLabel(d: string): string {
     return DOMAIN_LABELS[d] ?? d;
