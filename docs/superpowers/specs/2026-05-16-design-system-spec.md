@@ -1,7 +1,7 @@
 # Smart Pedi CDSS — Design System Spec
 
 **Date**: 2026-05-16
-**Status**: Draft — round-4 reviewable
+**Status**: Draft — round-5 reviewable
 **Author**: collaborative brainstorming with Light, two rounds of Opus design-system review
 
 ## Context
@@ -659,6 +659,10 @@ describe('design system enforcement', () => {
   it('4. --warn / --danger forbidden in selected/active/is-current rules (CSS-nesting aware)', () => {
     // walkRules descends into nested rules; outer non-state rules harmlessly
     // re-visit the same decls (false-positives prevented by the selector regex).
+    // Note: catches state classes only — `.tab.active` matches `.active`. Tabs
+    // use `--accent`, not `--warn`/`--danger`, so they pass. Legitimate tab
+    // styling that needed `--danger` (e.g. an "errors" tab) would need an
+    // explicit `design-system-allow:` comment, by design.
     const offenders: string[] = [];
     for (const { path, source } of COMPONENTS) {
       const css = styleBlock(source);
@@ -760,7 +764,17 @@ describe('design system enforcement', () => {
     // allowed once. Any new file with a JS hex literal must add itself to the
     // allowlist here, forcing an explicit review.
     const ALLOWLIST = new Set([
+      // Chart series palette — must be literal hex; resolved via inline style
+      // interpolation. Cannot use CSS vars in JS array.
       '/src/components/assess/AssessmentHistory.svelte',
+      // <meta name="theme-color"> requires literal hex; HTML meta attributes
+      // do not resolve CSS variables. Sync with --accent hex manually.
+      '/src/layouts/Base.astro',
+      // Canvas 2D API (ctx.fillStyle / ctx.strokeStyle) requires string
+      // literals. Refactor to getComputedStyle resolution is dark-mode work,
+      // out of v1 scope.
+      '/src/components/assess/GameModule.svelte',
+      '/src/components/assess/DrawingModule.svelte',
     ]);
     const offenders: string[] = [];
     for (const { path, source } of COMPONENTS) {
@@ -848,14 +862,14 @@ Expect 8-12 additional dark-mode-specific overrides + a parallel pattern library
 | `var(--color-accent-hover)` | `color-mix(in srgb, var(--accent) 85%, black)` |
 | `var(--color-accent-soft)` | `color-mix(in srgb, var(--accent) 10%, var(--bg))` |
 | `var(--color-accent-light)` | `color-mix(in srgb, var(--accent) 12%, var(--bg))` — *⚠ see hue note below* |
-| `var(--color-accent-strong)` | `color-mix(in srgb, var(--accent) 85%, black)` |
+| `var(--color-accent-strong)` | `color-mix(in srgb, var(--accent) 85%, black)` — intentionally collapsed with `-hover`. v1 has no distinct "deepest" shade; if a specific site visually requires deeper (e.g. high-emphasis chip text on accent-light bg), change that site to `color-mix(in srgb, var(--accent) 70%, black)` and document in the sweep PR |
 | `var(--color-text-base)` | `var(--text)` |
 | `var(--color-text-muted)` | `color-mix(in srgb, var(--text), var(--bg) 30%)` |
 | `var(--color-text-subtle)` | `color-mix(in srgb, var(--text), var(--bg) 45%)` — *enforce ≥ 24px or non-actionable use* |
 | `var(--color-text-inverse)` | `var(--text-inverse)` (= `white`) |
 | `var(--bg-base)` | `var(--bg)` |
 | `var(--bg-surface)` | `var(--surface)` |
-| `var(--bg-muted)` | context-dependent: **card / panel** → `var(--surface)`; **disabled / placeholder / progress track** → `color-mix(in srgb, var(--bg), var(--text) 5%)` |
+| `var(--bg-muted)` | context-dependent (48 sites). Heuristic: if the rule also sets `border:` / `box-shadow:` or references `--border-default` → it's a card / panel → `var(--surface)`. Otherwise (faded fills, disabled, progress track) → `color-mix(in srgb, var(--bg), var(--text) 5%)` |
 | `var(--border-default)` | `var(--line)` (decorative only — `hr`, table inner divider) |
 | `var(--border-strong)` | `color-mix(in srgb, var(--line), var(--text) 33%)` |
 | `var(--color-risk-normal)` | `var(--accent)` |
@@ -873,6 +887,10 @@ Expect 8-12 additional dark-mode-specific overrides + a parallel pattern library
 | `var(--state-disabled-text)` | `color-mix(in srgb, var(--text), var(--bg) 55%)` |
 
 **⚠ accent-light hue shift**: The old `--color-accent-light` was `oklch(0.88 0.04 155)` — a slightly chromatic light green. The new `color-mix(--accent 12%, --bg)` mixes 12% accent into warm ivory, shifting hue toward neutral. Visually acceptable but **PR sweeps should side-by-side compare** the badge / chip pages (ContentViewer, LaunchSelector, EducationRecommend). If a specific case looks wrong, raise the mix to 18% or switch the interpolation to `color-mix(in oklch, ...)`.
+
+### SVG inline attribute fallbacks
+
+Some SVG elements use `stroke="var(--border-default, #e5e7eb)"` form (CSS-var with hex fallback inside the SVG attribute). Drop the hex fallback during sweep — modern browsers (OKLCH-supporting browsers) all support CSS variables in SVG, and the spec explicitly targets Chrome 111+ / Safari 16.4+. Convert `stroke="var(--token, #hex)"` → `stroke="var(--token)"`. Affected: `AssessmentHistory.svelte:416,430` (known); grep `'\\bvar\\(--[^,)]+,[^)]+\\)'` across `src/` to find others.
 
 ### Dynamic CSS variables
 
@@ -904,7 +922,7 @@ Mechanical search-and-replace won't catch `var(--color-risk-{level})` because th
 
 After conversion the inline value is a plain `var(--token)` reference, which Test 6 accepts. Add these 4 files to the audit-findings list during sweep.
 
-### 8 audit findings to manually override during sweep
+### 9 audit findings to manually override during sweep
 
 These are not auto-mapped — each gets the correct pattern applied:
 
@@ -916,6 +934,7 @@ These are not auto-mapped — each gets the correct pattern applied:
 6. `AssessmentsTab.svelte:170-171` — `.mode-demo` badge → Pattern #6 normal
 7. `LaunchSelector.svelte:159-160` — `.ehr-icon` → Pattern #6 normal
 8. `ContentViewer.svelte:160-161` — `.format-badge--questionnaire` → Pattern #6 normal
+9. `VideoModule.svelte:288,321,325,336,344` — `#ef4444` recording-indicator literals → `var(--danger)`
 
 ### Sweep recommendation
 
@@ -931,7 +950,7 @@ After implementation:
 1. **Test suite**: `pnpm test` → all 8 design-system tests pass.
 2. **Type check**: `pnpm check` shows no **new** errors / warnings vs `main` baseline. (Baseline expected to be 0 / 0 / 58 hints.)
 3. **Hex sweep**: `grep -rE "#[0-9a-fA-F]{3,8}" src --include="*.svelte" --include="*.astro" --include="*.css"` returns only hits in `src/styles/tokens.css` fallback block and intentional JS palettes (`SERIES_COLORS` array in `AssessmentHistory.svelte`).
-4. **RGB sweep**: `grep -rE "rgba?\(" src --include="*.svelte" --include="*.astro" --include="*.css"` empty.
+4. **RGB sweep** (excludes `src/styles/*` because tokens.css legitimately keeps `rgba()` shadow fallbacks for non-OKLCH browsers): `grep -rE "rgba?\(" src --include="*.svelte" --include="*.astro"` returns empty.
 5. **Visual regression** on key pages: home, `/assess/?` step 1, `/result/?id=`, `/workspace/`, `/settings/` system guide, `/education/` list, `/history/` compare mode.
 6. **Contrast audit** with axe DevTools or browser picker on: `--text-muted` on `--surface`, `--warn` on `--warn-bg`, `--accent` on `--bg`, focus-ring visibility.
 7. **PWA install** on iOS Safari + Android Chrome — theme-color and icon match new accent.
@@ -955,6 +974,10 @@ After implementation:
   --accent:   #3d6b54;
   --warn:     #945a10;
   --danger:   #b62b1f;
+
+  /* Native form-control accent (Pattern #18) — merged into main :root
+     so Test 5 sees a single canonical hex block. */
+  accent-color: var(--accent);
 
   /* Spacing (existing — out of scope of color rework) */
   --space-1: 4px;  --space-2: 8px;  --space-3: 12px;  --space-3-5: 14px;
@@ -990,9 +1013,6 @@ After implementation:
     --shadow-xl: 0 8px 16px oklch(0.22 0.015 60 / 0.10), 0 24px 48px oklch(0.22 0.015 60 / 0.18);
   }
 }
-
-/* Native form-control accent — Pattern #18 */
-:root { accent-color: var(--accent); }
 
 @keyframes pulse-critical {
   0%, 100% { opacity: 1; }
