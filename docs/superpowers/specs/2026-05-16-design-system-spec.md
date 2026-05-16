@@ -265,10 +265,162 @@ Memorisable:
 2. **`--warn` and `--danger` only in alert / badge / validation / status badge contexts.** Selected / hover / focus / chip — always `color-mix(var(--accent), ...)`.
 3. **No new colors at the component level.** If no pattern fits, extend the pattern library in this spec — do not invent a new color recipe inline.
 
+## Typography tokens
+
+Typography is part of the design system under the same rules as color: components consume tokens, components do not invent their own values, the token list is finite and does not grow ad-hoc.
+
+```css
+/* in src/styles/typography.css */
+
+/* Size scale (9 + caption escape hatch) — 18px floor for body / UI */
+--text-caption: 16px;   /* chart axis labels, tooltips — NOT for body prose */
+--text-xs:      18px;   /* metadata, breadcrumb, badge */
+--text-sm:      20px;   /* table cell, nav, secondary button */
+--text-base:    22px;   /* body, prose, modal content */
+--text-lg:      24px;   /* h4, card title */
+--text-xl:      28px;   /* h3, question text */
+--text-2xl:     32px;   /* h2 */
+--text-3xl:     40px;   /* h1 */
+--text-display: 48px;   /* hero / marketing only */
+
+/* Line-height (paired with each size) */
+--lh-caption: 1.5;
+--lh-xs: 1.5; --lh-sm: 1.5; --lh-base: 1.6;
+--lh-lg: 1.5; --lh-xl: 1.4; --lh-2xl: 1.3; --lh-3xl: 1.2;
+--lh-display: 1.15;
+
+/* Weight (3 steps) */
+--font-normal: 400;
+--font-medium: 500;
+--font-bold:   700;
+
+/* Family */
+--font-sans:   /* Noto Sans TC stack */
+--font-mono:   /* mono stack */
+```
+
+### Typography rules
+
+- Component CSS uses `var(--text-*)` / `var(--font-*)` only — no `font-size: 14px`, no `font-weight: 600`.
+- The 9-step size scale is fixed. New sizes need to come from the existing scale, not a one-off `15px` or `0.875rem`.
+- `--text-caption` (16px) is the only token below the 18px UI floor. It exists for chart axes / tooltips where position + aria-label carry meaning. It is **not** for body prose — using it for paragraph text is a defect.
+- `em` is allowed for symbolic UI (inline code at `0.9em`, icon size on button) — relative units serve a different purpose than absolute scale.
+
+## Enforcement (automated)
+
+PR review alone is best-effort, not 100%. Automated tests catch violations before merge.
+
+### Vitest suite — `tests/design-system.test.ts`
+
+Five tests, ~50 lines total. CI runs them via existing `pnpm test`; failing tests block merge.
+
+```ts
+import { describe, it, expect } from 'vitest';
+import { glob } from 'glob';
+import { readFile } from 'fs/promises';
+
+function extractStyle(content: string): string {
+  // Svelte / Astro <style> block extraction. JS / TS strings excluded.
+  return Array.from(
+    content.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g),
+    m => m[1]
+  ).join('\n').replace(/\/\*[\s\S]*?\*\//g, ''); // strip CSS comments
+}
+
+async function styleBlocksFromAllComponents() {
+  const files = await glob('src/**/*.{svelte,astro}', {
+    ignore: ['src/styles/**'],
+  });
+  return Promise.all(files.map(async f => ({
+    file: f,
+    css: extractStyle(await readFile(f, 'utf8')),
+  })));
+}
+
+describe('design system enforcement', () => {
+  it('1. no hex colors in component CSS', async () => {
+    const blocks = await styleBlocksFromAllComponents();
+    const offenders = blocks
+      .map(({ file, css }) => ({ file, hex: css.match(/#[0-9a-fA-F]{3,8}\b/g) }))
+      .filter(b => b.hex);
+    expect(offenders, 'Use tokens or color-mix, not hex literals').toEqual([]);
+  });
+
+  it('2. no rgb()/rgba() in component CSS', async () => {
+    const blocks = await styleBlocksFromAllComponents();
+    const offenders = blocks
+      .map(({ file, css }) => ({ file, rgb: css.match(/rgba?\(/g) }))
+      .filter(b => b.rgb);
+    expect(offenders, 'Use oklch() or color-mix() instead of rgb/rgba').toEqual([]);
+  });
+
+  it('3. no hardcoded font-size in px / rem in component CSS', async () => {
+    const blocks = await styleBlocksFromAllComponents();
+    const offenders = blocks
+      .map(({ file, css }) => ({
+        file,
+        bad: css.match(/font-size:\s*(\d+px|\d*\.?\d+rem)/g),
+      }))
+      .filter(b => b.bad);
+    expect(offenders, 'Use var(--text-*) tokens').toEqual([]);
+  });
+
+  it('4. --warn / --danger forbidden in selected / active / hover contexts', async () => {
+    const blocks = await styleBlocksFromAllComponents();
+    const offenders: string[] = [];
+    for (const { file, css } of blocks) {
+      // Heuristic: any rule whose selector mentions selected/active/is-current/chosen/hover
+      const rules = css.matchAll(/([^{}]+)\{([^{}]+)\}/g);
+      for (const [, selector, body] of rules) {
+        if (/\.(selected|active|is-current|chosen)\b|:hover/.test(selector)
+            && /var\(--(warn|danger)\b/.test(body)) {
+          offenders.push(`${file}: ${selector.trim()}`);
+        }
+      }
+    }
+    expect(offenders,
+      '--warn / --danger are alert semantics, not interaction state. Use color-mix(var(--accent), ...)'
+    ).toEqual([]);
+  });
+
+  it('5. tokens.css defines exactly the approved token set', async () => {
+    const css = await readFile('src/styles/tokens.css', 'utf8');
+    const declared = Array.from(css.matchAll(/--([\w-]+):/g), m => `--${m[1]}`);
+    const colorTokens = declared.filter(t =>
+      !t.startsWith('--text-') && !t.startsWith('--font-') &&
+      !t.startsWith('--lh-') && !t.startsWith('--space-') &&
+      !t.startsWith('--radius-') && !t.startsWith('--shadow-')
+    );
+    const approved = new Set([
+      '--bg', '--surface', '--text', '--line',
+      '--accent', '--warn', '--danger',
+    ]);
+    const extras = [...new Set(colorTokens)].filter(t => !approved.has(t));
+    expect(extras,
+      'Color token set is locked at 7. Adding new tokens requires a spec amendment.'
+    ).toEqual([]);
+  });
+});
+```
+
+### Pre-commit hook (optional convenience)
+
+Husky + lint-staged runs the same tests on staged files for instant local feedback. Optional because CI already enforces; pre-commit only improves DX:
+
+```sh
+# .husky/pre-commit
+pnpm vitest run tests/design-system.test.ts
+```
+
+### Trade-offs
+
+- Tests use regex, not full CSS AST. Edge cases possible (e.g. a hex inside a CSS string literal would false-positive), but the `<style>` extraction + comment stripping makes this rare. If false positives appear, add a narrow allow-list in the test.
+- Rule 4 (selected/active uses `--warn`) is selector-pattern matching, not full semantic analysis. Component authors using non-standard class names (e.g. `.row-highlighted` instead of `.selected`) can technically slip through. Convention enforcement (use the standard names) covers this.
+- Rule 5 (token set locked) is the strongest guard — adding `--accent-2` literally cannot land without amending the spec and updating this test in the same PR. By design.
+
 ## Out of scope (explicit)
 
-- **Typography tokens** — `--text-caption` through `--text-display` (9 sizes) remain as-is.
-- **Spacing tokens** — `--space-1` through `--space-12` + `--space-3-5` remain.
+- **Spacing tokens** — `--space-1` through `--space-12` + `--space-3-5` remain as-is.
 - **Shadow / radius tokens** — keep existing 4-step shadow + 6-step radius.
 - **Dark mode** — not in this spec. Future work: redefine the 7 source tokens under `[data-theme="dark"]`; pattern library is automatically dark-compatible because everything is `color-mix`-derived.
 - **Component structure** — `Button.svelte`, `Modal.svelte` etc. structure / behavior is untouched; only their CSS color bindings change.
