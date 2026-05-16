@@ -1,7 +1,7 @@
 # Smart Pedi CDSS — Design System Spec
 
 **Date**: 2026-05-16
-**Status**: Draft — round-3 reviewable
+**Status**: Draft — round-4 reviewable
 **Author**: collaborative brainstorming with Light, two rounds of Opus design-system review
 
 ## Context
@@ -51,15 +51,16 @@ Three rules drive every downstream decision:
 ```
 
 **Computed contrast (sRGB, against `--bg` unless noted)**:
-- `--text` on `--bg`: **13.1:1** (AAA body)
+- `--text` on `--bg`: **13.4:1** (AAA body)
 - `--accent` on white: **6.1:1** (AA body, AAA large)
-- `--accent` on `--bg`: **5.5:1** (AA body)
-- `--warn` on `color-mix(warn 14%, bg)`: **4.6:1** (AA body, badge text)
+- `--accent` on `--bg`: **5.8:1** (AA body)
+- `--warn` on `color-mix(warn 12%, bg)`: **4.5:1** (AA body — thin pass; do not raise mix beyond 12%)
 - `--warn` on white: **5.6:1** (AA body)
 - `--danger` on white: **6.3:1** (AA body)
-- `--danger` on `color-mix(danger 14%, bg)`: **5.8:1** (AA body)
+- `--danger` on `color-mix(danger 14%, bg)`: **4.7:1** (AA body — thin pass; do not raise mix beyond 14%)
 - `--border-strong` (= `color-mix(line, text 33%)`) on `--bg`: **3.3:1** (UI pass, WCAG 1.4.11)
-- `--line` on `--bg`: 1.5:1 — **decorative only** (see Border rules below)
+- `--border-strong` on `--surface`: **3.0:1** (UI pass — at minimum; do not lighten `--surface`)
+- `--line` on `--bg`: 1.8:1 — **decorative only** (see Border rules below)
 
 ### Naming convention
 
@@ -77,7 +78,7 @@ Three rules drive every downstream decision:
 | `--text-subtle` | `color-mix(in srgb, var(--text), var(--bg) 45%)` | **Large text ≥ 24px or graphical-only** (#7) — 3.4:1 AA Large |
 | `--text-inverse` | `white` (literal, never theme-swapped) | Solid accent / danger fills |
 | `--focus-ring` | `color-mix(in srgb, var(--accent) 45%, transparent)` | Focus state (#12) |
-| `--warn-bg` | `color-mix(in srgb, var(--warn) 14%, var(--bg))` | Risk-warn badge (#6), Alert (#10) |
+| `--warn-bg` | `color-mix(in srgb, var(--warn) 12%, var(--bg))` | Risk-warn badge (#6), Alert (#10) |
 | `--danger-bg` | `color-mix(in srgb, var(--danger) 14%, var(--bg))` | Risk-danger badge (#6), Alert (#10) |
 | `--row-hover-bg` | `color-mix(in srgb, var(--accent) 4%, var(--bg))` | Row hover (#5), Secondary button hover (#1) |
 | `--ghost-hover-bg` | `color-mix(in srgb, var(--accent) 8%, var(--bg))` | Ghost button hover (#1) |
@@ -95,10 +96,11 @@ Every percentage above is intentional. New patterns must reuse an existing perce
 |---|---|---|
 | 4% | Pointer feedback (row hover) | Minimum perceptible — feedback, not emphasis |
 | 5% | Permanent state offset (disabled bg) | One step stronger than hover (state is sticky) |
-| 8% | Ghost button hover | Interactive element needs more emphasis than passive row |
+| 8% (accent → bg) | Ghost button hover | Interactive element needs more emphasis than passive row |
+| 8% (text → line) | Progress track tint | Lifts line above bg so track edge visible (2.1:1 / 1.95:1 on bg / surface) |
 | 10% | Selected / alert background | Clear "bound to action/level" but not screaming |
-| 12% | Chip / normal-status surface | Small chips need higher saturation to read |
-| 14% | Risk badge bg (warn / danger) | Alert deserves more visual weight than brand chip |
+| 12% | Chip / normal-status surface / `--warn` badge bg | Small chips need higher saturation; warn badge limited to 12% for AA-body 4.5:1 |
+| 14% | `--danger` badge bg only | Danger deserves more visual weight; 14% is max before fg fails AA |
 | 30% | Text-muted (text into bg) | text 70% — 5.2:1 AA body against bg |
 | 33% | Border-strong (text into line) | Lifts line above 3:1 UI contrast against bg (3.3:1) |
 | 40% | Link `:visited` (text into accent) | Distinct from base accent + hover; reads as "already visited" |
@@ -176,7 +178,7 @@ Typography is part of the design system under the same rules as color: component
 - `--text-caption` (16px) is the only token below the 18px UI floor. It exists for chart axes / tooltips where position + aria-label carry meaning. It is **not** for body prose — that's a defect.
 - `em` is allowed for symbolic UI (inline code `0.9em`, icon size on button). Relative units serve a different purpose than absolute scale.
 
-## Component CSS Pattern Library (18 patterns)
+## Component CSS Pattern Library (19 patterns)
 
 All component CSS composes from these patterns. New components consult this library; if no pattern fits, the library is extended — never bypassed.
 
@@ -272,7 +274,7 @@ Applies to: `.selected`, `.is-current`, `.chosen`, `.chip.active`. **Excludes `.
   color: var(--accent);
 }
 .badge--warn {
-  background: color-mix(in srgb, var(--warn) 14%, var(--bg));
+  background: color-mix(in srgb, var(--warn) 12%, var(--bg));
   color: var(--warn);
   font-weight: var(--font-medium); /* advisory tier; bump to --font-bold for warning */
 }
@@ -390,7 +392,7 @@ For div-based custom progress. If using native `<progress>`, `accent-color: var(
 .progress {
   background: color-mix(in srgb, var(--line), var(--text) 8%);
   border-radius: var(--radius-full);
-  /* Track visible on both --bg and --surface (2.1:1 / 2.0:1) */
+  /* Track visible on both --bg and --surface (2.1:1 / 1.95:1) */
 }
 .progress__fill {
   background: var(--accent);
@@ -466,6 +468,10 @@ Used by the `/assess` multi-step flow. Composes from existing tokens — no new 
 }
 ```
 
+### Known future patterns (not in v1)
+
+The 19 patterns above cover components currently used in the codebase. Patterns deferred to a future spec amendment because the codebase does not yet use them: **pagination, breadcrumb, accordion / disclosure, drawer / side sheet, skeleton loader, segmented control, popover positioning, file upload zone, chip input.** When a component needs one of these, do not invent inline — open a spec amendment, add the pattern with a use case + rationale + computed contrast, then implement.
+
 ## Pattern selection decision tree
 
 When multiple patterns could apply, pick by this hierarchy:
@@ -484,10 +490,15 @@ When multiple patterns could apply, pick by this hierarchy:
 - Decision: **in prose flow** → Link. **standalone action button** → primary if one, secondary if alternatives exist.
 
 **Selection / state family** — for "this is current/chosen":
-- **Selected (#4)** — chosen item in a list / option set; reversible
+- **Selected (#4)** — chosen item in a list / option set; reversible; uses `--accent` 10% bg
 - **Tab.active (#11)** — current page section; navigational, not selection
 - **Stepper is-current (#19)** — current step in a sequential flow
 - Decision: **list selection** → Selected. **page/section nav** → Tab. **wizard step** → Stepper.
+
+**Chip subtlety**:
+- **Decorative / persistent chip** (category tag in row, format icon) → Badge pattern #6 normal (12% bg)
+- **Interactive chip that toggles selected state** (filter chip) → Selected pattern #4 (10% bg)
+- 10% vs 12% are close visually (Δ ≈ 2% luminance); the semantic split matters more than the value difference.
 
 If no pattern fits cleanly, extend the library — do not invent inline.
 
@@ -542,15 +553,23 @@ Tests use **`postcss`** (already transitively available via Vite) for `<style>` 
 ```ts
 import { describe, it, expect } from 'vitest';
 import { readFile } from 'node:fs/promises';
-import postcss, { Rule } from 'postcss';
-// import.meta.glob works in vitest; no `glob` package needed.
-// At test time, vitest evaluates this and returns a map of absolute paths.
+import postcss, { type Rule } from 'postcss';
 
+// Vitest's import.meta.glob is project-root-relative. Modern Vite 5+ syntax
+// uses { query: '?raw', import: 'default' } in place of the deprecated 'as: raw'.
 const componentFiles = import.meta.glob('/src/**/*.{svelte,astro}', {
-  as: 'raw', eager: true,
-});
-const COMPONENT_PATHS = Object.keys(componentFiles)
-  .filter(p => !p.startsWith('/src/styles/'));
+  query: '?raw', import: 'default', eager: true,
+}) as Record<string, string>;
+
+// Normalize keys: vite may return either '/src/...' (root-relative) or absolute.
+// Strip CWD if present so subsequent ALLOWLIST comparisons are predictable.
+const CWD = process.cwd();
+const COMPONENTS: Array<{ path: string; source: string }> = Object.entries(componentFiles)
+  .map(([k, source]) => ({
+    path: k.startsWith(CWD) ? k.slice(CWD.length) : k,
+    source,
+  }))
+  .filter(({ path }) => !path.startsWith('/src/styles/'));
 
 function styleBlock(content: string): string {
   return Array.from(
@@ -594,8 +613,8 @@ describe('design system enforcement', () => {
 
   it('1. no hex color in <style> blocks (CSS-aware, ignores comments)', () => {
     const offenders: string[] = [];
-    for (const path of COMPONENT_PATHS) {
-      const css = styleBlock(componentFiles[path] as string);
+    for (const { path, source } of COMPONENTS) {
+      const css = styleBlock(source);
       if (!css) continue;
       const root = parseStyle(css);
       root.walkDecls(decl => {
@@ -609,8 +628,8 @@ describe('design system enforcement', () => {
 
   it('2. no rgb() / rgba() in <style> blocks', () => {
     const offenders: string[] = [];
-    for (const path of COMPONENT_PATHS) {
-      const css = styleBlock(componentFiles[path] as string);
+    for (const { path, source } of COMPONENTS) {
+      const css = styleBlock(source);
       if (!css) continue;
       parseStyle(css).walkDecls(decl => {
         if (isAllowed(decl)) return;
@@ -624,8 +643,8 @@ describe('design system enforcement', () => {
 
   it('3. no hardcoded font-size px / rem', () => {
     const offenders: string[] = [];
-    for (const path of COMPONENT_PATHS) {
-      const css = styleBlock(componentFiles[path] as string);
+    for (const { path, source } of COMPONENTS) {
+      const css = styleBlock(source);
       if (!css) continue;
       parseStyle(css).walkDecls('font-size', decl => {
         if (isAllowed(decl)) return;
@@ -638,9 +657,11 @@ describe('design system enforcement', () => {
   });
 
   it('4. --warn / --danger forbidden in selected/active/is-current rules (CSS-nesting aware)', () => {
+    // walkRules descends into nested rules; outer non-state rules harmlessly
+    // re-visit the same decls (false-positives prevented by the selector regex).
     const offenders: string[] = [];
-    for (const path of COMPONENT_PATHS) {
-      const css = styleBlock(componentFiles[path] as string);
+    for (const { path, source } of COMPONENTS) {
+      const css = styleBlock(source);
       if (!css) continue;
       parseStyle(css).walkRules(rule => {
         const sel = fullSelector(rule);
@@ -707,8 +728,8 @@ describe('design system enforcement', () => {
 
   it('6. no hex / rgba in inline style="..." or style={...} attributes', () => {
     const offenders: string[] = [];
-    for (const path of COMPONENT_PATHS) {
-      const inline = inlineStyles(componentFiles[path] as string);
+    for (const { path, source } of COMPONENTS) {
+      const inline = inlineStyles(source);
       for (const segment of inline.split(/[;\n]/)) {
         if (/design-system-allow:/.test(segment)) continue;
         if (/#[0-9a-fA-F]{3,8}\b/.test(segment) || /\brgba?\(/.test(segment)) {
@@ -721,8 +742,8 @@ describe('design system enforcement', () => {
 
   it('7. no numeric font-weight in <style> blocks', () => {
     const offenders: string[] = [];
-    for (const path of COMPONENT_PATHS) {
-      const css = styleBlock(componentFiles[path] as string);
+    for (const { path, source } of COMPONENTS) {
+      const css = styleBlock(source);
       if (!css) continue;
       parseStyle(css).walkDecls('font-weight', decl => {
         if (isAllowed(decl)) return;
@@ -742,9 +763,9 @@ describe('design system enforcement', () => {
       '/src/components/assess/AssessmentHistory.svelte',
     ]);
     const offenders: string[] = [];
-    for (const path of COMPONENT_PATHS) {
+    for (const { path, source } of COMPONENTS) {
       if (ALLOWLIST.has(path)) continue;
-      const content = componentFiles[path] as string;
+      const content = source;
       // Strip <style> blocks and inline styles — those have their own tests.
       const cleaned = content
         .replace(/<style[^>]*>[\s\S]*?<\/style>/g, '')
@@ -840,9 +861,9 @@ Expect 8-12 additional dark-mode-specific overrides + a parallel pattern library
 | `var(--color-risk-normal)` | `var(--accent)` |
 | `var(--color-risk-normal-bg)` | `color-mix(in srgb, var(--accent) 12%, var(--bg))` (= accent-light visually; intentional, normal-status ≡ brand) |
 | `var(--color-risk-advisory)` | `var(--warn)` |
-| `var(--color-risk-advisory-bg)` | `color-mix(in srgb, var(--warn) 14%, var(--bg))` |
+| `var(--color-risk-advisory-bg)` | `color-mix(in srgb, var(--warn) 12%, var(--bg))` |
 | `var(--color-risk-warning)` | `var(--warn)` |
-| `var(--color-risk-warning-bg)` | `color-mix(in srgb, var(--warn) 14%, var(--bg))` |
+| `var(--color-risk-warning-bg)` | `color-mix(in srgb, var(--warn) 12%, var(--bg))` |
 | `var(--color-risk-critical)` | `var(--danger)` |
 | `var(--color-risk-critical-bg)` | `color-mix(in srgb, var(--danger) 14%, var(--bg))` |
 | `var(--state-selected-bg)` | `color-mix(in srgb, var(--accent) 10%, var(--bg))` |
@@ -856,6 +877,32 @@ Expect 8-12 additional dark-mode-specific overrides + a parallel pattern library
 ### Dynamic CSS variables
 
 Components occasionally use inline-style dynamic vars (e.g. `style="--bar-color: ..."` in `AlertCard.svelte`, `PatientList.svelte`). Rule: the value of any dynamic var **must** be `var(--token)` or `color-mix(var(--token), ...)`. Inline hex bypasses test 6 in the markup-detection sense but **test 6 catches it via inline-style scan**.
+
+### Dynamic token-name interpolation (4 known sites)
+
+Four files build token names via Svelte template interpolation:
+
+- `AlertCard.svelte` — `style="--bar-color: var(--color-risk-{alert.riskLevel})"`
+- `AlertFeed.svelte` — same pattern with `{alert.riskLevel}`
+- `RiskSummary.svelte` — `style="..." var(--color-risk-{card.level})`
+- `PatientList.svelte` — same
+
+Mechanical search-and-replace won't catch `var(--color-risk-{level})` because the literal token name is constructed at runtime. **Each of these sites needs hand-conversion** to a script-side lookup map:
+
+```svelte
+<script>
+  const LEVEL_TO_COLOR = {
+    normal:   'var(--accent)',
+    advisory: 'var(--warn)',
+    warning:  'var(--warn)',
+    critical: 'var(--danger)',
+  };
+</script>
+
+<div style="--bar-color: {LEVEL_TO_COLOR[alert.riskLevel]}">
+```
+
+After conversion the inline value is a plain `var(--token)` reference, which Test 6 accepts. Add these 4 files to the audit-findings list during sweep.
 
 ### 8 audit findings to manually override during sweep
 
@@ -872,13 +919,16 @@ These are not auto-mapped — each gets the correct pattern applied:
 
 ### Sweep recommendation
 
-Don't use raw `sed` for multi-line color-mix replacements — too fragile across editor differences. Use a node script with [`replace-in-file`](https://www.npmjs.com/package/replace-in-file) library, run as `pnpm migrate:tokens`. Single-line renames (token A → token B) are safe to sed.
+- **Single-line token renames** (e.g. `var(--color-accent)` → `var(--accent)`): safe to run as a series of `sed -i ''` commands or editor multi-cursor.
+- **Multi-line `color-mix` replacements**: do these by hand in an editor — too fragile to script reliably given Svelte / Astro template interleaving.
+- **The 8 audit-finding overrides**: hand-edit per the pattern bindings below; do not script.
+- Run `pnpm test` between batches to confirm each step doesn't regress enforcement.
 
 ## Verification
 
 After implementation:
 
-1. **Test suite**: `pnpm test` → all 7 design-system tests pass.
+1. **Test suite**: `pnpm test` → all 8 design-system tests pass.
 2. **Type check**: `pnpm check` shows no **new** errors / warnings vs `main` baseline. (Baseline expected to be 0 / 0 / 58 hints.)
 3. **Hex sweep**: `grep -rE "#[0-9a-fA-F]{3,8}" src --include="*.svelte" --include="*.astro" --include="*.css"` returns only hits in `src/styles/tokens.css` fallback block and intentional JS palettes (`SERIES_COLORS` array in `AssessmentHistory.svelte`).
 4. **RGB sweep**: `grep -rE "rgba?\(" src --include="*.svelte" --include="*.astro" --include="*.css"` empty.
