@@ -308,7 +308,7 @@
     width: 64px;
     height: 64px;
     border-radius: var(--radius-full);
-    border: 4px solid var(--border-strong);
+    border: 4px solid color-mix(in srgb, var(--line), var(--text) 33%);
     background: var(--bg);
     cursor: pointer;
     display: flex;

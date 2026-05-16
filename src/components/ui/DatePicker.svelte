@@ -68,7 +68,7 @@
   }
 
   .date-input:hover:not(:disabled) {
-    border-color: var(--border-strong);
+    border-color: color-mix(in srgb, var(--line), var(--text) 33%);
   }
 
   .date-input:focus {

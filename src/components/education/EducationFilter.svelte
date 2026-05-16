@@ -155,7 +155,7 @@
   }
 
   .chip {
-    border: 1.5px solid var(--border-strong);
+    border: 1.5px solid color-mix(in srgb, var(--line), var(--text) 33%);
     background: var(--bg);
     padding: var(--space-1) var(--space-3);
     min-height: 32px;

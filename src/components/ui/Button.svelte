@@ -80,7 +80,7 @@
   .btn-secondary {
     background: transparent;
     color: var(--text);
-    border: 1.5px solid var(--border-strong);
+    border: 1.5px solid color-mix(in srgb, var(--line), var(--text) 33%);
   }
   .btn-secondary:hover:not(:disabled) {
     background: var(--state-hover-surface);

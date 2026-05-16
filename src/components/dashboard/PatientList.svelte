@@ -157,7 +157,7 @@
   }
 
   .patient-card:hover {
-    border-color: var(--border-strong);
+    border-color: color-mix(in srgb, var(--line), var(--text) 33%);
     box-shadow: var(--shadow-md);
   }
 
