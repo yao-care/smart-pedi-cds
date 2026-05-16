@@ -1,7 +1,7 @@
 # Smart Pedi CDSS — Design System Spec
 
 **Date**: 2026-05-16
-**Status**: Draft — round-2 reviewable
+**Status**: Draft — round-3 reviewable
 **Author**: collaborative brainstorming with Light, two rounds of Opus design-system review
 
 ## Context
@@ -32,7 +32,7 @@ Three rules drive every downstream decision:
   --text:     #33291d;   /* primary type */
   --line:     #c8b896;   /* divider / border — decorative */
   --accent:   #3d6b54;   /* brand interaction + normal-status */
-  --warn:     #945a10;   /* advisory + warning combined (AA-pass amber) */
+  --warn:     #945a10;   /* advisory + warning combined (AA-pass warm amber-brown) */
   --danger:   #b62b1f;   /* critical / error */
 }
 
@@ -50,13 +50,16 @@ Three rules drive every downstream decision:
 }
 ```
 
-**Why these values pass WCAG**:
-- `--text` on `--bg`: 14.5:1 (AAA body)
-- `--accent` on white: 6.8:1 (AAA body) — used in solid CTA + on light bg
-- `--warn` on `color-mix(warn 14%, bg)`: 5.4:1 (AA body) — badge text
-- `--warn` on white: 5.6:1 (AA body)
-- `--danger` on white: 5.7:1 (AA body)
-- `--line` on `--bg`: 2.1:1 — **decorative only** (see Border rules below)
+**Computed contrast (sRGB, against `--bg` unless noted)**:
+- `--text` on `--bg`: **13.1:1** (AAA body)
+- `--accent` on white: **6.1:1** (AA body, AAA large)
+- `--accent` on `--bg`: **5.5:1** (AA body)
+- `--warn` on `color-mix(warn 14%, bg)`: **4.6:1** (AA body, badge text)
+- `--warn` on white: **5.6:1** (AA body)
+- `--danger` on white: **6.3:1** (AA body)
+- `--danger` on `color-mix(danger 14%, bg)`: **5.8:1** (AA body)
+- `--border-strong` (= `color-mix(line, text 33%)`) on `--bg`: **3.3:1** (UI pass, WCAG 1.4.11)
+- `--line` on `--bg`: 1.5:1 — **decorative only** (see Border rules below)
 
 ### Naming convention
 
@@ -71,7 +74,7 @@ Three rules drive every downstream decision:
 | `--accent-soft-bg` (selected/alert) | `color-mix(in srgb, var(--accent) 10%, var(--bg))` | Selected (#4), Alert (#10) |
 | `--accent-chip-bg` | `color-mix(in srgb, var(--accent) 12%, var(--bg))` | Risk-normal badge (#6), accent chip |
 | `--text-muted` | `color-mix(in srgb, var(--text), var(--bg) 30%)` | Body secondary (#7) — **5.2:1 AA pass** |
-| `--text-subtle` | `color-mix(in srgb, var(--text), var(--bg) 50%)` | **Large text ≥ 24px or graphical-only** (#7) |
+| `--text-subtle` | `color-mix(in srgb, var(--text), var(--bg) 45%)` | **Large text ≥ 24px or graphical-only** (#7) — 3.4:1 AA Large |
 | `--text-inverse` | `white` (literal, never theme-swapped) | Solid accent / danger fills |
 | `--focus-ring` | `color-mix(in srgb, var(--accent) 45%, transparent)` | Focus state (#12) |
 | `--warn-bg` | `color-mix(in srgb, var(--warn) 14%, var(--bg))` | Risk-warn badge (#6), Alert (#10) |
@@ -80,7 +83,7 @@ Three rules drive every downstream decision:
 | `--ghost-hover-bg` | `color-mix(in srgb, var(--accent) 8%, var(--bg))` | Ghost button hover (#1) |
 | `--disabled-bg` | `color-mix(in srgb, var(--bg), var(--text) 5%)` | Disabled (#8) |
 | `--disabled-text` | `color-mix(in srgb, var(--text), var(--bg) 55%)` | Disabled (#8) — **WCAG 1.4.3 exempts disabled** |
-| `--border-strong` | `color-mix(in srgb, var(--line), var(--text) 25%)` | Card border, Input border (#2, #3) — **3.1:1 UI pass** |
+| `--border-strong` | `color-mix(in srgb, var(--line), var(--text) 33%)` | Card border, Input border (#2, #3) — **3.3:1 UI pass** |
 | `--modal-backdrop` | `color-mix(in srgb, var(--text) 50%, transparent)` | Modal (#9) |
 | `--normal-status` color | reuse `--accent` directly (brand green = healthy) | Normal badge (#6) |
 
@@ -96,12 +99,12 @@ Every percentage above is intentional. New patterns must reuse an existing perce
 | 10% | Selected / alert background | Clear "bound to action/level" but not screaming |
 | 12% | Chip / normal-status surface | Small chips need higher saturation to read |
 | 14% | Risk badge bg (warn / danger) | Alert deserves more visual weight than brand chip |
-| 25% | Border-strong mix into text | Lifts line above 3:1 UI contrast against bg |
-| 30% | Text-muted (text into bg) | text 70% — passes AA 5.2:1 against bg |
-| 45% | Focus ring alpha | Layered with 2px solid outline; alpha avoids hard pixel edge |
-| 50% | Text-subtle / modal backdrop | text 50% — for large text only; backdrop heavy enough to dim |
+| 30% | Text-muted (text into bg) | text 70% — 5.2:1 AA body against bg |
+| 33% | Border-strong (text into line) | Lifts line above 3:1 UI contrast against bg (3.3:1) |
+| 40% | Link `:visited` (text into accent) | Distinct from base accent + hover; reads as "already visited" |
+| 45% | Focus ring alpha / Text-subtle | Focus: layered with 2px outline; Text-subtle: AA Large 3.4:1 against bg |
+| 50% | Modal backdrop | text 50% — heavy enough to dim background contents |
 | 55% | Disabled text | Disabled exempt from AA (WCAG 1.4.3); legible for sighted users |
-| 60% | (reserved, currently unused) | — |
 | 85% | Button hover (mix with black) | Industry standard (Tailwind / Bootstrap) — visible one-step darker |
 
 ### Border rules
@@ -193,7 +196,7 @@ All component CSS composes from these patterns. New components consult this libr
 .btn-secondary {
   background: transparent;
   color: var(--text);
-  border: 1.5px solid color-mix(in srgb, var(--line), var(--text) 25%);
+  border: 1.5px solid color-mix(in srgb, var(--line), var(--text) 33%);
 }
 .btn-secondary:hover {
   border-color: var(--accent);
@@ -216,7 +219,7 @@ All component CSS composes from these patterns. New components consult this libr
 ```css
 .card {
   background: var(--surface);
-  border: 1px solid color-mix(in srgb, var(--line), var(--text) 25%);
+  border: 1px solid color-mix(in srgb, var(--line), var(--text) 33%);
   border-radius: var(--radius-lg);
 }
 ```
@@ -226,7 +229,7 @@ All component CSS composes from these patterns. New components consult this libr
 ```css
 input, textarea, select {
   background: var(--bg);
-  border: 1.5px solid color-mix(in srgb, var(--line), var(--text) 25%);
+  border: 1.5px solid color-mix(in srgb, var(--line), var(--text) 33%);
   color: var(--text);
   border-radius: var(--radius-md);
 }
@@ -285,7 +288,7 @@ Applies to: `.selected`, `.is-current`, `.chosen`, `.chip.active`. **Excludes `.
 /* base: var(--text) directly */
 .text-muted { color: color-mix(in srgb, var(--text), var(--bg) 30%); }    /* AA-pass body */
 .text-subtle {
-  color: color-mix(in srgb, var(--text), var(--bg) 50%);
+  color: color-mix(in srgb, var(--text), var(--bg) 45%);
   /* ALLOWED USE: ≥ 24px decorative caption / non-interactive disabled state */
   /* FORBIDDEN: body prose, form labels, any actionable text */
 }
@@ -342,11 +345,12 @@ WCAG 1.4.3 explicitly exempts disabled form controls from contrast requirements;
 
 ### 12. Focus ring (global)
 
+Outline-only (no box-shadow stack — single mechanism per modern accessibility guidance):
+
 ```css
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 3px solid color-mix(in srgb, var(--accent) 65%, transparent);
   outline-offset: 2px;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent);
 }
 ```
 
@@ -380,10 +384,13 @@ WCAG 1.4.3 explicitly exempts disabled form controls from contrast requirements;
 
 ### 15. Progress bar
 
+For div-based custom progress. If using native `<progress>`, `accent-color: var(--accent)` (set globally) tints it.
+
 ```css
 .progress {
-  background: color-mix(in srgb, var(--line), var(--bg) 50%);
+  background: color-mix(in srgb, var(--line), var(--text) 8%);
   border-radius: var(--radius-full);
+  /* Track visible on both --bg and --surface (2.1:1 / 2.0:1) */
 }
 .progress__fill {
   background: var(--accent);
@@ -401,7 +408,8 @@ WCAG 1.4.3 explicitly exempts disabled form controls from contrast requirements;
   font-weight: var(--font-bold);
 }
 .data-table tr:nth-child(even) {
-  background: color-mix(in srgb, var(--bg), var(--text) 2%);
+  background: color-mix(in srgb, var(--bg), var(--text) 4%);
+  /* Distinct from --surface (~0.89) and --bg (0.94): stripe ~0.87 */
 }
 .data-table tr:hover {
   background: color-mix(in srgb, var(--accent) 4%, var(--bg));
@@ -422,18 +430,66 @@ WCAG 1.4.3 explicitly exempts disabled form controls from contrast requirements;
 .prose a:hover, a.link:hover {
   color: color-mix(in srgb, var(--accent) 85%, black);
 }
-.prose a:visited { color: color-mix(in srgb, var(--accent), var(--text) 15%); }
+.prose a:visited { color: color-mix(in srgb, var(--accent), var(--text) 40%); }
 ```
 
 ### 18. Native form control accent
 
-For checkbox / radio / switch, use browser-native rendering tinted by:
+For checkbox / radio / switch / `<progress>` / `<input type="range">`, use browser-native rendering tinted by:
 
 ```css
 :root { accent-color: var(--accent); }
 ```
 
-Spec does **not** redesign these in v1. Custom checkbox / switch styling is out of scope; revisit when native rendering proves inadequate.
+Spec does **not** redesign these in v1. Custom checkbox / switch styling is out of scope; revisit when native rendering proves inadequate. Note: Safari ignores `accent-color` on `<select>` chevrons — acceptable until custom select is built.
+
+### 19. Stepper (multi-step wizard indicator)
+
+Used by the `/assess` multi-step flow. Composes from existing tokens — no new color recipes.
+
+```css
+.stepper__step {
+  color: color-mix(in srgb, var(--text), var(--bg) 30%); /* same as text-muted */
+}
+.stepper__step.is-current {
+  color: var(--accent);
+  font-weight: var(--font-bold);
+}
+.stepper__step.is-done {
+  color: var(--accent);
+}
+.stepper__connector {
+  background: var(--line);
+}
+.stepper__connector.is-passed {
+  background: var(--accent);
+}
+```
+
+## Pattern selection decision tree
+
+When multiple patterns could apply, pick by this hierarchy:
+
+**Status / alert family** — for conveying information level:
+- **Badge (#6)** — inline status indicator inside a row / card; persistent; small
+- **Alert (#10)** — block-level inline notice within page content; persistent; has explanatory text
+- **Toast (#13)** — floating, dismissible; ephemeral (after-action feedback)
+- Decision: **persistent + inline + small** → Badge. **persistent + block** → Alert. **ephemeral + floating** → Toast.
+
+**Interaction family** — for user actions:
+- **Button primary (#1)** — single most important action on screen
+- **Button secondary (#1)** — alternative action
+- **Button ghost (#1)** — tertiary / navigational action
+- **Link (#17)** — inline navigation within prose
+- Decision: **in prose flow** → Link. **standalone action button** → primary if one, secondary if alternatives exist.
+
+**Selection / state family** — for "this is current/chosen":
+- **Selected (#4)** — chosen item in a list / option set; reversible
+- **Tab.active (#11)** — current page section; navigational, not selection
+- **Stepper is-current (#19)** — current step in a sequential flow
+- Decision: **list selection** → Selected. **page/section nav** → Tab. **wizard step** → Stepper.
+
+If no pattern fits cleanly, extend the library — do not invent inline.
 
 ## Co-occurrence guidance
 
@@ -477,104 +533,134 @@ Rules 1, 2, 3 are CI-enforced (Vitest). Rules 4, 5 are reviewer-enforced.
 
 CI runs `pnpm test` on every PR. The design-system suite blocks merge on violation.
 
+### Implementation strategy
+
+Tests use **`postcss`** (already transitively available via Vite) for `<style>` block parsing — not regex. Regex remained for the inline-style attribute scan (no parser needed for short attribute values). This handles native CSS nesting (`&.selected { ... }`), `@media` / `@supports` nested rules, and comments correctly.
+
 ### `tests/design-system.test.ts`
 
 ```ts
 import { describe, it, expect } from 'vitest';
-import { glob } from 'glob';
-import { readFile } from 'fs/promises';
+import { readFile } from 'node:fs/promises';
+import postcss, { Rule } from 'postcss';
+// import.meta.glob works in vitest; no `glob` package needed.
+// At test time, vitest evaluates this and returns a map of absolute paths.
 
-const SOURCE_GLOB = 'src/**/*.{svelte,astro}';
-const IGNORE = ['src/styles/**'];
+const componentFiles = import.meta.glob('/src/**/*.{svelte,astro}', {
+  as: 'raw', eager: true,
+});
+const COMPONENT_PATHS = Object.keys(componentFiles)
+  .filter(p => !p.startsWith('/src/styles/'));
 
-function extractStyleBlocks(content: string): string {
-  // Strip CSS comments before checking
+function styleBlock(content: string): string {
   return Array.from(
     content.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g),
-    m => m[1]
-  ).join('\n').replace(/\/\*[\s\S]*?\*\//g, '');
-}
-
-function extractInlineStyles(content: string): string {
-  // style="..." attribute values across Svelte / Astro markup
-  return Array.from(
-    content.matchAll(/\sstyle="([^"]*)"/g),
     m => m[1]
   ).join('\n');
 }
 
-function shouldSkip(line: string): boolean {
-  return /design-system-allow:/.test(line);
+// Astro permits both style="..." and style={expr}; capture both.
+function inlineStyles(content: string): string {
+  return Array.from(
+    content.matchAll(/\sstyle=(?:"([^"]*)"|\{([^}]*)\})/g),
+    m => (m[1] ?? m[2] ?? '')
+  ).join('\n');
 }
 
-async function loadAll(): Promise<{ file: string; style: string; inline: string }[]> {
-  const files = await glob(SOURCE_GLOB, { ignore: IGNORE });
-  return Promise.all(files.map(async f => {
-    const content = await readFile(f, 'utf8');
-    return { file: f, style: extractStyleBlocks(content), inline: extractInlineStyles(content) };
-  }));
+// Skip a postcss node if its preceding comment node carries the allow marker.
+function isAllowed(node: postcss.Node): boolean {
+  const prev = node.prev();
+  return prev?.type === 'comment'
+    && /design-system-allow:/.test(prev.text);
+}
+
+// Build the full selector chain (parent > child) so native CSS nesting is
+// understood. `.tab` nested with `&.active` produces `.tab.active`.
+function fullSelector(rule: Rule): string {
+  const chain: string[] = [];
+  let node: postcss.Container | undefined = rule;
+  while (node && 'selector' in node) {
+    chain.unshift((node as Rule).selector);
+    node = node.parent;
+  }
+  return chain.join(' ').replace(/\s*&/g, '');
+}
+
+function parseStyle(css: string): postcss.Root {
+  return postcss.parse(css);
 }
 
 describe('design system enforcement', () => {
 
-  it('1. no hex color in <style> blocks', async () => {
+  it('1. no hex color in <style> blocks (CSS-aware, ignores comments)', () => {
     const offenders: string[] = [];
-    for (const { file, style } of await loadAll()) {
-      for (const line of style.split('\n')) {
-        if (shouldSkip(line)) continue;
-        const hex = line.match(/#[0-9a-fA-F]{3,8}\b/g);
-        if (hex) offenders.push(`${file}: ${hex.join(', ')}`);
-      }
+    for (const path of COMPONENT_PATHS) {
+      const css = styleBlock(componentFiles[path] as string);
+      if (!css) continue;
+      const root = parseStyle(css);
+      root.walkDecls(decl => {
+        if (isAllowed(decl)) return;
+        const hex = decl.value.match(/#[0-9a-fA-F]{3,8}\b/g);
+        if (hex) offenders.push(`${path}: ${decl.prop}: ${decl.value}`);
+      });
     }
     expect(offenders, 'Use tokens or color-mix, not hex literals').toEqual([]);
   });
 
-  it('2. no rgb() / rgba() in <style> blocks', async () => {
+  it('2. no rgb() / rgba() in <style> blocks', () => {
     const offenders: string[] = [];
-    for (const { file, style } of await loadAll()) {
-      for (const line of style.split('\n')) {
-        if (shouldSkip(line)) continue;
-        if (/rgba?\(/.test(line)) offenders.push(`${file}: ${line.trim()}`);
-      }
+    for (const path of COMPONENT_PATHS) {
+      const css = styleBlock(componentFiles[path] as string);
+      if (!css) continue;
+      parseStyle(css).walkDecls(decl => {
+        if (isAllowed(decl)) return;
+        if (/\brgba?\(/.test(decl.value)) {
+          offenders.push(`${path}: ${decl.prop}: ${decl.value}`);
+        }
+      });
     }
     expect(offenders, 'Use oklch() or color-mix() instead of rgb/rgba').toEqual([]);
   });
 
-  it('3. no hardcoded font-size px / rem in <style> blocks', async () => {
+  it('3. no hardcoded font-size px / rem', () => {
     const offenders: string[] = [];
-    for (const { file, style } of await loadAll()) {
-      for (const line of style.split('\n')) {
-        if (shouldSkip(line)) continue;
-        const m = line.match(/font-size:\s*(\d+px|\d*\.?\d+rem)/);
-        if (m) offenders.push(`${file}: ${line.trim()}`);
-      }
+    for (const path of COMPONENT_PATHS) {
+      const css = styleBlock(componentFiles[path] as string);
+      if (!css) continue;
+      parseStyle(css).walkDecls('font-size', decl => {
+        if (isAllowed(decl)) return;
+        if (/\d+px|\d*\.?\d+rem/.test(decl.value)) {
+          offenders.push(`${path}: ${decl.value}`);
+        }
+      });
     }
     expect(offenders, 'Use var(--text-*) tokens').toEqual([]);
   });
 
-  it('4. --warn / --danger forbidden in selected/active/is-current contexts', async () => {
+  it('4. --warn / --danger forbidden in selected/active/is-current rules (CSS-nesting aware)', () => {
     const offenders: string[] = [];
-    for (const { file, style } of await loadAll()) {
-      const rules = style.matchAll(/([^{}]+)\{([^{}]+)\}/g);
-      for (const [, selector, body] of rules) {
-        if (shouldSkip(body)) continue;
-        // Only flags explicit state classes — :hover excluded because hover
-        // patterns are governed by review (pattern #1 / #5), not by this rule.
-        const isStateCtx = /\.(selected|active|is-current|chosen)\b/.test(selector);
-        const usesAlertToken = /var\(--(warn|danger)(?![\w-])/.test(body);
-        if (isStateCtx && usesAlertToken) {
-          offenders.push(`${file}: ${selector.trim()}`);
-        }
-      }
+    for (const path of COMPONENT_PATHS) {
+      const css = styleBlock(componentFiles[path] as string);
+      if (!css) continue;
+      parseStyle(css).walkRules(rule => {
+        const sel = fullSelector(rule);
+        // Explicit state classes only — :hover is reviewer-governed.
+        if (!/\.(selected|active|is-current|chosen)\b/.test(sel)) return;
+        rule.walkDecls(decl => {
+          if (isAllowed(decl)) return;
+          if (/var\(--(warn|danger)(?![\w-])/.test(decl.value)) {
+            offenders.push(`${path}: ${sel} { ${decl.prop}: ${decl.value} }`);
+          }
+        });
+      });
     }
     expect(offenders,
       '--warn / --danger are alert semantics. Use color-mix(var(--accent), ...) for state classes.'
     ).toEqual([]);
   });
 
-  it('5. tokens.css color set is exactly the approved 7', async () => {
+  it('5. tokens.css color set is exactly the approved 7 (hex AND OKLCH blocks parity)', async () => {
     const css = await readFile('src/styles/tokens.css', 'utf8');
-    const declared = Array.from(css.matchAll(/^\s*--([\w-]+):/gm), m => `--${m[1]}`);
 
     const TYPOGRAPHY = new Set([
       '--text-caption','--text-xs','--text-sm','--text-base','--text-lg',
@@ -584,56 +670,111 @@ describe('design system enforcement', () => {
       '--font-sans','--font-mono','--font-normal','--font-medium','--font-bold',
     ]);
     const isStructural = (t: string) => /^--(space|radius|shadow)(-|$)/.test(t);
-    const isTypography = (t: string) => TYPOGRAPHY.has(t);
-
+    const isColor = (t: string) => !TYPOGRAPHY.has(t) && !isStructural(t);
     const APPROVED = new Set(['--bg','--surface','--text','--line','--accent','--warn','--danger']);
 
-    const colorTokens = [...new Set(declared.filter(t => !isTypography(t) && !isStructural(t)))];
-    const extras = colorTokens.filter(t => !APPROVED.has(t));
-    const missing = [...APPROVED].filter(t => !colorTokens.includes(t));
+    const root = postcss.parse(css);
+    let hexColors: Set<string> | null = null;
+    let oklchColors: Set<string> | null = null;
 
-    expect({ extras, missing }, 'Color token set is locked at 7. Modifying requires spec amendment + this test update.').toEqual({ extras: [], missing: [] });
+    root.walkRules(':root', rule => {
+      const tokens = new Set(
+        rule.nodes
+          .filter((n): n is postcss.Declaration => n.type === 'decl')
+          .map(d => d.prop)
+          .filter(isColor)
+      );
+      // Outer :root = hex; inside @supports = oklch
+      if (rule.parent?.type === 'root') hexColors = tokens;
+      else oklchColors = tokens;
+    });
+
+    expect(hexColors, 'hex :root block found').not.toBeNull();
+    expect(oklchColors, 'OKLCH :root block inside @supports found').not.toBeNull();
+
+    const hex = [...(hexColors ?? new Set<string>())];
+    const oklch = [...(oklchColors ?? new Set<string>())];
+
+    const hexExtras = hex.filter(t => !APPROVED.has(t));
+    const hexMissing = [...APPROVED].filter(t => !hex.includes(t));
+    const oklchExtras = oklch.filter(t => !APPROVED.has(t));
+    const oklchMissing = [...APPROVED].filter(t => !oklch.includes(t));
+
+    expect({ hexExtras, hexMissing, oklchExtras, oklchMissing },
+      'Color token set is locked at 7. Both hex fallback and OKLCH blocks must define exactly the approved set. Modifying requires spec amendment + this test update.'
+    ).toEqual({ hexExtras: [], hexMissing: [], oklchExtras: [], oklchMissing: [] });
   });
 
-  it('6. no hex / rgba in inline style="..." attributes', async () => {
+  it('6. no hex / rgba in inline style="..." or style={...} attributes', () => {
     const offenders: string[] = [];
-    for (const { file, inline } of await loadAll()) {
-      for (const line of inline.split(/[;\n]/)) {
-        if (shouldSkip(line)) continue;
-        if (/#[0-9a-fA-F]{3,8}\b/.test(line) || /rgba?\(/.test(line)) {
-          offenders.push(`${file}: ${line.trim()}`);
+    for (const path of COMPONENT_PATHS) {
+      const inline = inlineStyles(componentFiles[path] as string);
+      for (const segment of inline.split(/[;\n]/)) {
+        if (/design-system-allow:/.test(segment)) continue;
+        if (/#[0-9a-fA-F]{3,8}\b/.test(segment) || /\brgba?\(/.test(segment)) {
+          offenders.push(`${path}: ${segment.trim()}`);
         }
       }
     }
     expect(offenders, 'Inline style attributes must reference tokens, not hex/rgba.').toEqual([]);
   });
 
-  it('7. no numeric font-weight in <style> blocks', async () => {
+  it('7. no numeric font-weight in <style> blocks', () => {
     const offenders: string[] = [];
-    for (const { file, style } of await loadAll()) {
-      for (const line of style.split('\n')) {
-        if (shouldSkip(line)) continue;
-        const m = line.match(/font-weight:\s*(\d+)/);
-        if (m) offenders.push(`${file}: ${line.trim()}`);
-      }
+    for (const path of COMPONENT_PATHS) {
+      const css = styleBlock(componentFiles[path] as string);
+      if (!css) continue;
+      parseStyle(css).walkDecls('font-weight', decl => {
+        if (isAllowed(decl)) return;
+        if (/^\d+$/.test(decl.value.trim())) {
+          offenders.push(`${path}: ${decl.value}`);
+        }
+      });
     }
     expect(offenders, 'Use var(--font-normal|medium|bold)').toEqual([]);
+  });
+
+  it('8. no JS hex palettes leak through inline style interpolation (allow-list-only)', async () => {
+    // SERIES_COLORS in AssessmentHistory.svelte is a chart palette — explicitly
+    // allowed once. Any new file with a JS hex literal must add itself to the
+    // allowlist here, forcing an explicit review.
+    const ALLOWLIST = new Set([
+      '/src/components/assess/AssessmentHistory.svelte',
+    ]);
+    const offenders: string[] = [];
+    for (const path of COMPONENT_PATHS) {
+      if (ALLOWLIST.has(path)) continue;
+      const content = componentFiles[path] as string;
+      // Strip <style> blocks and inline styles — those have their own tests.
+      const cleaned = content
+        .replace(/<style[^>]*>[\s\S]*?<\/style>/g, '')
+        .replace(/\sstyle=(?:"[^"]*"|\{[^}]*\})/g, '');
+      const hex = cleaned.match(/#[0-9a-fA-F]{3,8}\b/g);
+      if (hex) offenders.push(`${path}: ${hex.join(', ')}`);
+    }
+    expect(offenders,
+      'JS-level hex literals must be added to the explicit ALLOWLIST in this test file with reviewer approval.'
+    ).toEqual([]);
   });
 });
 ```
 
-### Escape hatch: `design-system-allow:`
+### Escape hatch: `design-system-allow:` comment
 
-Any single CSS line preceded by a comment `/* design-system-allow: <reason> */` skips all rules. Use cases:
+Any CSS declaration preceded immediately by a comment `/* design-system-allow: <reason> */` skips Tests 1–4 and Test 7. PostCSS's AST sees the comment as a sibling node, so `node.prev()` finds it (the previous broken implementation stripped comments before checking — fixed). Use cases:
 
 ```css
 .x-ray-viewer {
-  /* design-system-allow: medical-imaging requires specific calibrated values */
+  /* design-system-allow: medical-imaging requires calibrated #1a1a1a */
   background: #1a1a1a;
 }
 ```
 
-Reviewer must approve the allow-list comment. The comment leaves audit trail.
+For inline-style attributes (Test 6), the escape hatch is the literal substring `design-system-allow:` in the same segment. Inline use is intentionally awkward — there's almost never a good reason to inline hex; if there is, refactor to a `<style>` block.
+
+For JS hex palettes leaking through (Test 8), the escape hatch is the explicit `ALLOWLIST` set in the test file itself — a code change requiring reviewer approval. This is intentional: chart palettes are the only legitimate case and they're rare.
+
+Reviewer must approve every allow-list usage. The comments and allowlist edits leave audit trail in git.
 
 ### Pre-commit (optional convenience)
 
@@ -673,7 +814,8 @@ Expect 8-12 additional dark-mode-specific overrides + a parallel pattern library
 | **Fix audit findings** | 8 sites (during sweep) | Apply pattern library bindings — see Migration notes |
 | **Manual font-size sweep** | 2 known files | `Toast.svelte` line ~95 (`0.875rem` → `var(--text-xs)`), `SystemGuide.svelte:202` (`0.9em` — em is legal, leave as-is) |
 | **New file** | `docs/superpowers/design-system.md` (1) | One-page summary linking back to this spec for in-repo discoverability |
-| **New file** | `tests/design-system.test.ts` (1) | The seven Vitest rules above |
+| **New file** | `tests/design-system.test.ts` (1) | The eight Vitest rules above |
+| **Dependency** | `package.json` | `postcss` is already transitive (via Vite) but should be promoted to `devDependencies` so the test's import is explicit and won't break on strict pnpm resolution: `pnpm add -D postcss` |
 
 ## Migration notes for the implementation plan
 
@@ -688,13 +830,13 @@ Expect 8-12 additional dark-mode-specific overrides + a parallel pattern library
 | `var(--color-accent-strong)` | `color-mix(in srgb, var(--accent) 85%, black)` |
 | `var(--color-text-base)` | `var(--text)` |
 | `var(--color-text-muted)` | `color-mix(in srgb, var(--text), var(--bg) 30%)` |
-| `var(--color-text-subtle)` | `color-mix(in srgb, var(--text), var(--bg) 50%)` — *enforce ≥ 24px or non-actionable use* |
+| `var(--color-text-subtle)` | `color-mix(in srgb, var(--text), var(--bg) 45%)` — *enforce ≥ 24px or non-actionable use* |
 | `var(--color-text-inverse)` | `var(--text-inverse)` (= `white`) |
 | `var(--bg-base)` | `var(--bg)` |
 | `var(--bg-surface)` | `var(--surface)` |
 | `var(--bg-muted)` | context-dependent: **card / panel** → `var(--surface)`; **disabled / placeholder / progress track** → `color-mix(in srgb, var(--bg), var(--text) 5%)` |
 | `var(--border-default)` | `var(--line)` (decorative only — `hr`, table inner divider) |
-| `var(--border-strong)` | `color-mix(in srgb, var(--line), var(--text) 25%)` |
+| `var(--border-strong)` | `color-mix(in srgb, var(--line), var(--text) 33%)` |
 | `var(--color-risk-normal)` | `var(--accent)` |
 | `var(--color-risk-normal-bg)` | `color-mix(in srgb, var(--accent) 12%, var(--bg))` (= accent-light visually; intentional, normal-status ≡ brand) |
 | `var(--color-risk-advisory)` | `var(--warn)` |
@@ -743,6 +885,7 @@ After implementation:
 5. **Visual regression** on key pages: home, `/assess/?` step 1, `/result/?id=`, `/workspace/`, `/settings/` system guide, `/education/` list, `/history/` compare mode.
 6. **Contrast audit** with axe DevTools or browser picker on: `--text-muted` on `--surface`, `--warn` on `--warn-bg`, `--accent` on `--bg`, focus-ring visibility.
 7. **PWA install** on iOS Safari + Android Chrome — theme-color and icon match new accent.
+8. **Contrast spot-check** — verify computed values in this spec ("Computed contrast" section) using DevTools accessibility inspector. Numbers should match within ±0.1.
 
 ## Appendix: target `tokens.css` final content
 
