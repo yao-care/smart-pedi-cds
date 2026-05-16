@@ -353,8 +353,8 @@
   }
 
   .model-card.current {
+    background: color-mix(in srgb, var(--accent) 10%, var(--bg));
     border-color: var(--accent);
-    background: color-mix(in srgb, var(--accent) 12%, var(--bg));
   }
 
   .model-card-info {
@@ -547,8 +547,8 @@
   }
 
   .version-item.is-current {
+    background: color-mix(in srgb, var(--accent) 10%, var(--bg));
     border-color: var(--accent);
-    background: color-mix(in srgb, var(--accent) 12%, var(--bg));
   }
 
   .version-info {
