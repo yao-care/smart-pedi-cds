@@ -13,6 +13,13 @@
     critical: '危急',
   };
 
+  const LEVEL_TO_COLOR: Record<string, string> = {
+    normal:   'var(--accent)',
+    advisory: 'var(--warn)',
+    warning:  'var(--warn)',
+    critical: 'var(--danger)',
+  };
+
   const openAlerts = $derived.by(() => {
     return alertStore.alerts
       .filter((a) => a.status === 'open')
@@ -57,7 +64,7 @@
   {:else}
     <ul class="feed-list" role="list">
       {#each openAlerts as alert (alert.id)}
-        <li class="feed-item" style="border-left-color: var(--color-risk-{alert.riskLevel})">
+        <li class="feed-item" style="border-left-color: {LEVEL_TO_COLOR[alert.riskLevel] ?? 'var(--accent)'}">
           <div class="item-header">
             <time class="timestamp" datetime={new Date(alert.createdAt).toISOString()}>
               {formatTimestamp(alert.createdAt)}

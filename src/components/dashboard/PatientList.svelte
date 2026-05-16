@@ -29,6 +29,13 @@
     critical: '危急',
   };
 
+  const LEVEL_TO_COLOR: Record<string, string> = {
+    normal:   'var(--accent)',
+    advisory: 'var(--warn)',
+    warning:  'var(--warn)',
+    critical: 'var(--danger)',
+  };
+
   const ageGroupLabel: Record<string, string> = {
     infant: '嬰兒',
     toddler: '幼兒',
@@ -68,7 +75,7 @@
           <button
             class="patient-card"
             class:pulse-critical={level === 'critical'}
-            style="--bar-color: var(--color-risk-{level})"
+            style="--bar-color: {LEVEL_TO_COLOR[level] ?? 'var(--accent)'}"
             onclick={() => selectPatient(patient.id)}
             aria-label="選擇病患 {patient.name ?? patient.id}，風險等級：{riskLabelMap[level]}"
           >

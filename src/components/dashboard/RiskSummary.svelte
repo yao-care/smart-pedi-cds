@@ -13,6 +13,13 @@
     { level: 'warning', label: '警告' },
     { level: 'critical', label: '危急' },
   ];
+
+  const LEVEL_TO_COLOR: Record<string, string> = {
+    normal:   'var(--accent)',
+    advisory: 'var(--warn)',
+    warning:  'var(--warn)',
+    critical: 'var(--danger)',
+  };
 </script>
 
 <section class="risk-summary" aria-label="風險等級摘要">
@@ -24,7 +31,7 @@
       >
         <span class="count">{patientStore.riskSummary[card.level]}</span>
         <span class="label">{card.label}</span>
-        <div class="indicator-bar" style="background-color: var(--color-risk-{card.level})"></div>
+        <div class="indicator-bar" style="background-color: {LEVEL_TO_COLOR[card.level] ?? 'var(--accent)'}"></div>
       </div>
     {/each}
   </div>

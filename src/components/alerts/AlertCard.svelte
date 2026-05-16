@@ -28,6 +28,13 @@
     resolved: '已解決',
   };
 
+  const LEVEL_TO_COLOR: Record<string, string> = {
+    normal:   'var(--accent)',
+    advisory: 'var(--warn)',
+    warning:  'var(--warn)',
+    critical: 'var(--danger)',
+  };
+
   function formatTimestamp(date: Date): string {
     const d = new Date(date);
     const y = d.getFullYear();
@@ -63,7 +70,7 @@
 
 <article
   class="alert-card"
-  style="--bar-color: var(--color-risk-{alert.riskLevel})"
+  style="--bar-color: {LEVEL_TO_COLOR[alert.riskLevel] ?? 'var(--accent)'}"
   aria-label="預警：{riskLabelMap[alert.riskLevel]}，病患 {alert.patientId}"
 >
   <div class="color-bar"></div>

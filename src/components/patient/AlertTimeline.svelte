@@ -22,6 +22,13 @@
     resolved: '已解決',
   };
 
+  const LEVEL_TO_COLOR: Record<string, string> = {
+    normal:   'var(--accent)',
+    advisory: 'var(--warn)',
+    warning:  'var(--warn)',
+    critical: 'var(--danger)',
+  };
+
   const sortedAlerts = $derived(
     [...alerts].sort(
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
@@ -55,7 +62,7 @@
           {#if hasEscalation(alert)}
             <div class="escalation-arrow" aria-label="升級自前一預警">
               <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-                <path d="M8 2 L12 8 L9 8 L9 14 L7 14 L7 8 L4 8 Z" fill="var(--color-risk-{level})" />
+                <path d="M8 2 L12 8 L9 8 L9 14 L7 14 L7 8 L4 8 Z" fill="{LEVEL_TO_COLOR[level] ?? 'var(--accent)'}" />
               </svg>
             </div>
           {/if}
@@ -63,7 +70,7 @@
           <div class="dot-column">
             <div
               class="dot"
-              style="background-color: var(--color-risk-{level})"
+              style="background-color: {LEVEL_TO_COLOR[level] ?? 'var(--accent)'}"
               aria-hidden="true"
             ></div>
             {#if !isLast}
