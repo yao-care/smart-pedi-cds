@@ -167,8 +167,8 @@
   }
 
   .mode-demo {
-    background: color-mix(in srgb, var(--warn) 12%, var(--bg));
-    color: var(--warn);
+    background: color-mix(in srgb, var(--accent) 12%, var(--bg));
+    color: var(--accent);
   }
 
   .empty-cta {
