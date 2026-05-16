@@ -1,12 +1,12 @@
 # Smart Pedi CDSS — Design System Spec
 
 **Date**: 2026-05-16
-**Status**: Draft — round-5 reviewable
+**Status**: Approved for implementation (5 rounds of independent Opus review)
 **Author**: collaborative brainstorming with Light, two rounds of Opus design-system review
 
 ## Context
 
-Over the past 24 hours, the project went through 5 rounds of design token thrash — cold blue → rose 350 → rose 15 → eucalyptus 155 — each rejected. A semantic audit then surfaced 8 separate token misuses (`selected` row bound to `risk-advisory-bg`, `current model` card bound to `risk-normal-bg`, `option-btn.selected` borrowing risk-advisory, etc.). The thrash and the misuses share one root cause: **the token system was never designed from first principles**. Tokens were added ad-hoc as needs arose, semantic boundaries were never enforced, and every visual change required hunting through every component for hardcoded bindings.
+Over the past 24 hours, the project went through 5 rounds of design token thrash — cold blue → rose 350 → rose 15 → eucalyptus 155 — each rejected. A semantic audit then surfaced 9 separate token misuses (`selected` row bound to `risk-advisory-bg`, `current model` card bound to `risk-normal-bg`, `option-btn.selected` borrowing risk-advisory, plus VideoModule hex literals, etc.). The thrash and the misuses share one root cause: **the token system was never designed from first principles**. Tokens were added ad-hoc as needs arose, semantic boundaries were never enforced, and every visual change required hunting through every component for hardcoded bindings.
 
 This spec replaces the existing token system with one designed up-front, intentionally minimal, with explicit semantic boundaries, a pattern library that leaves no room for borrowed-meaning errors, and automated tests that block violations at CI.
 
@@ -104,7 +104,8 @@ Every percentage above is intentional. New patterns must reuse an existing perce
 | 30% | Text-muted (text into bg) | text 70% — 5.2:1 AA body against bg |
 | 33% | Border-strong (text into line) | Lifts line above 3:1 UI contrast against bg (3.3:1) |
 | 40% | Link `:visited` (text into accent) | Distinct from base accent + hover; reads as "already visited" |
-| 45% | Focus ring alpha / Text-subtle | Focus: layered with 2px outline; Text-subtle: AA Large 3.4:1 against bg |
+| 45% | Input/textarea `:focus` outline alpha / Text-subtle | Layered with 2px solid border + 2px offset; Text-subtle AA Large 3.4:1 |
+| 65% | Global `:focus-visible` outline alpha | Standalone 3px solid alpha ring on non-bordered elements needs higher saturation than the 45% used over a solid border |
 | 50% | Modal backdrop | text 50% — heavy enough to dim background contents |
 | 55% | Disabled text | Disabled exempt from AA (WCAG 1.4.3); legible for sighted users |
 | 85% | Button hover (mix with black) | Industry standard (Tailwind / Bootstrap) — visible one-step darker |
@@ -113,7 +114,7 @@ Every percentage above is intentional. New patterns must reuse an existing perce
 
 `--line` deliberately fails 3:1 contrast vs `--bg`. It's a decorative divider, not a perceptible boundary. Two consequences:
 
-1. **Card / Input / Modal borders use `--border-strong`** (derived = `color-mix(--line, --text 25%)`), which passes 3:1 UI contrast. Card pattern #2, Input pattern #3 and any container that needs perceivable boundary must use this.
+1. **Card / Input / Modal borders use `--border-strong`** (derived = `color-mix(in srgb, var(--line), var(--text) 33%)`), which passes 3:1 UI contrast. Card pattern #2, Input pattern #3 and any container that needs perceivable boundary must use this.
 2. **`--line` alone is OK for** prose `<hr>`, decorative section divider, table inner row divider — places where the line is informational redundancy, not the primary semantic carrier.
 
 ### Risk levels: 4 engine → 3 UI
@@ -410,8 +411,9 @@ For div-based custom progress. If using native `<progress>`, `accent-color: var(
   font-weight: var(--font-bold);
 }
 .data-table tr:nth-child(even) {
-  background: color-mix(in srgb, var(--bg), var(--text) 4%);
-  /* Distinct from --surface (~0.89) and --bg (0.94): stripe ~0.87 */
+  background: color-mix(in srgb, var(--bg), var(--text) 8%);
+  /* Luminance ~0.81 — clearly distinct from --surface (0.87) and --bg (0.94).
+     4% mix was too close to --surface luminance (both ~0.87) — fixed in r5. */
 }
 .data-table tr:hover {
   background: color-mix(in srgb, var(--accent) 4%, var(--bg));
@@ -695,7 +697,9 @@ describe('design system enforcement', () => {
       '--font-sans','--font-mono','--font-normal','--font-medium','--font-bold',
     ]);
     const isStructural = (t: string) => /^--(space|radius|shadow)(-|$)/.test(t);
-    const isColor = (t: string) => !TYPOGRAPHY.has(t) && !isStructural(t);
+    // Guard: only custom properties (--prefix). Standard CSS properties like
+    // `accent-color` would otherwise be misclassified as tokens.
+    const isColor = (t: string) => t.startsWith('--') && !TYPOGRAPHY.has(t) && !isStructural(t);
     const APPROVED = new Set(['--bg','--surface','--text','--line','--accent','--warn','--danger']);
 
     const root = postcss.parse(css);
@@ -845,8 +849,8 @@ Expect 8-12 additional dark-mode-specific overrides + a parallel pattern library
 |---|---|---|
 | **Rewrite** | `src/styles/tokens.css` (1) | Collapse to 7 color tokens + hex + OKLCH; remove `--color-*` / `--bg-*` / `--state-*` / `--border-*` namespaces |
 | **Rewrite** | `src/styles/global.css` (1) | `:focus-visible` to new pattern #12; `.prose a` to pattern #17; `.risk-*` utility classes to alert pattern #10 |
-| **Sweep** | ~60-65 `.svelte` / `.astro` files | Mechanical token rename + 8 audit findings manually overridden to pattern bindings. Distribution: assess/* (~15), settings/* (~12), dashboard/*, workspace/*, patient/*, ui/*, alerts/*, education/*, fhir/*, pages/* |
-| **Fix audit findings** | 8 sites (during sweep) | Apply pattern library bindings — see Migration notes |
+| **Sweep** | ~60-65 `.svelte` / `.astro` files | Mechanical token rename + 9 audit findings manually overridden to pattern bindings. Distribution: assess/* (~15), settings/* (~12), dashboard/*, workspace/*, patient/*, ui/*, alerts/*, education/*, fhir/*, pages/* |
+| **Fix audit findings** | 9 sites (during sweep) | Apply pattern library bindings — see Migration notes |
 | **Manual font-size sweep** | 2 known files | `Toast.svelte` line ~95 (`0.875rem` → `var(--text-xs)`), `SystemGuide.svelte:202` (`0.9em` — em is legal, leave as-is) |
 | **New file** | `docs/superpowers/design-system.md` (1) | One-page summary linking back to this spec for in-repo discoverability |
 | **New file** | `tests/design-system.test.ts` (1) | The eight Vitest rules above |
@@ -940,7 +944,7 @@ These are not auto-mapped — each gets the correct pattern applied:
 
 - **Single-line token renames** (e.g. `var(--color-accent)` → `var(--accent)`): safe to run as a series of `sed -i ''` commands or editor multi-cursor.
 - **Multi-line `color-mix` replacements**: do these by hand in an editor — too fragile to script reliably given Svelte / Astro template interleaving.
-- **The 8 audit-finding overrides**: hand-edit per the pattern bindings below; do not script.
+- **The 9 audit-finding overrides**: hand-edit per the pattern bindings below; do not script.
 - Run `pnpm test` between batches to confirm each step doesn't regress enforcement.
 
 ## Verification
