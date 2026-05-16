@@ -248,7 +248,7 @@
   }
 
   .norms-table tr.custom {
-    background: color-mix(in srgb, var(--warn) 12%, var(--bg));
+    background: color-mix(in srgb, var(--accent) 10%, var(--bg));
   }
 
   .norms-table input[type='number'] {
