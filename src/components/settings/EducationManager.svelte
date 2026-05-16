@@ -298,7 +298,7 @@
   .manager-header h3 {
     font-size: var(--text-base);
     font-weight: 600;
-    color: var(--color-text-base);
+    color: var(--text);
     margin: 0;
   }
 
@@ -315,8 +315,8 @@
     padding: var(--space-2) var(--space-4);
     font-size: var(--text-sm);
     font-weight: 500;
-    color: var(--color-text-inverse);
-    background: var(--color-accent);
+    color: white;
+    background: var(--accent);
     border: none;
     border-radius: var(--radius-md);
     cursor: pointer;
@@ -330,8 +330,8 @@
 
   /* Form */
   .edu-form {
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius-lg);
     padding: var(--space-6);
     display: flex;
@@ -342,7 +342,7 @@
   .edu-form h4 {
     font-size: var(--text-lg);
     font-weight: var(--font-bold);
-    color: var(--color-text-base);
+    color: var(--text);
     margin: 0;
   }
 
@@ -355,7 +355,7 @@
   .field > label {
     font-size: var(--text-sm);
     font-weight: 500;
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .field input[type='text'],
@@ -365,10 +365,10 @@
     font-size: var(--text-sm);
     min-height: 44px;
     padding: var(--space-2) var(--space-3);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    background: var(--bg-base);
-    color: var(--color-text-base);
+    background: var(--bg);
+    color: var(--text);
     font-family: inherit;
     transition: border-color 0.15s ease;
   }
@@ -378,7 +378,7 @@
   .field select:focus,
   .field textarea:focus {
     outline: none;
-    border-color: var(--color-accent);
+    border-color: var(--accent);
   }
 
   .field textarea {
@@ -404,7 +404,7 @@
     align-items: center;
     gap: var(--space-2);
     font-size: var(--text-sm);
-    color: var(--color-text-base);
+    color: var(--text);
     cursor: pointer;
     min-height: 44px;
   }
@@ -413,7 +413,7 @@
   .radio-label input {
     width: 18px;
     height: 18px;
-    accent-color: var(--color-accent);
+    accent-color: var(--accent);
     cursor: pointer;
   }
 
@@ -433,14 +433,14 @@
     font-weight: 500;
     color: var(--color-text-muted);
     background: var(--bg-muted);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     cursor: pointer;
     transition: color 0.15s ease;
   }
 
   .btn-cancel:hover {
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .btn-save {
@@ -450,8 +450,8 @@
     padding: var(--space-2) var(--space-5);
     font-size: var(--text-sm);
     font-weight: 500;
-    color: var(--color-text-inverse);
-    background: var(--color-accent);
+    color: white;
+    background: var(--accent);
     border: none;
     border-radius: var(--radius-md);
     cursor: pointer;
@@ -474,8 +474,8 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--space-4);
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius-lg);
     padding: var(--space-4);
     flex-wrap: wrap;
@@ -504,7 +504,7 @@
   .item-info strong {
     font-size: var(--text-sm);
     font-weight: var(--font-bold);
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .item-summary {
@@ -529,7 +529,7 @@
   }
 
   .inactive-tag {
-    color: var(--color-risk-warning);
+    color: var(--warn);
     background: var(--color-risk-warning-bg);
   }
 
@@ -544,26 +544,26 @@
     padding: var(--space-2) var(--space-3);
     font-size: var(--text-xs);
     font-weight: 500;
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    background: var(--bg-base);
+    background: var(--bg);
     color: var(--color-text-muted);
     cursor: pointer;
     transition: color 0.15s ease, border-color 0.15s ease;
   }
 
   .item-actions button:hover {
-    color: var(--color-text-base);
+    color: var(--text);
     border-color: var(--color-text-muted);
   }
 
   .item-actions .btn-delete {
-    color: var(--color-risk-critical);
+    color: var(--danger);
   }
 
   .item-actions .btn-delete:hover {
-    color: var(--color-risk-critical);
-    border-color: var(--color-risk-critical);
+    color: var(--danger);
+    border-color: var(--danger);
   }
 
   /* States */
@@ -573,9 +573,9 @@
     color: var(--color-text-muted);
     font-size: var(--text-sm);
     padding: var(--space-8) var(--space-4);
-    border: 1px dashed var(--border-default);
+    border: 1px dashed var(--line);
     border-radius: var(--radius-md);
-    background: var(--bg-surface);
+    background: var(--surface);
     margin: 0;
   }
 </style>

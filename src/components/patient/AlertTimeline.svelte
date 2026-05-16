@@ -133,15 +133,15 @@
     border-radius: var(--radius-full);
     flex-shrink: 0;
     margin-top: var(--space-1);
-    border: 2px solid var(--bg-surface);
-    box-shadow: 0 0 0 1px var(--border-default);
+    border: 2px solid var(--surface);
+    box-shadow: 0 0 0 1px var(--line);
   }
 
   .connector {
     width: 2px;
     flex: 1;
     min-height: var(--space-6);
-    background-color: var(--border-default);
+    background-color: var(--line);
   }
 
   .entry-content {
@@ -171,22 +171,22 @@
   }
 
   .risk-normal {
-    color: var(--color-risk-normal);
+    color: var(--accent);
     background-color: var(--color-risk-normal-bg);
   }
 
   .risk-advisory {
-    color: var(--color-risk-advisory);
+    color: var(--warn);
     background-color: var(--color-risk-advisory-bg);
   }
 
   .risk-warning {
-    color: var(--color-risk-warning);
+    color: var(--warn);
     background-color: var(--color-risk-warning-bg);
   }
 
   .risk-critical {
-    color: var(--color-risk-critical);
+    color: var(--danger);
     background-color: var(--color-risk-critical-bg);
   }
 
@@ -195,39 +195,39 @@
     font-weight: 500;
     padding: 2px var(--space-2);
     border-radius: var(--radius-full);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     color: var(--color-text-muted);
     background-color: var(--bg-muted);
   }
 
   .status-open {
-    color: var(--color-risk-critical);
-    border-color: var(--color-risk-critical);
+    color: var(--danger);
+    border-color: var(--danger);
     background-color: var(--color-risk-critical-bg);
   }
 
   .status-acknowledged {
-    color: var(--color-risk-advisory);
-    border-color: var(--color-risk-advisory);
+    color: var(--warn);
+    border-color: var(--warn);
     background-color: var(--color-risk-advisory-bg);
   }
 
   .status-false_positive {
     color: var(--color-text-subtle);
-    border-color: var(--border-default);
+    border-color: var(--line);
     background-color: var(--bg-muted);
   }
 
   .status-resolved {
-    color: var(--color-risk-normal);
-    border-color: var(--color-risk-normal);
+    color: var(--accent);
+    border-color: var(--accent);
     background-color: var(--color-risk-normal-bg);
   }
 
   .entry-rationale {
     margin: 0;
     font-size: 0.85rem;
-    color: var(--color-text-base);
+    color: var(--text);
     line-height: 1.5;
   }
 </style>

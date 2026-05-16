@@ -118,16 +118,16 @@
 <style>
   .content-viewer {
     max-width: 720px;
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius-lg);
     overflow: hidden;
   }
 
   .viewer-header {
     padding: var(--space-5) var(--space-6);
-    border-bottom: 1px solid var(--border-default);
-    background: var(--bg-base);
+    border-bottom: 1px solid var(--line);
+    background: var(--bg);
   }
 
   .header-top {
@@ -153,12 +153,12 @@
 
   .format-badge--video {
     background: var(--bg-muted);
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .format-badge--questionnaire {
     background: var(--color-risk-warning-bg);
-    color: var(--color-risk-warning);
+    color: var(--warn);
   }
 
   .read-badge {
@@ -169,13 +169,13 @@
     font-weight: 700;
     letter-spacing: 0.04em;
     background: var(--color-risk-normal-bg);
-    color: var(--color-risk-normal);
+    color: var(--accent);
   }
 
   .viewer-title {
     font-size: 1.25rem;
     font-weight: 700;
-    color: var(--color-text-base);
+    color: var(--text);
     margin: 0;
     line-height: 1.4;
   }
@@ -186,7 +186,7 @@
 
   .article-content {
     font-size: 0.95rem;
-    color: var(--color-text-base);
+    color: var(--text);
     line-height: 1.7;
   }
 
@@ -198,15 +198,15 @@
   .read-action {
     margin-top: var(--space-6);
     padding-top: var(--space-5);
-    border-top: 1px solid var(--border-default);
+    border-top: 1px solid var(--line);
     display: flex;
     justify-content: flex-end;
   }
 
   .mark-read-btn {
     padding: var(--space-2) var(--space-5);
-    background: var(--color-risk-normal);
-    color: var(--color-text-inverse);
+    background: var(--accent);
+    color: white;
     border: none;
     border-radius: var(--radius-sm);
     font-size: 0.875rem;
@@ -255,7 +255,7 @@
   }
 
   .fallback-link {
-    color: var(--color-accent);
+    color: var(--accent);
     font-size: 0.85rem;
     text-decoration: none;
   }
@@ -279,7 +279,7 @@
     margin: 0;
     font-size: 0.9rem;
     font-weight: 600;
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .placeholder-sub {

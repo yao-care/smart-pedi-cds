@@ -553,7 +553,7 @@
 
   .source-badge.source-fhir {
     background: var(--color-risk-advisory-bg);
-    color: var(--color-risk-advisory);
+    color: var(--warn);
   }
 
   .loading-state {
@@ -564,8 +564,8 @@
   .spinner {
     width: 40px;
     height: 40px;
-    border: 3px solid var(--border-default);
-    border-top-color: var(--color-accent);
+    border: 3px solid var(--line);
+    border-top-color: var(--accent);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
     margin: 0 auto var(--space-3);
@@ -598,8 +598,8 @@
     align-items: center;
     justify-content: center;
     padding: var(--space-3) var(--space-7);
-    background: var(--color-accent);
-    color: var(--color-text-inverse);
+    background: var(--accent);
+    color: white;
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
     font-weight: var(--font-medium);
@@ -620,8 +620,8 @@
     display: flex;
     flex-direction: column;
     padding: var(--space-3) var(--space-4);
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
   }
 
@@ -634,7 +634,7 @@
   .stat-value {
     font-size: var(--text-lg);
     font-weight: var(--font-bold);
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .child-section { margin-bottom: var(--space-8); }
@@ -647,11 +647,11 @@
     font-weight: var(--font-medium);
     margin-bottom: var(--space-3);
     padding-bottom: var(--space-2);
-    border-bottom: 1px solid var(--border-default);
+    border-bottom: 1px solid var(--line);
   }
 
   .child-id {
-    color: var(--color-text-base);
+    color: var(--text);
     font-family: var(--font-mono);
     font-size: var(--text-sm);
   }
@@ -678,15 +678,15 @@
     flex-wrap: wrap;
     gap: var(--space-3);
     padding: var(--space-3) var(--space-4);
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
   }
 
   .timeline-row.selected {
-    border-color: var(--color-accent);
-    background: var(--color-risk-advisory-bg);
+    border-color: var(--accent);
+    background: var(--state-selected-bg);
   }
 
   .timeline-main {
@@ -706,7 +706,7 @@
   }
 
   .action-link {
-    color: var(--color-accent);
+    color: var(--accent);
     text-decoration: none;
     font-size: var(--text-xs);
     min-height: 32px;
@@ -732,16 +732,16 @@
     line-height: 1;
   }
 
-  .badge-normal { background: var(--color-risk-normal-bg); color: var(--color-risk-normal); }
-  .badge-monitor { background: var(--color-risk-warning-bg); color: var(--color-risk-warning); }
-  .badge-refer { background: var(--color-risk-critical-bg); color: var(--color-risk-critical); }
-  .badge-incomplete { background: var(--bg-surface); color: var(--color-text-subtle); border: 1px solid var(--border-default); }
+  .badge-normal { background: var(--color-risk-normal-bg); color: var(--accent); }
+  .badge-monitor { background: var(--color-risk-warning-bg); color: var(--warn); }
+  .badge-refer { background: var(--color-risk-critical-bg); color: var(--danger); }
+  .badge-incomplete { background: var(--surface); color: var(--color-text-subtle); border: 1px solid var(--line); }
 
   .compare-bar {
     position: sticky;
     bottom: 0;
-    background: var(--bg-surface);
-    border-top: 1px solid var(--border-default);
+    background: var(--surface);
+    border-top: 1px solid var(--line);
     padding: var(--space-3) var(--space-4);
     display: flex;
     align-items: center;
@@ -754,15 +754,15 @@
     padding: 6px 14px;
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     cursor: pointer;
     min-height: 36px;
   }
 
   .btn-compare {
-    background: var(--color-accent);
-    color: var(--color-text-inverse);
-    border-color: var(--color-accent);
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
     margin-left: auto;
   }
 
@@ -774,8 +774,8 @@
   .compare-view {
     margin-top: var(--space-6);
     padding: var(--space-4);
-    background: var(--bg-surface);
-    border: 1px solid var(--color-accent);
+    background: var(--surface);
+    border: 1px solid var(--accent);
     border-radius: var(--radius-lg);
   }
 
@@ -813,9 +813,9 @@
     align-items: center;
     gap: var(--space-2);
     padding: var(--space-1) var(--space-3);
-    background: var(--bg-base);
-    border: 1px solid var(--border-default);
-    border-left: 4px solid var(--series-color, var(--color-accent));
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--series-color, var(--accent));
     border-radius: var(--radius-md);
     font-size: var(--text-xs);
   }
@@ -825,7 +825,7 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: var(--series-color, var(--color-accent));
+    background: var(--series-color, var(--accent));
   }
 
   .meta-date {
@@ -837,7 +837,7 @@
   }
 
   .meta-link {
-    color: var(--color-accent);
+    color: var(--accent);
     text-decoration: none;
     margin-left: var(--space-1);
   }
@@ -848,7 +848,7 @@
     gap: var(--space-2);
     flex-wrap: wrap;
     padding: var(--space-3);
-    background: var(--bg-base);
+    background: var(--bg);
     border-radius: var(--radius-md);
     margin-bottom: var(--space-4);
     font-size: var(--text-sm);
@@ -878,7 +878,7 @@
 
   :global(.radar-axis-label) {
     font-size: var(--text-caption);
-    fill: var(--color-text-base);
+    fill: var(--text);
   }
 
   .diff-table-wrap {
@@ -895,7 +895,7 @@
   .diff-table th,
   .diff-table td {
     padding: var(--space-2) var(--space-2);
-    border-bottom: 1px solid var(--border-default);
+    border-bottom: 1px solid var(--line);
     text-align: left;
     vertical-align: top;
   }
@@ -907,7 +907,7 @@
   }
 
   .diff-table .series-col {
-    border-bottom: 3px solid var(--series-color, var(--color-accent));
+    border-bottom: 3px solid var(--series-color, var(--accent));
     text-align: right;
     white-space: nowrap;
   }
@@ -935,7 +935,7 @@
   }
 
   .cell-z.z-bad {
-    color: var(--color-risk-critical);
+    color: var(--danger);
   }
 
   .trend-cell {
@@ -963,7 +963,7 @@
 
   .history-nav {
     padding-top: var(--space-6);
-    border-top: 1px solid var(--border-default);
+    border-top: 1px solid var(--line);
     margin-top: var(--space-6);
   }
 
@@ -972,14 +972,14 @@
     align-items: center;
     justify-content: center;
     padding: var(--space-3) var(--space-6);
-    background: var(--bg-surface);
-    color: var(--color-text-base);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
     text-decoration: none;
     min-height: 44px;
   }
 
-  .btn-back:hover { border-color: var(--color-accent); }
+  .btn-back:hover { border-color: var(--accent); }
 </style>

@@ -76,7 +76,7 @@
   }
 
   .modal {
-    background: var(--bg-base);
+    background: var(--bg);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-xl);
     width: 100%;
@@ -92,14 +92,14 @@
     align-items: center;
     justify-content: space-between;
     padding: var(--space-4) var(--space-6);
-    border-bottom: 1px solid var(--border-default);
+    border-bottom: 1px solid var(--line);
     flex-shrink: 0;
   }
 
   .modal-title {
     font-size: 1.125rem;
     font-weight: 600;
-    color: var(--color-text-base);
+    color: var(--text);
     margin: 0;
   }
 
@@ -120,11 +120,11 @@
 
   .close-btn:hover {
     background: var(--bg-muted);
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .close-btn:focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
 

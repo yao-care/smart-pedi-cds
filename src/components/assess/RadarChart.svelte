@@ -53,7 +53,7 @@
       cy={center}
       r={radius * level / 100}
       fill="none"
-      stroke="var(--border-default)"
+      stroke="var(--line)"
       stroke-width="1"
       opacity="0.5"
     />
@@ -64,7 +64,7 @@
     {@const angle = i * angleStep}
     {@const end = polarToCartesian(angle, radius)}
     {@const labelPos = polarToCartesian(angle, radius + 25)}
-    <line x1={center} y1={center} x2={end.x} y2={end.y} stroke="var(--border-default)" stroke-width="1" opacity="0.3" />
+    <line x1={center} y1={center} x2={end.x} y2={end.y} stroke="var(--line)" stroke-width="1" opacity="0.3" />
     <text x={labelPos.x} y={labelPos.y} text-anchor="middle" dominant-baseline="middle" font-size="12" fill="var(--color-text-muted)">
       {domainLabels[d.domain] ?? d.domain}
     </text>
@@ -72,7 +72,7 @@
 
   <!-- Data polygon -->
   {#if dataPath}
-    <path d={dataPath} fill="var(--color-accent)" fill-opacity="0.2" stroke="var(--color-accent)" stroke-width="2" />
+    <path d={dataPath} fill="var(--accent)" fill-opacity="0.2" stroke="var(--accent)" stroke-width="2" />
   {/if}
 
   <!-- Data points -->
@@ -81,7 +81,7 @@
       cx={point.x}
       cy={point.y}
       r="5"
-      fill={data[i].hasAnomaly ? 'var(--color-risk-critical)' : 'var(--color-accent)'}
+      fill={data[i].hasAnomaly ? 'var(--danger)' : 'var(--accent)'}
       stroke="#fff"
       stroke-width="2"
     />

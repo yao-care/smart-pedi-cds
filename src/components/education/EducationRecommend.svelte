@@ -132,8 +132,8 @@
 
   .edu-card {
     padding: var(--space-4);
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     display: flex;
     flex-direction: column;
@@ -142,7 +142,7 @@
   }
 
   .edu-card:hover {
-    border-color: var(--color-accent);
+    border-color: var(--accent);
   }
 
   .edu-card.read {
@@ -170,13 +170,13 @@
 
   .format-tag--video {
     background: var(--bg-muted);
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .format-tag--questionnaire {
-    background: var(--bg-surface);
-    color: var(--color-text-base);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--line);
   }
 
   .read-tag {
@@ -186,13 +186,13 @@
     padding: 2px var(--space-2);
     border-radius: var(--radius-full);
     background: var(--color-risk-normal-bg);
-    color: var(--color-risk-normal);
+    color: var(--accent);
   }
 
   .card-title {
     font-size: 0.9rem;
     font-weight: 600;
-    color: var(--color-text-base);
+    color: var(--text);
     margin: 0;
     line-height: 1.4;
   }
@@ -207,7 +207,7 @@
   .read-link {
     font-size: 0.82rem;
     font-weight: 600;
-    color: var(--color-accent);
+    color: var(--accent);
     text-decoration: none;
     align-self: flex-start;
     margin-top: var(--space-1);

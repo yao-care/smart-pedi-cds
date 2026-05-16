@@ -127,18 +127,18 @@
 
   .time-range-controls button {
     padding: var(--space-2) var(--space-4);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    background: var(--bg-surface);
+    background: var(--surface);
     color: var(--color-text-muted);
     cursor: pointer;
     font-size: var(--text-xs);
   }
 
   .time-range-controls button.active {
-    background: var(--color-accent);
-    color: var(--color-text-inverse);
-    border-color: var(--color-accent);
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
   }
 
   .chart-grid {
@@ -148,8 +148,8 @@
   }
 
   .chart-item {
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius-lg);
     padding: var(--space-4);
   }

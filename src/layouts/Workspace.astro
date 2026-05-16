@@ -41,8 +41,8 @@ const { title, description = 'CDSS 臨床監測工作台' } = Astro.props;
     align-items: center;
     justify-content: space-between;
     padding: var(--space-2) var(--space-4);
-    background: var(--bg-surface);
-    border-bottom: 1px solid var(--border-default);
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
     flex-shrink: 0;
   }
 
@@ -70,13 +70,13 @@ const { title, description = 'CDSS 臨床監測工作台' } = Astro.props;
   }
 
   .back-link:hover {
-    color: var(--color-accent);
+    color: var(--accent);
   }
 
   .workspace-title {
     font-size: var(--text-sm);
     font-weight: var(--font-bold);
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .icon-btn {
@@ -93,7 +93,7 @@ const { title, description = 'CDSS 臨床監測工作台' } = Astro.props;
 
   .icon-btn:hover {
     background: var(--bg-muted);
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .workspace-body {

@@ -45,9 +45,9 @@
 
 <style>
   .accordion {
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    background: var(--bg-base);
+    background: var(--bg);
     overflow: hidden;
   }
 
@@ -60,7 +60,7 @@
     user-select: none;
     list-style: none;
     min-height: 44px;
-    background: var(--bg-surface);
+    background: var(--surface);
     transition: background-color 0.15s ease;
   }
 
@@ -73,14 +73,14 @@
   }
 
   .accordion-summary:focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--accent);
     outline-offset: -2px;
   }
 
   .accordion-title {
     font-size: 0.9375rem;
     font-weight: 600;
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .accordion-chevron {
@@ -92,7 +92,7 @@
 
   .accordion-body {
     padding: var(--space-4);
-    border-top: 1px solid var(--border-default);
-    color: var(--color-text-base);
+    border-top: 1px solid var(--line);
+    color: var(--text);
   }
 </style>

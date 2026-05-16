@@ -99,7 +99,7 @@
   .feed-title {
     font-size: 1.125rem;
     font-weight: 600;
-    color: var(--color-text-base);
+    color: var(--text);
     margin: 0;
   }
 
@@ -111,8 +111,8 @@
     height: 28px;
     padding: 0 var(--space-2);
     border-radius: var(--radius-full);
-    background-color: var(--color-risk-critical);
-    color: var(--color-text-inverse);
+    background-color: var(--danger);
+    color: white;
     font-size: 0.8rem;
     font-weight: 700;
   }
@@ -134,9 +134,9 @@
 
   .feed-item {
     padding: var(--space-3) var(--space-4);
-    border-left: 4px solid var(--border-default);
+    border-left: 4px solid var(--line);
     border-radius: var(--radius-sm);
-    background-color: var(--bg-surface);
+    background-color: var(--surface);
   }
 
   .item-header {
@@ -161,22 +161,22 @@
   }
 
   .risk-normal {
-    color: var(--color-risk-normal);
+    color: var(--accent);
     background-color: var(--color-risk-normal-bg);
   }
 
   .risk-advisory {
-    color: var(--color-risk-advisory);
+    color: var(--warn);
     background-color: var(--color-risk-advisory-bg);
   }
 
   .risk-warning {
-    color: var(--color-risk-warning);
+    color: var(--warn);
     background-color: var(--color-risk-warning-bg);
   }
 
   .risk-critical {
-    color: var(--color-risk-critical);
+    color: var(--danger);
     background-color: var(--color-risk-critical-bg);
   }
 
@@ -189,7 +189,7 @@
   .patient-id {
     font-size: 0.8rem;
     font-weight: 600;
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .rationale {
@@ -210,7 +210,7 @@
     justify-content: center;
     min-height: 44px;
     padding: var(--space-2) var(--space-4);
-    color: var(--color-accent);
+    color: var(--accent);
     font-size: 0.875rem;
     font-weight: 600;
     text-decoration: none;
@@ -223,7 +223,7 @@
   }
 
   .view-all:focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
 </style>

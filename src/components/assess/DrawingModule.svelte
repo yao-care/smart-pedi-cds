@@ -200,7 +200,7 @@
 
   .progress-fill {
     height: 100%;
-    background: var(--color-accent);
+    background: var(--accent);
     border-radius: var(--radius-full);
     transition: width 0.3s;
   }
@@ -223,7 +223,7 @@
   .guide-text {
     font-size: var(--text-lg);
     font-weight: var(--font-medium);
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .canvas-area {
@@ -233,9 +233,9 @@
   }
 
   canvas {
-    border: 2px solid var(--border-default);
+    border: 2px solid var(--line);
     border-radius: var(--radius-lg);
-    background: var(--color-text-inverse);
+    background: white;
     cursor: crosshair;
     max-width: 100%;
     height: auto;
@@ -249,8 +249,8 @@
 
   .btn-clear {
     padding: var(--space-3) var(--space-6);
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     color: var(--color-text-muted);
     cursor: pointer;
@@ -264,8 +264,8 @@
 
   .btn-submit {
     padding: var(--space-3) var(--space-6);
-    background: var(--color-accent);
-    color: var(--color-text-inverse);
+    background: var(--accent);
+    color: white;
     border: none;
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
@@ -304,8 +304,8 @@
 
   .btn-next {
     padding: var(--space-3) var(--space-7);
-    background: var(--color-accent);
-    color: var(--color-text-inverse);
+    background: var(--accent);
+    color: white;
     border: none;
     border-radius: var(--radius-md);
     font-size: var(--text-sm);

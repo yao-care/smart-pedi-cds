@@ -63,26 +63,26 @@
   }
 
   .dot--connected {
-    background: var(--color-risk-normal);
+    background: var(--accent);
   }
 
   .dot--syncing {
-    background: var(--color-risk-warning);
+    background: var(--warn);
     animation: blink 1s ease-in-out infinite;
   }
 
   .dot--disconnected {
-    background: var(--color-risk-critical);
+    background: var(--danger);
   }
 
   .status-label {
     font-weight: 600;
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .sync-time {
     color: var(--color-text-subtle);
-    border-left: 1px solid var(--border-default);
+    border-left: 1px solid var(--line);
     padding-left: var(--space-2);
     max-width: 120px;
     overflow: hidden;
@@ -91,8 +91,8 @@
   }
 
   .error-msg {
-    color: var(--color-risk-critical);
-    border-left: 1px solid var(--border-default);
+    color: var(--danger);
+    border-left: 1px solid var(--line);
     padding-left: var(--space-2);
     max-width: 160px;
     overflow: hidden;

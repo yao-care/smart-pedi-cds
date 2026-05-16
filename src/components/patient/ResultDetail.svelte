@@ -240,7 +240,7 @@
   .relaunch-link {
     display: inline-block;
     margin-top: var(--space-3);
-    color: var(--color-accent);
+    color: var(--accent);
     text-decoration: none;
     font-weight: var(--font-medium);
   }
@@ -257,8 +257,8 @@
     gap: var(--space-4);
     align-items: center;
     padding: var(--space-3) var(--space-4);
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
   }
@@ -284,7 +284,7 @@
 
   .source-badge.source-fhir {
     background: var(--color-risk-advisory-bg);
-    color: var(--color-risk-advisory);
+    color: var(--warn);
   }
 
   section h3 {
@@ -301,7 +301,7 @@
   .metric-table th,
   .metric-table td {
     padding: var(--space-2);
-    border-bottom: 1px solid var(--border-default);
+    border-bottom: 1px solid var(--line);
     text-align: left;
   }
 
@@ -334,9 +334,9 @@
     font-size: var(--text-sm);
   }
 
-  .triage-normal { background: var(--color-risk-normal-bg); color: var(--color-risk-normal); }
-  .triage-monitor { background: var(--color-risk-warning-bg); color: var(--color-risk-warning); }
-  .triage-refer { background: var(--color-risk-critical-bg); color: var(--color-risk-critical); }
+  .triage-normal { background: var(--color-risk-normal-bg); color: var(--accent); }
+  .triage-monitor { background: var(--color-risk-warning-bg); color: var(--warn); }
+  .triage-refer { background: var(--color-risk-critical-bg); color: var(--danger); }
 
   .rule-detail {
     margin-top: var(--space-2);
@@ -346,7 +346,7 @@
 
   .rule-detail summary {
     cursor: pointer;
-    color: var(--color-accent);
+    color: var(--accent);
     margin-bottom: var(--space-1);
   }
 
@@ -364,8 +364,8 @@
     font-weight: var(--font-medium);
   }
 
-  .status-pill.status-normal { background: var(--color-risk-normal-bg); color: var(--color-risk-normal); }
-  .status-pill.status-anomaly { background: var(--color-risk-critical-bg); color: var(--color-risk-critical); }
+  .status-pill.status-normal { background: var(--color-risk-normal-bg); color: var(--accent); }
+  .status-pill.status-anomaly { background: var(--color-risk-critical-bg); color: var(--danger); }
 
   .muted {
     color: var(--color-text-muted);
@@ -379,7 +379,7 @@
   .note-input {
     width: 100%;
     padding: var(--space-2);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     font: inherit;
   }

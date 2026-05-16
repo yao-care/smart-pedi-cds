@@ -168,13 +168,13 @@
 
   .mode-demo {
     background: var(--color-risk-advisory-bg);
-    color: var(--color-risk-advisory);
+    color: var(--warn);
   }
 
   .empty-cta {
     display: inline-block;
     margin-top: var(--space-3);
-    color: var(--color-accent);
+    color: var(--accent);
     text-decoration: none;
   }
 
@@ -185,15 +185,15 @@
   }
 
   .status.error {
-    color: var(--color-risk-critical);
+    color: var(--danger);
   }
 
   .empty {
     text-align: center;
     padding: var(--space-8);
     color: var(--color-text-muted);
-    background: var(--bg-surface);
-    border: 1px dashed var(--border-default);
+    background: var(--surface);
+    border: 1px dashed var(--line);
     border-radius: var(--radius-md);
   }
 
@@ -208,7 +208,7 @@
     align-items: center;
     gap: var(--space-2);
     padding: var(--space-2) var(--space-3);
-    border-bottom: 1px solid var(--border-default);
+    border-bottom: 1px solid var(--line);
   }
 
   .group-count {
@@ -225,17 +225,17 @@
 
   .badge-refer {
     background: var(--color-risk-critical-bg);
-    color: var(--color-risk-critical);
+    color: var(--danger);
   }
 
   .badge-monitor {
     background: var(--color-risk-warning-bg);
-    color: var(--color-risk-warning);
+    color: var(--warn);
   }
 
   .badge-normal {
     background: var(--color-risk-normal-bg);
-    color: var(--color-risk-normal);
+    color: var(--accent);
   }
 
   .list {
@@ -253,14 +253,14 @@
     align-items: center;
     gap: var(--space-3);
     padding: var(--space-2) var(--space-3);
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius-sm);
     font-size: var(--text-sm);
   }
 
   .row:hover {
-    border-color: var(--color-accent);
+    border-color: var(--accent);
   }
 
   .row-date {
@@ -274,14 +274,14 @@
   }
 
   .row-summary {
-    color: var(--color-text-base);
+    color: var(--text);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   .row-link {
-    color: var(--color-accent);
+    color: var(--accent);
     text-decoration: none;
     font-size: var(--text-xs);
   }

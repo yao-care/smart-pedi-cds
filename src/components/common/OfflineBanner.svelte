@@ -54,18 +54,18 @@
   }
 
   .banner-offline {
-    background: var(--color-risk-warning);
-    color: var(--color-text-inverse);
+    background: var(--warn);
+    color: white;
   }
 
   .banner-update {
-    background: var(--color-risk-advisory);
-    color: var(--color-text-inverse);
+    background: var(--warn);
+    color: white;
   }
 
   .banner-update button {
     background: rgba(255, 255, 255, 0.2);
-    color: var(--color-text-inverse);
+    color: white;
     border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: 4px;
     padding: 2px 8px;

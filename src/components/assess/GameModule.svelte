@@ -408,7 +408,7 @@
 
   .progress-fill {
     height: 100%;
-    background: var(--color-accent);
+    background: var(--accent);
     border-radius: var(--radius-full);
     transition: width 0.3s ease;
   }
@@ -423,7 +423,7 @@
     font-size: var(--text-xl);
     line-height: var(--lh-xl);
     text-align: center;
-    color: var(--color-text-base);
+    color: var(--text);
     font-weight: var(--font-medium);
     margin: 0;
   }
@@ -440,7 +440,7 @@
     position: relative;
     border-radius: var(--radius-lg);
     overflow: hidden;
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     background: #fafafa;
   }
 
@@ -466,7 +466,7 @@
   .feedback-text {
     font-size: var(--text-3xl);
     font-weight: var(--font-bold);
-    color: var(--color-accent);
+    color: var(--accent);
     animation: pop 0.4s ease-out;
   }
 
@@ -509,8 +509,8 @@
     justify-content: center;
     min-height: 56px;
     padding: var(--space-3) var(--space-7);
-    background: var(--color-accent);
-    color: var(--color-text-inverse);
+    background: var(--accent);
+    color: white;
     border: none;
     border-radius: var(--radius-md);
     font-size: var(--text-sm);

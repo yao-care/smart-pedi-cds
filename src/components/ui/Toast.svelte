@@ -69,17 +69,17 @@
 
   .toast-success {
     background: var(--color-risk-normal-bg);
-    color: var(--color-risk-normal);
+    color: var(--accent);
   }
 
   .toast-error {
     background: var(--color-risk-critical-bg);
-    color: var(--color-risk-critical);
+    color: var(--danger);
   }
 
   .toast-info {
     background: var(--color-risk-advisory-bg);
-    color: var(--color-risk-advisory);
+    color: var(--warn);
   }
 
   .toast-icon {
@@ -94,7 +94,7 @@
     margin: 0;
     font-size: 0.875rem;
     line-height: 1.5;
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .toast-close {
@@ -118,7 +118,7 @@
   }
 
   .toast-close:focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
 </style>

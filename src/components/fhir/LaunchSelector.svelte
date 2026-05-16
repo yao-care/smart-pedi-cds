@@ -97,7 +97,7 @@
   .title {
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--color-text-base);
+    color: var(--text);
     margin: 0 0 var(--space-2);
     text-align: center;
   }
@@ -127,8 +127,8 @@
     align-items: center;
     gap: var(--space-3);
     padding: var(--space-6);
-    background: var(--bg-surface);
-    border: 2px solid var(--border-default);
+    background: var(--surface);
+    border: 2px solid var(--line);
     border-radius: var(--radius-lg);
     cursor: pointer;
     text-align: center;
@@ -136,13 +136,13 @@
   }
 
   .launch-option:hover {
-    border-color: var(--color-accent);
-    background: var(--bg-base);
+    border-color: var(--accent);
+    background: var(--bg);
     box-shadow: var(--shadow-md);
   }
 
   .launch-option:focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
 
@@ -157,18 +157,18 @@
 
   .ehr-icon {
     background: var(--color-risk-advisory-bg);
-    color: var(--color-risk-advisory);
+    color: var(--warn);
   }
 
   .standalone-icon {
     background: var(--color-risk-normal-bg);
-    color: var(--color-risk-normal);
+    color: var(--accent);
   }
 
   .option-title {
     font-size: 1rem;
     font-weight: 600;
-    color: var(--color-text-base);
+    color: var(--text);
     margin: 0;
   }
 
@@ -192,7 +192,7 @@
   .back-btn {
     background: none;
     border: none;
-    color: var(--color-accent);
+    color: var(--accent);
     cursor: pointer;
     font-size: 0.875rem;
     padding: 0;
@@ -225,12 +225,12 @@
 
   .status-card.launching {
     background: var(--color-risk-advisory-bg);
-    color: var(--color-risk-advisory);
+    color: var(--warn);
   }
 
   .status-card.error {
     background: var(--color-risk-critical-bg);
-    color: var(--color-risk-critical);
+    color: var(--danger);
   }
 
   .error-msg {
@@ -240,8 +240,8 @@
 
   .retry-btn {
     padding: var(--space-2) var(--space-4);
-    background: var(--color-risk-critical);
-    color: var(--color-text-inverse);
+    background: var(--danger);
+    color: white;
     border: none;
     border-radius: var(--radius-sm);
     cursor: pointer;

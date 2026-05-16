@@ -134,19 +134,19 @@
     align-items: center;
     justify-content: space-between;
     padding: var(--space-4);
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     cursor: pointer;
     min-height: 56px;
     font-size: var(--text-sm);
-    color: var(--color-text-base);
+    color: var(--text);
     text-align: left;
     width: 100%;
   }
 
   .resume-card:hover {
-    border-color: var(--color-accent);
+    border-color: var(--accent);
   }
 
   .resume-status {
@@ -155,14 +155,14 @@
   }
 
   .resume-action {
-    color: var(--color-accent);
+    color: var(--accent);
     font-weight: var(--font-medium);
   }
 
   .btn-new {
     padding: var(--space-3) var(--space-6);
     background: none;
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     color: var(--color-text-muted);
     cursor: pointer;
@@ -174,7 +174,7 @@
     display: inline-block;
     margin-top: var(--space-4);
     font-size: var(--text-sm);
-    color: var(--color-accent);
+    color: var(--accent);
     text-decoration: none;
   }
 
@@ -187,13 +187,13 @@
     justify-content: space-between;
     padding: var(--space-4) 0;
     margin-top: var(--space-6);
-    border-top: 1px solid var(--border-default);
+    border-top: 1px solid var(--line);
   }
 
   .btn-back {
     padding: var(--space-2) var(--space-5);
     background: none;
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     color: var(--color-text-muted);
     cursor: pointer;
@@ -212,6 +212,6 @@
   }
 
   .btn-pause:hover {
-    color: var(--color-risk-warning);
+    color: var(--warn);
   }
 </style>

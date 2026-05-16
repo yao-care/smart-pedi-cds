@@ -275,7 +275,7 @@
     gap: var(--space-2);
     padding: var(--space-1) var(--space-3);
     background: rgba(0, 0, 0, 0.6);
-    color: var(--color-text-inverse);
+    color: white;
     border-radius: var(--radius-full);
     font-size: var(--text-xs);
     font-weight: var(--font-medium);
@@ -309,7 +309,7 @@
     height: 64px;
     border-radius: var(--radius-full);
     border: 4px solid var(--border-strong);
-    background: var(--bg-base);
+    background: var(--bg);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -356,8 +356,8 @@
     align-items: center;
     justify-content: center;
     padding: var(--space-4) var(--space-7);
-    background: var(--color-accent);
-    color: var(--color-text-inverse);
+    background: var(--accent);
+    color: white;
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
     font-weight: var(--font-bold);
@@ -382,8 +382,8 @@
   .btn-primary {
     width: 100%;
     padding: var(--space-4);
-    background: var(--color-accent);
-    color: var(--color-text-inverse);
+    background: var(--accent);
+    color: white;
     border: none;
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
@@ -400,8 +400,8 @@
   .btn-next {
     flex: 1;
     padding: var(--space-4);
-    background: var(--color-accent);
-    color: var(--color-text-inverse);
+    background: var(--accent);
+    color: white;
     border: none;
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
@@ -418,7 +418,7 @@
     flex: 1;
     padding: var(--space-3);
     background: none;
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     color: var(--color-text-muted);
     font-size: var(--text-sm);
@@ -427,15 +427,15 @@
   }
 
   .btn-retry:hover {
-    border-color: var(--color-accent);
-    color: var(--color-accent);
+    border-color: var(--accent);
+    color: var(--accent);
   }
 
   .btn-alt {
     width: 100%;
     padding: var(--space-3);
     background: none;
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     color: var(--color-text-muted);
     font-size: var(--text-sm);
@@ -445,8 +445,8 @@
   }
 
   .btn-alt:hover {
-    border-color: var(--color-accent);
-    color: var(--color-accent);
+    border-color: var(--accent);
+    color: var(--accent);
   }
 
   .btn-back {
@@ -480,7 +480,7 @@
   }
 
   .error {
-    color: var(--color-risk-critical);
+    color: var(--danger);
     font-size: var(--text-sm);
     margin-bottom: var(--space-4);
   }

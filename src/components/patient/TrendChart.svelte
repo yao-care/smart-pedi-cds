@@ -113,7 +113,7 @@
     g.append('path')
       .datum(chartData)
       .attr('fill', 'none')
-      .attr('stroke', 'var(--color-accent)')
+      .attr('stroke', 'var(--accent)')
       .attr('stroke-width', 2)
       .attr('d', lineGen);
 
@@ -129,11 +129,11 @@
       .attr('fill', (d) => {
         if (mean != null && std != null) {
           const deviation = Math.abs(d.value - mean);
-          if (deviation > 2 * std) return 'var(--color-risk-critical)';
+          if (deviation > 2 * std) return 'var(--danger)';
         }
-        return 'var(--color-accent)';
+        return 'var(--accent)';
       })
-      .attr('stroke', 'var(--color-text-inverse)')
+      .attr('stroke', 'white')
       .attr('stroke-width', 1.5)
       .style('cursor', 'pointer');
 
@@ -152,7 +152,7 @@
         .attr('cy', (d) => yScale(d.value))
         .attr('r', 8)
         .attr('fill', 'none')
-        .attr('stroke', 'var(--color-risk-critical)')
+        .attr('stroke', 'var(--danger)')
         .attr('stroke-width', 2)
         .attr('opacity', 0.6);
     }
@@ -206,7 +206,7 @@
       .text(unitLabel);
 
     // Style axis lines
-    g.selectAll('.domain, .tick line').attr('stroke', 'var(--border-default)');
+    g.selectAll('.domain, .tick line').attr('stroke', 'var(--line)');
   }
 
   $effect(() => {
@@ -249,8 +249,8 @@
   .tooltip {
     position: absolute;
     pointer-events: none;
-    background-color: var(--color-text-base);
-    color: var(--color-text-inverse);
+    background-color: var(--text);
+    color: white;
     padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-sm);
     font-size: var(--text-xs);
@@ -270,12 +270,12 @@
 
   /* d3-drawn baseline band + mean line. Selectors target classes set in JS. */
   :global(.baseline-band) {
-    fill: var(--color-risk-normal);
+    fill: var(--accent);
     opacity: 0.2;
   }
 
   :global(.baseline-mean) {
-    stroke: var(--color-risk-normal);
+    stroke: var(--accent);
     stroke-width: 1.5;
     stroke-dasharray: 6 4;
     opacity: 0.7;

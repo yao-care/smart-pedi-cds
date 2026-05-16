@@ -101,18 +101,18 @@
     position: sticky;
     top: 0;
     z-index: 1;
-    background-color: var(--bg-base);
+    background-color: var(--bg);
     padding-bottom: var(--space-2);
   }
 
   .search-input {
     width: 100%;
     padding: var(--space-3) var(--space-4);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     font-size: 1rem;
-    color: var(--color-text-base);
-    background-color: var(--bg-surface);
+    color: var(--text);
+    background-color: var(--surface);
     min-height: 44px;
   }
 
@@ -121,9 +121,9 @@
   }
 
   .search-input:focus {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--accent);
     outline-offset: -1px;
-    border-color: var(--color-accent);
+    border-color: var(--accent);
   }
 
   .status-message {
@@ -144,9 +144,9 @@
   .patient-card {
     display: flex;
     width: 100%;
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    background-color: var(--bg-surface);
+    background-color: var(--surface);
     cursor: pointer;
     text-align: left;
     font: inherit;
@@ -162,7 +162,7 @@
   }
 
   .patient-card:focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
 
@@ -194,7 +194,7 @@
 
   .patient-name {
     font-weight: 600;
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .age-badge {
@@ -230,22 +230,22 @@
   }
 
   .risk-normal {
-    color: var(--color-risk-normal);
+    color: var(--accent);
     background-color: var(--color-risk-normal-bg);
   }
 
   .risk-advisory {
-    color: var(--color-risk-advisory);
+    color: var(--warn);
     background-color: var(--color-risk-advisory-bg);
   }
 
   .risk-warning {
-    color: var(--color-risk-warning);
+    color: var(--warn);
     background-color: var(--color-risk-warning-bg);
   }
 
   .risk-critical {
-    color: var(--color-risk-critical);
+    color: var(--danger);
     background-color: var(--color-risk-critical-bg);
   }
 

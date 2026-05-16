@@ -66,8 +66,8 @@
 
   .btn-connect {
     padding: var(--space-3) var(--space-6);
-    background: var(--color-accent);
-    color: var(--color-text-inverse);
+    background: var(--accent);
+    color: white;
     border: none;
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
@@ -82,9 +82,9 @@
 
   .btn-skip {
     padding: var(--space-3) var(--space-6);
-    background: var(--bg-surface);
+    background: var(--surface);
     color: var(--color-text-muted);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
     cursor: pointer;

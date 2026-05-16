@@ -21,9 +21,9 @@
   };
 
   const categoryColors: Record<string, string> = {
-    normal: 'var(--color-risk-normal)',
-    monitor: 'var(--color-risk-warning)',
-    refer: 'var(--color-risk-critical)',
+    normal: 'var(--accent)',
+    monitor: 'var(--warn)',
+    refer: 'var(--danger)',
   };
 
   const categoryBgColors: Record<string, string> = {
@@ -146,7 +146,7 @@
   .error-box a {
     display: inline-block;
     margin-top: var(--space-3);
-    color: var(--color-accent);
+    color: var(--accent);
   }
 
   .result-view {
@@ -158,10 +158,10 @@
   .disclaimer {
     padding: var(--space-3) var(--space-4);
     background: var(--color-risk-warning-bg);
-    border: 1px solid var(--color-risk-warning);
+    border: 1px solid var(--warn);
     border-radius: var(--radius-md);
     font-size: var(--text-xs);
-    color: var(--color-risk-warning);
+    color: var(--warn);
     text-align: center;
     font-weight: var(--font-medium);
   }
@@ -186,7 +186,7 @@
 
   .summary {
     font-size: var(--text-base);
-    color: var(--color-text-base);
+    color: var(--text);
     line-height: var(--lh-base);
   }
 
@@ -207,7 +207,7 @@
     gap: var(--space-3);
     align-items: center;
     padding-top: var(--space-4);
-    border-top: 1px solid var(--border-default);
+    border-top: 1px solid var(--line);
   }
 
   .btn-history,
@@ -215,9 +215,9 @@
     min-height: 44px;
     padding: var(--space-2) var(--space-5);
     border-radius: var(--radius-md);
-    border: 1px solid var(--border-default);
-    background: var(--bg-surface);
-    color: var(--color-text-base);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--text);
     text-decoration: none;
     font-size: var(--text-sm);
     text-align: center;
@@ -225,7 +225,7 @@
 
   .btn-history:hover,
   .btn-home:hover {
-    border-color: var(--color-accent);
-    color: var(--color-accent);
+    border-color: var(--accent);
+    color: var(--accent);
   }
 </style>

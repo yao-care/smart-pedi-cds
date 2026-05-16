@@ -56,11 +56,11 @@
     left: calc(50% + 16px);
     width: calc(100% - 32px);
     height: 2px;
-    background: var(--border-default);
+    background: var(--line);
   }
 
   .step.completed:not(:last-child)::after {
-    background: var(--color-risk-normal);
+    background: var(--accent);
   }
 
   .step-dot {
@@ -72,23 +72,23 @@
     justify-content: center;
     font-size: var(--text-xs);
     font-weight: var(--font-bold);
-    border: 2px solid var(--border-default);
-    background: var(--bg-base);
+    border: 2px solid var(--line);
+    background: var(--bg);
     color: var(--color-text-subtle);
     position: relative;
     z-index: 1;
   }
 
   .step.completed .step-dot {
-    background: var(--color-risk-normal);
-    border-color: var(--color-risk-normal);
-    color: var(--color-text-inverse);
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
   }
 
   .step.active .step-dot {
-    background: var(--color-accent);
-    border-color: var(--color-accent);
-    color: var(--color-text-inverse);
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
   }
 
   .step-label {
@@ -100,12 +100,12 @@
   }
 
   .step.active .step-label {
-    color: var(--color-accent);
+    color: var(--accent);
     font-weight: var(--font-medium);
   }
 
   .step.completed .step-label {
-    color: var(--color-risk-normal);
+    color: var(--accent);
   }
 
   @media (max-width: 640px) {

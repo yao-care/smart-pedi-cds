@@ -155,7 +155,7 @@
     gap: var(--space-3);
     padding: var(--space-3) var(--space-4);
     background: var(--color-risk-advisory-bg);
-    border-bottom: 1px solid var(--color-risk-advisory);
+    border-bottom: 1px solid var(--warn);
     font-size: var(--text-sm);
   }
 
@@ -165,15 +165,15 @@
 
   .banner-text {
     flex: 1;
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .banner-cta {
     padding: 4px 12px;
     border-radius: var(--radius-md);
-    border: 1px solid var(--color-risk-advisory);
+    border: 1px solid var(--warn);
     background: white;
-    color: var(--color-risk-advisory);
+    color: var(--warn);
     cursor: pointer;
     font-size: var(--text-xs);
     min-height: 32px;
@@ -181,8 +181,8 @@
 
   .launch-panel {
     padding: var(--space-4);
-    border-bottom: 1px solid var(--border-default);
-    background: var(--bg-surface);
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
   }
 
   .fhir-required {
@@ -192,7 +192,7 @@
   }
 
   .fhir-required h3 {
-    color: var(--color-text-base);
+    color: var(--text);
     margin-bottom: var(--space-2);
   }
 
@@ -206,8 +206,8 @@
     top: var(--space-3);
     left: var(--space-2);
     z-index: 10;
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius-sm);
     padding: var(--space-1);
     cursor: pointer;
@@ -222,8 +222,8 @@
   .workspace-sidebar {
     width: 320px;
     flex-shrink: 0;
-    border-right: 1px solid var(--border-default);
-    background: var(--bg-surface);
+    border-right: 1px solid var(--line);
+    background: var(--surface);
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -243,7 +243,7 @@
 
   .workspace-tabs {
     display: flex;
-    border-bottom: 1px solid var(--border-default);
+    border-bottom: 1px solid var(--line);
     padding: 0 var(--space-4);
     flex-shrink: 0;
   }
@@ -261,12 +261,12 @@
   }
 
   .tab-btn:hover:not(:disabled) {
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .tab-btn.active {
-    color: var(--color-accent);
-    border-bottom-color: var(--color-accent);
+    color: var(--accent);
+    border-bottom-color: var(--accent);
   }
 
   .tab-btn:disabled {

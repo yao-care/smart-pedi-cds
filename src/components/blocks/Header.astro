@@ -44,8 +44,8 @@ function isActive(href: string): boolean {
 
 <style>
   .site-header {
-    background-color: var(--bg-surface);
-    border-bottom: 1px solid var(--border-default);
+    background-color: var(--surface);
+    border-bottom: 1px solid var(--line);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -63,13 +63,13 @@ function isActive(href: string): boolean {
   .site-title {
     font-size: var(--text-lg);
     font-weight: var(--font-bold);
-    color: var(--color-text-base);
+    color: var(--text);
     text-decoration: none;
     line-height: var(--lh-lg);
   }
 
   .site-title:hover {
-    color: var(--color-accent);
+    color: var(--accent);
   }
 
   /* ---------- Hamburger toggle (CSS-only) ---------- */
@@ -91,7 +91,7 @@ function isActive(href: string): boolean {
   .hamburger::before,
   .hamburger::after {
     display: block;
-    background-color: var(--color-text-base);
+    background-color: var(--text);
     height: 3px;
     width: 24px;
     border-radius: var(--radius-sm);
@@ -152,12 +152,12 @@ function isActive(href: string): boolean {
   }
 
   .nav-link:hover {
-    color: var(--color-text-base);
+    color: var(--text);
     background-color: var(--bg-muted);
   }
 
   .nav-link.active {
-    color: var(--color-accent);
+    color: var(--accent);
     font-weight: var(--font-medium);
     background-color: var(--bg-muted);
   }

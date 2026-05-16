@@ -162,16 +162,16 @@ const presentDomains = Array.from(new Set(sorted.map((c) => c.data.domain))).sor
     display: flex;
     gap: var(--space-4);
     padding: var(--space-3) var(--space-4);
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     margin-bottom: var(--space-4);
     font-size: var(--text-sm);
   }
 
-  .stat-pending strong { color: var(--color-risk-advisory); }
-  .stat-approved strong { color: var(--color-risk-normal); }
-  .stat-rejected strong { color: var(--color-risk-critical); }
+  .stat-pending strong { color: var(--warn); }
+  .stat-approved strong { color: var(--accent); }
+  .stat-rejected strong { color: var(--danger); }
 
   .filters {
     display: flex;
@@ -179,8 +179,8 @@ const presentDomains = Array.from(new Set(sorted.map((c) => c.data.domain))).sor
     gap: var(--space-2);
     margin-bottom: var(--space-6);
     padding: var(--space-3) var(--space-4);
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
   }
 
@@ -204,8 +204,8 @@ const presentDomains = Array.from(new Set(sorted.map((c) => c.data.domain))).sor
   }
 
   .chip {
-    border: 1px solid var(--border-default);
-    background: var(--bg-base);
+    border: 1px solid var(--line);
+    background: var(--bg);
     padding: 4px 12px;
     min-height: 32px;
     border-radius: var(--radius-full);
@@ -215,14 +215,14 @@ const presentDomains = Array.from(new Set(sorted.map((c) => c.data.domain))).sor
   }
 
   .chip.active {
-    background: var(--color-accent);
-    border-color: var(--color-accent);
-    color: var(--color-text-inverse);
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
   }
 
   .chip:hover:not(.active) {
-    border-color: var(--color-accent);
-    color: var(--color-accent);
+    border-color: var(--accent);
+    color: var(--accent);
   }
 
   .empty-msg {
@@ -238,13 +238,13 @@ const presentDomains = Array.from(new Set(sorted.map((c) => c.data.domain))).sor
   }
 
   .card {
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     overflow: hidden;
-    background: var(--bg-surface);
+    background: var(--surface);
   }
 
-  .card-approved { border-color: var(--color-risk-normal); }
+  .card-approved { border-color: var(--accent); }
   .card-rejected { opacity: 0.5; }
 
   .thumb img {
@@ -273,11 +273,11 @@ const presentDomains = Array.from(new Set(sorted.map((c) => c.data.domain))).sor
     align-self: flex-start;
   }
 
-  .status-pending { background: var(--color-risk-advisory-bg); color: var(--color-risk-advisory); }
-  .status-approved { background: var(--color-risk-normal-bg); color: var(--color-risk-normal); }
-  .status-rejected { background: var(--color-risk-critical-bg); color: var(--color-risk-critical); }
+  .status-pending { background: var(--color-risk-advisory-bg); color: var(--warn); }
+  .status-approved { background: var(--color-risk-normal-bg); color: var(--accent); }
+  .status-rejected { background: var(--color-risk-critical-bg); color: var(--danger); }
 
-  .title { color: var(--color-text-base); }
+  .title { color: var(--text); }
   .id-line { color: var(--color-text-muted); font-size: 0.7rem; }
   .attr { color: var(--color-text-subtle); font-size: 0.7rem; margin: 0; }
   .license { color: var(--color-text-subtle); font-size: 0.7rem; }

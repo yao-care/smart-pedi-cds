@@ -193,7 +193,7 @@
       <div class="summary-icon" aria-hidden="true">
         <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
           <circle cx="28" cy="28" r="28" style="fill: var(--color-risk-normal-bg);"/>
-          <path d="M16 28.5l8 8 16-16" style="stroke: var(--color-risk-normal);" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M16 28.5l8 8 16-16" style="stroke: var(--accent);" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
       <h2 class="summary-title">問卷完成！</h2>
@@ -254,7 +254,7 @@
 
   .progress-bar-fill {
     height: 100%;
-    background: var(--color-accent);
+    background: var(--accent);
     border-radius: var(--radius-full);
     transition: width 0.3s ease;
   }
@@ -269,7 +269,7 @@
     display: inline-block;
     padding: var(--space-1) var(--space-3);
     background: var(--color-risk-advisory-bg);
-    color: var(--color-risk-advisory);
+    color: var(--warn);
     border-radius: var(--radius-full);
     font-size: var(--text-xs);
     font-weight: var(--font-medium);
@@ -282,13 +282,13 @@
     font-weight: var(--font-bold);
     line-height: var(--lh-xl);
     margin-bottom: var(--space-6);
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   /* ---- Feedback ---- */
   .feedback-banner {
     background: var(--color-risk-normal-bg);
-    color: var(--color-risk-normal);
+    color: var(--accent);
     border-radius: var(--radius-md);
     padding: var(--space-3) var(--space-4);
     font-size: var(--text-sm);
@@ -308,12 +308,12 @@
     width: 100%;
     min-height: 64px;
     padding: var(--space-4) var(--space-5);
-    background: var(--bg-surface);
-    border: 2px solid var(--border-default);
+    background: var(--surface);
+    border: 2px solid var(--line);
     border-radius: var(--radius-lg);
     font-size: var(--text-base);
     font-weight: var(--font-medium);
-    color: var(--color-text-base);
+    color: var(--text);
     cursor: pointer;
     text-align: left;
     transition: border-color 0.15s, background 0.15s;
@@ -321,14 +321,14 @@
   }
 
   .option-btn:hover:not(:disabled) {
-    border-color: var(--color-accent);
-    background: var(--bg-base);
+    border-color: var(--accent);
+    background: var(--bg);
   }
 
   .option-btn.selected {
-    border-color: var(--color-accent);
+    border-color: var(--accent);
     background: var(--color-risk-advisory-bg);
-    color: var(--color-risk-advisory);
+    color: var(--warn);
   }
 
   .option-btn:disabled {
@@ -392,15 +392,15 @@
   }
 
   .bar-fill.bar-high {
-    background: var(--color-risk-normal);
+    background: var(--accent);
   }
 
   .bar-fill.bar-mid {
-    background: var(--color-risk-warning);
+    background: var(--warn);
   }
 
   .bar-fill.bar-low {
-    background: var(--color-risk-critical);
+    background: var(--danger);
   }
 
   .domain-score {
@@ -414,8 +414,8 @@
   .btn-finish {
     width: 100%;
     padding: var(--space-4);
-    background: var(--color-accent);
-    color: var(--color-text-inverse);
+    background: var(--accent);
+    color: white;
     border: none;
     border-radius: var(--radius-md);
     font-size: var(--text-lg);

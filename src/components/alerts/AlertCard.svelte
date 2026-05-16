@@ -164,9 +164,9 @@
 <style>
   .alert-card {
     display: flex;
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    background-color: var(--bg-surface);
+    background-color: var(--surface);
     overflow: hidden;
   }
 
@@ -208,29 +208,29 @@
   }
 
   .risk-normal {
-    color: var(--color-risk-normal);
+    color: var(--accent);
     background-color: var(--color-risk-normal-bg);
   }
 
   .risk-advisory {
-    color: var(--color-risk-advisory);
+    color: var(--warn);
     background-color: var(--color-risk-advisory-bg);
   }
 
   .risk-warning {
-    color: var(--color-risk-warning);
+    color: var(--warn);
     background-color: var(--color-risk-warning-bg);
   }
 
   .risk-critical {
-    color: var(--color-risk-critical);
+    color: var(--danger);
     background-color: var(--color-risk-critical-bg);
   }
 
   .patient-id {
     font-weight: 600;
     font-size: 0.875rem;
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .status-badge {
@@ -238,20 +238,20 @@
     font-weight: 500;
     padding: 2px var(--space-2);
     border-radius: var(--radius-full);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     color: var(--color-text-muted);
     background-color: var(--bg-muted);
   }
 
   .status-open {
-    color: var(--color-risk-critical);
-    border-color: var(--color-risk-critical);
+    color: var(--danger);
+    border-color: var(--danger);
     background-color: var(--color-risk-critical-bg);
   }
 
   .status-acknowledged {
-    color: var(--color-risk-advisory);
-    border-color: var(--color-risk-advisory);
+    color: var(--warn);
+    border-color: var(--warn);
     background-color: var(--color-risk-advisory-bg);
   }
 
@@ -260,8 +260,8 @@
   }
 
   .status-resolved {
-    color: var(--color-risk-normal);
-    border-color: var(--color-risk-normal);
+    color: var(--accent);
+    border-color: var(--accent);
     background-color: var(--color-risk-normal-bg);
   }
 
@@ -279,7 +279,7 @@
   .rationale {
     margin: 0;
     font-size: 0.875rem;
-    color: var(--color-text-base);
+    color: var(--text);
     line-height: 1.5;
   }
 
@@ -295,12 +295,12 @@
     border-radius: var(--radius-full);
     background-color: var(--bg-muted);
     color: var(--color-text-muted);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
   }
 
   .education-section {
     padding-top: var(--space-2);
-    border-top: 1px solid var(--border-default);
+    border-top: 1px solid var(--line);
   }
 
   .education-title {
@@ -314,13 +314,13 @@
     margin: 0;
     padding-left: var(--space-5);
     font-size: 0.8rem;
-    color: var(--color-text-base);
+    color: var(--text);
     line-height: 1.6;
   }
 
   .card-actions {
     padding-top: var(--space-2);
-    border-top: 1px solid var(--border-default);
+    border-top: 1px solid var(--line);
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2);
@@ -333,13 +333,13 @@
     min-height: 44px;
     min-width: 44px;
     padding: var(--space-2) var(--space-4);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
-    background-color: var(--bg-surface);
-    color: var(--color-text-base);
+    background-color: var(--surface);
+    color: var(--text);
     transition: background-color 0.2s ease, border-color 0.2s ease;
   }
 
@@ -348,13 +348,13 @@
   }
 
   .action-btn:focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
 
   .btn-acknowledge {
-    color: var(--color-risk-advisory);
-    border-color: var(--color-risk-advisory);
+    color: var(--warn);
+    border-color: var(--warn);
   }
 
   .btn-acknowledge:hover {
@@ -366,9 +366,9 @@
   }
 
   .btn-confirm {
-    color: var(--color-text-inverse);
-    background-color: var(--color-accent);
-    border-color: var(--color-accent);
+    color: white;
+    background-color: var(--accent);
+    border-color: var(--accent);
   }
 
   .btn-confirm:hover {
@@ -395,19 +395,19 @@
   .notes-input {
     width: 100%;
     padding: var(--space-2) var(--space-3);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     font-size: 0.875rem;
     font-family: inherit;
-    color: var(--color-text-base);
-    background-color: var(--bg-base);
+    color: var(--text);
+    background-color: var(--bg);
     resize: vertical;
   }
 
   .notes-input:focus {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--accent);
     outline-offset: -1px;
-    border-color: var(--color-accent);
+    border-color: var(--accent);
   }
 
   .notes-actions {

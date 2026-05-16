@@ -234,7 +234,7 @@
       <label class="upload-label" for="model-upload">
         <div class="upload-box" role="button" tabindex="0" aria-label="選擇 ONNX 模型檔案">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M12 16V4M8 8l4-4 4 4" stroke="var(--color-accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 16V4M8 8l4-4 4 4" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="var(--color-text-muted)" stroke-width="1.5" stroke-linecap="round"/>
           </svg>
           <span class="upload-text">點選上傳 .onnx 模型</span>
@@ -341,19 +341,19 @@
   .model-section h3 {
     font-size: var(--text-base);
     font-weight: var(--font-bold);
-    color: var(--color-text-base);
+    color: var(--text);
     margin: 0 0 var(--space-3) 0;
   }
 
   .model-card {
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     padding: var(--space-4);
-    background: var(--bg-surface);
+    background: var(--surface);
   }
 
   .model-card.current {
-    border-color: var(--color-risk-normal);
+    border-color: var(--accent);
     background: var(--color-risk-normal-bg);
   }
 
@@ -369,7 +369,7 @@
     font-weight: var(--font-bold);
     font-family: var(--font-mono);
     font-size: var(--text-sm);
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .model-meta {
@@ -392,7 +392,7 @@
   }
 
   .meta-row dd {
-    color: var(--color-text-base);
+    color: var(--text);
     margin: 0;
   }
 
@@ -405,9 +405,9 @@
     text-align: center;
     color: var(--color-text-muted);
     font-size: var(--text-xs);
-    border: 1px dashed var(--border-default);
+    border: 1px dashed var(--line);
     border-radius: var(--radius-md);
-    background: var(--bg-surface);
+    background: var(--surface);
   }
 
   .no-model p {
@@ -432,23 +432,23 @@
     align-items: center;
     gap: var(--space-2);
     padding: var(--space-7);
-    border: 2px dashed var(--border-default);
+    border: 2px dashed var(--line);
     border-radius: var(--radius-md);
-    background: var(--bg-surface);
+    background: var(--surface);
     transition: border-color 0.15s ease, background-color 0.15s ease;
     text-align: center;
   }
 
   .upload-label:hover .upload-box,
   .upload-label:focus-within .upload-box {
-    border-color: var(--color-accent);
+    border-color: var(--accent);
     background: var(--bg-muted);
   }
 
   .upload-text {
     font-size: var(--text-sm);
     font-weight: var(--font-medium);
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .upload-hint {
@@ -493,9 +493,9 @@
     flex-direction: column;
     gap: var(--space-1);
     padding: var(--space-3);
-    background: var(--bg-surface);
+    background: var(--surface);
     border-radius: var(--radius-md);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     text-align: center;
   }
 
@@ -510,12 +510,12 @@
   .metric-value {
     font-size: var(--text-xl);
     font-weight: var(--font-bold);
-    color: var(--color-text-base);
+    color: var(--text);
     margin: 0;
   }
 
   .metric-card-warn .metric-value {
-    color: var(--color-risk-warning);
+    color: var(--warn);
   }
 
   .sample-count {
@@ -540,14 +540,14 @@
     justify-content: space-between;
     gap: var(--space-3);
     padding: var(--space-3);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    background: var(--bg-base);
+    background: var(--bg);
     flex-wrap: wrap;
   }
 
   .version-item.is-current {
-    border-color: var(--color-risk-normal);
+    border-color: var(--accent);
     background: var(--color-risk-normal-bg);
   }
 
@@ -563,7 +563,7 @@
     font-weight: var(--font-medium);
     font-family: var(--font-mono);
     font-size: var(--text-xs);
-    color: var(--color-text-base);
+    color: var(--text);
     word-break: break-all;
   }
 

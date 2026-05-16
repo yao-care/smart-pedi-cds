@@ -54,9 +54,9 @@
     align-items: center;
     gap: var(--space-1);
     padding: var(--space-5) var(--space-4);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    background-color: var(--bg-surface);
+    background-color: var(--surface);
     overflow: hidden;
   }
 
@@ -80,18 +80,18 @@
   }
 
   .risk-card-normal .count {
-    color: var(--color-risk-normal);
+    color: var(--accent);
   }
 
   .risk-card-advisory .count {
-    color: var(--color-risk-advisory);
+    color: var(--warn);
   }
 
   .risk-card-warning .count {
-    color: var(--color-risk-warning);
+    color: var(--warn);
   }
 
   .risk-card-critical .count {
-    color: var(--color-risk-critical);
+    color: var(--danger);
   }
 </style>

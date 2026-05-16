@@ -395,7 +395,7 @@
   .section-header h3 {
     font-size: var(--text-base);
     font-weight: 600;
-    color: var(--color-text-base);
+    color: var(--text);
     margin: 0;
   }
 
@@ -405,9 +405,9 @@
     align-items: center;
     gap: var(--space-3);
     padding: var(--space-8);
-    border: 1px dashed var(--border-default);
+    border: 1px dashed var(--line);
     border-radius: var(--radius-md);
-    background: var(--bg-surface);
+    background: var(--surface);
     color: var(--color-text-muted);
     font-size: var(--text-xs);
   }
@@ -426,10 +426,10 @@
   }
 
   .webhook-item {
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     overflow: hidden;
-    background: var(--bg-base);
+    background: var(--bg);
     display: flex;
     flex-direction: column;
     gap: 0;
@@ -466,7 +466,7 @@
   .webhook-name {
     font-size: var(--text-base);
     font-weight: 600;
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .webhook-url {
@@ -512,16 +512,16 @@
   .form-label {
     font-size: var(--text-xs);
     font-weight: 500;
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .form-input {
     height: 44px;
     padding: 0 var(--space-3);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    background: var(--bg-base);
-    color: var(--color-text-base);
+    background: var(--bg);
+    color: var(--text);
     font-size: var(--text-xs);
     font-family: inherit;
     transition: border-color 0.15s ease;
@@ -529,12 +529,12 @@
 
   .form-input:focus {
     outline: none;
-    border-color: var(--color-accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 20%, transparent);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
   }
 
   .form-fieldset {
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     padding: var(--space-3);
     margin: 0;
@@ -544,7 +544,7 @@
     padding: 0 var(--space-2);
     font-size: var(--text-xs);
     font-weight: 500;
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .level-checkboxes {
@@ -566,13 +566,13 @@
     width: 18px;
     height: 18px;
     cursor: pointer;
-    accent-color: var(--color-accent);
+    accent-color: var(--accent);
   }
 
   .form-error {
     margin: 0;
     font-size: var(--text-xs);
-    color: var(--color-risk-critical);
+    color: var(--danger);
     background: var(--color-risk-critical-bg);
     padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-md);
@@ -602,12 +602,12 @@
   }
 
   .toggle:focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
 
   .toggle.on {
-    background: var(--color-accent);
+    background: var(--accent);
   }
 
   .toggle-thumb {
@@ -616,7 +616,7 @@
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: var(--color-text-inverse);
+    background: white;
     box-shadow: var(--shadow-sm);
     transition: transform 0.2s ease;
     pointer-events: none;

@@ -147,7 +147,7 @@
   .guide {
     max-width: 760px;
     line-height: 1.7;
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .guide h2 {
@@ -192,7 +192,7 @@
   }
 
   .guide a {
-    color: var(--color-accent);
+    color: var(--accent);
   }
 
   .guide code {
@@ -224,9 +224,9 @@
   .caveat {
     padding: var(--space-3);
     background: var(--color-risk-advisory-bg);
-    border-left: 3px solid var(--color-risk-advisory);
+    border-left: 3px solid var(--warn);
     border-radius: var(--radius-sm);
-    color: var(--color-text-base);
+    color: var(--text);
     font-size: var(--text-sm);
     margin: var(--space-3) 0 0;
   }
@@ -234,7 +234,7 @@
   .footer-note {
     margin-top: var(--space-8);
     padding-top: var(--space-4);
-    border-top: 1px solid var(--border-default);
+    border-top: 1px solid var(--line);
     font-size: var(--text-xs);
     color: var(--color-text-muted);
   }

@@ -242,14 +242,14 @@
   .title {
     font-size: 1.25rem;
     font-weight: 700;
-    color: var(--color-text-base);
+    color: var(--text);
     margin: 0;
   }
 
   .add-btn {
     padding: var(--space-2) var(--space-4);
-    background: var(--color-accent);
-    color: var(--color-text-inverse);
+    background: var(--accent);
+    color: white;
     border: none;
     border-radius: var(--radius-sm);
     font-size: 0.875rem;
@@ -293,8 +293,8 @@
     justify-content: space-between;
     gap: var(--space-4);
     padding: var(--space-4);
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
   }
 
@@ -308,7 +308,7 @@
   .server-name {
     font-size: 0.9rem;
     font-weight: 600;
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .server-url,
@@ -330,22 +330,22 @@
     font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
-    border: 1px solid var(--border-default);
-    background: var(--bg-base);
-    color: var(--color-text-base);
+    border: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--text);
     transition: background 0.12s ease;
   }
 
   .edit-btn:hover {
     background: var(--color-risk-advisory-bg);
-    border-color: var(--color-risk-advisory);
-    color: var(--color-risk-advisory);
+    border-color: var(--warn);
+    color: var(--warn);
   }
 
   .delete-btn:hover {
     background: var(--color-risk-critical-bg);
-    border-color: var(--color-risk-critical);
-    color: var(--color-risk-critical);
+    border-color: var(--danger);
+    color: var(--danger);
   }
 
   /* Form */
@@ -364,28 +364,28 @@
   .field-label {
     font-size: 0.875rem;
     font-weight: 600;
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .required {
-    color: var(--color-risk-critical);
+    color: var(--danger);
   }
 
   .field-input {
     padding: var(--space-2) var(--space-3);
-    background: var(--bg-base);
-    border: 1px solid var(--border-default);
+    background: var(--bg);
+    border: 1px solid var(--line);
     border-radius: var(--radius-sm);
     font-size: 0.9rem;
-    color: var(--color-text-base);
+    color: var(--text);
     font-family: inherit;
     transition: border-color 0.12s ease;
   }
 
   .field-input:focus {
     outline: none;
-    border-color: var(--color-accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 12%, transparent);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent);
   }
 
   .field-textarea {
@@ -402,13 +402,13 @@
 
   .test-btn {
     padding: var(--space-2) var(--space-4);
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius-sm);
     font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
-    color: var(--color-text-base);
+    color: var(--text);
     transition: background 0.12s ease;
   }
 
@@ -427,16 +427,16 @@
   }
 
   .test-msg.ok {
-    color: var(--color-risk-normal);
+    color: var(--accent);
   }
 
   .test-msg.fail {
-    color: var(--color-risk-critical);
+    color: var(--danger);
   }
 
   .error-msg {
     font-size: 0.875rem;
-    color: var(--color-risk-critical);
+    color: var(--danger);
     background: var(--color-risk-critical-bg);
     padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-sm);
@@ -451,8 +451,8 @@
 
   .save-btn {
     padding: var(--space-2) var(--space-6);
-    background: var(--color-accent);
-    color: var(--color-text-inverse);
+    background: var(--accent);
+    color: white;
     border: none;
     border-radius: var(--radius-sm);
     font-size: 0.9rem;
@@ -472,13 +472,13 @@
 
   .cancel-btn {
     padding: var(--space-2) var(--space-4);
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius-sm);
     font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
-    color: var(--color-text-base);
+    color: var(--text);
     transition: background 0.12s ease;
   }
 

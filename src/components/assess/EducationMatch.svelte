@@ -87,8 +87,8 @@
   .edu-card {
     display: block;
     padding: var(--space-5);
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius-lg);
     text-decoration: none;
     color: inherit;
@@ -96,14 +96,14 @@
   }
 
   .edu-card:hover {
-    border-color: var(--color-accent);
+    border-color: var(--accent);
   }
 
   .edu-card h4 {
     font-size: var(--text-sm);
     font-weight: var(--font-bold);
     margin-bottom: var(--space-2);
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .edu-card p {
@@ -114,7 +114,7 @@
 
   .read-link {
     font-size: var(--text-xs);
-    color: var(--color-accent);
+    color: var(--accent);
     font-weight: var(--font-medium);
   }
 

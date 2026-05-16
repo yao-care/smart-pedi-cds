@@ -337,7 +337,7 @@ rules:
   .section-header h3 {
     font-size: var(--text-base);
     font-weight: 600;
-    color: var(--color-text-base);
+    color: var(--text);
     margin: 0;
   }
 
@@ -364,14 +364,14 @@ rules:
   }
 
   .yaml-display {
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     padding: var(--space-4);
     font-size: var(--text-xs);
     font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
     line-height: 1.6;
-    color: var(--color-text-base);
+    color: var(--text);
     overflow-x: auto;
     white-space: pre;
     max-height: 400px;
@@ -393,16 +393,16 @@ rules:
   .form-label {
     font-size: var(--text-xs);
     font-weight: 500;
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .form-input {
     height: 44px;
     padding: 0 var(--space-3);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    background: var(--bg-base);
-    color: var(--color-text-base);
+    background: var(--bg);
+    color: var(--text);
     font-size: var(--text-xs);
     font-family: inherit;
     transition: border-color 0.15s ease;
@@ -410,18 +410,18 @@ rules:
 
   .form-input:focus {
     outline: none;
-    border-color: var(--color-accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 20%, transparent);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
   }
 
   .yaml-editor {
     width: 100%;
     box-sizing: border-box;
     padding: var(--space-3);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    background: var(--bg-base);
-    color: var(--color-text-base);
+    background: var(--bg);
+    color: var(--text);
     font-size: var(--text-xs);
     font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
     line-height: 1.6;
@@ -431,8 +431,8 @@ rules:
 
   .yaml-editor:focus {
     outline: none;
-    border-color: var(--color-accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 20%, transparent);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
   }
 
   .validation-result {
@@ -443,14 +443,14 @@ rules:
 
   .validation-result.valid {
     background: var(--color-risk-normal-bg);
-    color: var(--color-risk-normal);
-    border: 1px solid var(--color-risk-normal);
+    color: var(--accent);
+    border: 1px solid var(--accent);
   }
 
   .validation-result.invalid {
     background: var(--color-risk-critical-bg);
-    color: var(--color-risk-critical);
-    border: 1px solid var(--color-risk-critical);
+    color: var(--danger);
+    border: 1px solid var(--danger);
   }
 
   .error-list {
@@ -479,9 +479,9 @@ rules:
 
   .history-item {
     padding: var(--space-3);
-    background: var(--bg-surface);
+    background: var(--surface);
     border-radius: var(--radius-md);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
   }
 
   .history-meta {
@@ -497,13 +497,13 @@ rules:
 
   .history-author {
     font-weight: 600;
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .history-reason {
     margin: 0;
     font-size: var(--text-xs);
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .empty-state {

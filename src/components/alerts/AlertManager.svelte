@@ -74,14 +74,14 @@
     display: flex;
     gap: var(--space-6);
     padding: var(--space-3) var(--space-4);
-    background: var(--bg-surface);
+    background: var(--surface);
     border-radius: var(--radius-md);
     font-size: var(--text-xs);
     color: var(--color-text-muted);
   }
 
   .critical-count {
-    color: var(--color-risk-critical);
+    color: var(--danger);
     font-weight: var(--font-bold);
   }
 

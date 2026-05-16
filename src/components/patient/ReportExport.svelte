@@ -161,16 +161,16 @@
     flex-direction: column;
     gap: var(--space-4);
     padding: var(--space-4);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    background-color: var(--bg-surface);
+    background-color: var(--surface);
   }
 
   .export-title {
     margin: 0;
     font-size: 1rem;
     font-weight: 600;
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .date-range {
@@ -194,17 +194,17 @@
   .date-input {
     min-height: 44px;
     padding: var(--space-2) var(--space-3);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     font-size: 0.875rem;
-    color: var(--color-text-base);
-    background-color: var(--bg-base);
+    color: var(--text);
+    background-color: var(--bg);
   }
 
   .date-input:focus {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--accent);
     outline-offset: -1px;
-    border-color: var(--color-accent);
+    border-color: var(--accent);
   }
 
   .export-btn {
@@ -217,8 +217,8 @@
     border-radius: var(--radius-md);
     font-size: 0.875rem;
     font-weight: 600;
-    color: var(--color-text-inverse);
-    background-color: var(--color-accent);
+    color: white;
+    background-color: var(--accent);
     cursor: pointer;
     transition: background-color 0.2s ease;
     align-self: flex-start;
@@ -229,7 +229,7 @@
   }
 
   .export-btn:focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
 

@@ -104,35 +104,40 @@
   }
 
   .field {
-    margin-bottom: var(--space-6);
+    margin: 0 0 var(--space-6);
+    padding: 0;
+    border: 0;
+    min-width: 0;
   }
 
-  label {
+  label,
+  .field > legend {
     display: block;
     font-size: var(--text-sm);
     font-weight: var(--font-medium);
     margin-bottom: var(--space-2);
-    color: var(--color-text-base);
+    padding: 0;
+    color: var(--text);
   }
 
   .required {
-    color: var(--color-risk-critical);
+    color: var(--danger);
   }
 
   input[type="date"],
   input[type="text"] {
     width: 100%;
     padding: var(--space-3) var(--space-4);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     font-size: var(--text-base);
     min-height: 48px;
-    background: var(--bg-base);
-    color: var(--color-text-base);
+    background: var(--bg);
+    color: var(--text);
   }
 
   input:focus {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
 
@@ -141,7 +146,7 @@
     margin-top: var(--space-2);
     padding: var(--space-1) var(--space-3);
     background: var(--color-risk-normal-bg);
-    color: var(--color-risk-normal);
+    color: var(--accent);
     border-radius: var(--radius-full);
     font-size: var(--text-xs);
     font-weight: var(--font-medium);
@@ -152,7 +157,7 @@
     margin-top: var(--space-2);
     padding: var(--space-1) var(--space-3);
     background: var(--color-risk-warning-bg);
-    color: var(--color-risk-warning);
+    color: var(--warn);
     border-radius: var(--radius-full);
     font-size: var(--text-xs);
   }
@@ -168,7 +173,7 @@
     align-items: center;
     justify-content: center;
     padding: var(--space-3);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     cursor: pointer;
     font-size: var(--text-sm);
@@ -185,13 +190,13 @@
   }
 
   .pill.selected {
-    background: var(--color-accent);
-    color: var(--color-text-inverse);
-    border-color: var(--color-accent);
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
   }
 
   .error {
-    color: var(--color-risk-critical);
+    color: var(--danger);
     font-size: var(--text-sm);
     margin-bottom: var(--space-4);
     text-align: center;
@@ -200,8 +205,8 @@
   .btn-start {
     width: 100%;
     padding: var(--space-4);
-    background: var(--color-accent);
-    color: var(--color-text-inverse);
+    background: var(--accent);
+    color: white;
     border: none;
     border-radius: var(--radius-md);
     font-size: var(--text-lg);

@@ -209,7 +209,7 @@
   }
 
   .prefs-fieldset {
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     padding: var(--space-4);
     margin: 0;
@@ -222,7 +222,7 @@
     padding: 0 var(--space-2);
     font-size: var(--text-xs);
     font-weight: var(--font-bold);
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .pref-row {
@@ -231,7 +231,7 @@
     justify-content: space-between;
     gap: var(--space-4);
     padding: var(--space-3) 0;
-    border-bottom: 1px solid var(--border-default);
+    border-bottom: 1px solid var(--line);
   }
 
   .pref-row:last-child {
@@ -251,7 +251,7 @@
     display: block;
     font-size: var(--text-sm);
     font-weight: var(--font-medium);
-    color: var(--color-text-base);
+    color: var(--text);
     margin-bottom: var(--space-1);
   }
 
@@ -263,7 +263,7 @@
   }
 
   .perm-warning {
-    color: var(--color-risk-warning);
+    color: var(--warn);
   }
 
   .perm-note {
@@ -291,12 +291,12 @@
   }
 
   .toggle:focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
 
   .toggle.on {
-    background: var(--color-accent);
+    background: var(--accent);
   }
 
   .toggle:disabled {
@@ -310,8 +310,8 @@
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: var(--color-text-inverse);
-    box-shadow: 0 1px 3px color-mix(in srgb, var(--color-text-base) 20%, transparent);
+    background: white;
+    box-shadow: 0 1px 3px color-mix(in srgb, var(--text) 20%, transparent);
     transition: transform 0.2s ease;
     pointer-events: none;
   }
@@ -324,10 +324,10 @@
     width: 80px;
     height: 44px;
     padding: 0 var(--space-3);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    background: var(--bg-base);
-    color: var(--color-text-base);
+    background: var(--bg);
+    color: var(--text);
     font-size: var(--text-sm);
     font-family: inherit;
     text-align: right;
@@ -337,8 +337,8 @@
 
   .number-input:focus {
     outline: none;
-    border-color: var(--color-accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 20%, transparent);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
   }
 
   .form-actions {

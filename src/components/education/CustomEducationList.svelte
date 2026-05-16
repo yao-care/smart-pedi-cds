@@ -74,14 +74,14 @@
 
   .custom-card {
     padding: var(--space-5);
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius-lg);
     transition: border-color 0.2s ease;
   }
 
   .custom-card:hover {
-    border-color: var(--color-accent);
+    border-color: var(--accent);
   }
 
   .card-badge {
@@ -123,7 +123,7 @@
 
   .video-link {
     font-size: var(--text-xs);
-    color: var(--color-accent);
+    color: var(--accent);
     text-decoration: none;
   }
 

@@ -303,7 +303,7 @@
 
   .progress-fill {
     height: 100%;
-    background: var(--color-accent);
+    background: var(--accent);
     border-radius: var(--radius-full);
     transition: width 0.3s ease;
   }
@@ -317,8 +317,8 @@
   /* Prompt card */
   .prompt-card {
     text-align: center;
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius-lg);
     padding: var(--space-8) var(--space-6);
   }
@@ -332,7 +332,7 @@
   .prompt-text {
     font-size: var(--text-xl);
     font-weight: var(--font-bold);
-    color: var(--color-text-base);
+    color: var(--text);
     margin-bottom: var(--space-6);
     line-height: var(--lh-xl);
   }
@@ -344,7 +344,7 @@
     justify-content: center;
     gap: var(--space-2);
     font-size: var(--text-sm);
-    color: var(--color-risk-critical);
+    color: var(--danger);
     margin-bottom: var(--space-4);
   }
 
@@ -352,7 +352,7 @@
     display: inline-block;
     width: 12px;
     height: 12px;
-    background: var(--color-risk-critical);
+    background: var(--danger);
     border-radius: var(--radius-full);
     animation: pulse-rec 1s ease-in-out infinite;
   }
@@ -364,13 +364,13 @@
 
   .speaking-notice {
     font-size: var(--text-sm);
-    color: var(--color-accent);
+    color: var(--accent);
     font-weight: var(--font-medium);
   }
 
   .recorded-notice {
     font-size: var(--text-sm);
-    color: var(--color-risk-normal);
+    color: var(--accent);
     font-weight: var(--font-medium);
     margin-bottom: var(--space-4);
   }
@@ -379,8 +379,8 @@
   .btn-primary {
     width: 100%;
     padding: var(--space-4);
-    background: var(--color-accent);
-    color: var(--color-text-inverse);
+    background: var(--accent);
+    color: white;
     border: none;
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
@@ -397,8 +397,8 @@
   .btn-next {
     width: 100%;
     padding: var(--space-4);
-    background: var(--color-accent);
-    color: var(--color-text-inverse);
+    background: var(--accent);
+    color: white;
     border: none;
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
@@ -414,8 +414,8 @@
   .btn-stop {
     width: 100%;
     padding: var(--space-4);
-    background: var(--color-risk-critical);
-    color: var(--color-text-inverse);
+    background: var(--danger);
+    color: white;
     border: none;
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
@@ -432,7 +432,7 @@
     flex: 1;
     padding: var(--space-3);
     background: none;
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     color: var(--color-text-muted);
     font-size: var(--text-sm);
@@ -441,8 +441,8 @@
   }
 
   .btn-retry:hover {
-    border-color: var(--color-accent);
-    color: var(--color-accent);
+    border-color: var(--accent);
+    color: var(--accent);
   }
 
   .prompt-actions {
@@ -472,7 +472,7 @@
   }
 
   .error {
-    color: var(--color-risk-critical);
+    color: var(--danger);
     font-size: var(--text-sm);
     margin-bottom: var(--space-4);
   }

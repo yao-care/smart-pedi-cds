@@ -51,16 +51,16 @@
   .date-label {
     font-size: 0.875rem;
     font-weight: 500;
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .date-input {
     height: 44px;
     padding: 0 var(--space-3);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    background: var(--bg-base);
-    color: var(--color-text-base);
+    background: var(--bg);
+    color: var(--text);
     font-size: 0.875rem;
     font-family: inherit;
     cursor: pointer;
@@ -73,8 +73,8 @@
 
   .date-input:focus {
     outline: none;
-    border-color: var(--color-accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 20%, transparent);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
   }
 
   .date-input:disabled {

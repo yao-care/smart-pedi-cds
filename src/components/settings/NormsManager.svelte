@@ -215,7 +215,7 @@
     display: flex;
     gap: var(--space-1);
     flex-wrap: wrap;
-    border-bottom: 1px solid var(--border-default);
+    border-bottom: 1px solid var(--line);
   }
 
   .age-tab {
@@ -230,8 +230,8 @@
   }
 
   .age-tab.active {
-    color: var(--color-accent);
-    border-bottom-color: var(--color-accent);
+    color: var(--accent);
+    border-bottom-color: var(--accent);
   }
 
   .norms-table {
@@ -243,7 +243,7 @@
   .norms-table th,
   .norms-table td {
     padding: var(--space-2) var(--space-3);
-    border-bottom: 1px solid var(--border-default);
+    border-bottom: 1px solid var(--line);
     text-align: left;
   }
 
@@ -254,7 +254,7 @@
   .norms-table input[type='number'] {
     width: 100px;
     padding: 4px 8px;
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-sm);
     font: inherit;
   }
@@ -272,9 +272,9 @@
 
   .btn-save {
     padding: var(--space-2) var(--space-5);
-    background: var(--color-accent);
-    color: var(--color-text-inverse);
-    border: 1px solid var(--color-accent);
+    background: var(--accent);
+    color: white;
+    border: 1px solid var(--accent);
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
     cursor: pointer;
@@ -289,16 +289,16 @@
   .btn-link {
     background: none;
     border: none;
-    color: var(--color-accent);
+    color: var(--accent);
     cursor: pointer;
     font-size: var(--text-xs);
     padding: 0;
   }
 
-  .btn-link.danger { color: var(--color-risk-critical); }
+  .btn-link.danger { color: var(--danger); }
 
   .toast {
     font-size: var(--text-xs);
-    color: var(--color-risk-normal);
+    color: var(--accent);
   }
 </style>

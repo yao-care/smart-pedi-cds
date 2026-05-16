@@ -50,7 +50,7 @@
   }
 
   .btn:focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
     box-shadow: 0 0 0 4px var(--state-focus-ring);
   }
@@ -67,8 +67,8 @@
 
   /* Primary — rose fill, white text, shadow rest, hover darkens + lifts */
   .btn-primary {
-    background: var(--color-accent);
-    color: var(--color-text-inverse);
+    background: var(--accent);
+    color: white;
     box-shadow: var(--shadow-sm);
   }
   .btn-primary:hover:not(:disabled) {
@@ -79,19 +79,19 @@
   /* Secondary — transparent fill with strong border, becomes accent on hover */
   .btn-secondary {
     background: transparent;
-    color: var(--color-text-base);
+    color: var(--text);
     border: 1.5px solid var(--border-strong);
   }
   .btn-secondary:hover:not(:disabled) {
     background: var(--state-hover-surface);
-    border-color: var(--color-accent);
-    color: var(--color-accent);
+    border-color: var(--accent);
+    color: var(--accent);
   }
 
   /* Danger — risk-critical fill */
   .btn-danger {
-    background: var(--color-risk-critical);
-    color: var(--color-text-inverse);
+    background: var(--danger);
+    color: white;
     box-shadow: var(--shadow-sm);
   }
   .btn-danger:hover:not(:disabled) {
@@ -102,7 +102,7 @@
   /* Ghost — invisible by default, accent text + soft hover bg */
   .btn-ghost {
     background: transparent;
-    color: var(--color-accent);
+    color: var(--accent);
   }
   .btn-ghost:hover:not(:disabled) {
     background: var(--state-hover-surface);

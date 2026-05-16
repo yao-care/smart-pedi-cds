@@ -91,7 +91,7 @@ const tabs = [
   }
 
   .back-to-workspace:hover {
-    color: var(--color-accent);
+    color: var(--accent);
   }
 
   h1 {
@@ -102,7 +102,7 @@ const tabs = [
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 0;
-    border-bottom: 1px solid var(--border-default);
+    border-bottom: 1px solid var(--line);
   }
 
   .tab-input {
@@ -128,7 +128,7 @@ const tabs = [
   }
 
   .tab-label:hover {
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .tab-panel {
@@ -166,8 +166,8 @@ const tabs = [
   #tab-recommendations:checked ~ label[for="tab-recommendations"],
   #tab-norms:checked ~ label[for="tab-norms"],
   #tab-guide:checked ~ label[for="tab-guide"] {
-    color: var(--color-accent);
-    border-bottom-color: var(--color-accent);
+    color: var(--accent);
+    border-bottom-color: var(--accent);
   }
 
 </style>

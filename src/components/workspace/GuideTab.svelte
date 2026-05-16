@@ -94,7 +94,7 @@
     max-width: 720px;
     margin: 0 auto;
     line-height: 1.7;
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .guide h2 {
@@ -127,7 +127,7 @@
   }
 
   .guide a {
-    color: var(--color-accent);
+    color: var(--accent);
   }
 
   .guide code {
@@ -159,8 +159,8 @@
   details {
     margin-bottom: var(--space-2);
     padding: var(--space-2) var(--space-3);
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
   }
 

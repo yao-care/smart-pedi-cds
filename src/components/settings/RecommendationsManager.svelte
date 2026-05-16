@@ -365,7 +365,7 @@
   .category-tabs {
     display: flex;
     gap: var(--space-2);
-    border-bottom: 1px solid var(--border-default);
+    border-bottom: 1px solid var(--line);
   }
 
   .cat-tab {
@@ -381,8 +381,8 @@
   }
 
   .cat-tab.active {
-    color: var(--color-accent);
-    border-bottom-color: var(--color-accent);
+    color: var(--accent);
+    border-bottom-color: var(--accent);
   }
 
   .domain-tree {
@@ -395,14 +395,14 @@
   }
 
   .domain-row {
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    background: var(--bg-surface);
+    background: var(--surface);
     overflow: hidden;
   }
 
   .domain-row.has-overlay {
-    border-color: var(--color-accent);
+    border-color: var(--accent);
   }
 
   .domain-row.expanded {
@@ -480,13 +480,13 @@
 
   .badge-override {
     background: var(--color-risk-advisory-bg);
-    color: var(--color-risk-advisory);
+    color: var(--warn);
   }
 
   .btn-link {
     background: none;
     border: none;
-    color: var(--color-accent);
+    color: var(--accent);
     cursor: pointer;
     font-size: var(--text-sm);
     padding: 0;
@@ -494,7 +494,7 @@
   }
 
   .btn-link.danger {
-    color: var(--color-risk-critical);
+    color: var(--danger);
   }
 
   .editor {
@@ -508,7 +508,7 @@
     align-items: center;
     gap: var(--space-2);
     font-size: var(--text-xs);
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .item-editor {
@@ -533,9 +533,9 @@
   .title-input {
     min-height: 36px;
     padding: 4px 8px;
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-sm);
-    background: var(--bg-base);
+    background: var(--bg);
     font-size: var(--text-xs);
   }
 
@@ -543,7 +543,7 @@
     min-height: 32px;
     min-width: 32px;
     background: none;
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-sm);
     cursor: pointer;
     font-size: var(--text-base);
@@ -551,14 +551,14 @@
   }
 
   .btn-icon.danger {
-    color: var(--color-risk-critical);
-    border-color: var(--color-risk-critical);
+    color: var(--danger);
+    border-color: var(--danger);
   }
 
   .btn-add {
     align-self: flex-start;
     background: none;
-    border: 1px dashed var(--border-default);
+    border: 1px dashed var(--line);
     border-radius: var(--radius-sm);
     padding: 6px 12px;
     cursor: pointer;
@@ -568,8 +568,8 @@
   }
 
   .btn-add:hover {
-    color: var(--color-accent);
-    border-color: var(--color-accent);
+    color: var(--accent);
+    border-color: var(--accent);
   }
 
   .editor-actions {
@@ -583,7 +583,7 @@
     min-height: 36px;
     padding: 6px 14px;
     border-radius: var(--radius-sm);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     cursor: pointer;
     font-size: var(--text-xs);
   }
@@ -594,9 +594,9 @@
   }
 
   .btn-save {
-    background: var(--color-accent);
-    color: var(--color-text-inverse);
-    border-color: var(--color-accent);
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
   }
 
   .btn-save:disabled {

@@ -73,19 +73,19 @@
     min-height: 44px;
     min-width: 140px;
     padding: var(--space-2) var(--space-3);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     font-size: 0.875rem;
-    color: var(--color-text-base);
-    background-color: var(--bg-surface);
+    color: var(--text);
+    background-color: var(--surface);
     cursor: pointer;
     appearance: auto;
   }
 
   .filter-select:focus {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--accent);
     outline-offset: -1px;
-    border-color: var(--color-accent);
+    border-color: var(--accent);
   }
 
   .filter-select:hover {

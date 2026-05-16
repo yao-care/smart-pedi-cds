@@ -169,9 +169,9 @@
     justify-content: center;
     gap: var(--space-2);
     padding: var(--space-2) var(--space-5);
-    background: var(--bg-surface);
-    color: var(--color-text-base);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
     cursor: pointer;
@@ -180,9 +180,9 @@
   }
 
   .btn-pdf:hover:not(:disabled) {
-    border-color: var(--color-accent);
-    background: var(--color-accent);
-    color: var(--color-text-inverse);
+    border-color: var(--accent);
+    background: var(--accent);
+    color: white;
   }
 
   .btn-pdf:disabled {
@@ -192,7 +192,7 @@
 
   .pdf-error {
     font-size: var(--text-xs);
-    color: var(--color-risk-critical);
+    color: var(--danger);
     margin-top: var(--space-2);
   }
 </style>

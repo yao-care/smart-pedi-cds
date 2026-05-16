@@ -130,8 +130,8 @@
     gap: var(--space-3);
     margin-bottom: var(--space-6);
     padding: var(--space-3) var(--space-4);
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
   }
 
@@ -156,27 +156,27 @@
 
   .chip {
     border: 1.5px solid var(--border-strong);
-    background: var(--bg-base);
+    background: var(--bg);
     padding: var(--space-1) var(--space-3);
     min-height: 32px;
     border-radius: var(--radius-full);
     font-size: var(--text-xs);
     font-weight: var(--font-medium);
     cursor: pointer;
-    color: var(--color-text-base);
+    color: var(--text);
     transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
   }
 
   .chip.active {
-    background: var(--color-accent);
-    border-color: var(--color-accent);
-    color: var(--color-text-inverse);
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
   }
 
   .chip:hover:not(.active) {
     background: var(--state-hover-surface);
-    border-color: var(--color-accent);
-    color: var(--color-accent);
+    border-color: var(--accent);
+    color: var(--accent);
   }
 
   .count {

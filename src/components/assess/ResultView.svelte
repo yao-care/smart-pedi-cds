@@ -21,9 +21,9 @@
   };
 
   const categoryColors: Record<string, string> = {
-    normal: 'var(--color-risk-normal)',
-    monitor: 'var(--color-risk-warning)',
-    refer: 'var(--color-risk-critical)',
+    normal: 'var(--accent)',
+    monitor: 'var(--warn)',
+    refer: 'var(--danger)',
   };
 
   const categoryBgColors: Record<string, string> = {
@@ -201,10 +201,10 @@
   .disclaimer {
     padding: var(--space-3) var(--space-4);
     background: var(--color-risk-warning-bg);
-    border: 1px solid var(--color-risk-warning);
+    border: 1px solid var(--warn);
     border-radius: var(--radius-md);
     font-size: var(--text-xs);
-    color: var(--color-risk-warning);
+    color: var(--warn);
     text-align: center;
     font-weight: var(--font-medium);
   }
@@ -230,7 +230,7 @@
 
   .summary {
     font-size: var(--text-base);
-    color: var(--color-text-base);
+    color: var(--text);
     line-height: var(--lh-base);
   }
 
@@ -259,13 +259,13 @@
     align-items: center;
     gap: var(--space-4);
     padding-top: var(--space-4);
-    border-top: 1px solid var(--border-default);
+    border-top: 1px solid var(--line);
   }
 
   .btn-fhir {
     padding: var(--space-3) var(--space-7);
-    background: var(--color-accent);
-    color: var(--color-text-inverse);
+    background: var(--accent);
+    color: white;
     border: none;
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
@@ -287,13 +287,13 @@
 
   .fhir-success {
     font-size: var(--text-sm);
-    color: var(--color-risk-normal);
+    color: var(--accent);
     font-weight: var(--font-medium);
   }
 
   .fhir-error {
     font-size: var(--text-sm);
-    color: var(--color-risk-critical);
+    color: var(--danger);
     font-weight: var(--font-medium);
   }
 
@@ -302,9 +302,9 @@
     align-items: center;
     justify-content: center;
     padding: var(--space-3) var(--space-7);
-    background: var(--bg-surface);
-    color: var(--color-accent);
-    border: 1px solid var(--color-accent);
+    background: var(--surface);
+    color: var(--accent);
+    border: 1px solid var(--accent);
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
     font-weight: var(--font-medium);
@@ -315,8 +315,8 @@
   }
 
   .btn-history:hover {
-    background: var(--color-accent);
-    color: var(--color-text-inverse);
+    background: var(--accent);
+    color: white;
   }
 
   .btn-home {
@@ -324,9 +324,9 @@
     align-items: center;
     justify-content: center;
     padding: var(--space-3) var(--space-7);
-    background: var(--bg-surface);
-    color: var(--color-text-base);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
     text-decoration: none;
@@ -336,6 +336,6 @@
   }
 
   .btn-home:hover {
-    border-color: var(--color-accent);
+    border-color: var(--accent);
   }
 </style>

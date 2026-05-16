@@ -163,7 +163,7 @@
   .title {
     font-size: 1.25rem;
     font-weight: 700;
-    color: var(--color-text-base);
+    color: var(--text);
     margin: 0 0 var(--space-5);
   }
 
@@ -191,8 +191,8 @@
     flex-direction: column;
     align-items: flex-start;
     padding: var(--space-3) var(--space-4);
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     cursor: pointer;
     text-align: left;
@@ -201,13 +201,13 @@
   }
 
   .server-item:hover {
-    border-color: var(--color-accent);
+    border-color: var(--accent);
   }
 
   .server-name {
     font-size: 0.875rem;
     font-weight: 600;
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .server-url {
@@ -218,7 +218,7 @@
 
   .divider {
     height: 1px;
-    background: var(--border-default);
+    background: var(--line);
     margin: var(--space-5) 0;
   }
 
@@ -237,28 +237,28 @@
   .field-label {
     font-size: 0.875rem;
     font-weight: 600;
-    color: var(--color-text-base);
+    color: var(--text);
   }
 
   .required {
-    color: var(--color-risk-critical);
+    color: var(--danger);
   }
 
   .field-input {
     padding: var(--space-2) var(--space-3);
-    background: var(--bg-base);
-    border: 1px solid var(--border-default);
+    background: var(--bg);
+    border: 1px solid var(--line);
     border-radius: var(--radius-sm);
     font-size: 0.9rem;
-    color: var(--color-text-base);
+    color: var(--text);
     transition: border-color 0.12s ease;
     font-family: inherit;
   }
 
   .field-input:focus {
     outline: none;
-    border-color: var(--color-accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 12%, transparent);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent);
   }
 
   .field-textarea {
@@ -274,7 +274,7 @@
 
   .error-msg {
     font-size: 0.875rem;
-    color: var(--color-risk-critical);
+    color: var(--danger);
     background: var(--color-risk-critical-bg);
     padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-sm);
@@ -287,8 +287,8 @@
     justify-content: center;
     gap: var(--space-2);
     padding: var(--space-3) var(--space-6);
-    background: var(--color-accent);
-    color: var(--color-text-inverse);
+    background: var(--accent);
+    color: white;
     border: none;
     border-radius: var(--radius-sm);
     font-size: 0.9rem;
@@ -312,7 +312,7 @@
     width: 16px;
     height: 16px;
     border: 2px solid rgba(255, 255, 255, 0.4);
-    border-top-color: var(--color-text-inverse);
+    border-top-color: white;
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
   }

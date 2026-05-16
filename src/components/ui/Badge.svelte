@@ -33,21 +33,21 @@
 
   .badge-normal {
     background: var(--color-risk-normal-bg);
-    color: var(--color-risk-normal);
+    color: var(--accent);
   }
 
   .badge-advisory {
     background: var(--color-risk-advisory-bg);
-    color: var(--color-risk-advisory);
+    color: var(--warn);
   }
 
   .badge-warning {
     background: var(--color-risk-warning-bg);
-    color: var(--color-risk-warning);
+    color: var(--warn);
   }
 
   .badge-critical {
     background: var(--color-risk-critical-bg);
-    color: var(--color-risk-critical);
+    color: var(--danger);
   }
 </style>
