@@ -367,7 +367,7 @@
   }
 
   .file-input-label:hover {
-    background: var(--color-accent-hover);
+    background: color-mix(in srgb, var(--accent) 85%, black);
   }
 
   .file-input-label input[type="file"] {
@@ -394,7 +394,7 @@
   }
 
   .btn-primary:hover {
-    background: var(--color-accent-hover);
+    background: color-mix(in srgb, var(--accent) 85%, black);
   }
 
   .btn-next {
@@ -411,7 +411,7 @@
   }
 
   .btn-next:hover {
-    background: var(--color-accent-hover);
+    background: color-mix(in srgb, var(--accent) 85%, black);
   }
 
   .btn-retry {

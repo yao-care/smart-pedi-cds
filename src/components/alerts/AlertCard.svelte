@@ -372,7 +372,7 @@
   }
 
   .btn-confirm:hover {
-    background-color: var(--color-accent-hover);
+    background-color: color-mix(in srgb, var(--accent) 85%, black);
   }
 
   .btn-cancel {

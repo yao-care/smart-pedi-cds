@@ -72,7 +72,7 @@
     box-shadow: var(--shadow-sm);
   }
   .btn-primary:hover:not(:disabled) {
-    background: var(--color-accent-hover);
+    background: color-mix(in srgb, var(--accent) 85%, black);
     box-shadow: var(--shadow-md);
   }
 

@@ -275,7 +275,7 @@
   }
 
   .btn-submit:hover:not(:disabled) {
-    background: var(--color-accent-hover);
+    background: color-mix(in srgb, var(--accent) 85%, black);
   }
 
   .btn-submit:disabled {
@@ -315,6 +315,6 @@
   }
 
   .btn-next:hover {
-    background: var(--color-accent-hover);
+    background: color-mix(in srgb, var(--accent) 85%, black);
   }
 </style>

@@ -607,7 +607,7 @@
     min-height: 48px;
   }
 
-  .btn-start:hover { background: var(--color-accent-hover); }
+  .btn-start:hover { background: color-mix(in srgb, var(--accent) 85%, black); }
 
   .stats-row {
     display: grid;

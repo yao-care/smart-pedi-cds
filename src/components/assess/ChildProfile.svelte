@@ -217,7 +217,7 @@
   }
 
   .btn-start:hover:not(:disabled) {
-    background: var(--color-accent-hover);
+    background: color-mix(in srgb, var(--accent) 85%, black);
   }
 
   .btn-start:disabled {

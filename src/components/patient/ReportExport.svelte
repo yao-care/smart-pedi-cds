@@ -225,7 +225,7 @@
   }
 
   .export-btn:hover:not(:disabled) {
-    background-color: var(--color-accent-hover);
+    background-color: color-mix(in srgb, var(--accent) 85%, black);
   }
 
   .export-btn:focus-visible {

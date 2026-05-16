@@ -391,7 +391,7 @@
   }
 
   .btn-primary:hover {
-    background: var(--color-accent-hover);
+    background: color-mix(in srgb, var(--accent) 85%, black);
   }
 
   .btn-next {
@@ -408,7 +408,7 @@
   }
 
   .btn-next:hover {
-    background: var(--color-accent-hover);
+    background: color-mix(in srgb, var(--accent) 85%, black);
   }
 
   .btn-stop {

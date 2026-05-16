@@ -299,7 +299,7 @@
   }
 
   .connect-btn:hover:not(:disabled) {
-    background: var(--color-accent-hover);
+    background: color-mix(in srgb, var(--accent) 85%, black);
   }
 
   .connect-btn:disabled {

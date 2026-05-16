@@ -219,7 +219,7 @@
 
   .view-all:hover {
     text-decoration: underline;
-    color: var(--color-accent-hover);
+    color: color-mix(in srgb, var(--accent) 85%, black);
   }
 
   .view-all:focus-visible {

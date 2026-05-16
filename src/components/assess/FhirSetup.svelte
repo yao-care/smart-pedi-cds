@@ -77,7 +77,7 @@
   }
 
   .btn-connect:hover {
-    background: var(--color-accent-hover);
+    background: color-mix(in srgb, var(--accent) 85%, black);
   }
 
   .btn-skip {

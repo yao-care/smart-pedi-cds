@@ -147,8 +147,8 @@
   }
 
   .format-badge--article {
-    background: var(--color-accent-soft);
-    color: var(--color-accent-strong);
+    background: color-mix(in srgb, var(--accent) 10%, var(--bg));
+    color: color-mix(in srgb, var(--accent) 85%, black);
   }
 
   .format-badge--video {
