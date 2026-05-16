@@ -60,10 +60,15 @@ const jsonLd = {
     margin: 0 var(--space-1);
   }
 
+  /* Override global.css 44px touch-target rule for inline breadcrumb anchors.
+     Breadcrumb anchors are inline navigation, not primary touch actions; the
+     44px floor causes inconsistent height vs the non-link current page span. */
   .breadcrumb-link {
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
     text-decoration: underline;
     text-underline-offset: 2px;
+    min-height: 0;
+    min-width: 0;
   }
 
   .breadcrumb-link:hover {

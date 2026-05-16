@@ -8,9 +8,13 @@ interface Props {
   title: string;
   description: string;
   breadcrumbs: { label: string; href?: string }[];
+  /** Render the left sidebar column. Default false — most education pages
+   *  (article detail, etc.) don't have sidebar content and need the main
+   *  prose column to center in the container. */
+  hasSidebar?: boolean;
 }
 
-const { title, description, breadcrumbs } = Astro.props;
+const { title, description, breadcrumbs, hasSidebar = false } = Astro.props;
 ---
 
 <Base title={title} description={description}>
@@ -18,11 +22,13 @@ const { title, description, breadcrumbs } = Astro.props;
     <Header />
     <div class="container">
       <Breadcrumb items={breadcrumbs} />
-      <div class="edu-layout">
-        <aside class="edu-sidebar">
-          <slot name="sidebar" />
-        </aside>
-        <main id="main-content" class="prose" data-pagefind-body>
+      <div class:list={['edu-layout', { 'has-sidebar': hasSidebar }]}>
+        {hasSidebar && (
+          <aside class="edu-sidebar">
+            <slot name="sidebar" />
+          </aside>
+        )}
+        <main id="main-content" class="prose edu-main" data-pagefind-body>
           <slot />
         </main>
       </div>
@@ -50,8 +56,15 @@ const { title, description, breadcrumbs } = Astro.props;
     gap: var(--space-6);
   }
 
+  /* Centre the prose column when there's no sidebar so content sits in the
+     middle of the container instead of left-aligned with a wide right gutter. */
+  .edu-layout:not(.has-sidebar) .edu-main {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   @media (min-width: 768px) {
-    .edu-layout {
+    .edu-layout.has-sidebar {
       grid-template-columns: 280px 1fr;
     }
   }
