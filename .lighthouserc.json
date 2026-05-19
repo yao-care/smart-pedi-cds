@@ -1,0 +1,21 @@
+{
+  "ci": {
+    "collect": {
+      "url": [
+        "http://localhost:4321/result/",
+        "http://localhost:4321/workspace/result/"
+      ],
+      "numberOfRuns": 3,
+      "startServerCommand": "pnpm preview",
+      "startServerReadyPattern": "Local"
+    },
+    "assert": {
+      "preset": "lighthouse:recommended",
+      "assertions": {
+        "categories:performance": ["error", { "minScore": 0.85 }],
+        "third-party-summary": "off"
+      }
+    },
+    "upload": { "target": "temporary-public-storage" }
+  }
+}
