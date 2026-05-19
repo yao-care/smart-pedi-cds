@@ -3,6 +3,9 @@
   import { isAuthorized } from '../../lib/fhir/client';
   import type { Assessment } from '../../lib/db/schema';
   import { db } from '../../lib/db/schema';
+  import { deriveCdsaTriggers } from '$lib/education/trigger-derivation';
+  import { ageGroupCDSA } from '$lib/utils/age-groups';
+  import TriggerVideoList from '../education/TriggerVideoList.svelte';
 
   const DOMAIN_LABELS: Record<string, string> = {
     behavior: '行為',
@@ -42,6 +45,7 @@
   let assessment = $state<Assessment | null>(null);
   let source = $state<Source | null>(null);
   let returnUrl = $state<string>('');
+  let childBirthDate = $state<string | null>(null);
 
   $effect(() => {
     (async () => {
@@ -64,6 +68,9 @@
         if (result.ok) {
           assessment = result.assessment;
           source = result.source;
+          // Load child birthDate to derive CDSA age group for video triggers
+          const child = await db.children.get(result.assessment.childId).catch(() => null);
+          if (child?.birthDate) childBirthDate = child.birthDate;
         } else {
           error = result.error;
         }
@@ -76,6 +83,21 @@
   });
 
   const triage = $derived(assessment?.triageResult ?? null);
+
+  const videoTriggers = $derived.by(() => {
+    if (!triage || !childBirthDate) return [];
+    const ageGroup = ageGroupCDSA(childBirthDate);
+    return deriveCdsaTriggers(
+      {
+        category: triage.category,
+        confidence: triage.confidence,
+        summary: triage.summary,
+        anomalyCount: triage.anomalyCount ?? 0,
+        details: triage.details ?? [],
+      },
+      ageGroup,
+    );
+  });
 
   let note = $state('');
   let noteSaveTimer: ReturnType<typeof setTimeout> | null = null;
@@ -226,6 +248,13 @@
       ></textarea>
       <p class="muted small">草稿自動暫存；提交到 FHIR 為下次迭代功能。</p>
     </section>
+
+    {#if videoTriggers.length > 0}
+      <section class="recommended-videos" aria-label="建議分享給家長的衛教影片">
+        <h2>建議分享給家長的衛教影片</h2>
+        <TriggerVideoList triggers={videoTriggers} />
+      </section>
+    {/if}
   </article>
 {/if}
 
@@ -382,5 +411,14 @@
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
     font: inherit;
+  }
+
+  .recommended-videos {
+    margin-top: var(--space-xl, 32px);
+  }
+
+  .recommended-videos h2 {
+    font-size: var(--text-lg, 22px);
+    margin-bottom: var(--space-md, 16px);
   }
 </style>
