@@ -1,0 +1,16 @@
+{
+  "official-tw": [
+    { "tag": "@MOHWtaiwan", "channelId": null },
+    { "tag": "@HPATaiwan",  "channelId": null },
+    { "tag": "@NTUHchildren", "channelId": null },
+    { "tag": "@TWPedSoc",   "channelId": null }
+  ],
+  "international": [
+    { "tag": "@AmericanAcademyofPediatrics", "channelId": null },
+    { "tag": "@CDC", "channelId": null },
+    { "tag": "@nhs", "channelId": null },
+    { "tag": "@WHO", "channelId": null },
+    { "tag": "@ClevelandClinic", "channelId": null }
+  ],
+  "pro-kol": []
+}
