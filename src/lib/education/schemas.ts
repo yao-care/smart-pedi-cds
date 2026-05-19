@@ -97,6 +97,7 @@ export const runtimeIndexSchema = z.object({
     videoIds: z.array(z.string()),
     inapplicable: z.boolean(),
   })),
+  educationSlugToTriggers: z.record(z.string(), z.array(z.string())),
 });
 
 // --- Types ---

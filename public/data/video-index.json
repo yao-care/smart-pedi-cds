@@ -1,5 +1,6 @@
 {
   "catalog": {},
+  "educationSlugToTriggers": {},
   "triggers": {
     "cdsa.domain.behavior.anomaly.2-6m": {
       "inapplicable": true,

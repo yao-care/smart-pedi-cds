@@ -3,6 +3,7 @@ import Education from '../../layouts/Education.astro';
 import { getCollection, render } from 'astro:content';
 import ContentViewer from '../../components/education/ContentViewer.svelte';
 import InteractionTracker from '../../components/education/InteractionTracker.svelte';
+import EducationRelatedVideos from '../../components/education/EducationRelatedVideos.svelte';
 
 export async function getStaticPaths() {
   const entries = await getCollection('education');
@@ -71,6 +72,9 @@ const breadcrumbs = [
       videoUrl={entry.data.videoUrl}
     />
   )}
+
+  <!-- Related education videos derived from trigger mappings -->
+  <EducationRelatedVideos client:visible slug={entry.id} />
 </Education>
 
 <style>

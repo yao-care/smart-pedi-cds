@@ -74,6 +74,14 @@ describe('buildVideoIndex', () => {
     await expect(buildVideoIndex({ cwd: tmpDir })).rejects.toThrow(/educationSlug/);
   });
 
+  it('emits educationSlugToTriggers for triggers with educationSlug and verified videos', async () => {
+    await buildVideoIndex({ cwd: tmpDir });
+    const idx = JSON.parse(await fs.readFile(`${tmpDir}/public/data/video-index.json`, 'utf8'));
+    expect(idx.educationSlugToTriggers).toEqual({
+      'when-to-seek-help': ['cdsa.triage.refer.13-24m'],
+    });
+  });
+
   it('detects duplicate videoId across catalog files', async () => {
     await fs.writeFile(`${tmpDir}/src/data/video-catalog/international.yaml`, `
 - videoId: "abc123XYZ45"

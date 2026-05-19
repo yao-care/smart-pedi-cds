@@ -98,6 +98,17 @@ export async function buildVideoIndex(opts: BuildOptions = {}): Promise<void> {
     Object.entries(catalog).filter(([, v]) => v.verificationStatus === 'verified'),
   );
 
+  const educationSlugToTriggers: Record<string, string[]> = {};
+  for (const t of Object.values(triggers)) {
+    if (
+      t.educationSlug &&
+      !t.inapplicable &&
+      t.videoIds.filter(id => verifiedCatalog[id] != null).length > 0
+    ) {
+      (educationSlugToTriggers[t.educationSlug] ??= []).push(t.trigger);
+    }
+  }
+
   const runtime = {
     catalog: Object.fromEntries(
       Object.entries(verifiedCatalog).map(([id, v]) => [id, {
@@ -114,6 +125,7 @@ export async function buildVideoIndex(opts: BuildOptions = {}): Promise<void> {
         inapplicable: t.inapplicable === true,
       }]),
     ),
+    educationSlugToTriggers,
   };
 
   runtimeIndexSchema.parse(runtime);
