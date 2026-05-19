@@ -1,6 +1,59 @@
 {
-  "catalog": {},
-  "educationSlugToTriggers": {},
+  "catalog": {
+    "-d0DmEv8qVs": {
+      "channel": "Talk with Dr. TN Huang",
+      "duration": 514,
+      "language": "zh-Hant",
+      "score": 0.85,
+      "sourceTier": "pro-kol",
+      "title": "超過兩歲不說話，送幼稚園就OK？！難道有自閉傾向？幼兒語言發展大解密｜黃瑽寧x剪接師EP3",
+      "videoId": "-d0DmEv8qVs"
+    },
+    "G7COjy4hpqA": {
+      "channel": "Talk with Dr. TN Huang",
+      "duration": 820,
+      "language": "zh-Hant",
+      "score": 0.72,
+      "sourceTier": "pro-kol",
+      "title": "自閉傾向的兒童並不少見！父母如何判斷、早療與陪伴？│黃瑽寧x剪接師EP14",
+      "videoId": "G7COjy4hpqA"
+    },
+    "e9FYZmw_Hyk": {
+      "channel": "Good way to health",
+      "duration": 211,
+      "language": "zh-Hant",
+      "score": 0.68,
+      "sourceTier": "pro-kol",
+      "title": "兒童發展遲緩 早發現 早治療 | 兒科 歐善福醫師",
+      "videoId": "e9FYZmw_Hyk"
+    },
+    "yzRi9GlSptM": {
+      "channel": "Talk with Dr. TN Huang",
+      "duration": 574,
+      "language": "zh-Hant",
+      "score": 0.78,
+      "sourceTier": "pro-kol",
+      "title": "影響孩子語言發展的2件事，你我都能做到！【KIT系列 EP03】｜黃瑽寧醫師健康講堂",
+      "videoId": "yzRi9GlSptM"
+    },
+    "ziWchb0yVA0": {
+      "channel": "光仁社會福利基金會",
+      "duration": 166,
+      "language": "zh-Hant",
+      "score": 0.65,
+      "sourceTier": "pro-kol",
+      "title": "【光仁社福】什麼情況需要評估作早療? 由超人氣小兒科醫生-黃瑽寧來為大家解答!",
+      "videoId": "ziWchb0yVA0"
+    }
+  },
+  "educationSlugToTriggers": {
+    "language-stimulation": [
+      "cdsa.domain.language.anomaly.13-24m"
+    ],
+    "when-to-seek-help": [
+      "cdsa.triage.refer.13-24m"
+    ]
+  },
   "triggers": {
     "cdsa.domain.behavior.anomaly.2-6m": {
       "inapplicable": true,
@@ -22,6 +75,14 @@
       "inapplicable": true,
       "videoIds": []
     },
+    "cdsa.domain.language.anomaly.13-24m": {
+      "inapplicable": false,
+      "videoIds": [
+        "yzRi9GlSptM",
+        "-d0DmEv8qVs",
+        "G7COjy4hpqA"
+      ]
+    },
     "cdsa.domain.language.anomaly.2-6m": {
       "inapplicable": true,
       "videoIds": []
@@ -41,6 +102,14 @@
     "cdsa.domain.social_emotional.anomaly.2-6m": {
       "inapplicable": true,
       "videoIds": []
+    },
+    "cdsa.triage.refer.13-24m": {
+      "inapplicable": false,
+      "videoIds": [
+        "-d0DmEv8qVs",
+        "e9FYZmw_Hyk",
+        "ziWchb0yVA0"
+      ]
     }
   }
 }

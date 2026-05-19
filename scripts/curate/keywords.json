@@ -1,1 +1,26 @@
-{}
+{
+  "cdsa.triage.refer.13-24m": {
+    "primary": [
+      "幼兒 發展遲緩 何時就醫 黃瑽寧",
+      "幼兒 發展里程碑 異常 衛教",
+      "1歲 2歲 發展評估 早期療育"
+    ],
+    "secondary": ["toddler developmental delay early intervention"],
+    "educationSlug": "when-to-seek-help",
+    "minDuration": 60,
+    "maxDuration": 1500,
+    "timeSensitive": false
+  },
+  "cdsa.domain.language.anomaly.13-24m": {
+    "primary": [
+      "幼兒 語言發展遲緩 黃瑽寧",
+      "1歲 2歲 不會說話 怎麼辦",
+      "幼兒 語言刺激 衛教"
+    ],
+    "secondary": [],
+    "educationSlug": "language-stimulation",
+    "minDuration": 60,
+    "maxDuration": 1500,
+    "timeSensitive": false
+  }
+}

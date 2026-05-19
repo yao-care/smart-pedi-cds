@@ -62,3 +62,14 @@
   ageGroup: 2-6m
   inapplicable: true
   videoIds: []
+
+# 已 curate trigger（reachable + verified videos）
+- trigger: cdsa.domain.language.anomaly.13-24m
+  category: domain
+  domain: language
+  ageGroup: 13-24m
+  educationSlug: language-stimulation
+  videoIds:
+    - yzRi9GlSptM
+    - "-d0DmEv8qVs"
+    - G7COjy4hpqA

@@ -112,37 +112,48 @@ async function processTrigger(
 
   const reportCandidates: ReportCandidate[] = [];
   for (const c of scored) {
-    try { await downloadSubtitle(c.id, cacheDir); }
-    catch (e) { console.warn(`subtitle fail ${c.id}: ${(e as Error).message}`); continue; }
-
-    const cacheFiles = await fs.readdir(cacheDir);
-    const subPath = cacheFiles
-      .map(f => path.join(cacheDir, f))
-      .find(p => p.includes(c.id) && p.endsWith('.vtt'));
-    if (!subPath) continue;
-
-    const subContent = await fs.readFile(subPath, 'utf8');
-    const text = subContent
-      .split('\n')
-      .filter(l => !l.includes('-->') && !/^\d+$/.test(l) && !l.startsWith('WEBVTT'))
-      .join(' ')
-      .replace(/<[^>]+>/g, '')
-      .trim();
-
-    if (simplifiedRatio(text) > 0.3) {
-      console.warn(`${c.id} rejected: simplified Chinese ratio > 0.3`);
-      continue;
+    // 字幕為「加分項」非必要條件：YouTube 中文兒科衛教多無字幕（hard-coded
+    // 進影片）。無字幕時仍進 report，由 Claude Code 從 title + description
+    // 判讀；subtitleType='none' 已在 heuristics 計入 0 加分。
+    let text = '';
+    let textForReport = '';
+    try {
+      await downloadSubtitle(c.id, cacheDir);
+      const cacheFiles = await fs.readdir(cacheDir);
+      const subPath = cacheFiles
+        .map(f => path.join(cacheDir, f))
+        .find(p => p.includes(c.id) && p.endsWith('.vtt'));
+      if (subPath) {
+        const subContent = await fs.readFile(subPath, 'utf8');
+        text = subContent
+          .split('\n')
+          .filter(l => !l.includes('-->') && !/^\d+$/.test(l) && !l.startsWith('WEBVTT'))
+          .join(' ')
+          .replace(/<[^>]+>/g, '')
+          .trim();
+        if (simplifiedRatio(text) > 0.3) {
+          console.warn(`${c.id} rejected: simplified Chinese ratio > 0.3`);
+          continue;
+        }
+        textForReport = text;
+      } else {
+        c.subtitleType = 'none';
+      }
+    } catch (e) {
+      console.warn(`subtitle fail ${c.id}: ${(e as Error).message}`);
+      c.subtitleType = 'none';
     }
 
     const score = computeScore(c);
     const verdict = classifyVerdict(c, score);
+    const fallbackBlurb = `[無字幕] description: ${c.description.slice(0, 400)}`;
 
     reportCandidates.push({
       videoId: c.id, title: c.title, channel: c.channel,
       sourceTier: c.channelTier, duration: c.duration,
       subtitleType: c.subtitleType, score,
-      subtitleHead: text.slice(0, 200),
-      subtitleTail: text.slice(-200),
+      subtitleHead: textForReport ? textForReport.slice(0, 200) : fallbackBlurb,
+      subtitleTail: textForReport ? textForReport.slice(-200) : '(無字幕；以 description 替代)',
       verdict,
     });
   }
