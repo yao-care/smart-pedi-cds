@@ -414,11 +414,11 @@
   }
 
   .recommended-videos {
-    margin-top: var(--space-xl, 32px);
+    margin-top: var(--space-7);
   }
 
   .recommended-videos h2 {
-    font-size: var(--text-lg, 22px);
+    font-size: var(--text-lg);
     margin-bottom: var(--space-md, 16px);
   }
 </style>

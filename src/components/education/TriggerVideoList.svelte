@@ -25,5 +25,5 @@ $effect(() => {
 {/each}
 
 <style>
-.trigger-videos { margin: var(--space-lg, 24px) 0; }
+.trigger-videos { margin: var(--space-6) 0; }
 </style>

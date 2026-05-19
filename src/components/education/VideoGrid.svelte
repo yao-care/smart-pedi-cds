@@ -32,6 +32,6 @@ const hasMore = $derived(sorted.length > maxResults);
 </div>
 
 <style>
-.video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-md, 16px); }
-.expand-btn { min-height: 44px; background: transparent; border: 1px dashed var(--color-border, #ccc); border-radius: var(--radius-md, 8px); padding: var(--space-md, 16px); font-size: var(--text-base, 18px); cursor: pointer; grid-column: 1 / -1; }
+.video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-4); }
+.expand-btn { min-height: 44px; background: transparent; border: 1px dashed var(--line); border-radius: var(--radius-md); padding: var(--space-4); font-size: var(--text-base); cursor: pointer; grid-column: 1 / -1; }
 </style>

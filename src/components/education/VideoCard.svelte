@@ -89,13 +89,13 @@ function onImgError() { markSessionFailed(video.videoId); thumbFailed = true; }
 <style>
 .video-card { display: flex; flex-direction: column; min-width: 280px; }
 .video-card button { min-height: 44px; padding: 0; border: 0; background: transparent; cursor: pointer; }
-.video-card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: var(--radius-md, 8px); }
-.video-card iframe { width: 100%; aspect-ratio: 16/9; border: 0; border-radius: var(--radius-md, 8px); }
-.no-thumbnail { aspect-ratio: 16/9; background: var(--color-bg-muted, #eaeaea); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: var(--space-md, 16px); }
-.no-thumbnail .big-title { font-size: var(--text-lg, 22px); font-weight: 600; line-height: 1.3; }
-.play-icon { font-size: var(--text-base, 18px); margin-top: var(--space-sm, 8px); }
-.meta { padding: var(--space-sm, 8px) 0; display: flex; gap: var(--space-sm, 8px); align-items: center; flex-wrap: wrap; }
-.badge { background: var(--color-bg-accent, #ddd); padding: 2px 8px; border-radius: 12px; font-size: var(--text-sm, 16px); }
-.title { font-size: var(--text-base, 18px); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; flex: 1; }
-.duration { font-size: var(--text-sm, 16px); color: var(--color-text-muted, #666); }
+.video-card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: var(--radius-md); }
+.video-card iframe { width: 100%; aspect-ratio: 16/9; border: 0; border-radius: var(--radius-md); }
+.no-thumbnail { aspect-ratio: 16/9; background: var(--surface); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: var(--space-4); }
+.no-thumbnail .big-title { font-size: var(--text-lg); font-weight: var(--font-bold); line-height: 1.3; }
+.play-icon { font-size: var(--text-base); margin-top: var(--space-2); }
+.meta { padding: var(--space-2) 0; display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; }
+.badge { background: var(--surface); padding: var(--space-1) var(--space-2); border-radius: var(--radius-lg); font-size: var(--text-sm); }
+.title { font-size: var(--text-base); display: -webkit-box; line-clamp: 2; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; flex: 1; }
+.duration { font-size: var(--text-sm); color: var(--text); opacity: 0.7; }
 </style>
