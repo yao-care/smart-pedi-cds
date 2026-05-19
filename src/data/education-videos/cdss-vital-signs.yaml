@@ -1,0 +1,3 @@
+# CDSS 生理警示 trigger map（63 個 trigger）
+# trigger key 格式：cdss.<indicator>.<level>.<ageGroupCDSS>
+[]

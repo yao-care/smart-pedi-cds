@@ -1,0 +1,3 @@
+# CDSA 分流結果 trigger map（14 個 trigger）
+# trigger key 格式：cdsa.triage.<monitor|refer>.<ageGroupCDSA>
+[]

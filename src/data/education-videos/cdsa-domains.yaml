@@ -1,0 +1,3 @@
+# CDSA domain anomaly trigger map（56 - 10 inapplicable = 46 reachable）
+# trigger key 格式：cdsa.domain.<domain>.anomaly.<ageGroupCDSA>
+[]
