@@ -3,6 +3,41 @@
   import type { Patient } from '../../lib/db/schema';
   import type { RiskLevel } from '../../lib/utils/risk-levels';
   import { riskSeverity } from '../../lib/utils/risk-levels';
+  import { getOpenAlerts } from '../../lib/db/alerts';
+  import { deriveCdssTriggers } from '$lib/education/trigger-derivation';
+  import TriggerVideoList from '../education/TriggerVideoList.svelte';
+
+  // Per-card lazy-loaded trigger cache: patientId → string[]
+  const cardTriggers = $state<Record<string, string[]>>({});
+  const cardExpanded = $state<Record<string, boolean>>({});
+
+  async function loadCardTriggers(patient: Patient): Promise<void> {
+    if (cardTriggers[patient.id] !== undefined) return; // already loaded
+    try {
+      const alerts = await getOpenAlerts(patient.id);
+      if (alerts.length === 0) {
+        cardTriggers[patient.id] = [];
+        return;
+      }
+      // Use the most recent open alert's indicators + riskLevel to synthesise IndicatorResult[]
+      const latest = alerts[alerts.length - 1];
+      const syntheticIndicators = latest.indicators.map(indicator => ({
+        indicator,
+        value: 0,
+        level: latest.riskLevel,
+        range: null as [number, number] | null,
+        rationale: '',
+      }));
+      cardTriggers[patient.id] = deriveCdssTriggers(syntheticIndicators, patient.ageGroup).slice(0, 3);
+    } catch {
+      cardTriggers[patient.id] = [];
+    }
+  }
+
+  function onDetailsToggle(patient: Patient, open: boolean) {
+    cardExpanded[patient.id] = open;
+    if (open) loadCardTriggers(patient);
+  }
 
   let searchQuery = $state('');
 
@@ -71,7 +106,7 @@
     <ul class="card-list" role="list">
       {#each filteredPatients as patient (patient.id)}
         {@const level = patient.currentRiskLevel}
-        <li>
+        <li class="patient-item">
           <button
             class="patient-card"
             class:pulse-critical={level === 'critical'}
@@ -91,6 +126,23 @@
               </div>
             </div>
           </button>
+          {#if level !== 'normal'}
+            <details
+              class="hover-preview"
+              ontoggle={(e) => onDetailsToggle(patient, (e.target as HTMLDetailsElement).open)}
+            >
+              <summary>相關衛教影片</summary>
+              {#if cardTriggers[patient.id] !== undefined}
+                {#if cardTriggers[patient.id].length > 0}
+                  <TriggerVideoList triggers={cardTriggers[patient.id]} />
+                {:else}
+                  <p class="no-videos">目前無相關影片建議</p>
+                {/if}
+              {:else}
+                <p class="loading-videos">載入中…</p>
+              {/if}
+            </details>
+          {/if}
         </li>
       {/each}
     </ul>
@@ -266,5 +318,44 @@
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
     border: 0;
+  }
+
+  .patient-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .hover-preview {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    font-size: var(--text-xs);
+  }
+
+  .hover-preview summary {
+    padding: var(--space-2) var(--space-3);
+    cursor: pointer;
+    color: var(--accent);
+    font-size: var(--text-xs);
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .hover-preview summary:hover {
+    background: color-mix(in srgb, var(--accent) 5%, var(--bg));
+    border-radius: var(--radius-md);
+  }
+
+  .hover-preview > :not(summary) {
+    padding: 0 var(--space-3) var(--space-3);
+  }
+
+  .no-videos,
+  .loading-videos {
+    color: color-mix(in srgb, var(--text), var(--bg) 40%);
+    font-size: var(--text-xs);
+    padding: var(--space-2) 0;
   }
 </style>
