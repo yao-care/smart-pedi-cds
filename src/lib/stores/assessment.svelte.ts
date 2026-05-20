@@ -133,6 +133,15 @@ class AssessmentStore {
     }
   }
 
+  async setForceFullAssessment(value: boolean): Promise<void> {
+    this.forceFullAssessment = value;
+    if (this.assessment) {
+      await assessmentDao.updateAssessmentForceFull(this.assessment.id, value);
+      // sync local assessment object
+      this.assessment = { ...this.assessment, forceFullAssessment: value };
+    }
+  }
+
   async resume(assessmentId: string): Promise<void> {
     this.isLoading = true;
     this.error = null;

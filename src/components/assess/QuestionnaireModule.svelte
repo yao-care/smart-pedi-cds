@@ -164,7 +164,7 @@
   }
 
   async function handleForceFullEval() {
-    assessmentStore.forceFullAssessment = true;
+    await assessmentStore.setForceFullAssessment(true);
     await handleFinish();
   }
 </script>

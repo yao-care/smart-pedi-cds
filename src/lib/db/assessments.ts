@@ -66,3 +66,7 @@ export async function markFhirSubmitted(id: string, fhirDiagnosticReportId: stri
 export async function getIncompleteAssessments(): Promise<Assessment[]> {
   return db.assessments.where('status').anyOf(['started', 'paused', 'resumed']).reverse().sortBy('createdAt');
 }
+
+export async function updateAssessmentForceFull(id: string, value: boolean): Promise<void> {
+  await db.assessments.update(id, { forceFullAssessment: value, updatedAt: new Date() });
+}
