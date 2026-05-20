@@ -1011,6 +1011,146 @@
       ],
       "clinicallyReviewed": false,
       "source": "Denver II inspiration"
+    },
+    {
+      "id": "lc-06",
+      "domain": "language_comprehension",
+      "domainLabel": "語言理解",
+      "ageGroups": [
+        "13-24m"
+      ],
+      "text": "孩子能理解「過來」「坐下」等簡單指令嗎？",
+      "options": [
+        {
+          "value": "yes",
+          "label": "是，能正確回應",
+          "score": 2
+        },
+        {
+          "value": "sometimes",
+          "label": "有時聽得懂",
+          "score": 1
+        },
+        {
+          "value": "no",
+          "label": "還聽不懂",
+          "score": 0
+        }
+      ],
+      "clinicallyReviewed": false,
+      "source": "Denver II inspiration"
+    },
+    {
+      "id": "gm-08",
+      "domain": "gross_motor",
+      "domainLabel": "粗動作",
+      "ageGroups": [
+        "25-36m"
+      ],
+      "text": "孩子能雙腳同時跳離地面嗎？",
+      "options": [
+        {
+          "value": "yes",
+          "label": "可以跳得很穩",
+          "score": 2
+        },
+        {
+          "value": "sometimes",
+          "label": "勉強一隻腳離地",
+          "score": 1
+        },
+        {
+          "value": "no",
+          "label": "還不會",
+          "score": 0
+        }
+      ],
+      "clinicallyReviewed": false,
+      "source": "Denver II inspiration"
+    },
+    {
+      "id": "lc-07",
+      "domain": "language_comprehension",
+      "domainLabel": "語言理解",
+      "ageGroups": [
+        "25-36m"
+      ],
+      "text": "孩子能理解「大」「小」的概念嗎？（例如：「拿大顆的給我」）",
+      "options": [
+        {
+          "value": "yes",
+          "label": "是，能正確指認",
+          "score": 2
+        },
+        {
+          "value": "sometimes",
+          "label": "有時對",
+          "score": 1
+        },
+        {
+          "value": "no",
+          "label": "還無法",
+          "score": 0
+        }
+      ],
+      "clinicallyReviewed": false,
+      "source": "ASQ-3 inspiration"
+    },
+    {
+      "id": "le-06",
+      "domain": "language_expression",
+      "domainLabel": "語言表達",
+      "ageGroups": [
+        "25-36m"
+      ],
+      "text": "孩子會說兩個字以上的詞嗎？（例如：「媽媽抱」「狗狗叫」）",
+      "options": [
+        {
+          "value": "yes",
+          "label": "是，會說很多",
+          "score": 2
+        },
+        {
+          "value": "sometimes",
+          "label": "偶爾說",
+          "score": 1
+        },
+        {
+          "value": "no",
+          "label": "還只說單字",
+          "score": 0
+        }
+      ],
+      "clinicallyReviewed": false,
+      "source": "Denver II inspiration"
+    },
+    {
+      "id": "gm-09",
+      "domain": "gross_motor",
+      "domainLabel": "粗動作",
+      "ageGroups": [
+        "37-48m"
+      ],
+      "text": "孩子能用單腳站立 2 秒以上嗎？",
+      "options": [
+        {
+          "value": "yes",
+          "label": "可以穩穩站",
+          "score": 2
+        },
+        {
+          "value": "sometimes",
+          "label": "勉強一下",
+          "score": 1
+        },
+        {
+          "value": "no",
+          "label": "還不會",
+          "score": 0
+        }
+      ],
+      "clinicallyReviewed": false,
+      "source": "Denver II inspiration"
     }
   ]
 }
