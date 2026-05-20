@@ -126,3 +126,291 @@
   verificationStatus: "verified"
   score: 0.75
   notes: "Sunny Huang IBCLC（國際泌乳顧問）整理美國 CDC 4 歲兒童發展指標；2 分鐘簡短衛教，引用 CDC 權威來源，適合 37-48m 家長快速理解發展里程碑。"
+
+- videoId: "a7730hw3TZE"
+  title: "我家孩子發展遲緩嗎？評估不等於生病 把握早療黃金期｜臺安醫院心身醫學科主治醫師 陳長聖｜健康醫聊站"
+  channel: "台視新聞 TTV NEWS"
+  channelId: "UC8ROUUjHzEQm-ndb69CX8Ww"
+  duration: 1415
+  publishedAt: "2025-11-10"
+  language: "zh-Hant"
+  subtitleType: "human"
+  sourceTier: "pro-kol"
+  viewCount: 737
+  curatedAt: "2026-05-21"
+  verifiedBy: "claude-code"
+  verificationStatus: "verified"
+  score: 0.78
+  notes: "台視新聞健康醫聊站邀臺安醫院心身醫學科陳長聖主治醫師，深度（23分鐘）談發展評估與早療黃金期。含人工字幕，適合 49-60m 家長深度理解。"
+
+- videoId: "6-kYKAIwlUo"
+  title: "早期篩檢療解你的寶貝 滿5歲未滿6歲"
+  channel: "新北市政府衛生局"
+  channelId: "UCltLZ1l3dgPvs_INJf-770g"
+  duration: 173
+  publishedAt: "2014-03-05"
+  language: "zh-Hant"
+  subtitleType: "none"
+  sourceTier: "official-tw"
+  viewCount: 684
+  curatedAt: "2026-05-21"
+  verifiedBy: "claude-code"
+  verificationStatus: "verified"
+  score: 0.80
+  notes: "新北市政府衛生局官方頻道；專門為 5-6 歲（即 61-72m）製作的早期篩檢衛教，3 分鐘簡短直白。雖然影片較舊（2014）但發展指標基準變動小，內容仍適用。標為 official-tw tier。"
+
+- videoId: "8wrJmyjo4Us"
+  title: "發展遲緩兒童 6歲前是早期療育關鍵 南投新聞"
+  channel: "台灣生活新聞 Taiwan Daily Network"
+  channelId: "UCoNhCZJsackYDAJsHeW5ZTg"
+  duration: 146
+  publishedAt: "2023-04-15"
+  language: "zh-Hant"
+  subtitleType: "none"
+  sourceTier: "pro-kol"
+  viewCount: 163
+  curatedAt: "2026-05-21"
+  verifiedBy: "claude-code"
+  verificationStatus: "verified"
+  score: 0.62
+  notes: "南投新聞報導風格，2.5 分鐘簡短說明 6 歲前早療關鍵期；做為 61-72m 補充。"
+
+- videoId: "oRDPgoXP9Ik"
+  title: "兒童基礎救命術教學 第6章 嬰兒胸外按壓與人工呼吸(醫護人員版)"
+  channel: "Te-Liang Yang"
+  channelId: "UCxrCQR49r9ijSjs6o_xyLJQ"
+  duration: 737
+  publishedAt: "2023-06-03"
+  language: "zh-Hant"
+  subtitleType: "none"
+  sourceTier: "pro-kol"
+  viewCount: 183
+  curatedAt: "2026-05-21"
+  verifiedBy: "claude-code"
+  verificationStatus: "verified"
+  score: 0.70
+  notes: "12分鐘嬰兒急救 CPR 教學；對應 critical heart rate / arrest 警示。原為醫護人員版但內容對家長也有參考價值。"
+
+- videoId: "OFjKW19mY1I"
+  title: "童呼吸快.胸凹.鼻翼搧動小心! 醫:3徵兆危險｜TVBS新聞"
+  channel: "TVBS NEWS"
+  channelId: "UC5nwNW4KdC0SzrhF9BXEYOQ"
+  duration: 110
+  publishedAt: "2022-08-19"
+  language: "zh-Hant"
+  subtitleType: "none"
+  sourceTier: "pro-kol"
+  viewCount: 33477
+  curatedAt: "2026-05-21"
+  verifiedBy: "claude-code"
+  verificationStatus: "verified"
+  score: 0.75
+  notes: "TVBS 新聞 + 醫師說明，2 分鐘明確列出兒童呼吸危險 3 徵兆（呼吸快、胸凹、鼻翼搧動）；高觀看數 3.3 萬反映實用性。"
+
+- videoId: "8OT2cmJcJvs"
+  title: "EP70 小孩「呼吸喘」？到底怎麼看？"
+  channel: "怡兒大安親子診所-黃斯煒醫師"
+  channelId: "UCUmi5pmk1g5UBbtHhrXFZtQ"
+  duration: 362
+  publishedAt: "2022-09-13"
+  language: "zh-Hant"
+  subtitleType: "none"
+  sourceTier: "pro-kol"
+  viewCount: 19117
+  curatedAt: "2026-05-21"
+  verifiedBy: "claude-code"
+  verificationStatus: "verified"
+  score: 0.76
+  notes: "怡兒大安親子診所 黃斯煒醫師 6 分鐘衛教，專門講「小孩呼吸喘怎麼看」；診所兒科醫師親述，主題完美對應 respiratory_rate critical。"
+
+- videoId: "eliyHpotPkQ"
+  title: "義大醫院衛教宣導影片-暫時性新生兒呼吸急促"
+  channel: "義大醫院 (轉載)"
+  channelId: "UC9LdqsLFFKmUVPDr_8rWKrg"
+  duration: 246
+  publishedAt: "2023-07-13"
+  language: "zh-Hant"
+  subtitleType: "none"
+  sourceTier: "pro-kol"
+  viewCount: 415
+  curatedAt: "2026-05-21"
+  verifiedBy: "claude-code"
+  verificationStatus: "verified"
+  score: 0.72
+  notes: "義大醫院官方衛教宣導；4 分鐘專門講新生兒呼吸急促（暫時性 TTN）。直接對應 cdss.respiratory_rate.critical.infant 主題。"
+
+- videoId: "RGcAYoNlIkU"
+  title: "嬰兒感染RSV（呼吸道融合病毒）吃化痰藥、氣管擴張劑、拍痰都無效！讓張學友失聲的病毒，如何照顧與預防？｜黃瑽寧醫師健康講堂"
+  channel: "Talk with Dr. TN Huang"
+  channelId: "UCkha3wg7As4t9duOzre5HcQ"
+  duration: 630
+  publishedAt: "2024-12-05"
+  language: "zh-Hant"
+  subtitleType: "none"
+  sourceTier: "pro-kol"
+  viewCount: 224177
+  curatedAt: "2026-05-21"
+  verifiedBy: "claude-code"
+  verificationStatus: "verified"
+  score: 0.82
+  notes: "黃瑽寧醫師 10 分鐘衛教 RSV 病毒，呼吸道急促/感染的主因之一；高觀看數 22 萬。對應 respiratory_rate critical 多 ageGroup。"
+
+- videoId: "DN-Jrk2I94M"
+  title: "5~10歲孩童 心肺體能訓練衛教資料"
+  channel: "Chia Chi Tan"
+  channelId: "UCiBY-Cu_jWL49Ry23UgTvqg"
+  duration: 223
+  publishedAt: "2023-08-29"
+  language: "zh-Hant"
+  subtitleType: "none"
+  sourceTier: "pro-kol"
+  viewCount: 28
+  curatedAt: "2026-05-21"
+  verifiedBy: "claude-code"
+  verificationStatus: "verified"
+  score: 0.55
+  notes: "5-10 歲心肺體能衛教，4 分鐘；觀看數很低（28）但主題對應 preschool 呼吸/心肺。作為 preschool 補充影片。"
+
+- videoId: "lWnAXEAP22E"
+  title: "小兒發燒"
+  channel: "中山醫學大學附設醫院藥劑科"
+  channelId: "UCgLNyFx0BL1a5RiluY7vvKg"
+  duration: 674
+  publishedAt: "2023-08-30"
+  language: "zh-Hant"
+  subtitleType: "none"
+  sourceTier: "official-tw"
+  viewCount: 757
+  curatedAt: "2026-05-21"
+  verifiedBy: "claude-code"
+  verificationStatus: "verified"
+  score: 0.82
+  notes: "中山醫學大學附設醫院藥劑科官方衛教；11 分鐘深度講小兒發燒，醫院官方。official-tw tier。"
+
+- videoId: "3fn75zeL2IA"
+  title: "[衛教影片] 兒童發燒的處理方式"
+  channel: "振興藥教學"
+  channelId: "UC-kVFNfR11BzsC301kfxoJQ"
+  duration: 171
+  publishedAt: "2022-06-06"
+  language: "zh-Hant"
+  subtitleType: "human"
+  sourceTier: "pro-kol"
+  viewCount: 668
+  curatedAt: "2026-05-21"
+  verifiedBy: "claude-code"
+  verificationStatus: "verified"
+  score: 0.78
+  notes: "振興醫院藥師團隊衛教；3 分鐘簡短講兒童發燒處理方式，含人工字幕。"
+
+- videoId: "cGjaI1yeLYQ"
+  title: "中暑≠發燒！兒科急救必學：蔡明耿醫師教你「移脫散補」4步驟"
+  channel: "DoctorMK 蔡明耿醫師"
+  channelId: "UCimPLywGg7c1pQAdeKZhoJw"
+  duration: 577
+  publishedAt: "2026-03-12"
+  language: "zh-Hant"
+  subtitleType: "none"
+  sourceTier: "pro-kol"
+  viewCount: 17
+  curatedAt: "2026-05-21"
+  verifiedBy: "claude-code"
+  verificationStatus: "verified"
+  score: 0.70
+  notes: "蔡明耿兒科醫師親述「中暑≠發燒」與「移脫散補」4步驟急救，10 分鐘；新發布觀看數低但主題完美。"
+
+- videoId: "joyesUXbywc"
+  title: "兒童染疫高燒不退 家長如何應急？"
+  channel: "DaAi News Storage"
+  channelId: "UCD6Rspu8syp8yVZ0DHiVRmg"
+  duration: 96
+  publishedAt: "2022-05-04"
+  language: "zh-Hant"
+  subtitleType: "none"
+  sourceTier: "pro-kol"
+  viewCount: 1099
+  curatedAt: "2026-05-21"
+  verifiedBy: "claude-code"
+  verificationStatus: "verified"
+  score: 0.60
+  notes: "大愛新聞 1.5 分鐘新聞風格報導兒童高燒應急；屬 timeSensitive 內容（疫情變動快）但目前仍可參考。"
+
+- videoId: "Ua49xtJOa38"
+  title: "【舉手問醫生：寶寶睡眠問題Q&A】夜驚、調整作息、養肝時間｜黃瑽寧醫師健康講堂【寶寶系列 EP22】"
+  channel: "Talk with Dr. TN Huang"
+  channelId: "UCkha3wg7As4t9duOzre5HcQ"
+  duration: 835
+  publishedAt: "2023-02-02"
+  language: "zh-Hant"
+  subtitleType: "none"
+  sourceTier: "pro-kol"
+  viewCount: 193419
+  curatedAt: "2026-05-21"
+  verifiedBy: "claude-code"
+  verificationStatus: "verified"
+  score: 0.82
+  notes: "黃瑽寧醫師 14 分鐘專講寶寶睡眠問題（夜驚、作息調整）；主題完美對應 sleep_quality critical 多 ageGroup。高觀看 19 萬。"
+
+- videoId: "g4LYbQYDy14"
+  title: "寶寶睡不過夜？總是半夜起床哭鬧討奶喝怎麼安撫？影響寶寶睡眠的因素是什麼？｜黃瑽寧醫師健康講堂【寶寶系列 EP21】"
+  channel: "Talk with Dr. TN Huang"
+  channelId: "UCkha3wg7As4t9duOzre5HcQ"
+  duration: 652
+  publishedAt: "2023-01-26"
+  language: "zh-Hant"
+  subtitleType: "none"
+  sourceTier: "pro-kol"
+  viewCount: 448459
+  curatedAt: "2026-05-21"
+  verifiedBy: "claude-code"
+  verificationStatus: "verified"
+  score: 0.84
+  notes: "黃瑽寧醫師 11 分鐘專講寶寶睡眠不過夜、半夜哭鬧；超高觀看 44 萬反映高家長共鳴。對應 sleep_quality critical infant/toddler。"
+
+- videoId: "3D1w_XFkx3I"
+  title: "【舉手問醫生：小嬰兒常見問題特輯】 睡覺、腸絞痛、撞頭、領域感、翻身手揮｜黃瑽寧醫師健康講堂"
+  channel: "Talk with Dr. TN Huang"
+  channelId: "UCkha3wg7As4t9duOzre5HcQ"
+  duration: 891
+  publishedAt: "2024-08-08"
+  language: "zh-Hant"
+  subtitleType: "none"
+  sourceTier: "pro-kol"
+  viewCount: 81394
+  curatedAt: "2026-05-21"
+  verifiedBy: "claude-code"
+  verificationStatus: "verified"
+  score: 0.76
+  notes: "黃瑽寧醫師 15 分鐘嬰兒問題特輯，含睡眠相關問題；可用於 sleep_quality + 一般 infant 育兒。"
+
+- videoId: "MwGCCsMcegw"
+  title: "含糖飲料的秘密"
+  channel: "3H Future Lab 未來健康研究室"
+  channelId: "UCGYuBcU-0YAWsO8T-WlEWvw"
+  duration: 198
+  publishedAt: "2025-01-09"
+  language: "zh-Hant"
+  subtitleType: "none"
+  sourceTier: "pro-kol"
+  viewCount: 6307
+  curatedAt: "2026-05-21"
+  verifiedBy: "claude-code"
+  verificationStatus: "verified"
+  score: 0.68
+  notes: "3H Future Lab（未來健康研究室）健康衛教，3 分鐘講含糖飲料對健康的影響；對應 sugar_intake critical 多 ageGroup。"
+
+- videoId: "LM5jMqzrXwA"
+  title: "每3人1肥胖 糖毒侵噬兒童健康｜大愛新聞"
+  channel: "大愛新聞DaaiNews"
+  channelId: "UC4NL28kbpJjq42NM9XLN2Rw"
+  duration: 212
+  publishedAt: "2026-02-10"
+  language: "zh-Hant"
+  subtitleType: "none"
+  sourceTier: "pro-kol"
+  viewCount: 211
+  curatedAt: "2026-05-21"
+  verifiedBy: "claude-code"
+  verificationStatus: "verified"
+  score: 0.62
+  notes: "大愛新聞 3.5 分鐘專門報導兒童糖分攝取與肥胖；對應 sugar_intake critical toddler/preschool。"

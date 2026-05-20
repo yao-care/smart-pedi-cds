@@ -46,3 +46,22 @@
   videoIds:
     - YpO_Z7L6Fy8
     - e9FYZmw_Hyk
+
+- trigger: cdsa.triage.refer.49-60m
+  category: triage
+  triageCategory: refer
+  ageGroup: 49-60m
+  educationSlug: when-to-seek-help
+  videoIds:
+    - a7730hw3TZE
+    - YpO_Z7L6Fy8
+
+- trigger: cdsa.triage.refer.61-72m
+  category: triage
+  triageCategory: refer
+  ageGroup: 61-72m
+  educationSlug: when-to-seek-help
+  videoIds:
+    - 6-kYKAIwlUo
+    - MyTQbNlsAs4
+    - 8wrJmyjo4Us

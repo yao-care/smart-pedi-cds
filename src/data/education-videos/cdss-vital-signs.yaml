@@ -1,3 +1,211 @@
 # CDSS 生理警示 trigger map（63 個 trigger）
 # trigger key 格式：cdss.<indicator>.<level>.<ageGroupCDSS>
-[]
+#
+# Curate 第一輪結果（2026-05-20/21）— 僅 critical 級已 curate；warning/advisory 留後續。
+# 部分 critical trigger 候選池找不到合適衛教影片，留空（curate 報告中所有
+# candidate 主題偏離或為新聞報導）。Phase 4 operator 後續可加白名單頻道再跑。
+
+# --- heart_rate critical ---
+- trigger: cdss.heart_rate.critical.infant
+  category: vital-sign
+  indicator: heart_rate
+  level: critical
+  ageGroup: infant
+  educationSlug: when-to-seek-help
+  videoIds:
+    - oRDPgoXP9Ik
+
+- trigger: cdss.heart_rate.critical.toddler
+  category: vital-sign
+  indicator: heart_rate
+  level: critical
+  ageGroup: toddler
+  educationSlug: when-to-seek-help
+  videoIds: []
+
+- trigger: cdss.heart_rate.critical.preschool
+  category: vital-sign
+  indicator: heart_rate
+  level: critical
+  ageGroup: preschool
+  educationSlug: when-to-seek-help
+  videoIds: []
+
+# --- spo2 critical （候選全為新聞報導，無真正衛教，留空待後續）---
+- trigger: cdss.spo2.critical.infant
+  category: vital-sign
+  indicator: spo2
+  level: critical
+  ageGroup: infant
+  educationSlug: respiratory-care
+  videoIds: []
+
+- trigger: cdss.spo2.critical.toddler
+  category: vital-sign
+  indicator: spo2
+  level: critical
+  ageGroup: toddler
+  educationSlug: respiratory-care
+  videoIds: []
+
+- trigger: cdss.spo2.critical.preschool
+  category: vital-sign
+  indicator: spo2
+  level: critical
+  ageGroup: preschool
+  educationSlug: respiratory-care
+  videoIds: []
+
+# --- respiratory_rate critical ---
+- trigger: cdss.respiratory_rate.critical.infant
+  category: vital-sign
+  indicator: respiratory_rate
+  level: critical
+  ageGroup: infant
+  educationSlug: respiratory-care
+  videoIds:
+    - eliyHpotPkQ
+    - RGcAYoNlIkU
+
+- trigger: cdss.respiratory_rate.critical.toddler
+  category: vital-sign
+  indicator: respiratory_rate
+  level: critical
+  ageGroup: toddler
+  educationSlug: respiratory-care
+  videoIds:
+    - OFjKW19mY1I
+    - 8OT2cmJcJvs
+    - RGcAYoNlIkU
+
+- trigger: cdss.respiratory_rate.critical.preschool
+  category: vital-sign
+  indicator: respiratory_rate
+  level: critical
+  ageGroup: preschool
+  educationSlug: respiratory-care
+  videoIds:
+    - RGcAYoNlIkU
+    - DN-Jrk2I94M
+    - OFjKW19mY1I
+
+# --- temperature critical ---
+- trigger: cdss.temperature.critical.infant
+  category: vital-sign
+  indicator: temperature
+  level: critical
+  ageGroup: infant
+  educationSlug: when-to-seek-help
+  videoIds:
+    - lWnAXEAP22E
+    - 3fn75zeL2IA
+    - cGjaI1yeLYQ
+
+- trigger: cdss.temperature.critical.toddler
+  category: vital-sign
+  indicator: temperature
+  level: critical
+  ageGroup: toddler
+  educationSlug: when-to-seek-help
+  videoIds:
+    - lWnAXEAP22E
+    - 3fn75zeL2IA
+    - joyesUXbywc
+
+- trigger: cdss.temperature.critical.preschool
+  category: vital-sign
+  indicator: temperature
+  level: critical
+  ageGroup: preschool
+  educationSlug: when-to-seek-help
+  videoIds:
+    - lWnAXEAP22E
+    - 3fn75zeL2IA
+    - cGjaI1yeLYQ
+
+# --- sleep_quality critical ---
+- trigger: cdss.sleep_quality.critical.infant
+  category: vital-sign
+  indicator: sleep_quality
+  level: critical
+  ageGroup: infant
+  educationSlug: sleep-hygiene
+  videoIds:
+    - g4LYbQYDy14
+    - 3D1w_XFkx3I
+
+- trigger: cdss.sleep_quality.critical.toddler
+  category: vital-sign
+  indicator: sleep_quality
+  level: critical
+  ageGroup: toddler
+  educationSlug: sleep-hygiene
+  videoIds:
+    - Ua49xtJOa38
+    - g4LYbQYDy14
+    - 3D1w_XFkx3I
+
+- trigger: cdss.sleep_quality.critical.preschool
+  category: vital-sign
+  indicator: sleep_quality
+  level: critical
+  ageGroup: preschool
+  educationSlug: sleep-hygiene
+  videoIds:
+    - Ua49xtJOa38
+    - 3D1w_XFkx3I
+
+# --- activity_level critical （候選全為寵物 / 老人睡眠等不適配，留空）---
+- trigger: cdss.activity_level.critical.infant
+  category: vital-sign
+  indicator: activity_level
+  level: critical
+  ageGroup: infant
+  educationSlug: when-to-seek-help
+  videoIds: []
+
+- trigger: cdss.activity_level.critical.toddler
+  category: vital-sign
+  indicator: activity_level
+  level: critical
+  ageGroup: toddler
+  educationSlug: when-to-seek-help
+  videoIds: []
+
+- trigger: cdss.activity_level.critical.preschool
+  category: vital-sign
+  indicator: activity_level
+  level: critical
+  ageGroup: preschool
+  educationSlug: when-to-seek-help
+  videoIds: []
+
+# --- sugar_intake critical ---
+- trigger: cdss.sugar_intake.critical.infant
+  category: vital-sign
+  indicator: sugar_intake
+  level: critical
+  ageGroup: infant
+  educationSlug: diet-control
+  videoIds:
+    - MwGCCsMcegw
+
+- trigger: cdss.sugar_intake.critical.toddler
+  category: vital-sign
+  indicator: sugar_intake
+  level: critical
+  ageGroup: toddler
+  educationSlug: diet-control
+  videoIds:
+    - MwGCCsMcegw
+    - LM5jMqzrXwA
+
+- trigger: cdss.sugar_intake.critical.preschool
+  category: vital-sign
+  indicator: sugar_intake
+  level: critical
+  ageGroup: preschool
+  educationSlug: diet-control
+  videoIds:
+    - MwGCCsMcegw
+    - LM5jMqzrXwA
