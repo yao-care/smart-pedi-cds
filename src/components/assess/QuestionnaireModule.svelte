@@ -54,7 +54,8 @@
       if (!domains[q.domain]) {
         domains[q.domain] = { label: q.domainLabel, score: 0, max: 0 };
       }
-      domains[q.domain].max += Math.max(...q.options.map(o => o.score));
+      // Math.max(0, ...) 保護空 options（Math.max(...[]) === -Infinity）
+      domains[q.domain].max += Math.max(0, ...q.options.map(o => o.score));
       if (answers[q.id]) {
         domains[q.domain].score += answers[q.id].score;
       }
@@ -482,9 +483,8 @@
     margin-bottom: var(--space-6);
   }
 
-  /* a11y 例外：標示性 badge，非 primary content；對比度 ≥ 4.5:1 (warn vs bg)
-     依 spec §3.4 允許小於最小 18px 字級 */
-  /* ---- clinicallyReviewed badge ---- */
+  /* clinicallyReviewed badge — text-sm 為 20px (≥ 18px 最小字級門檻)，
+     對比度 ≥ 4.5:1 (warn oklch(0.48 0.14 65) vs bg oklch(0.985 0.006 85)，WCAG AA pass) */
   .badge-unreviewed {
     display: inline-block;
     background: var(--warn);

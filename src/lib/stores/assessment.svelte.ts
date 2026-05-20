@@ -129,12 +129,22 @@ class AssessmentStore {
   }
 
   async setForceFullAssessment(value: boolean): Promise<void> {
-    this.forceFullAssessment = value;
+    // 寫 DB 後才 mutate 記憶體狀態：失敗時不會 in-memory / IDB desync
     if (this.assessment) {
-      await assessmentDao.updateAssessmentForceFull(this.assessment.id, value);
-      // sync local assessment object
-      this.assessment = { ...this.assessment, forceFullAssessment: value };
+      const id = this.assessment.id;
+      try {
+        await assessmentDao.updateAssessmentForceFull(id, value);
+      } catch (err) {
+        console.error('[AssessmentStore] setForceFullAssessment IDB write failed', err);
+        throw err;
+      }
+      this.assessment = {
+        ...this.assessment,
+        forceFullAssessment: value,
+        updatedAt: new Date(),
+      };
     }
+    this.forceFullAssessment = value;
   }
 
   async resume(assessmentId: string): Promise<void> {
