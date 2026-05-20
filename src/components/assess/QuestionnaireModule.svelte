@@ -54,7 +54,7 @@
       if (!domains[q.domain]) {
         domains[q.domain] = { label: q.domainLabel, score: 0, max: 0 };
       }
-      domains[q.domain].max += 2; // max score per question is 2
+      domains[q.domain].max += Math.max(...q.options.map(o => o.score));
       if (answers[q.id]) {
         domains[q.domain].score += answers[q.id].score;
       }
@@ -186,7 +186,7 @@
     <!-- Question text -->
     <h2 class="question-text">
       {currentQuestion.text}
-      {#if currentQuestion?.clinicallyReviewed === false}
+      {#if currentQuestion && currentQuestion.clinicallyReviewed !== true}
         <span
           class="badge-unreviewed"
           aria-label="本題尚未經臨床顧問審查"
@@ -482,6 +482,8 @@
     margin-bottom: var(--space-6);
   }
 
+  /* a11y 例外：標示性 badge，非 primary content；對比度 ≥ 4.5:1 (warn vs bg)
+     依 spec §3.4 允許小於最小 18px 字級 */
   /* ---- clinicallyReviewed badge ---- */
   .badge-unreviewed {
     display: inline-block;

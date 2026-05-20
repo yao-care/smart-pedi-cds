@@ -64,18 +64,13 @@ class AssessmentStore {
     if (this.forceFullAssessment) return new Set();
     const scores = this.partialAnalysis.questionnaireScores ?? {};
     const max = this.partialAnalysis.questionnaireMaxScores ?? {};
+    const isFull = (d: string): boolean =>
+      (max[d] ?? 0) >= 4 && scores[d] === max[d];
+
     const next = new Set<SkippableModule>();
-    if (max.gross_motor && max.gross_motor >= 4 && scores.gross_motor === max.gross_motor) {
-      next.add('video');
-    }
-    if (max.fine_motor && max.fine_motor >= 4 && scores.fine_motor === max.fine_motor) {
-      next.add('drawing');
-    }
-    const lcFull = max.language_comprehension && max.language_comprehension >= 4 &&
-                   scores.language_comprehension === max.language_comprehension;
-    const leFull = max.language_expression && max.language_expression >= 4 &&
-                   scores.language_expression === max.language_expression;
-    if (lcFull && leFull) next.add('voice');
+    if (isFull('gross_motor')) next.add('video');
+    if (isFull('fine_motor')) next.add('drawing');
+    if (isFull('language_comprehension') && isFull('language_expression')) next.add('voice');
     return next;
   });
 
@@ -153,7 +148,7 @@ class AssessmentStore {
       this.assessment = assessment;
       this.child = child;
       this.currentStepIndex = assessment.currentStep;
-      this.forceFullAssessment = (assessment as Assessment & { forceFullAssessment?: boolean }).forceFullAssessment ?? false;
+      this.forceFullAssessment = assessment.forceFullAssessment ?? false;
       await assessmentDao.updateAssessmentStatus(assessmentId, 'resumed');
     } catch (e) {
       this.error = e instanceof Error ? e.message : 'Failed to resume assessment';
