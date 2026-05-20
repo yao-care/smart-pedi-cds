@@ -18,6 +18,8 @@
     ageGroups: string[];
     text: string;
     options: QuestionOption[];
+    clinicallyReviewed?: boolean;
+    source?: string;
   }
 
   // ---- Derived state ----
@@ -166,7 +168,15 @@
     <div class="domain-badge">{currentQuestion.domainLabel}</div>
 
     <!-- Question text -->
-    <h2 class="question-text">{currentQuestion.text}</h2>
+    <h2 class="question-text">
+      {currentQuestion.text}
+      {#if currentQuestion?.clinicallyReviewed === false}
+        <span
+          class="badge-unreviewed"
+          aria-label="本題尚未經臨床顧問審查"
+        >未審</span>
+      {/if}
+    </h2>
 
     <!-- Feedback overlay -->
     {#if lastAnswerLabel}
@@ -437,5 +447,17 @@
 
   .empty-state p {
     margin-bottom: var(--space-6);
+  }
+
+  /* ---- clinicallyReviewed badge ---- */
+  .badge-unreviewed {
+    display: inline-block;
+    background: var(--warn);
+    color: var(--bg);
+    font-size: var(--text-sm);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+    margin-left: var(--space-2);
+    vertical-align: middle;
   }
 </style>
