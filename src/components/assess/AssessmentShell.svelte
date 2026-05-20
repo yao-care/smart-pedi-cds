@@ -61,7 +61,7 @@
           {#each incompleteAssessments as a}
             <button class="resume-card" onclick={() => handleResume(a.id)}>
               <span class="resume-date">{new Date(a.startedAt).toLocaleDateString('zh-TW')}</span>
-              <span class="resume-status">步驟 {a.currentStep + 1} / {assessmentStore.effectiveSteps.length}</span>
+              <span class="resume-status">步驟 {a.currentStep + 1} / {assessmentStore.steps.length}</span>
               <span class="resume-action">繼續 →</span>
             </button>
           {/each}
