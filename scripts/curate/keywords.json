@@ -1,26 +1,234 @@
 {
+  "cdsa.triage.refer.2-6m": {
+    "primary": ["新生兒 嬰兒 發展評估 何時就醫", "0-6個月 寶寶 發展遲緩", "嬰兒 早療 早期療育"],
+    "secondary": ["infant developmental screening when to refer"],
+    "educationSlug": "when-to-seek-help",
+    "minDuration": 60,
+    "maxDuration": 1500,
+    "timeSensitive": false
+  },
+  "cdsa.triage.refer.7-12m": {
+    "primary": ["嬰兒 發展遲緩 何時就醫 衛教", "7-12個月 寶寶 發展里程碑", "嬰兒 早療 評估"],
+    "secondary": ["infant developmental delay early intervention"],
+    "educationSlug": "when-to-seek-help",
+    "minDuration": 60,
+    "maxDuration": 1500,
+    "timeSensitive": false
+  },
   "cdsa.triage.refer.13-24m": {
-    "primary": [
-      "幼兒 發展遲緩 何時就醫 黃瑽寧",
-      "幼兒 發展里程碑 異常 衛教",
-      "1歲 2歲 發展評估 早期療育"
-    ],
+    "primary": ["幼兒 發展遲緩 何時就醫 黃瑽寧", "1歲 2歲 發展評估 早期療育", "幼兒 發展里程碑 異常"],
     "secondary": ["toddler developmental delay early intervention"],
     "educationSlug": "when-to-seek-help",
     "minDuration": 60,
     "maxDuration": 1500,
     "timeSensitive": false
   },
+  "cdsa.triage.refer.25-36m": {
+    "primary": ["2歲 3歲 發展遲緩 早療", "幼兒 早期療育 黃瑽寧", "兒童 發展評估 就醫"],
+    "secondary": ["preschool developmental delay early intervention"],
+    "educationSlug": "when-to-seek-help",
+    "minDuration": 60,
+    "maxDuration": 1500,
+    "timeSensitive": false
+  },
+  "cdsa.triage.refer.37-48m": {
+    "primary": ["3歲 4歲 發展評估 早療", "學齡前 兒童 發展遲緩", "兒童 早期療育 衛教"],
+    "secondary": ["preschool age developmental delay"],
+    "educationSlug": "when-to-seek-help",
+    "minDuration": 60,
+    "maxDuration": 1500,
+    "timeSensitive": false
+  },
+  "cdsa.triage.refer.49-60m": {
+    "primary": ["4歲 5歲 發展遲緩 早療", "兒童 早期療育 黃瑽寧", "學齡前 發展評估"],
+    "secondary": ["preschool developmental screening"],
+    "educationSlug": "when-to-seek-help",
+    "minDuration": 60,
+    "maxDuration": 1500,
+    "timeSensitive": false
+  },
+  "cdsa.triage.refer.61-72m": {
+    "primary": ["5歲 6歲 發展遲緩 早療", "學齡前 兒童 發展評估", "入學前 兒童 早期療育"],
+    "secondary": ["school-age developmental delay"],
+    "educationSlug": "when-to-seek-help",
+    "minDuration": 60,
+    "maxDuration": 1500,
+    "timeSensitive": false
+  },
   "cdsa.domain.language.anomaly.13-24m": {
-    "primary": [
-      "幼兒 語言發展遲緩 黃瑽寧",
-      "1歲 2歲 不會說話 怎麼辦",
-      "幼兒 語言刺激 衛教"
-    ],
+    "primary": ["幼兒 語言發展遲緩 黃瑽寧", "1歲 2歲 不會說話 怎麼辦", "幼兒 語言刺激 衛教"],
     "secondary": [],
     "educationSlug": "language-stimulation",
     "minDuration": 60,
     "maxDuration": 1500,
     "timeSensitive": false
+  },
+  "cdss.heart_rate.critical.infant": {
+    "primary": ["嬰兒 心跳異常 急救", "新生兒 心跳過快 過慢 處置", "嬰兒 心律不整 衛教"],
+    "secondary": ["infant heart rate emergency"],
+    "educationSlug": "when-to-seek-help",
+    "minDuration": 60,
+    "maxDuration": 900,
+    "timeSensitive": false
+  },
+  "cdss.heart_rate.critical.toddler": {
+    "primary": ["幼兒 心跳異常 急救", "1歲 2歲 心律不整 就醫", "幼兒 心跳過快 衛教"],
+    "secondary": ["toddler heart rate emergency"],
+    "educationSlug": "when-to-seek-help",
+    "minDuration": 60,
+    "maxDuration": 900,
+    "timeSensitive": false
+  },
+  "cdss.heart_rate.critical.preschool": {
+    "primary": ["兒童 心跳異常 急救", "學齡前 心律不整 就醫", "兒童 心臟問題 衛教"],
+    "secondary": ["preschool heart rate emergency"],
+    "educationSlug": "when-to-seek-help",
+    "minDuration": 60,
+    "maxDuration": 900,
+    "timeSensitive": false
+  },
+  "cdss.spo2.critical.infant": {
+    "primary": ["嬰兒 嘴唇發紫 急救", "新生兒 缺氧 處置 衛教", "寶寶 血氧低 怎麼辦"],
+    "secondary": ["infant cyanosis emergency parent guide"],
+    "educationSlug": "respiratory-care",
+    "minDuration": 60,
+    "maxDuration": 900,
+    "timeSensitive": false
+  },
+  "cdss.spo2.critical.toddler": {
+    "primary": ["幼兒 嘴唇發紫 急救", "1歲 2歲 缺氧 處置", "幼兒 血氧低 衛教"],
+    "secondary": ["toddler cyanosis emergency"],
+    "educationSlug": "respiratory-care",
+    "minDuration": 60,
+    "maxDuration": 900,
+    "timeSensitive": false
+  },
+  "cdss.spo2.critical.preschool": {
+    "primary": ["兒童 嘴唇發紫 急救", "學齡前 缺氧 處置", "兒童 呼吸困難 衛教"],
+    "secondary": ["preschool cyanosis hypoxia"],
+    "educationSlug": "respiratory-care",
+    "minDuration": 60,
+    "maxDuration": 900,
+    "timeSensitive": false
+  },
+  "cdss.respiratory_rate.critical.infant": {
+    "primary": ["嬰兒 呼吸急促 處置 衛教", "新生兒 呼吸困難 就醫", "寶寶 呼吸喘 急救"],
+    "secondary": ["infant tachypnea breathing problem"],
+    "educationSlug": "respiratory-care",
+    "minDuration": 60,
+    "maxDuration": 900,
+    "timeSensitive": true
+  },
+  "cdss.respiratory_rate.critical.toddler": {
+    "primary": ["幼兒 呼吸急促 衛教", "1歲 2歲 呼吸喘 就醫", "幼兒 呼吸困難 處置"],
+    "secondary": ["toddler tachypnea breathing"],
+    "educationSlug": "respiratory-care",
+    "minDuration": 60,
+    "maxDuration": 900,
+    "timeSensitive": true
+  },
+  "cdss.respiratory_rate.critical.preschool": {
+    "primary": ["兒童 呼吸急促 衛教", "學齡前 呼吸喘 就醫", "兒童 呼吸困難 急救"],
+    "secondary": ["preschool tachypnea breathing"],
+    "educationSlug": "respiratory-care",
+    "minDuration": 60,
+    "maxDuration": 900,
+    "timeSensitive": true
+  },
+  "cdss.temperature.critical.infant": {
+    "primary": ["嬰兒 高燒 急救 衛教", "新生兒 發燒 處置", "寶寶 體溫過高 就醫"],
+    "secondary": ["infant high fever emergency"],
+    "educationSlug": "when-to-seek-help",
+    "minDuration": 60,
+    "maxDuration": 900,
+    "timeSensitive": true
+  },
+  "cdss.temperature.critical.toddler": {
+    "primary": ["幼兒 高燒 急救 衛教", "1歲 2歲 發燒 處置", "幼兒 體溫過高 就醫"],
+    "secondary": ["toddler high fever"],
+    "educationSlug": "when-to-seek-help",
+    "minDuration": 60,
+    "maxDuration": 900,
+    "timeSensitive": true
+  },
+  "cdss.temperature.critical.preschool": {
+    "primary": ["兒童 高燒 急救 衛教", "學齡前 發燒 處置", "兒童 體溫過高 就醫"],
+    "secondary": ["preschool high fever"],
+    "educationSlug": "when-to-seek-help",
+    "minDuration": 60,
+    "maxDuration": 900,
+    "timeSensitive": true
+  },
+  "cdss.sleep_quality.critical.infant": {
+    "primary": ["嬰兒 睡眠 異常 衛教", "新生兒 睡眠 障礙", "寶寶 睡眠 問題 就醫"],
+    "secondary": ["infant sleep disorder"],
+    "educationSlug": "sleep-hygiene",
+    "minDuration": 60,
+    "maxDuration": 1200,
+    "timeSensitive": false
+  },
+  "cdss.sleep_quality.critical.toddler": {
+    "primary": ["幼兒 睡眠 異常 衛教", "1歲 2歲 睡眠 障礙", "幼兒 睡眠 問題"],
+    "secondary": ["toddler sleep disorder"],
+    "educationSlug": "sleep-hygiene",
+    "minDuration": 60,
+    "maxDuration": 1200,
+    "timeSensitive": false
+  },
+  "cdss.sleep_quality.critical.preschool": {
+    "primary": ["兒童 睡眠 異常 衛教", "學齡前 睡眠 障礙", "兒童 睡眠 問題 就醫"],
+    "secondary": ["preschool sleep disorder"],
+    "educationSlug": "sleep-hygiene",
+    "minDuration": 60,
+    "maxDuration": 1200,
+    "timeSensitive": false
+  },
+  "cdss.activity_level.critical.infant": {
+    "primary": ["嬰兒 活動力 下降 嗜睡 急救", "新生兒 活動力差 就醫", "寶寶 不活潑 警訊"],
+    "secondary": ["infant lethargy warning"],
+    "educationSlug": "when-to-seek-help",
+    "minDuration": 60,
+    "maxDuration": 900,
+    "timeSensitive": false
+  },
+  "cdss.activity_level.critical.toddler": {
+    "primary": ["幼兒 活動力 下降 嗜睡", "1歲 2歲 活動力差 就醫", "幼兒 精神不佳 警訊"],
+    "secondary": ["toddler lethargy"],
+    "educationSlug": "when-to-seek-help",
+    "minDuration": 60,
+    "maxDuration": 900,
+    "timeSensitive": false
+  },
+  "cdss.activity_level.critical.preschool": {
+    "primary": ["兒童 活動力 下降 嗜睡", "學齡前 活動力差", "兒童 精神不佳 警訊"],
+    "secondary": ["preschool lethargy"],
+    "educationSlug": "when-to-seek-help",
+    "minDuration": 60,
+    "maxDuration": 900,
+    "timeSensitive": false
+  },
+  "cdss.sugar_intake.critical.infant": {
+    "primary": ["嬰兒 飲食 含糖 健康", "新生兒 飲食 衛教", "寶寶 副食品 糖分 衛教"],
+    "secondary": ["infant sugar intake guideline"],
+    "educationSlug": "diet-control",
+    "minDuration": 60,
+    "maxDuration": 1200,
+    "timeSensitive": true
+  },
+  "cdss.sugar_intake.critical.toddler": {
+    "primary": ["幼兒 含糖飲料 健康危害", "1歲 2歲 糖分攝取 衛教", "幼兒 飲食 糖 衛教"],
+    "secondary": ["toddler sugar intake"],
+    "educationSlug": "diet-control",
+    "minDuration": 60,
+    "maxDuration": 1200,
+    "timeSensitive": true
+  },
+  "cdss.sugar_intake.critical.preschool": {
+    "primary": ["兒童 含糖飲料 健康危害", "學齡前 糖分攝取 衛教", "兒童 飲食 糖 衛教"],
+    "secondary": ["preschool sugar intake"],
+    "educationSlug": "diet-control",
+    "minDuration": 60,
+    "maxDuration": 1200,
+    "timeSensitive": true
   }
 }
