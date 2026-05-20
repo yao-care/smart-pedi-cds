@@ -10,6 +10,17 @@ import type { TriageResult } from '../../engine/cdsa/triage';
 // 移除 'analyzing' 步驟——分析在各模組完成時即時執行
 const STEPS = ['profile', 'questionnaire', 'game', 'voice', 'video', 'drawing', 'result'] as const;
 export type AssessmentStep = typeof STEPS[number];
+export type SkippableModule = 'game' | 'voice' | 'video' | 'drawing';
+
+export const STEP_LABELS: Record<AssessmentStep, string> = {
+  profile: '基本資料',
+  questionnaire: '問卷',
+  game: '互動遊戲',
+  voice: '語音互動',
+  video: '影片錄製',
+  drawing: '繪圖測試',
+  result: '評估結果',
+};
 
 /** 各模組即時產出的分析結果 */
 export interface PartialAnalysis {
@@ -37,6 +48,9 @@ class AssessmentStore {
   /** 最終分流結果（進入 result 步驟時由 ResultView 計算） */
   triageResult = $state<TriageResult | null>(null);
 
+  /** 強制完整評估模式（不 skip 任何模組） */
+  forceFullAssessment = $state<boolean>(false);
+
   currentStep = $derived(STEPS[this.currentStepIndex] ?? 'profile');
   ageGroup = $derived<AgeGroupCDSA | null>(
     this.child?.birthDate ? ageGroupCDSA(this.child.birthDate) : null
@@ -45,6 +59,40 @@ class AssessmentStore {
   isLastStep = $derived(this.currentStepIndex === STEPS.length - 1);
   progress = $derived(this.currentStepIndex / (STEPS.length - 1));
   steps = STEPS;
+
+  skippedModules = $derived.by<Set<SkippableModule>>(() => {
+    if (this.forceFullAssessment) return new Set();
+    const scores = this.partialAnalysis.questionnaireScores ?? {};
+    const max = this.partialAnalysis.questionnaireMaxScores ?? {};
+    const next = new Set<SkippableModule>();
+    if (max.gross_motor && max.gross_motor >= 4 && scores.gross_motor === max.gross_motor) {
+      next.add('video');
+    }
+    if (max.fine_motor && max.fine_motor >= 4 && scores.fine_motor === max.fine_motor) {
+      next.add('drawing');
+    }
+    const lcFull = max.language_comprehension && max.language_comprehension >= 4 &&
+                   scores.language_comprehension === max.language_comprehension;
+    const leFull = max.language_expression && max.language_expression >= 4 &&
+                   scores.language_expression === max.language_expression;
+    if (lcFull && leFull) next.add('voice');
+    return next;
+  });
+
+  effectiveSteps = $derived.by<AssessmentStep[]>(() =>
+    STEPS.filter(s => !this.skippedModules.has(s as SkippableModule))
+  );
+
+  effectiveStepIndex = $derived.by<number>(() => {
+    const idx = this.effectiveSteps.indexOf(this.currentStep);
+    if (idx >= 0) return idx;
+    for (let i = this.currentStepIndex - 1; i >= 0; i--) {
+      const name = STEPS[i];
+      const j = this.effectiveSteps.indexOf(name);
+      if (j >= 0) return j;
+    }
+    return 0;
+  });
 
   /** 各模組完成時呼叫，累積分析結果 */
   addAnalysis(partial: Partial<PartialAnalysis>): void {
@@ -96,6 +144,7 @@ class AssessmentStore {
       this.assessment = assessment;
       this.child = child;
       this.currentStepIndex = assessment.currentStep;
+      this.forceFullAssessment = (assessment as Assessment & { forceFullAssessment?: boolean }).forceFullAssessment ?? false;
       await assessmentDao.updateAssessmentStatus(assessmentId, 'resumed');
     } catch (e) {
       this.error = e instanceof Error ? e.message : 'Failed to resume assessment';
@@ -105,18 +154,32 @@ class AssessmentStore {
   }
 
   async nextStep(): Promise<void> {
-    if (this.currentStepIndex >= STEPS.length - 1) return;
-    this.currentStepIndex++;
-    if (this.assessment) {
-      await assessmentDao.updateAssessmentStep(this.assessment.id, this.currentStepIndex);
+    let idx = this.currentStepIndex;
+    while (idx < STEPS.length - 1) {
+      idx++;
+      const name = STEPS[idx];
+      if (!this.skippedModules.has(name as SkippableModule)) {
+        this.currentStepIndex = idx;
+        if (this.assessment) {
+          await assessmentDao.updateAssessmentStep(this.assessment.id, idx);
+        }
+        return;
+      }
     }
   }
 
   async prevStep(): Promise<void> {
-    if (this.currentStepIndex <= 0) return;
-    this.currentStepIndex--;
-    if (this.assessment) {
-      await assessmentDao.updateAssessmentStep(this.assessment.id, this.currentStepIndex);
+    let idx = this.currentStepIndex;
+    while (idx > 0) {
+      idx--;
+      const name = STEPS[idx];
+      if (!this.skippedModules.has(name as SkippableModule)) {
+        this.currentStepIndex = idx;
+        if (this.assessment) {
+          await assessmentDao.updateAssessmentStep(this.assessment.id, idx);
+        }
+        return;
+      }
     }
   }
 
@@ -141,6 +204,7 @@ class AssessmentStore {
     this.error = null;
     this.partialAnalysis = {};
     this.triageResult = null;
+    this.forceFullAssessment = false;
   }
 }
 
