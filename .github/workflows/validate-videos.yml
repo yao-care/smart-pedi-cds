@@ -19,7 +19,7 @@ jobs:
       - run: pip install 'yt-dlp>=2026.03.17,<2027'
       - uses: pnpm/action-setup@v3
       - uses: actions/setup-node@v4
-        with: { node-version: 20, cache: 'pnpm' }
+        with: { node-version: 22, cache: 'pnpm' }
       - run: pnpm install --frozen-lockfile
       - name: Validate (batch 50, rotated by lastValidatedAt asc)
         run: pnpm curate:videos --validate-only --batch 50
