@@ -1,5 +1,23 @@
 # CDSA 分流結果 trigger map（14 個 trigger）
 # trigger key 格式：cdsa.triage.<monitor|refer>.<ageGroupCDSA>
+- trigger: cdsa.triage.refer.2-6m
+  category: triage
+  triageCategory: refer
+  ageGroup: 2-6m
+  educationSlug: when-to-seek-help
+  videoIds:
+    - FnDs6MCUtgs
+    - e9FYZmw_Hyk
+
+- trigger: cdsa.triage.refer.7-12m
+  category: triage
+  triageCategory: refer
+  ageGroup: 7-12m
+  educationSlug: when-to-seek-help
+  videoIds:
+    - MyTQbNlsAs4
+    - e9FYZmw_Hyk
+
 - trigger: cdsa.triage.refer.13-24m
   category: triage
   triageCategory: refer

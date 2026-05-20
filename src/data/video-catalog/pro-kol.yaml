@@ -78,3 +78,35 @@
   verificationStatus: "verified"
   score: 0.65
   notes: "光仁社福（早療領域 NGO）邀黃瑽寧醫師解答「何時需評估早療」；短版 2.8 分鐘直白回答家長疑問。"
+
+- videoId: "FnDs6MCUtgs"
+  title: "兒童生長與發展評估"
+  channel: "高雄長庚兒童發展暨保護中心"
+  channelId: "UC06D6kwQPSuthUFswtA1FTQ"
+  duration: 1218
+  publishedAt: "2023-10-03"
+  language: "zh-Hant"
+  subtitleType: "none"
+  sourceTier: "pro-kol"
+  viewCount: 2842
+  curatedAt: "2026-05-20"
+  verifiedBy: "claude-code"
+  verificationStatus: "verified"
+  score: 0.78
+  notes: "高雄長庚兒童發展暨保護中心官方頻道；20 分鐘完整衛教，涵蓋嬰幼兒生長與發展評估。主題完美命中嬰兒期發展評估議題。"
+
+- videoId: "MyTQbNlsAs4"
+  title: "我的孩子有「發展遲緩」嗎？了解類型跟跡象才不會錯失黃金治療時機｜優迪診療間 feat. 林昰樺·兒童職能治療師"
+  channel: "YODEE 優迪"
+  channelId: "UC8tBUJL6EWZAWOWlFpWr77Q"
+  duration: 420
+  publishedAt: "2022-12-09"
+  language: "zh-Hant"
+  subtitleType: "none"
+  sourceTier: "pro-kol"
+  viewCount: 2713
+  curatedAt: "2026-05-20"
+  verifiedBy: "claude-code"
+  verificationStatus: "verified"
+  score: 0.72
+  notes: "兒童職能治療師 林昰樺 親述發展遲緩類型與跡象；7 分鐘衛教影片，適合 7-12m 嬰兒家長理解何時需就醫。"

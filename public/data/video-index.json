@@ -9,6 +9,15 @@
       "title": "超過兩歲不說話，送幼稚園就OK？！難道有自閉傾向？幼兒語言發展大解密｜黃瑽寧x剪接師EP3",
       "videoId": "-d0DmEv8qVs"
     },
+    "FnDs6MCUtgs": {
+      "channel": "高雄長庚兒童發展暨保護中心",
+      "duration": 1218,
+      "language": "zh-Hant",
+      "score": 0.78,
+      "sourceTier": "pro-kol",
+      "title": "兒童生長與發展評估",
+      "videoId": "FnDs6MCUtgs"
+    },
     "G7COjy4hpqA": {
       "channel": "Talk with Dr. TN Huang",
       "duration": 820,
@@ -17,6 +26,15 @@
       "sourceTier": "pro-kol",
       "title": "自閉傾向的兒童並不少見！父母如何判斷、早療與陪伴？│黃瑽寧x剪接師EP14",
       "videoId": "G7COjy4hpqA"
+    },
+    "MyTQbNlsAs4": {
+      "channel": "YODEE 優迪",
+      "duration": 420,
+      "language": "zh-Hant",
+      "score": 0.72,
+      "sourceTier": "pro-kol",
+      "title": "我的孩子有「發展遲緩」嗎？了解類型跟跡象才不會錯失黃金治療時機｜優迪診療間 feat. 林昰樺·兒童職能治療師",
+      "videoId": "MyTQbNlsAs4"
     },
     "e9FYZmw_Hyk": {
       "channel": "Good way to health",
@@ -51,6 +69,8 @@
       "cdsa.domain.language.anomaly.13-24m"
     ],
     "when-to-seek-help": [
+      "cdsa.triage.refer.2-6m",
+      "cdsa.triage.refer.7-12m",
       "cdsa.triage.refer.13-24m"
     ]
   },
@@ -109,6 +129,20 @@
         "-d0DmEv8qVs",
         "e9FYZmw_Hyk",
         "ziWchb0yVA0"
+      ]
+    },
+    "cdsa.triage.refer.2-6m": {
+      "inapplicable": false,
+      "videoIds": [
+        "FnDs6MCUtgs",
+        "e9FYZmw_Hyk"
+      ]
+    },
+    "cdsa.triage.refer.7-12m": {
+      "inapplicable": false,
+      "videoIds": [
+        "MyTQbNlsAs4",
+        "e9FYZmw_Hyk"
       ]
     }
   }
