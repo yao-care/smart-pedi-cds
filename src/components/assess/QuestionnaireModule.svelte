@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { assessmentStore, type SkippableModule } from '../../lib/stores/assessment.svelte';
+  import { assessmentStore } from '../../lib/stores/assessment.svelte';
   import { recordEvent } from '../../lib/db/assessment-events';
   import questionsData from '../../data/questionnaire/questions.json';
   import expectedDomainsMap from '../../lib/data/expected-questionnaire-domains.generated.json';
@@ -248,14 +248,14 @@
         <h3>依您的作答結果，建議完成：</h3>
         <ul>
           <li>✓ 互動遊戲（量「行為」面向）</li>
-          <li class:skipped={assessmentStore.skippedModules.has('video' as SkippableModule)}>
-            {assessmentStore.skippedModules.has('video' as SkippableModule) ? '✗ 影片錄製（粗動作滿分，已跳過）' : '✓ 影片錄製（粗動作）'}
+          <li class:skipped={assessmentStore.skippedModules.has('video')}>
+            {assessmentStore.skippedModules.has('video') ? '✗ 影片錄製（粗動作滿分，已跳過）' : '✓ 影片錄製（粗動作）'}
           </li>
-          <li class:skipped={assessmentStore.skippedModules.has('drawing' as SkippableModule)}>
-            {assessmentStore.skippedModules.has('drawing' as SkippableModule) ? '✗ 繪圖（細動作滿分，已跳過）' : '✓ 繪圖（細動作）'}
+          <li class:skipped={assessmentStore.skippedModules.has('drawing')}>
+            {assessmentStore.skippedModules.has('drawing') ? '✗ 繪圖（細動作滿分，已跳過）' : '✓ 繪圖（細動作）'}
           </li>
-          <li class:skipped={assessmentStore.skippedModules.has('voice' as SkippableModule)}>
-            {assessmentStore.skippedModules.has('voice' as SkippableModule) ? '✗ 語音（語言滿分，已跳過）' : '✓ 語音（語言）'}
+          <li class:skipped={assessmentStore.skippedModules.has('voice')}>
+            {assessmentStore.skippedModules.has('voice') ? '✗ 語音（語言滿分，已跳過）' : '✓ 語音（語言）'}
           </li>
         </ul>
         <div class="actions">
