@@ -36,6 +36,15 @@
       "title": "我的孩子有「發展遲緩」嗎？了解類型跟跡象才不會錯失黃金治療時機｜優迪診療間 feat. 林昰樺·兒童職能治療師",
       "videoId": "MyTQbNlsAs4"
     },
+    "YpO_Z7L6Fy8": {
+      "channel": "Sunny Huang - IBCLC",
+      "duration": 120,
+      "language": "zh-Hant",
+      "score": 0.75,
+      "sourceTier": "pro-kol",
+      "title": "美國CDC最新版的4歲兒童發展指標及教養建議 | 科學育兒",
+      "videoId": "YpO_Z7L6Fy8"
+    },
     "e9FYZmw_Hyk": {
       "channel": "Good way to health",
       "duration": 211,
@@ -71,7 +80,9 @@
     "when-to-seek-help": [
       "cdsa.triage.refer.2-6m",
       "cdsa.triage.refer.7-12m",
-      "cdsa.triage.refer.13-24m"
+      "cdsa.triage.refer.13-24m",
+      "cdsa.triage.refer.25-36m",
+      "cdsa.triage.refer.37-48m"
     ]
   },
   "triggers": {
@@ -135,6 +146,21 @@
       "inapplicable": false,
       "videoIds": [
         "FnDs6MCUtgs",
+        "e9FYZmw_Hyk"
+      ]
+    },
+    "cdsa.triage.refer.25-36m": {
+      "inapplicable": false,
+      "videoIds": [
+        "-d0DmEv8qVs",
+        "G7COjy4hpqA",
+        "e9FYZmw_Hyk"
+      ]
+    },
+    "cdsa.triage.refer.37-48m": {
+      "inapplicable": false,
+      "videoIds": [
+        "YpO_Z7L6Fy8",
         "e9FYZmw_Hyk"
       ]
     },

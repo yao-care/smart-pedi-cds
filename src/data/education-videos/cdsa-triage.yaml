@@ -27,3 +27,22 @@
     - "-d0DmEv8qVs"
     - e9FYZmw_Hyk
     - ziWchb0yVA0
+
+- trigger: cdsa.triage.refer.25-36m
+  category: triage
+  triageCategory: refer
+  ageGroup: 25-36m
+  educationSlug: when-to-seek-help
+  videoIds:
+    - "-d0DmEv8qVs"
+    - G7COjy4hpqA
+    - e9FYZmw_Hyk
+
+- trigger: cdsa.triage.refer.37-48m
+  category: triage
+  triageCategory: refer
+  ageGroup: 37-48m
+  educationSlug: when-to-seek-help
+  videoIds:
+    - YpO_Z7L6Fy8
+    - e9FYZmw_Hyk
