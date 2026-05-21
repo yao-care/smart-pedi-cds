@@ -56,6 +56,20 @@ describe('education markdown — single-source invariant', () => {
     }
     expect(offenders, 'format=video markdown 改為 article + 影片寫進 yaml catalog').toEqual([]);
   });
+
+  it('沒有任何 .md 含 format: "questionnaire"（CDSA 評估問卷在 /, 不在衛教頁）', async () => {
+    const dir = 'src/data/education';
+    const files = await collectMarkdown(dir);
+    const offenders: string[] = [];
+    for (const f of files) {
+      const content = await fs.readFile(f, 'utf8');
+      const frontmatter = extractFrontmatter(content);
+      if (/^format:\s*["']?questionnaire["']?\s*$/m.test(frontmatter)) {
+        offenders.push(f);
+      }
+    }
+    expect(offenders, 'questionnaire = 評估流程的 questions.json；衛教頁不放問卷').toEqual([]);
+  });
 });
 
 async function collectMarkdown(dir: string): Promise<string[]> {

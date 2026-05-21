@@ -25,7 +25,6 @@ const ageGroupLabels: Record<string, string> = {
 const formatLabels: Record<string, string> = {
   article: '文章',
   video: '影片',
-  questionnaire: '問卷',
 };
 
 const sourceTierLabels: Record<string, string> = {
@@ -174,9 +173,7 @@ function extractYouTubeId(url: string | undefined): string | null {
         data-format={entry.data.format}
       >
         <a href={`/education/${entry.id}/`} class="card-link">
-          <span class={`format-icon format-${entry.data.format}`} aria-hidden="true">
-            {entry.data.format === 'questionnaire' ? '📝' : '📄'}
-          </span>
+          <span class={`format-icon format-${entry.data.format}`} aria-hidden="true">📄</span>
           <div class="card-meta">
             <span class="card-badge">{categoryLabels[entry.data.category] ?? entry.data.category}</span>
             <span class="card-format">{formatLabels[entry.data.format] ?? entry.data.format}</span>

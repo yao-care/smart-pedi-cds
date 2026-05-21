@@ -1,7 +1,6 @@
 ---
 import Education from '../../layouts/Education.astro';
 import { getCollection, render } from 'astro:content';
-import ContentViewer from '../../components/education/ContentViewer.svelte';
 import InteractionTracker from '../../components/education/InteractionTracker.svelte';
 import EducationRelatedVideos from '../../components/education/EducationRelatedVideos.svelte';
 
@@ -61,16 +60,6 @@ const breadcrumbs = [
 
   <!-- Interaction tracking (background, no visible UI) -->
   <InteractionTracker client:idle contentSlug={entry.id} />
-
-  <!-- Content viewer for questionnaire format（video 已不存在於 markdown）-->
-  {entry.data.format === 'questionnaire' && (
-    <ContentViewer
-      client:idle
-      slug={entry.id}
-      title={entry.data.title}
-      format={entry.data.format}
-    />
-  )}
 
   <!-- Related education videos derived from trigger mappings -->
   <EducationRelatedVideos client:visible slug={entry.id} />

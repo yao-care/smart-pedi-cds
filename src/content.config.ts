@@ -93,7 +93,7 @@ const educationCollection = defineCollection({
     ageGroup: z.array(
       z.enum(['infant', 'toddler', 'preschool']),
     ),
-    format: z.enum(['article', 'questionnaire']),  // 移除 'video' — 走 video catalog yaml
+    format: z.literal('article'),  // 移除 'video' / 'questionnaire' — 影片走 yaml catalog；CDSA 評估問卷在 /（不在衛教頁）
     // videoUrl / triggerIndicators 刻意不在 schema 中；任何 markdown 帶這兩個欄位
     // 將被 Astro Content Layer 視為 strict-mode 警告並被忽略。Build 不會 fail
     // 但 schema test 會抓到（見 tests/data/education-no-video-fields.test.ts）。

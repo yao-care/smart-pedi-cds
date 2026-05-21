@@ -10,7 +10,7 @@
    */
 
   type CategoryFilter = 'all' | 'diet' | 'sleep' | 'respiratory' | 'exercise' | 'milestone' | 'general';
-  type FormatFilter = 'all' | 'article' | 'video' | 'questionnaire';
+  type FormatFilter = 'all' | 'article' | 'video';
 
   const CATEGORY_LABELS: Record<CategoryFilter, string> = {
     all: '全部',
@@ -26,7 +26,6 @@
     all: '全部',
     article: '📄 文章',
     video: '🎬 影片',
-    questionnaire: '📝 問卷',
   };
 
   let category = $state<CategoryFilter>('all');
