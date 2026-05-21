@@ -3,9 +3,7 @@ title: "秋葵最怕兩件事：切了才燙、濕濕下鍋"
 summary: "秋葵的正確烹調方式，保留最多營養給孩子"
 category: "diet"
 ageGroup: ["toddler", "preschool"]
-format: "video"
-videoUrl: "https://www.youtube.com/shorts/6Dwo2ReTw-w"
-triggerIndicators: ["sugar_intake"]
+format: "article"
 publishedAt: 2026-05-01
 locale: "zh-TW"
 ---

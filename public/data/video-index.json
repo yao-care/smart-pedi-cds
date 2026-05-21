@@ -36,6 +36,15 @@
       "title": "早期篩檢療解你的寶貝 滿5歲未滿6歲",
       "videoId": "6-kYKAIwlUo"
     },
+    "6Dwo2ReTw-w": {
+      "channel": "樂地滋",
+      "duration": 32,
+      "language": "zh-Hant",
+      "score": 0.6,
+      "sourceTier": "pro-kol",
+      "title": "【營養食踐家】秋葵最怕兩件事：切了才燙、濕濕下鍋",
+      "videoId": "6Dwo2ReTw-w"
+    },
     "8OT2cmJcJvs": {
       "channel": "怡兒大安親子診所-黃斯煒醫師",
       "duration": 362,
@@ -126,6 +135,15 @@
       "title": "嬰兒感染RSV（呼吸道融合病毒）吃化痰藥、氣管擴張劑、拍痰都無效！讓張學友失聲的病毒，如何照顧與預防？｜黃瑽寧醫師健康講堂",
       "videoId": "RGcAYoNlIkU"
     },
+    "U4Dc9LDkjx8": {
+      "channel": "樂地滋",
+      "duration": 34,
+      "language": "zh-Hant",
+      "score": 0.6,
+      "sourceTier": "pro-kol",
+      "title": "【營養食踐家】這一步決定蒜的效果：拍碎後，先等一下",
+      "videoId": "U4Dc9LDkjx8"
+    },
     "Ua49xtJOa38": {
       "channel": "Talk with Dr. TN Huang",
       "duration": 835,
@@ -161,6 +179,15 @@
       "sourceTier": "pro-kol",
       "title": "中暑≠發燒！兒科急救必學：蔡明耿醫師教你「移脫散補」4步驟",
       "videoId": "cGjaI1yeLYQ"
+    },
+    "dl7FpR-WqoE": {
+      "channel": "樂地滋",
+      "duration": 24,
+      "language": "zh-Hant",
+      "score": 0.6,
+      "sourceTier": "pro-kol",
+      "title": "【營養食踐家】補維生素 D 不怕中暑：把香菇拿去曬 15 分鐘",
+      "videoId": "dl7FpR-WqoE"
     },
     "e9FYZmw_Hyk": {
       "channel": "Good way to health",
@@ -207,6 +234,15 @@
       "title": "小兒發燒",
       "videoId": "lWnAXEAP22E"
     },
+    "lbrDCmhQcbg": {
+      "channel": "樂地滋",
+      "duration": 38,
+      "language": "zh-Hant",
+      "score": 0.58,
+      "sourceTier": "pro-kol",
+      "title": "【營養食踐家】長高三要件：蛋白質、鈣＋日光、鋅",
+      "videoId": "lbrDCmhQcbg"
+    },
     "oRDPgoXP9Ik": {
       "channel": "Te-Liang Yang",
       "duration": 737,
@@ -215,6 +251,15 @@
       "sourceTier": "pro-kol",
       "title": "兒童基礎救命術教學 第6章 嬰兒胸外按壓與人工呼吸(醫護人員版)",
       "videoId": "oRDPgoXP9Ik"
+    },
+    "xvI_F3cPEvI": {
+      "channel": "樂地滋",
+      "duration": 31,
+      "language": "zh-Hant",
+      "score": 0.6,
+      "sourceTier": "pro-kol",
+      "title": "【營養食踐家】補鈣不用複雜：學會看豆腐的『凝固劑』",
+      "videoId": "xvI_F3cPEvI"
     },
     "yzRi9GlSptM": {
       "channel": "Talk with Dr. TN Huang",
@@ -455,21 +500,33 @@
     "cdss.sugar_intake.critical.infant": {
       "inapplicable": false,
       "videoIds": [
-        "MwGCCsMcegw"
+        "MwGCCsMcegw",
+        "lbrDCmhQcbg",
+        "dl7FpR-WqoE"
       ]
     },
     "cdss.sugar_intake.critical.preschool": {
       "inapplicable": false,
       "videoIds": [
         "MwGCCsMcegw",
-        "LM5jMqzrXwA"
+        "LM5jMqzrXwA",
+        "xvI_F3cPEvI",
+        "U4Dc9LDkjx8",
+        "lbrDCmhQcbg",
+        "6Dwo2ReTw-w",
+        "dl7FpR-WqoE"
       ]
     },
     "cdss.sugar_intake.critical.toddler": {
       "inapplicable": false,
       "videoIds": [
         "MwGCCsMcegw",
-        "LM5jMqzrXwA"
+        "LM5jMqzrXwA",
+        "xvI_F3cPEvI",
+        "U4Dc9LDkjx8",
+        "lbrDCmhQcbg",
+        "6Dwo2ReTw-w",
+        "dl7FpR-WqoE"
       ]
     },
     "cdss.temperature.critical.infant": {

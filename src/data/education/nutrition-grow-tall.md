@@ -3,9 +3,7 @@ title: "長高三要件：蛋白質、鈣＋日光、鉀"
 summary: "營養食踐家教你掌握兒童長高的三大營養關鍵"
 category: "diet"
 ageGroup: ["infant", "toddler", "preschool"]
-format: "video"
-videoUrl: "https://www.youtube.com/shorts/lbrDCmhQcbg"
-triggerIndicators: ["sugar_intake"]
+format: "article"
 publishedAt: 2026-05-01
 locale: "zh-TW"
 ---

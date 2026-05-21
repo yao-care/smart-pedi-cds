@@ -3,9 +3,7 @@ title: "這一步決定蒜的效果：拍碎後，先等一下"
 summary: "大蒜拍碎後靜置讓蒜素充分生成，提升營養價值"
 category: "diet"
 ageGroup: ["toddler", "preschool"]
-format: "video"
-videoUrl: "https://www.youtube.com/shorts/U4Dc9LDkjx8"
-triggerIndicators: ["sugar_intake"]
+format: "article"
 publishedAt: 2026-05-01
 locale: "zh-TW"
 ---

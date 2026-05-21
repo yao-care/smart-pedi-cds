@@ -189,6 +189,8 @@
   educationSlug: diet-control
   videoIds:
     - MwGCCsMcegw
+    - lbrDCmhQcbg
+    - dl7FpR-WqoE
 
 - trigger: cdss.sugar_intake.critical.toddler
   category: vital-sign
@@ -199,6 +201,11 @@
   videoIds:
     - MwGCCsMcegw
     - LM5jMqzrXwA
+    - xvI_F3cPEvI
+    - U4Dc9LDkjx8
+    - lbrDCmhQcbg
+    - 6Dwo2ReTw-w
+    - dl7FpR-WqoE
 
 - trigger: cdss.sugar_intake.critical.preschool
   category: vital-sign
@@ -209,3 +216,8 @@
   videoIds:
     - MwGCCsMcegw
     - LM5jMqzrXwA
+    - xvI_F3cPEvI
+    - U4Dc9LDkjx8
+    - lbrDCmhQcbg
+    - 6Dwo2ReTw-w
+    - dl7FpR-WqoE

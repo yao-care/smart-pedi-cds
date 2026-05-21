@@ -414,3 +414,84 @@
   verificationStatus: "verified"
   score: 0.62
   notes: "大愛新聞 3.5 分鐘專門報導兒童糖分攝取與肥胖；對應 sugar_intake critical toddler/preschool。"
+
+# 樂地滋（營養食踐家）系列 — 從 markdown 移進來統一管理
+- videoId: "xvI_F3cPEvI"
+  title: "【營養食踐家】補鈣不用複雜：學會看豆腐的『凝固劑』"
+  channel: "樂地滋"
+  channelId: "UCXC4BIH5dk8osqj6zoeZ5iw"
+  duration: 31
+  publishedAt: "2025-10-10"
+  language: "zh-Hant"
+  subtitleType: "none"
+  sourceTier: "pro-kol"
+  viewCount: 4182
+  curatedAt: "2026-05-21"
+  verifiedBy: "claude-code"
+  verificationStatus: "verified"
+  score: 0.60
+  notes: "樂地滋頻道營養食踐家系列短片，30 秒衛教教家長從豆腐凝固劑判斷鈣含量。從既有 markdown nutrition-calcium-tofu.md 移入；對應 sugar_intake critical（均衡飲食）系列。"
+
+- videoId: "U4Dc9LDkjx8"
+  title: "【營養食踐家】這一步決定蒜的效果：拍碎後，先等一下"
+  channel: "樂地滋"
+  channelId: "UCXC4BIH5dk8osqj6zoeZ5iw"
+  duration: 34
+  publishedAt: "2025-10-11"
+  language: "zh-Hant"
+  subtitleType: "none"
+  sourceTier: "pro-kol"
+  viewCount: 5464
+  curatedAt: "2026-05-21"
+  verifiedBy: "claude-code"
+  verificationStatus: "verified"
+  score: 0.60
+  notes: "樂地滋頻道，30 秒講大蒜拍碎後靜置讓蒜素生成。"
+
+- videoId: "lbrDCmhQcbg"
+  title: "【營養食踐家】長高三要件：蛋白質、鈣＋日光、鋅"
+  channel: "樂地滋"
+  channelId: "UCXC4BIH5dk8osqj6zoeZ5iw"
+  duration: 38
+  publishedAt: "2025-11-04"
+  language: "zh-Hant"
+  subtitleType: "none"
+  sourceTier: "pro-kol"
+  viewCount: 419
+  curatedAt: "2026-05-21"
+  verifiedBy: "claude-code"
+  verificationStatus: "verified"
+  score: 0.58
+  notes: "樂地滋頻道，38 秒講兒童長高三大營養關鍵。"
+
+- videoId: "6Dwo2ReTw-w"
+  title: "【營養食踐家】秋葵最怕兩件事：切了才燙、濕濕下鍋"
+  channel: "樂地滋"
+  channelId: "UCXC4BIH5dk8osqj6zoeZ5iw"
+  duration: 32
+  publishedAt: "2025-10-21"
+  language: "zh-Hant"
+  subtitleType: "none"
+  sourceTier: "pro-kol"
+  viewCount: 5745
+  curatedAt: "2026-05-21"
+  verifiedBy: "claude-code"
+  verificationStatus: "verified"
+  score: 0.60
+  notes: "樂地滋頻道，32 秒講秋葵正確烹調保留營養。"
+
+- videoId: "dl7FpR-WqoE"
+  title: "【營養食踐家】補維生素 D 不怕中暑：把香菇拿去曬 15 分鐘"
+  channel: "樂地滋"
+  channelId: "UCXC4BIH5dk8osqj6zoeZ5iw"
+  duration: 24
+  publishedAt: "2025-10-10"
+  language: "zh-Hant"
+  subtitleType: "none"
+  sourceTier: "pro-kol"
+  viewCount: 5768
+  curatedAt: "2026-05-21"
+  verifiedBy: "claude-code"
+  verificationStatus: "verified"
+  score: 0.60
+  notes: "樂地滋頻道，24 秒講曬香菇提升維生素 D。"

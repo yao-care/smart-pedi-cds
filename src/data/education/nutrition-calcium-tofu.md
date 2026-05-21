@@ -3,9 +3,7 @@ title: "補鈣不用複雜：學會看豆腐的凝固劑"
 summary: "教你從豆腐的凝固劑判斷鈣含量，輕鬆幫孩子補鈣"
 category: "diet"
 ageGroup: ["toddler", "preschool"]
-format: "video"
-videoUrl: "https://www.youtube.com/shorts/xvI_F3cPEvI"
-triggerIndicators: ["sugar_intake"]
+format: "article"
 publishedAt: 2026-05-01
 locale: "zh-TW"
 ---

@@ -3,9 +3,7 @@ title: "補維生素 D 不怕中暑：把香菇拿去曬 15 分鐘"
 summary: "用曬香菇的簡單方法，大幅提升維生素 D 含量"
 category: "diet"
 ageGroup: ["infant", "toddler", "preschool"]
-format: "video"
-videoUrl: "https://www.youtube.com/shorts/dl7FpR-WqoE"
-triggerIndicators: ["sugar_intake"]
+format: "article"
 publishedAt: 2026-05-01
 locale: "zh-TW"
 ---
