@@ -4,7 +4,6 @@ summary: "各年齡層兒童適當運動量與活動類型的專業建議"
 category: "exercise"
 ageGroup: ["infant", "toddler", "preschool"]
 format: "article"
-triggerIndicators: ["activity_level"]
 publishedAt: 2026-02-10
 locale: "zh-TW"
 ---

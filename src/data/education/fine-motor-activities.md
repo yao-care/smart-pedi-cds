@@ -4,7 +4,6 @@ summary: "促進手部精細動作與手眼協調的居家活動"
 category: "exercise"
 ageGroup: ["infant", "toddler", "preschool"]
 format: "article"
-triggerIndicators: ["activity_level"]
 publishedAt: 2026-03-01
 locale: "zh-TW"
 ---

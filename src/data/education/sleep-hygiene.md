@@ -4,7 +4,6 @@ summary: "建立良好睡眠習慣，改善兒童睡眠品質的實用建議"
 category: "sleep"
 ageGroup: ["infant", "toddler", "preschool"]
 format: "article"
-triggerIndicators: ["sleep_quality"]
 publishedAt: 2026-01-20
 locale: "zh-TW"
 ---

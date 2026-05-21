@@ -4,7 +4,6 @@ summary: "認識兒童呼吸系統特性與血氧監測的日常照護指引"
 category: "respiratory"
 ageGroup: ["infant", "toddler", "preschool"]
 format: "article"
-triggerIndicators: ["spo2", "respiratory_rate"]
 publishedAt: 2026-02-01
 locale: "zh-TW"
 ---

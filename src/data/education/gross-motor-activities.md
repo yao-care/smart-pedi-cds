@@ -4,7 +4,6 @@ summary: "適合各年齡層的粗動作訓練遊戲與居家活動建議"
 category: "exercise"
 ageGroup: ["infant", "toddler", "preschool"]
 format: "article"
-triggerIndicators: ["activity_level"]
 publishedAt: 2026-03-01
 locale: "zh-TW"
 ---

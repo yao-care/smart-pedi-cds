@@ -4,7 +4,6 @@ summary: "幫助家長了解兒童合理飲食結構與醣類攝取建議"
 category: "diet"
 ageGroup: ["infant", "toddler", "preschool"]
 format: "article"
-triggerIndicators: ["sugar_intake"]
 publishedAt: 2026-01-15
 locale: "zh-TW"
 ---

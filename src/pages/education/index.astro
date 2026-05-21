@@ -166,60 +166,31 @@ function extractYouTubeId(url: string | undefined): string | null {
   <EducationFilter client:load />
 
   <div class="education-grid">
-    {allEducation.map((entry) => {
-      const ytId = entry.data.format === 'video' ? extractYouTubeId(entry.data.videoUrl) : null;
-      const href = ytId ? `https://www.youtube.com/watch?v=${ytId}` : `/education/${entry.id}/`;
-      const linkProps = ytId
-        ? { target: '_blank', rel: 'noopener noreferrer' }
-        : {};
-      return (
-        <article
-          class:list={["education-card", ytId && "video-card"]}
-          data-edu-card
-          data-category={entry.data.category}
-          data-format={entry.data.format}
-        >
-          <a href={href} class="card-link" {...linkProps}>
-            {ytId ? (
-              <img
-                src={`https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`}
-                alt={entry.data.title}
-                loading="lazy"
-                referrerpolicy="no-referrer"
-                class="card-thumb"
-              />
-            ) : (
-              <span class={`format-icon format-${entry.data.format}`} aria-hidden="true">
-                {entry.data.format === 'video' ? '🎬' : entry.data.format === 'questionnaire' ? '📝' : '📄'}
-              </span>
-            )}
-            <div class={ytId ? 'card-body' : ''}>
-              <div class="card-meta">
-                <span class="card-badge">{categoryLabels[entry.data.category] ?? entry.data.category}</span>
-                <span class="card-format">{formatLabels[entry.data.format] ?? entry.data.format}</span>
-              </div>
-              <h2 class="card-title">{entry.data.title}</h2>
-              <p class="card-summary">{entry.data.summary}</p>
-              <div class="card-tags">
-                {entry.data.ageGroup.map((age: string) => (
-                  <span class="tag">{ageGroupLabels[age] ?? age}</span>
-                ))}
-              </div>
-              {ytId && entry.data.triggerIndicators && entry.data.triggerIndicators.length > 0 && (
-                <div class="card-triggers">
-                  <p class="triggers-title">觸發情境（{entry.data.triggerIndicators.length}）</p>
-                  <ul>
-                    {entry.data.triggerIndicators.map((ind: string) => (
-                      <li>{INDICATOR_ZH[ind] ?? ind}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </a>
-        </article>
-      );
-    })}
+    {allEducation.map((entry) => (
+      <article
+        class="education-card"
+        data-edu-card
+        data-category={entry.data.category}
+        data-format={entry.data.format}
+      >
+        <a href={`/education/${entry.id}/`} class="card-link">
+          <span class={`format-icon format-${entry.data.format}`} aria-hidden="true">
+            {entry.data.format === 'questionnaire' ? '📝' : '📄'}
+          </span>
+          <div class="card-meta">
+            <span class="card-badge">{categoryLabels[entry.data.category] ?? entry.data.category}</span>
+            <span class="card-format">{formatLabels[entry.data.format] ?? entry.data.format}</span>
+          </div>
+          <h2 class="card-title">{entry.data.title}</h2>
+          <p class="card-summary">{entry.data.summary}</p>
+          <div class="card-tags">
+            {entry.data.ageGroup.map((age: string) => (
+              <span class="tag">{ageGroupLabels[age] ?? age}</span>
+            ))}
+          </div>
+        </a>
+      </article>
+    ))}
 
     {videoCards.map((v) => (
       <article

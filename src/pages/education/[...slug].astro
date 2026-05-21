@@ -62,14 +62,13 @@ const breadcrumbs = [
   <!-- Interaction tracking (background, no visible UI) -->
   <InteractionTracker client:idle contentSlug={entry.id} />
 
-  <!-- Content viewer for video/questionnaire formats -->
-  {entry.data.format !== 'article' && (
+  <!-- Content viewer for questionnaire format（video 已不存在於 markdown）-->
+  {entry.data.format === 'questionnaire' && (
     <ContentViewer
       client:idle
       slug={entry.id}
       title={entry.data.title}
       format={entry.data.format}
-      videoUrl={entry.data.videoUrl}
     />
   )}
 
