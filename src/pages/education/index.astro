@@ -202,18 +202,20 @@ function extractYouTubeId(url: string | undefined): string | null {
           rel="noopener noreferrer"
           class="card-link"
         >
-          <img
-            src={`https://i.ytimg.com/vi/${v.videoId}/hqdefault.jpg`}
-            alt={v.title}
-            loading="lazy"
-            referrerpolicy="no-referrer"
-            class="card-thumb"
-          />
+          <div class="thumb-wrap">
+            <img
+              src={`https://i.ytimg.com/vi/${v.videoId}/hqdefault.jpg`}
+              alt={v.title}
+              loading="lazy"
+              referrerpolicy="no-referrer"
+              class="card-thumb"
+            />
+            <span class="thumb-duration">{fmtDuration(v.duration)}</span>
+          </div>
           <div class="card-body">
             <div class="card-meta">
               <span class="card-badge">{sourceTierLabels[v.sourceTier] ?? v.sourceTier}</span>
               <span class="card-format">影片</span>
-              <span class="card-duration">{fmtDuration(v.duration)}</span>
             </div>
             <h2 class="card-title">{v.title}</h2>
             <p class="card-summary">{v.channel}</p>
@@ -340,21 +342,30 @@ function extractYouTubeId(url: string | undefined): string | null {
   .video-card .card-link {
     padding: 0;
   }
+  .thumb-wrap {
+    position: relative;
+  }
   .card-thumb {
     width: 100%;
     aspect-ratio: 16 / 9;
     object-fit: cover;
     display: block;
   }
+  /* 時長浮在縮圖右下角（仿 YouTube），避免混在 meta row 內造成換行不對齊 */
+  .thumb-duration {
+    position: absolute;
+    right: var(--space-2);
+    bottom: var(--space-2);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+    background-color: color-mix(in srgb, var(--text) 80%, transparent);
+    color: var(--bg);
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+    line-height: 1;
+  }
   .card-body {
     padding: var(--space-6);
-  }
-  .card-duration {
-    display: inline-block;
-    padding: var(--space-1) var(--space-3);
-    font-size: var(--text-xs);
-    color: color-mix(in srgb, var(--text), var(--bg) 30%);
-    margin-left: auto;
   }
 
   /* 觸發情境清單 — 直接顯示供醫師審核 */
