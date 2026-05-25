@@ -22,14 +22,14 @@ test.describe('Parent assessment flow', () => {
   });
 
   test('home page renders with the assessment shell', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/assess');
     await expect(page).toHaveTitle(/兒童發展智慧評估/);
     // Step indicator with 7 steps is the canonical sign the shell loaded
     await expect(page.getByRole('heading', { name: '兒童基本資料' })).toBeVisible({ timeout: 10000 });
   });
 
   test('child profile form → submit → questionnaire appears', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/assess');
 
     // Wait for the form to hydrate (client:load island)
     await expect(page.getByRole('heading', { name: '兒童基本資料' })).toBeVisible({ timeout: 10000 });
@@ -56,7 +56,7 @@ test.describe('Parent assessment flow', () => {
   test('can answer all questions and reach the questionnaire summary', async ({ page }) => {
     test.setTimeout(60_000); // allow for 520ms × ~4 feedback delays + waits
 
-    await page.goto('/');
+    await page.goto('/assess');
     await expect(page.getByRole('heading', { name: '兒童基本資料' })).toBeVisible({ timeout: 10000 });
 
     // Fill profile (4-month-old → 2-6m age group, 4 questions)
@@ -87,5 +87,15 @@ test.describe('Parent assessment flow', () => {
 
     // Each domain row should show score / max ratio
     await expect(page.getByText(/\d+\/\d+/).first()).toBeVisible();
+  });
+
+  test('landing page links through to the assessment', async ({ page }) => {
+    await page.goto('/');
+    // 落地頁不應直接顯示評估表單
+    await expect(page.getByRole('heading', { name: '兒童基本資料' })).toHaveCount(0);
+    // 點主 CTA 進入評估
+    await page.getByRole('link', { name: '開始評估' }).first().click();
+    await expect(page).toHaveURL(/\/assess/);
+    await expect(page.getByRole('heading', { name: '兒童基本資料' })).toBeVisible({ timeout: 10000 });
   });
 });
