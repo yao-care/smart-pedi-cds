@@ -38,13 +38,11 @@
 
 ### 2. 查詢 Installation ID
 
-在已建立的 GitHub App 已安裝的清單中，運行：
-```bash
-curl -H "Authorization: Bearer <JWT>" \
-  https://api.github.com/app/installations
-```
+最簡單的方式是透過 GitHub UI：
 
-或直接進 GitHub App 設定頁面查看安裝位置，記下 Installation ID。
+> 前往 GitHub → Settings → Developer settings → GitHub Apps → yao-care-app → Install App → 點擊已安裝的組織/repo → URL 中即有 Installation ID
+> 
+> 例如：`https://github.com/settings/installations/12345678` 中的 `12345678` 就是 Installation ID
 
 ### 3. 設置密鑰
 
@@ -57,7 +55,13 @@ wrangler secret put GITHUB_APP_ID
 
 # 設置 GitHub App 私鑰（需先 base64 編碼）
 # 先在本機編碼 .pem 文件：
+
+# macOS (複製到剪貼板)：
 base64 -i /path/to/private-key.pem | tr -d '\n' | pbcopy
+
+# Linux / WSL (輸出到終端，手動複製)：
+base64 -w 0 /path/to/private-key.pem
+
 # 然後執行：
 wrangler secret put GITHUB_APP_PRIVATE_KEY
 # 粘貼編碼後的內容，按 Enter 確認
@@ -110,10 +114,12 @@ curl -X POST https://education-contribution.<account>.workers.dev/education-cont
     "type": "youtube",
     "domain": "language",
     "ageGroup": "13-24m",
-    "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    "url": "https://www.youtube.com/watch?v=TEST_VIDEO_ID",
     "title": "測試影片"
   }'
 ```
+
+> **注意**: 此指令會建立一個真實的 GitHub Issue，測試完畢後請手動關閉它。
 
 預期成功回應（HTTP 201）：
 ```json
