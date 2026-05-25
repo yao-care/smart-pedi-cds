@@ -34,6 +34,9 @@ function isActive(href: string): boolean {
             </a>
           </li>
         ))}
+        <li>
+          <a href="/assess" class="nav-link nav-cta">開始評估</a>
+        </li>
       </ul>
     </nav>
   </div>
@@ -157,6 +160,17 @@ function isActive(href: string): boolean {
     color: var(--accent);
     font-weight: var(--font-medium);
     background-color: color-mix(in srgb, var(--bg), var(--text) 5%);
+  }
+
+  .nav-cta {
+    color: var(--bg);
+    background-color: var(--accent);
+    font-weight: var(--font-bold);
+  }
+
+  .nav-cta:hover {
+    color: var(--bg);
+    background-color: color-mix(in srgb, var(--accent), #000 12%);
   }
 
   /* ---------- Responsive: mobile hamburger ---------- */
