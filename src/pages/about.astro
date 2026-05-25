@@ -1,5 +1,6 @@
 ---
 import App from '../layouts/App.astro';
+import { siteFaqs, faqJsonLd } from '../data/site-faqs';
 
 const features = [
   { title: '家長自評 (CDSA)', description: '家長可透過引導式問卷評估孩子健康狀況，取得即時衛教建議' },
@@ -10,33 +11,14 @@ const features = [
   { title: '完全離線運算', description: '所有邏輯在瀏覽器端執行，保護病患隱私' },
 ];
 
-const faqs = [
-  {
-    question: '這個系統需要安裝什麼軟體嗎？',
-    answer: '不需要。Smart Pedi 是一個純瀏覽器端應用程式，只需要現代瀏覽器（Chrome、Firefox、Safari、Edge）即可使用。所有運算邏輯在瀏覽器執行，無需安裝額外軟體或維護後端伺服器。',
-  },
-  {
-    question: '如何連接醫院的 FHIR Server？',
-    answer: '系統支援兩種連線模式：Standalone Launch 與 EHR Launch。Standalone 模式下，您可以在醫師工作台的設定中輸入 FHIR Server 位址進行連線；家長評估流程亦可選擇性連線。EHR Launch 模式下，醫院 EHR 系統會自動透過 SMART on FHIR 協議啟動本系統並傳入病患資料。',
-  },
-  {
-    question: '病患資料會被傳送到外部伺服器嗎？',
-    answer: '不會。本系統採用「隱私優先」設計，所有資料僅在您的瀏覽器與醫院 FHIR Server 之間流動。我們不收集、不儲存、不轉傳任何病患資料。系統本身為靜態網頁，部署後不需要任何後端伺服器。',
-  },
+const introHighlights = [
+  '雙角色：家長自評 + 醫護工作台',
+  '隱私優先：資料不離開瀏覽器',
+  '開源免費，免登入',
+  'SMART on FHIR 標準',
 ];
 
-const faqJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: faqs.map((faq) => ({
-    '@type': 'Question',
-    name: faq.question,
-    acceptedAnswer: {
-      '@type': 'Answer',
-      text: faq.answer,
-    },
-  })),
-};
+const techStack = ['Astro 5', 'Svelte 5', 'Web Worker', 'GitHub Pages', '零後端'];
 ---
 
 <App title="關於" description="Smart Pedi 兒科健康評估與臨床決策輔助系統使用說明">
@@ -44,14 +26,22 @@ const faqJsonLd = {
 
   <h1>關於 Smart Pedi 兒科健康輔助系統</h1>
 
-  <section class="about-section" aria-label="系統介紹">
-    <h2>系統介紹</h2>
-    <p>
-      Smart Pedi 是一套開源的兒科健康輔助系統，提供雙角色服務：
-      家長可透過 CDSA（臨床決策輔助應用）進行孩子健康自評並取得衛教建議；
-      醫護人員可透過 CDSS（臨床決策輔助系統）工作台即時監測指標、接收預警。
-      系統以 SMART on FHIR 標準運行於瀏覽器端，確保隱私與互通性。
-    </p>
+  <section class="about-section about-twocol" aria-label="系統介紹">
+    <div class="twocol-main">
+      <h2>系統介紹</h2>
+      <p>
+        Smart Pedi 是一套開源的兒科健康輔助系統，提供雙角色服務：
+        家長可透過 CDSA（臨床決策輔助應用）進行孩子健康自評並取得衛教建議；
+        醫護人員可透過 CDSS（臨床決策輔助系統）工作台即時監測指標、接收預警。
+        系統以 SMART on FHIR 標準運行於瀏覽器端，確保隱私與互通性。
+      </p>
+    </div>
+    <aside class="twocol-aside" aria-label="重點摘要">
+      <h3>重點摘要</h3>
+      <ul>
+        {introHighlights.map((h) => <li>{h}</li>)}
+      </ul>
+    </aside>
   </section>
 
   <section class="about-section" aria-label="功能概覽">
@@ -66,14 +56,22 @@ const faqJsonLd = {
     </div>
   </section>
 
-  <section class="about-section" aria-label="技術架構">
-    <h2>技術架構簡述</h2>
-    <p>
-      本系統採用 Astro 5 靜態網站生成框架，搭配 Svelte 5 做為互動元件的島嶼架構。
-      前端以 SMART on FHIR 標準與醫院 FHIR Server 通訊，所有臨床決策邏輯
-      （規則引擎、趨勢分析、風險評估）皆在瀏覽器端以 Web Worker 執行，
-      確保效能與隱私兼顧。靜態資產部署於 GitHub Pages，無需後端伺服器。
-    </p>
+  <section class="about-section about-twocol" aria-label="技術架構">
+    <div class="twocol-main">
+      <h2>技術架構簡述</h2>
+      <p>
+        本系統採用 Astro 5 靜態網站生成框架，搭配 Svelte 5 做為互動元件的島嶼架構。
+        前端以 SMART on FHIR 標準與醫院 FHIR Server 通訊，所有臨床決策邏輯
+        （規則引擎、趨勢分析、風險評估）皆在瀏覽器端以 Web Worker 執行，
+        確保效能與隱私兼顧。靜態資產部署於 GitHub Pages，無需後端伺服器。
+      </p>
+    </div>
+    <aside class="twocol-aside" aria-label="技術棧">
+      <h3>技術棧</h3>
+      <ul class="tech-badges">
+        {techStack.map((t) => <li>{t}</li>)}
+      </ul>
+    </aside>
   </section>
 
   <section class="about-section" aria-label="使用方式">
@@ -101,13 +99,17 @@ const faqJsonLd = {
   <section class="about-section" aria-label="常見問題">
     <h2>常見問題</h2>
     <div class="faq-list">
-      {faqs.map((faq) => (
+      {siteFaqs.map((faq) => (
         <details class="faq-item">
           <summary class="faq-question">{faq.question}</summary>
           <p class="faq-answer">{faq.answer}</p>
         </details>
       ))}
     </div>
+  </section>
+
+  <section class="about-cta" aria-label="開始評估">
+    <a href="/assess" class="cta-primary">開始評估</a>
   </section>
 </App>
 
@@ -133,6 +135,94 @@ const faqJsonLd = {
     line-height: var(--lh-base);
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
     max-width: 72ch;
+  }
+
+  /* ---------- 兩欄版面 ---------- */
+  .about-twocol {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 18rem);
+    gap: var(--space-6);
+    align-items: start;
+  }
+
+  .twocol-aside {
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+  }
+
+  .twocol-aside h3 {
+    font-size: var(--text-base);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--space-3);
+    color: var(--text);
+  }
+
+  .twocol-aside ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .twocol-aside li {
+    font-size: var(--text-sm);
+    line-height: var(--lh-sm);
+    color: color-mix(in srgb, var(--text), var(--bg) 25%);
+  }
+
+  .twocol-aside li::before {
+    content: '✓ ';
+    color: var(--accent);
+  }
+
+  .twocol-aside .tech-badges {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .tech-badges li {
+    background-color: color-mix(in srgb, var(--bg), var(--text) 6%);
+    border-radius: var(--radius-sm);
+    padding: var(--space-1) var(--space-3);
+  }
+
+  .tech-badges li::before {
+    content: none;
+  }
+
+  @media (max-width: 767px) {
+    .about-twocol {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ---------- 底部 CTA ---------- */
+  .about-cta {
+    text-align: center;
+    padding: var(--space-6) 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .about-cta .cta-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: var(--space-3) var(--space-6);
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
+    color: var(--bg);
+    background-color: var(--accent);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+  }
+
+  .about-cta .cta-primary:hover {
+    background-color: color-mix(in srgb, var(--accent), #000 12%);
   }
 
   /* ---------- Feature list ---------- */
