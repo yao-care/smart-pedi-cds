@@ -322,19 +322,110 @@
       "inapplicable": true,
       "videoIds": []
     },
+    "cdsa.domain.cognition.anomaly.13-24m": {
+      "educationSlug": "cognitive-play",
+      "inapplicable": false,
+      "videoIds": []
+    },
     "cdsa.domain.cognition.anomaly.2-6m": {
       "inapplicable": true,
+      "videoIds": []
+    },
+    "cdsa.domain.cognition.anomaly.25-36m": {
+      "educationSlug": "cognitive-play",
+      "inapplicable": false,
+      "videoIds": []
+    },
+    "cdsa.domain.cognition.anomaly.37-48m": {
+      "educationSlug": "cognitive-play",
+      "inapplicable": false,
+      "videoIds": []
+    },
+    "cdsa.domain.cognition.anomaly.49-60m": {
+      "educationSlug": "cognitive-play",
+      "inapplicable": false,
+      "videoIds": []
+    },
+    "cdsa.domain.cognition.anomaly.61-72m": {
+      "educationSlug": "cognitive-play",
+      "inapplicable": false,
       "videoIds": []
     },
     "cdsa.domain.cognition.anomaly.7-12m": {
       "inapplicable": true,
       "videoIds": []
     },
+    "cdsa.domain.fine_motor.anomaly.13-24m": {
+      "educationSlug": "fine-motor-activities",
+      "inapplicable": false,
+      "videoIds": []
+    },
     "cdsa.domain.fine_motor.anomaly.2-6m": {
       "inapplicable": true,
       "videoIds": []
     },
+    "cdsa.domain.fine_motor.anomaly.25-36m": {
+      "educationSlug": "fine-motor-activities",
+      "inapplicable": false,
+      "videoIds": []
+    },
+    "cdsa.domain.fine_motor.anomaly.37-48m": {
+      "educationSlug": "fine-motor-activities",
+      "inapplicable": false,
+      "videoIds": []
+    },
+    "cdsa.domain.fine_motor.anomaly.49-60m": {
+      "educationSlug": "fine-motor-activities",
+      "inapplicable": false,
+      "videoIds": []
+    },
+    "cdsa.domain.fine_motor.anomaly.61-72m": {
+      "educationSlug": "fine-motor-activities",
+      "inapplicable": false,
+      "videoIds": []
+    },
+    "cdsa.domain.fine_motor.anomaly.7-12m": {
+      "educationSlug": "fine-motor-activities",
+      "inapplicable": false,
+      "videoIds": []
+    },
+    "cdsa.domain.gross_motor.anomaly.13-24m": {
+      "educationSlug": "gross-motor-activities",
+      "inapplicable": false,
+      "videoIds": []
+    },
+    "cdsa.domain.gross_motor.anomaly.2-6m": {
+      "educationSlug": "gross-motor-activities",
+      "inapplicable": false,
+      "videoIds": []
+    },
+    "cdsa.domain.gross_motor.anomaly.25-36m": {
+      "educationSlug": "gross-motor-activities",
+      "inapplicable": false,
+      "videoIds": []
+    },
+    "cdsa.domain.gross_motor.anomaly.37-48m": {
+      "educationSlug": "gross-motor-activities",
+      "inapplicable": false,
+      "videoIds": []
+    },
+    "cdsa.domain.gross_motor.anomaly.49-60m": {
+      "educationSlug": "gross-motor-activities",
+      "inapplicable": false,
+      "videoIds": []
+    },
+    "cdsa.domain.gross_motor.anomaly.61-72m": {
+      "educationSlug": "gross-motor-activities",
+      "inapplicable": false,
+      "videoIds": []
+    },
+    "cdsa.domain.gross_motor.anomaly.7-12m": {
+      "educationSlug": "gross-motor-activities",
+      "inapplicable": false,
+      "videoIds": []
+    },
     "cdsa.domain.language.anomaly.13-24m": {
+      "educationSlug": "language-stimulation",
       "inapplicable": false,
       "videoIds": [
         "yzRi9GlSptM",
@@ -358,11 +449,42 @@
       "inapplicable": true,
       "videoIds": []
     },
+    "cdsa.domain.social_emotional.anomaly.13-24m": {
+      "educationSlug": "social-emotional-guide",
+      "inapplicable": false,
+      "videoIds": []
+    },
     "cdsa.domain.social_emotional.anomaly.2-6m": {
       "inapplicable": true,
       "videoIds": []
     },
+    "cdsa.domain.social_emotional.anomaly.25-36m": {
+      "educationSlug": "social-emotional-guide",
+      "inapplicable": false,
+      "videoIds": []
+    },
+    "cdsa.domain.social_emotional.anomaly.37-48m": {
+      "educationSlug": "social-emotional-guide",
+      "inapplicable": false,
+      "videoIds": []
+    },
+    "cdsa.domain.social_emotional.anomaly.49-60m": {
+      "educationSlug": "social-emotional-guide",
+      "inapplicable": false,
+      "videoIds": []
+    },
+    "cdsa.domain.social_emotional.anomaly.61-72m": {
+      "educationSlug": "social-emotional-guide",
+      "inapplicable": false,
+      "videoIds": []
+    },
+    "cdsa.domain.social_emotional.anomaly.7-12m": {
+      "educationSlug": "social-emotional-guide",
+      "inapplicable": false,
+      "videoIds": []
+    },
     "cdsa.triage.refer.13-24m": {
+      "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": [
         "-d0DmEv8qVs",
@@ -371,6 +493,7 @@
       ]
     },
     "cdsa.triage.refer.2-6m": {
+      "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": [
         "FnDs6MCUtgs",
@@ -378,6 +501,7 @@
       ]
     },
     "cdsa.triage.refer.25-36m": {
+      "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": [
         "-d0DmEv8qVs",
@@ -386,6 +510,7 @@
       ]
     },
     "cdsa.triage.refer.37-48m": {
+      "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": [
         "YpO_Z7L6Fy8",
@@ -393,6 +518,7 @@
       ]
     },
     "cdsa.triage.refer.49-60m": {
+      "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": [
         "a7730hw3TZE",
@@ -400,6 +526,7 @@
       ]
     },
     "cdsa.triage.refer.61-72m": {
+      "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": [
         "6-kYKAIwlUo",
@@ -408,6 +535,7 @@
       ]
     },
     "cdsa.triage.refer.7-12m": {
+      "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": [
         "MyTQbNlsAs4",
@@ -415,32 +543,39 @@
       ]
     },
     "cdss.activity_level.critical.infant": {
+      "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": []
     },
     "cdss.activity_level.critical.preschool": {
+      "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": []
     },
     "cdss.activity_level.critical.toddler": {
+      "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": []
     },
     "cdss.heart_rate.critical.infant": {
+      "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": [
         "oRDPgoXP9Ik"
       ]
     },
     "cdss.heart_rate.critical.preschool": {
+      "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": []
     },
     "cdss.heart_rate.critical.toddler": {
+      "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": []
     },
     "cdss.respiratory_rate.critical.infant": {
+      "educationSlug": "respiratory-care",
       "inapplicable": false,
       "videoIds": [
         "eliyHpotPkQ",
@@ -448,6 +583,7 @@
       ]
     },
     "cdss.respiratory_rate.critical.preschool": {
+      "educationSlug": "respiratory-care",
       "inapplicable": false,
       "videoIds": [
         "RGcAYoNlIkU",
@@ -456,6 +592,7 @@
       ]
     },
     "cdss.respiratory_rate.critical.toddler": {
+      "educationSlug": "respiratory-care",
       "inapplicable": false,
       "videoIds": [
         "OFjKW19mY1I",
@@ -464,6 +601,7 @@
       ]
     },
     "cdss.sleep_quality.critical.infant": {
+      "educationSlug": "sleep-hygiene",
       "inapplicable": false,
       "videoIds": [
         "g4LYbQYDy14",
@@ -471,6 +609,7 @@
       ]
     },
     "cdss.sleep_quality.critical.preschool": {
+      "educationSlug": "sleep-hygiene",
       "inapplicable": false,
       "videoIds": [
         "Ua49xtJOa38",
@@ -478,6 +617,7 @@
       ]
     },
     "cdss.sleep_quality.critical.toddler": {
+      "educationSlug": "sleep-hygiene",
       "inapplicable": false,
       "videoIds": [
         "Ua49xtJOa38",
@@ -486,18 +626,22 @@
       ]
     },
     "cdss.spo2.critical.infant": {
+      "educationSlug": "respiratory-care",
       "inapplicable": false,
       "videoIds": []
     },
     "cdss.spo2.critical.preschool": {
+      "educationSlug": "respiratory-care",
       "inapplicable": false,
       "videoIds": []
     },
     "cdss.spo2.critical.toddler": {
+      "educationSlug": "respiratory-care",
       "inapplicable": false,
       "videoIds": []
     },
     "cdss.sugar_intake.critical.infant": {
+      "educationSlug": "diet-control",
       "inapplicable": false,
       "videoIds": [
         "MwGCCsMcegw",
@@ -506,6 +650,7 @@
       ]
     },
     "cdss.sugar_intake.critical.preschool": {
+      "educationSlug": "diet-control",
       "inapplicable": false,
       "videoIds": [
         "MwGCCsMcegw",
@@ -518,6 +663,7 @@
       ]
     },
     "cdss.sugar_intake.critical.toddler": {
+      "educationSlug": "diet-control",
       "inapplicable": false,
       "videoIds": [
         "MwGCCsMcegw",
@@ -530,6 +676,7 @@
       ]
     },
     "cdss.temperature.critical.infant": {
+      "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": [
         "lWnAXEAP22E",
@@ -538,6 +685,7 @@
       ]
     },
     "cdss.temperature.critical.preschool": {
+      "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": [
         "lWnAXEAP22E",
@@ -546,6 +694,7 @@
       ]
     },
     "cdss.temperature.critical.toddler": {
+      "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": [
         "lWnAXEAP22E",

@@ -96,6 +96,7 @@ export const runtimeIndexSchema = z.object({
   triggers: z.record(z.string(), z.object({
     videoIds: z.array(z.string()),
     inapplicable: z.boolean(),
+    educationSlug: z.string().optional(),
   })),
   educationSlugToTriggers: z.record(z.string(), z.array(z.string())),
 });

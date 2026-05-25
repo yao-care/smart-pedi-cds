@@ -17,10 +17,9 @@ export type MatrixCellData = {
 
 export type MatrixData = Record<MatrixKey, MatrixCellData>;
 
-type TriggerMap   = Record<string, { videoIds: string[]; inapplicable: boolean }>;
-type SlugToTriggers = Record<string, string[]>;
+type TriggerMap = Record<string, { videoIds: string[]; inapplicable: boolean; educationSlug?: string }>;
 
-export function buildMatrixData(triggers: TriggerMap, slugToTriggers: SlugToTriggers): MatrixData {
+export function buildMatrixData(triggers: TriggerMap): MatrixData {
   const data: Record<string, MatrixCellData> = {};
 
   // Initialise all cells as applicable (empty → contributable).
@@ -33,25 +32,17 @@ export function buildMatrixData(triggers: TriggerMap, slugToTriggers: SlugToTrig
     }
   }
 
-  // Populate from cdsa.domain.* triggers only
+  // Populate from cdsa.domain.* triggers only. Articles (educationSlug) and videos
+  // are independent — a cell may have an article, a video, both, or neither.
   for (const [trigger, entry] of Object.entries(triggers)) {
     const parts = trigger.split('.');
     if (parts[0] !== 'cdsa' || parts[1] !== 'domain' || parts[3] !== 'anomaly') continue;
     const cell = data[`${parts[2]}:${parts[4]}`];
     if (!cell) continue;
     cell.inapplicable = entry.inapplicable;
-    if (!entry.inapplicable) cell.videoIds = [...entry.videoIds];
-  }
-
-  // Attach article slugs via cdsa.domain.* triggers only
-  for (const [slug, triggerList] of Object.entries(slugToTriggers)) {
-    for (const trigger of triggerList) {
-      const parts = trigger.split('.');
-      if (parts[0] !== 'cdsa' || parts[1] !== 'domain' || parts[3] !== 'anomaly') continue;
-      const cell = data[`${parts[2]}:${parts[4]}`];
-      if (cell && !cell.inapplicable && !cell.articleSlugs.includes(slug)) {
-        cell.articleSlugs.push(slug);
-      }
+    if (!entry.inapplicable) {
+      cell.videoIds = [...entry.videoIds];
+      if (entry.educationSlug) cell.articleSlugs = [entry.educationSlug];
     }
   }
 

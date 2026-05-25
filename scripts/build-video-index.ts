@@ -123,6 +123,9 @@ export async function buildVideoIndex(opts: BuildOptions = {}): Promise<void> {
           ? []
           : t.videoIds.filter(id => verifiedCatalog[id] != null),
         inapplicable: t.inapplicable === true,
+        // Article placement is independent of videos (matrix shows 📄 and 🎬 separately);
+        // surface educationSlug for applicable cells regardless of verified-video count.
+        ...(t.educationSlug && !t.inapplicable ? { educationSlug: t.educationSlug } : {}),
       }]),
     ),
     educationSlugToTriggers,

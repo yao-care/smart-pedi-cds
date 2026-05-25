@@ -20,8 +20,7 @@ const catalog = new Map<string, CatalogEntry>(
 );
 
 const matrixData = buildMatrixData(
-  videoIndex.triggers as Record<string, { videoIds: string[]; inapplicable: boolean }>,
-  videoIndex.educationSlugToTriggers as Record<string, string[]>,
+  videoIndex.triggers as Record<string, { videoIds: string[]; inapplicable: boolean; educationSlug?: string }>,
 );
 
 const DOMAIN_ZH: Record<string, string> = {
