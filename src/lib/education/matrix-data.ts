@@ -23,10 +23,13 @@ type SlugToTriggers = Record<string, string[]>;
 export function buildMatrixData(triggers: TriggerMap, slugToTriggers: SlugToTriggers): MatrixData {
   const data: Record<string, MatrixCellData> = {};
 
-  // Initialise all cells as inapplicable
+  // Initialise all cells as applicable (empty → contributable).
+  // Source of truth for inapplicability is scripts/curate/inapplicable-matrix.json,
+  // whose 10 inapplicable combos are emitted as explicit cdsa.domain triggers with
+  // inapplicable:true; only those flip a cell back to inapplicable below.
   for (const domain of CDSA_DOMAINS) {
     for (const age of AGE_GROUPS_CDSA) {
-      data[`${domain}:${age}`] = { inapplicable: true, articleSlugs: [], videoIds: [] };
+      data[`${domain}:${age}`] = { inapplicable: false, articleSlugs: [], videoIds: [] };
     }
   }
 

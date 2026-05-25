@@ -55,4 +55,25 @@ describe('buildMatrixData', () => {
     expect(data['gross_motor:13-24m'].videoIds).toEqual([]);
     expect(data['gross_motor:13-24m'].articleSlugs).toEqual([]);
   });
+
+  it('treats cells with no trigger entry as applicable (contributable)', () => {
+    // Regression: cells absent from the trigger map must default to applicable,
+    // not inapplicable — only the explicit 10 inapplicable combos show "—".
+    const data = buildMatrixData(triggers, slugToTriggers);
+    expect(data['cognition:61-72m'].inapplicable).toBe(false);
+    expect(data['cognition:61-72m'].videoIds).toEqual([]);
+    expect(data['cognition:61-72m'].articleSlugs).toEqual([]);
+  });
+
+  it('marks only explicitly-flagged combos as inapplicable', () => {
+    const data = buildMatrixData(triggers, slugToTriggers);
+    let inapplicableCount = 0;
+    for (const domain of CDSA_DOMAINS) {
+      for (const age of AGE_GROUPS_CDSA) {
+        if (data[`${domain}:${age}`].inapplicable) inapplicableCount++;
+      }
+    }
+    // test fixture has exactly one inapplicable trigger (language:2-6m)
+    expect(inapplicableCount).toBe(1);
+  });
 });
