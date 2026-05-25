@@ -84,7 +84,7 @@
     </details>
     <details>
       <summary>本機示範資料怎麼產生？</summary>
-      <p>用 <a href="/">首頁的家長端評估流程</a> 跑一遍，完成後該筆紀錄會自動寫入這台裝置的 IndexedDB，未登入 FHIR 時的「評估」tab 就會列出來。</p>
+      <p>用 <a href="/assess/">家長端評估流程</a> 跑一遍，完成後該筆紀錄會自動寫入這台裝置的 IndexedDB，未登入 FHIR 時的「評估」tab 就會列出來。</p>
     </details>
   </section>
 </article>

@@ -22,14 +22,14 @@ test.describe('Parent assessment flow', () => {
   });
 
   test('home page renders with the assessment shell', async ({ page }) => {
-    await page.goto('/assess');
+    await page.goto('/assess/');
     await expect(page).toHaveTitle(/兒童發展智慧評估/);
     // Step indicator with 7 steps is the canonical sign the shell loaded
     await expect(page.getByRole('heading', { name: '兒童基本資料' })).toBeVisible({ timeout: 10000 });
   });
 
   test('child profile form → submit → questionnaire appears', async ({ page }) => {
-    await page.goto('/assess');
+    await page.goto('/assess/');
 
     // Wait for the form to hydrate (client:load island)
     await expect(page.getByRole('heading', { name: '兒童基本資料' })).toBeVisible({ timeout: 10000 });
@@ -56,7 +56,7 @@ test.describe('Parent assessment flow', () => {
   test('can answer all questions and reach the questionnaire summary', async ({ page }) => {
     test.setTimeout(60_000); // allow for 520ms × ~4 feedback delays + waits
 
-    await page.goto('/assess');
+    await page.goto('/assess/');
     await expect(page.getByRole('heading', { name: '兒童基本資料' })).toBeVisible({ timeout: 10000 });
 
     // Fill profile (4-month-old → 2-6m age group, 4 questions)

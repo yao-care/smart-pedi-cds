@@ -180,7 +180,7 @@
     {/if}
 
     <a href="/history/" class="btn-history">查看評估紀錄</a>
-    <a href="/" class="btn-home">開始新評估</a>
+    <a href="/assess/" class="btn-home">開始新評估</a>
   </div>
 </div>
 {/if}

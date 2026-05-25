@@ -288,7 +288,7 @@
       <div class="empty-icon">🌱</div>
       <h2>還沒有評估紀錄</h2>
       <p>完成第一次評估後，紀錄會在這裡保留。</p>
-      <a href="/" class="btn-start">開始評估</a>
+      <a href="/assess/" class="btn-start">開始評估</a>
     </div>
   {:else}
     <section class="stats-row" aria-label="評估統計">
