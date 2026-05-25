@@ -31,3 +31,35 @@ describe('questionnaire coverage per ageGroup × applicable domain', () => {
     }
   });
 });
+
+describe('clinical review record integrity', () => {
+  const questions = (questionsData.questions as Question[]);
+
+  it('has no duplicate question IDs', () => {
+    const ids = questions.map((q) => q.id);
+    const dupes = ids.filter((id, i) => ids.indexOf(id) !== i);
+    expect(dupes).toEqual([]);
+  });
+
+  it('every question is clinically reviewed', () => {
+    for (const q of questions) {
+      expect(q.clinicallyReviewed).toBe(true);
+    }
+  });
+
+  interface ClinicalReviewMeta {
+    reviewed: boolean;
+    reviewedAt: string;
+    scope: string;
+    reviewer: string;
+    basis: string;
+  }
+
+  it('records a top-level clinical review metadata block', () => {
+    const meta = (questionsData as { clinicalReview?: ClinicalReviewMeta }).clinicalReview;
+    expect(meta).toBeDefined();
+    expect(meta?.reviewed).toBe(true);
+    expect(meta?.reviewedAt).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(meta?.reviewer.length).toBeGreaterThan(0);
+  });
+});
