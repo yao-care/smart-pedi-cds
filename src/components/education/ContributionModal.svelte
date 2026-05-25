@@ -51,13 +51,27 @@
     return () => document.removeEventListener('open-contribution', onOpen);
   });
 
+  $effect(() => {
+    if (!open) return;
+    function onKeydown(e: KeyboardEvent) {
+      if (e.code === 'Escape') close();
+    }
+    document.addEventListener('keydown', onKeydown);
+    return () => document.removeEventListener('keydown', onKeydown);
+  });
+
   function close() { open = false; }
+
+  function onTypeChange() {
+    url = ''; title = ''; summary = ''; content = '';
+  }
 
   async function handleSubmit(e: Event) {
     e.preventDefault();
     submitting = true; errorMsg = null;
     try {
-      const workerUrl = import.meta.env.PUBLIC_CONTRIBUTION_WORKER_URL as string;
+      const workerUrl = import.meta.env.PUBLIC_CONTRIBUTION_WORKER_URL as string | undefined;
+      if (!workerUrl) throw new Error('Worker URL 未設定，請聯絡管理員');
       const res = await fetch(workerUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -96,9 +110,9 @@
       <form onsubmit={handleSubmit} class="contribution-form">
         <fieldset>
           <legend>資源類型</legend>
-          <label><input type="radio" bind:group={type} value="youtube" /> YouTube 影片</label>
-          <label><input type="radio" bind:group={type} value="article" /> Markdown 文章</label>
-          <label><input type="radio" bind:group={type} value="external-link" /> 外部連結</label>
+          <label><input type="radio" bind:group={type} value="youtube" onchange={onTypeChange} /> YouTube 影片</label>
+          <label><input type="radio" bind:group={type} value="article" onchange={onTypeChange} /> Markdown 文章</label>
+          <label><input type="radio" bind:group={type} value="external-link" onchange={onTypeChange} /> 外部連結</label>
         </fieldset>
 
         {#if type === 'youtube'}
@@ -199,7 +213,7 @@
   }
   fieldset { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: var(--space-3); margin-bottom: var(--space-4); }
   legend { font-size: var(--text-sm); font-weight: var(--font-medium); padding: 0 var(--space-2); }
-  fieldset label { display: inline-flex; align-items: center; gap: var(--space-2); margin-right: var(--space-4); }
+  fieldset label { display: inline-flex; align-items: center; gap: var(--space-2); margin-right: var(--space-4); min-height: 44px; padding: var(--space-1) 0; }
   .field { display: flex; flex-direction: column; gap: var(--space-2); margin-bottom: var(--space-4); }
   .field span { font-size: var(--text-sm); font-weight: var(--font-medium); }
   .field input, .field textarea {
