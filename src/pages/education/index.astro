@@ -223,7 +223,7 @@ function cellVideos(cell: MatrixCellData): VideoInfo[] {
     background: color-mix(in srgb, var(--bg), var(--text) 2%);
   }
 
-  .cell { min-width: 80px; }
+  .cell { min-width: var(--space-11); }
 
   .cell-na {
     color: color-mix(in srgb, var(--text), var(--bg) 60%);
@@ -306,7 +306,7 @@ function cellVideos(cell: MatrixCellData): VideoInfo[] {
     color: inherit;
   }
   .video-thumb {
-    width: 80px;
+    width: var(--space-11);
     aspect-ratio: 16/9;
     object-fit: cover;
     border-radius: var(--radius-sm);
