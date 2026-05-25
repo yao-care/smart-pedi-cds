@@ -1,36 +1,305 @@
 ---
-import Base from '../layouts/Base.astro';
-import Header from '../components/blocks/Header.astro';
-import AssessmentShell from '../components/assess/AssessmentShell.svelte';
-import { getCollection } from 'astro:content';
+import App from '../layouts/App.astro';
+import { siteFaqs, faqJsonLd } from '../data/site-faqs';
 
-const cardEntries = await getCollection('cards');
-const approvedCards = cardEntries
-  .filter((e) => e.data.reviewStatus === 'approved')
-  .map((e) => ({ id: e.id, ...e.data }));
+const steps = [
+  { n: '1', title: '填寫基本資料', desc: '輸入孩子的出生日期與性別，約 30 秒。' },
+  { n: '2', title: '引導式評估', desc: '依年齡顯示發展題目，照孩子實際情況點選即可。' },
+  { n: '3', title: '即時建議', desc: '當下得到風險分級、衛教建議與是否需就醫的分流參考。' },
+];
+
+const gains = [
+  { title: '發展風險分級', desc: '六大發展面向（粗動作、精細動作、語言理解、語言表達、認知、社會情緒）的分級結果。' },
+  { title: '對應衛教建議', desc: '依結果推播相關衛教內容與居家可做的互動。' },
+  { title: '就醫分流參考', desc: '提供「是否建議進一步評估」的參考方向，幫助你決定下一步。' },
+];
+
+const trust = [
+  { title: '隱私優先', desc: '所有運算在你的瀏覽器內完成，資料不離開裝置、不收集、不轉傳。' },
+  { title: '可離線使用', desc: '純靜態網頁，免登入、免安裝，支援離線開啟。' },
+  { title: '開源透明', desc: '程式碼公開於 GitHub，任何人皆可檢視。' },
+  { title: '參考通用里程碑', desc: '六大發展面向架構與國民健康署「學前兒童發展檢核表」、ASQ-3 一致；題目參考通用發展里程碑編寫，並經兒科專業人員審閱（2026-05）。' },
+];
 ---
 
-<Base title="兒童發展智慧評估" description="兒童發展遲緩智慧分流評估系統">
-  <div class="app-layout">
-    <Header />
-    <main id="main-content" class="app-main" data-pagefind-body>
-      <AssessmentShell client:load cards={approvedCards} />
-    </main>
-  </div>
-</Base>
+<App title="免費兒童發展篩檢自評" description="免費的兒童發展遲緩自評工具：依年齡引導式問卷，即時提供發展風險分級與衛教建議。資料只在瀏覽器端運算，免登入、保護隱私。">
+  <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
+
+  <!-- 1. Hero -->
+  <section class="hero" aria-label="主要訴求">
+    <h1>孩子發展是否跟上？<br />花幾分鐘，免費自我評估</h1>
+    <p class="hero-sub">
+      擔心孩子說話比較慢、走路比較晚、和同齡孩子不太一樣？
+      這個免費工具用引導式問卷，幫你快速了解孩子的發展狀況，並提供衛教與就醫參考。
+    </p>
+    <a href="/assess" class="cta-primary">開始評估</a>
+    <ul class="hero-trustbar">
+      <li>免費</li><li>免登入</li><li>保護隱私</li><li>約 3 分鐘</li>
+    </ul>
+  </section>
+
+  <!-- 2. 共鳴痛點 -->
+  <section class="section" aria-label="常見擔心">
+    <h2>你是不是也有這些擔心？</h2>
+    <p class="lead">
+      「兩歲還不太會講話正常嗎？」「比同齡孩子晚走路要緊嗎？」
+      「該繼續觀察，還是去看醫生？」發展的每一步都讓人放心不下，
+      但網路資訊雜亂、又不知道該不該掛號。這個工具就是幫你把擔心整理成具體的方向。
+    </p>
+  </section>
+
+  <!-- 3. 怎麼運作 -->
+  <section class="section" aria-label="如何運作">
+    <h2>三步驟，馬上開始</h2>
+    <ol class="steps">
+      {steps.map((s) => (
+        <li class="step-card">
+          <span class="step-n">{s.n}</span>
+          <h3>{s.title}</h3>
+          <p>{s.desc}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <!-- 4. 你會得到什麼 -->
+  <section class="section" aria-label="評估結果">
+    <h2>你會得到什麼</h2>
+    <div class="card-grid">
+      {gains.map((g) => (
+        <div class="info-card">
+          <h3>{g.title}</h3>
+          <p>{g.desc}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- 5. 為什麼可信 -->
+  <section class="section" aria-label="為什麼可信">
+    <h2>為什麼可以放心使用</h2>
+    <div class="card-grid">
+      {trust.map((t) => (
+        <div class="info-card">
+          <h3>{t.title}</h3>
+          <p>{t.desc}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- 6. FAQ -->
+  <section class="section" aria-label="常見問題">
+    <h2>常見問題</h2>
+    <div class="faq-list">
+      {siteFaqs.map((faq) => (
+        <details class="faq-item">
+          <summary class="faq-question">{faq.question}</summary>
+          <p class="faq-answer">{faq.answer}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <!-- 7. 免責 -->
+  <section class="section disclaimer" aria-label="免責聲明">
+    <p>
+      本工具僅為發展分流參考，<strong>不是醫療診斷</strong>，亦未經信效度驗證。
+      評估結果不能取代專業醫療判斷。若您對孩子的發展有疑慮，或孩子有急性症狀，
+      請諮詢小兒科或兒童發展相關專業人員。
+    </p>
+  </section>
+
+  <!-- 8. 最終 CTA -->
+  <section class="final-cta" aria-label="開始評估">
+    <h2>準備好了嗎？</h2>
+    <a href="/assess" class="cta-primary">開始評估</a>
+  </section>
+</App>
 
 <style>
-  .app-layout {
-    min-height: 100dvh;
+  .hero {
+    text-align: center;
+    padding: var(--space-8) 0 var(--space-6);
+  }
+  .hero h1 {
+    font-size: var(--text-2xl);
+    line-height: var(--lh-2xl);
+    font-weight: var(--font-bold);
+    color: var(--text);
+    margin-bottom: var(--space-4);
+  }
+  .hero-sub {
+    font-size: var(--text-lg);
+    line-height: var(--lh-lg);
+    color: color-mix(in srgb, var(--text), var(--bg) 25%);
+    max-width: 60ch;
+    margin: 0 auto var(--space-5);
+  }
+  .cta-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: var(--space-3) var(--space-6);
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
+    color: var(--bg);
+    background-color: var(--accent);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+  }
+  .cta-primary:hover {
+    background-color: color-mix(in srgb, var(--accent), #000 12%);
+  }
+  .hero-trustbar {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-4);
+    list-style: none;
+    margin: var(--space-5) 0 0;
+    padding: 0;
+    font-size: var(--text-sm);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
+  }
+  .hero-trustbar li::before {
+    content: '✓ ';
+    color: var(--accent);
   }
 
-  .app-main {
-    flex: 1;
-    padding: var(--space-6) var(--space-4);
-    max-width: 960px;
-    width: 100%;
-    margin: 0 auto;
+  .section {
+    margin-bottom: var(--space-8);
+  }
+  .section h2 {
+    font-size: var(--text-2xl);
+    line-height: var(--lh-2xl);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--space-4);
+    color: var(--text);
+  }
+  .lead {
+    font-size: var(--text-base);
+    line-height: var(--lh-base);
+    color: color-mix(in srgb, var(--text), var(--bg) 25%);
+    max-width: 72ch;
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-5);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .step-card {
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+  }
+  .step-n {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background-color: var(--accent);
+    color: var(--bg);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--space-3);
+  }
+  .step-card h3, .info-card h3 {
+    font-size: var(--text-lg);
+    line-height: var(--lh-lg);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--space-2);
+    color: var(--text);
+  }
+  .step-card p, .info-card p {
+    font-size: var(--text-sm);
+    line-height: var(--lh-sm);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--space-5);
+  }
+  .info-card {
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+  }
+
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .faq-item {
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+  .faq-question {
+    padding: var(--space-4) var(--space-5);
+    font-size: var(--text-base);
+    font-weight: var(--font-medium);
+    color: var(--text);
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+  .faq-question::-webkit-details-marker {
+    display: none;
+  }
+  .faq-question::after {
+    content: '+';
+    font-size: var(--text-xl);
+    line-height: 1;
+    color: color-mix(in srgb, var(--text), var(--bg) 45%);
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+  }
+  .faq-item[open] .faq-question::after {
+    content: '-';
+  }
+  .faq-answer {
+    padding: 0 var(--space-5) var(--space-5);
+    font-size: var(--text-sm);
+    line-height: var(--lh-sm);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
+    max-width: 72ch;
+  }
+
+  .disclaimer p {
+    font-size: var(--text-sm);
+    line-height: var(--lh-sm);
+    color: color-mix(in srgb, var(--text), var(--bg) 35%);
+    background-color: color-mix(in srgb, var(--bg), var(--text) 4%);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: var(--space-4) var(--space-5);
+  }
+
+  .final-cta {
+    text-align: center;
+    padding: var(--space-8) 0;
+    border-top: 1px solid var(--line);
+  }
+  .final-cta h2 {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--space-4);
+    color: var(--text);
   }
 </style>
