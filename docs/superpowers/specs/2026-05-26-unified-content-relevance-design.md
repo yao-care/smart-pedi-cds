@@ -117,7 +117,8 @@ triggers:                     # 每個情境格列出該格內容
 
 ### 租戶 overlay（只在推薦層）
 
-- 沿用現有 IndexedDB overlay 機制，但 key 改為 `tenant::category::domain::ageGroup`（加入年齡，配合 D3）。
+- **沿用現有 IndexedDB overlay 機制與 key 不變**（`tenant::category::domain`，年齡無關）→ **不需 Dexie 遷移**，既有租戶自訂零風險保留。
+- 「推薦看年齡」由**預設值**承擔（來自 content-relevance 各年齡格）；overlay 維持 `(category, domain)` 粒度、套用到該領域所有年齡的預設清單上。D3 仍成立（推薦輸出依年齡），且 YAGNI 不引入「分齡自訂」此非必要能力。
 - overlay 疊在「評估後推薦」投影結果上（預設清單 + 租戶增減），矩陣/觸發不受影響。
 
 ---
@@ -142,7 +143,7 @@ triggers:                     # 每個情境格列出該格內容
 | `src/lib/education/trigger-derivation.ts` ⑥ | 保留「情境→trigger 字串」邏輯，但 `KNOWN_DOMAINS`/`KNOWN_INDICATORS` 改從 `schemas.ts` 單一 enum 源匯入（不再各自硬寫） |
 | `src/components/education/EducationRecommend.svelte` 🗑️ | **刪除**（死代碼，無 import、指向不存在 slug） |
 | `src/data/education/milestones/*.md` 📄 | 在 `content-relevance.yaml` 補上 relevance（依年齡），否則維持孤兒；**預設補上** |
-| `src/lib/db/custom-education.ts` + `schema.ts` 🏥 | 租戶自訂內容併入「推薦投影」；overlay/custom key 加 `ageGroup`（配合 D3）。runtime 投影函式需把 default + custom + overlay 合併 |
+| `src/lib/db/custom-education.ts` + `schema.ts` 🏥 | overlay key **不變**（`tenant::category::domain`），**不需 Dexie 遷移**；custom-education 沿用現有 `resolveItemDisplay` 解析（透過 overlay 的 `source:custom` 項目）。投影函式 = 各年齡預設 + overlay（年齡無關） |
 | `src/content.config.ts` | education frontmatter 不變（關聯不放 frontmatter，維持方向 B） |
 | 消費端 | `index.astro`、`ResultView`/`ResultViewWrapper`/`EducationMatch`、`TriggerVideoList`/`EducationRelatedVideos`、`PatientList`/`ResultDetail`、`CustomEducationList`、`[...slug].astro`、`RecommendationsManager` 全部改接新投影 API |
 
