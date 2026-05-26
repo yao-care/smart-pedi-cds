@@ -69,7 +69,7 @@ function cellVideos(cell: MatrixCellData): VideoInfo[] {
             {AGE_GROUPS_CDSA.map(age => {
               const cell = matrixData[`${domain}:${age}`];
               if (cell.inapplicable) {
-                return <td class="cell cell-na" aria-label="不適用">—</td>;
+                return <td class="cell cell-na">不適用</td>;
               }
 
               const articles = cell.articleSlugs.map(slug => ({
