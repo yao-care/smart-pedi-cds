@@ -9,9 +9,13 @@
     '25-36m': '2-3 歲', '37-48m': '3-4 歲', '49-60m': '4-5 歲', '61-72m': '5-6 歲',
   };
 
+  type Mode = 'add' | 'edit-article' | 'delete-article' | 'delete-video';
+
   let open      = $state(false);
+  let mode      = $state<Mode>('add');
   let domain    = $state('');
   let ageGroup  = $state('');
+  // add mode
   let type      = $state<'youtube' | 'article' | 'external-link'>('youtube');
   let url       = $state('');
   let title     = $state('');
@@ -19,6 +23,10 @@
   let content   = $state('');
   let notes     = $state('');
   let submitter = $state('');
+  // edit/delete modes
+  let targetSlug    = $state('');
+  let targetVideoId = $state('');
+  let videoTitle    = $state('');
 
   let submitting = $state(false);
   let issueUrl   = $state<string | null>(null);
@@ -41,12 +49,43 @@
     return null;
   }
 
+  type OpenDetail = {
+    action?: string;
+    domain: string;
+    age: string;
+    slug?: string;
+    title?: string;
+    summary?: string;
+    content?: string;
+    videoId?: string;
+    videoTitle?: string;
+  };
+
   $effect(() => {
     function onOpen(e: Event) {
-      const { domain: d, age } = (e as CustomEvent<{ domain: string; age: string }>).detail;
-      domain = d; ageGroup = age;
-      type = 'youtube'; url = title = summary = content = notes = submitter = '';
+      const detail = (e as CustomEvent<OpenDetail>).detail;
+      const action = (detail.action ?? 'add') as Mode;
+      domain = detail.domain;
+      ageGroup = detail.age;
+      mode = action;
+      // reset all fields
+      type = 'youtube'; url = ''; title = ''; summary = ''; content = '';
+      notes = ''; submitter = '';
+      targetSlug = ''; targetVideoId = ''; videoTitle = '';
       issueUrl = null; errorMsg = null;
+
+      if (action === 'edit-article') {
+        targetSlug = detail.slug ?? '';
+        title = detail.title ?? '';
+        summary = detail.summary ?? '';
+        content = detail.content ?? '';
+      } else if (action === 'delete-article') {
+        targetSlug = detail.slug ?? '';
+      } else if (action === 'delete-video') {
+        targetVideoId = detail.videoId ?? '';
+        videoTitle = detail.videoTitle ?? '';
+      }
+
       open = true;
     }
     document.addEventListener('open-contribution', onOpen);
@@ -75,16 +114,48 @@
     url = ''; title = ''; summary = ''; content = '';
   }
 
+  function modalHeading(): string {
+    if (mode === 'edit-article') return '修改文章';
+    if (mode === 'delete-article') return '刪除文章';
+    if (mode === 'delete-video') return '刪除影片';
+    return '新增衛教資源';
+  }
+
+  function ariaLabel(): string {
+    if (mode === 'edit-article') return '修改文章';
+    if (mode === 'delete-article') return '刪除文章';
+    if (mode === 'delete-video') return '刪除影片';
+    return '新增衛教資源';
+  }
+
   async function handleSubmit(e: Event) {
     e.preventDefault();
     submitting = true; errorMsg = null;
     try {
       const workerUrl = import.meta.env.PUBLIC_CONTRIBUTION_WORKER_URL as string | undefined;
       if (!workerUrl) throw new Error('Worker URL 未設定，請聯絡管理員');
+
+      let payload: Record<string, string>;
+      if (mode === 'edit-article') {
+        if (!targetSlug) throw new Error('缺少目標文章 slug');
+        if (!title) throw new Error('標題為必填');
+        payload = { type: 'edit-article', domain, ageGroup, targetSlug, title, summary, content, notes, submitter };
+      } else if (mode === 'delete-article') {
+        if (!targetSlug) throw new Error('缺少目標文章 slug');
+        if (!notes) throw new Error('刪除原因為必填');
+        payload = { type: 'delete-article', domain, ageGroup, targetSlug, notes, submitter };
+      } else if (mode === 'delete-video') {
+        if (!targetVideoId) throw new Error('缺少目標影片 ID');
+        if (!notes) throw new Error('刪除原因為必填');
+        payload = { type: 'delete-video', domain, ageGroup, targetVideoId, videoTitle, notes, submitter };
+      } else {
+        payload = { type, domain, ageGroup, url, title, summary, content, notes, submitter };
+      }
+
       const res = await fetch(workerUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type, domain, ageGroup, url, title, summary, content, notes, submitter }),
+        body: JSON.stringify(payload),
       });
       const data = await res.json() as { issueUrl?: string; error?: string };
       if (!res.ok || data.error) throw new Error(data.error ?? `HTTP ${res.status}`);
@@ -98,10 +169,10 @@
 </script>
 
 {#if open}
-<div class="modal-backdrop" role="dialog" aria-modal="true" aria-label="新增衛教資源">
+<div class="modal-backdrop" role="dialog" aria-modal="true" aria-label={ariaLabel()}>
   <div class="modal" tabindex="-1" bind:this={modalEl}>
     <header class="modal-header">
-      <h2>新增衛教資源</h2>
+      <h2>{modalHeading()}</h2>
       <button class="close-btn" onclick={close} aria-label="關閉">✕</button>
     </header>
 
@@ -117,65 +188,113 @@
       </div>
     {:else}
       <form onsubmit={handleSubmit} class="contribution-form">
-        <fieldset>
-          <legend>資源類型</legend>
-          <label><input type="radio" bind:group={type} value="youtube" onchange={onTypeChange} /> YouTube 影片</label>
-          <label><input type="radio" bind:group={type} value="article" onchange={onTypeChange} /> Markdown 文章</label>
-          <label><input type="radio" bind:group={type} value="external-link" onchange={onTypeChange} /> 外部連結</label>
-        </fieldset>
 
-        {#if type === 'youtube'}
-          <label class="field">
-            <span>YouTube URL *</span>
-            <input type="url" bind:value={url} required placeholder="https://www.youtube.com/watch?v=..." />
-          </label>
-          {#if videoPreviewId}
-            <img
-              class="video-preview"
-              src="https://i.ytimg.com/vi/{videoPreviewId}/mqdefault.jpg"
-              alt="影片預覽"
-              referrerpolicy="no-referrer"
-            />
+        {#if mode === 'add'}
+          <fieldset>
+            <legend>資源類型</legend>
+            <label><input type="radio" bind:group={type} value="youtube" onchange={onTypeChange} /> YouTube 影片</label>
+            <label><input type="radio" bind:group={type} value="article" onchange={onTypeChange} /> Markdown 文章</label>
+            <label><input type="radio" bind:group={type} value="external-link" onchange={onTypeChange} /> 外部連結</label>
+          </fieldset>
+
+          {#if type === 'youtube'}
+            <label class="field">
+              <span>YouTube URL *</span>
+              <input type="url" bind:value={url} required placeholder="https://www.youtube.com/watch?v=..." />
+            </label>
+            {#if videoPreviewId}
+              <img
+                class="video-preview"
+                src="https://i.ytimg.com/vi/{videoPreviewId}/mqdefault.jpg"
+                alt="影片預覽"
+                referrerpolicy="no-referrer"
+              />
+            {/if}
+            <label class="field">
+              <span>標題（選填）</span>
+              <input type="text" bind:value={title} placeholder="影片標題" />
+            </label>
+
+          {:else if type === 'article'}
+            <label class="field">
+              <span>標題 *</span>
+              <input type="text" bind:value={title} required />
+            </label>
+            <label class="field">
+              <span>摘要 *</span>
+              <input type="text" bind:value={summary} required />
+            </label>
+            <label class="field">
+              <span>內容（Markdown）*</span>
+              <textarea bind:value={content} required rows="8"></textarea>
+            </label>
+
+          {:else}
+            <label class="field">
+              <span>URL *</span>
+              <input type="url" bind:value={url} required />
+            </label>
+            <label class="field">
+              <span>標題 *</span>
+              <input type="text" bind:value={title} required />
+            </label>
           {/if}
+
           <label class="field">
-            <span>標題（選填）</span>
-            <input type="text" bind:value={title} placeholder="影片標題" />
+            <span>補充說明（選填）</span>
+            <textarea bind:value={notes} rows="3" placeholder="為何適合此情境？"></textarea>
           </label>
 
-        {:else if type === 'article'}
+          <label class="field">
+            <span>提交者（選填）</span>
+            <input type="text" bind:value={submitter} placeholder="姓名 / 科別" />
+          </label>
+
+        {:else if mode === 'edit-article'}
+          <p class="meta-info">目標文章：<code>{targetSlug}</code></p>
           <label class="field">
             <span>標題 *</span>
             <input type="text" bind:value={title} required />
           </label>
           <label class="field">
-            <span>摘要 *</span>
-            <input type="text" bind:value={summary} required />
+            <span>摘要</span>
+            <input type="text" bind:value={summary} />
           </label>
           <label class="field">
-            <span>內容（Markdown）*</span>
-            <textarea bind:value={content} required rows="8"></textarea>
+            <span>內容（Markdown）</span>
+            <textarea bind:value={content} rows="8"></textarea>
+          </label>
+          <label class="field">
+            <span>修改說明（選填）</span>
+            <textarea bind:value={notes} rows="3" placeholder="說明修改原因或重點"></textarea>
+          </label>
+          <label class="field">
+            <span>提交者（選填）</span>
+            <input type="text" bind:value={submitter} placeholder="姓名 / 科別" />
           </label>
 
-        {:else}
+        {:else if mode === 'delete-article'}
+          <p class="meta-info">目標文章：<code>{targetSlug}</code></p>
           <label class="field">
-            <span>URL *</span>
-            <input type="url" bind:value={url} required />
+            <span>刪除原因 *</span>
+            <textarea bind:value={notes} required rows="3" placeholder="請說明為何需要刪除此文章"></textarea>
           </label>
           <label class="field">
-            <span>標題 *</span>
-            <input type="text" bind:value={title} required />
+            <span>提交者（選填）</span>
+            <input type="text" bind:value={submitter} placeholder="姓名 / 科別" />
+          </label>
+
+        {:else if mode === 'delete-video'}
+          <p class="meta-info">目標影片：<strong>{videoTitle || targetVideoId}</strong></p>
+          <label class="field">
+            <span>刪除原因 *</span>
+            <textarea bind:value={notes} required rows="3" placeholder="請說明為何需要刪除此影片（如：連結失效、內容不適切）"></textarea>
+          </label>
+          <label class="field">
+            <span>提交者（選填）</span>
+            <input type="text" bind:value={submitter} placeholder="姓名 / 科別" />
           </label>
         {/if}
-
-        <label class="field">
-          <span>補充說明（選填）</span>
-          <textarea bind:value={notes} rows="3" placeholder="為何適合此情境？"></textarea>
-        </label>
-
-        <label class="field">
-          <span>提交者（選填）</span>
-          <input type="text" bind:value={submitter} placeholder="姓名 / 科別" />
-        </label>
 
         {#if errorMsg}
           <p class="error">{errorMsg}</p>
@@ -221,6 +340,22 @@
   .modal-context {
     font-size: var(--text-sm); color: color-mix(in srgb, var(--text), var(--bg) 30%);
     margin-bottom: var(--space-4);
+  }
+  .meta-info {
+    font-size: var(--text-sm);
+    color: color-mix(in srgb, var(--text), var(--bg) 20%);
+    margin-bottom: var(--space-4);
+    padding: var(--space-2) var(--space-3);
+    background: color-mix(in srgb, var(--bg), var(--text) 4%);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+  }
+  .meta-info code {
+    font-family: monospace;
+    font-size: var(--text-xs);
+    background: color-mix(in srgb, var(--bg), var(--text) 8%);
+    padding: 2px 4px;
+    border-radius: 2px;
   }
   fieldset { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: var(--space-3); margin-bottom: var(--space-4); }
   legend { font-size: var(--text-sm); font-weight: var(--font-medium); padding: 0 var(--space-2); }

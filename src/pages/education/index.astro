@@ -11,6 +11,11 @@ const allEducation = await getCollection('education');
 // Article lookup: slug → title
 const articleTitles = new Map(allEducation.map(e => [e.id, e.data.title]));
 
+// Article content map for edit pre-fill (slug → { title, summary, content })
+const articleContent = Object.fromEntries(
+  allEducation.map(e => [e.id, { title: e.data.title, summary: e.data.summary ?? '', content: e.body ?? '' }])
+);
+
 // Catalog lookup: videoId → { title, channel, duration, videoId }
 type CatalogEntry = { title: string; channel: string; duration: number; videoId: string };
 const catalog = new Map<string, CatalogEntry>(
@@ -100,10 +105,12 @@ function cellVideos(cell: MatrixCellData): VideoInfo[] {
                           <p class="detail-label">文章</p>
                           <ul class="resource-list">
                             {articles.map(a => (
-                              <li>
+                              <li class="resource-item">
                                 <a href={`/education/${a.slug}/`} class="article-link">
                                   {a.title}
                                 </a>
+                                <button class="item-action" data-action="edit-article" data-slug={a.slug} data-domain={domain} data-age={age} type="button" aria-label="修改文章">✏️</button>
+                                <button class="item-action" data-action="delete-article" data-slug={a.slug} data-domain={domain} data-age={age} type="button" aria-label="刪除文章">🗑️</button>
                               </li>
                             ))}
                           </ul>
@@ -115,7 +122,7 @@ function cellVideos(cell: MatrixCellData): VideoInfo[] {
                           <p class="detail-label">影片</p>
                           <ul class="resource-list video-list">
                             {videos.map(v => (
-                              <li>
+                              <li class="resource-item">
                                 <a
                                   href={`https://www.youtube.com/watch?v=${v.videoId}`}
                                   target="_blank"
@@ -134,6 +141,7 @@ function cellVideos(cell: MatrixCellData): VideoInfo[] {
                                     <span class="video-meta">{v.channel} · {fmtDuration(v.duration)}</span>
                                   </span>
                                 </a>
+                                <button class="item-action" data-action="delete-video" data-videoid={v.videoId} data-title={v.title} data-domain={domain} data-age={age} type="button" aria-label="刪除影片">🗑️</button>
                               </li>
                             ))}
                           </ul>
@@ -142,6 +150,7 @@ function cellVideos(cell: MatrixCellData): VideoInfo[] {
 
                       <button
                         class="contribute-btn"
+                        data-action="add"
                         data-domain={domain}
                         data-age={age}
                         type="button"
@@ -161,18 +170,42 @@ function cellVideos(cell: MatrixCellData): VideoInfo[] {
 
   <ContributionModal client:load />
   <CustomEducationList client:idle />
+
+  <script type="application/json" id="article-content" set:html={JSON.stringify(articleContent)}></script>
 </App>
 
 <script>
   document.addEventListener('click', function(e) {
-    var btn = e.target && (e.target as Element).closest('[data-domain][data-age]');
+    var target = e.target as Element | null;
+    var btn = target && target.closest('[data-action]');
     if (!btn) return;
-    document.dispatchEvent(new CustomEvent('open-contribution', {
-      detail: {
-        domain: btn.getAttribute('data-domain'),
-        age: btn.getAttribute('data-age'),
-      }
-    }));
+    var action = btn.getAttribute('data-action') || 'add';
+    var domain = btn.getAttribute('data-domain') || '';
+    var age = btn.getAttribute('data-age') || '';
+    if (!domain || !age) return;
+
+    var detail: Record<string, string> = { action: action, domain: domain, age: age };
+
+    if (action === 'edit-article') {
+      var slug = btn.getAttribute('data-slug') || '';
+      var contentEl = document.getElementById('article-content');
+      var contentMap = contentEl ? JSON.parse(contentEl.textContent || '{}') : {};
+      var articleData = contentMap[slug] || {};
+      detail.slug = slug;
+      detail.title = articleData.title || '';
+      detail.summary = articleData.summary || '';
+      detail.content = articleData.content || '';
+    } else if (action === 'delete-article') {
+      var slug = btn.getAttribute('data-slug') || '';
+      detail.slug = slug;
+    } else if (action === 'delete-video') {
+      var videoId = btn.getAttribute('data-videoid') || '';
+      var videoTitle = btn.getAttribute('data-title') || '';
+      detail.videoId = videoId;
+      detail.videoTitle = videoTitle;
+    }
+
+    document.dispatchEvent(new CustomEvent('open-contribution', { detail: detail }));
   });
 </script>
 
@@ -346,5 +379,40 @@ function cellVideos(cell: MatrixCellData): VideoInfo[] {
   }
   .contribute-btn:hover {
     background: color-mix(in srgb, var(--accent) 15%, var(--bg));
+  }
+
+  .resource-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-1);
+  }
+  .resource-item .article-link {
+    flex: 1;
+    min-width: 0;
+  }
+  .resource-item .video-item {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .item-action {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: var(--text-xs);
+    color: color-mix(in srgb, var(--text), var(--bg) 50%);
+    padding: var(--space-1);
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    line-height: 1;
+  }
+  .item-action:hover {
+    background: color-mix(in srgb, var(--text) 8%, var(--bg));
+    color: var(--text);
   }
 </style>
