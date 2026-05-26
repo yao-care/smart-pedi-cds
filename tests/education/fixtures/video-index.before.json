@@ -280,803 +280,42 @@
       "videoId": "ziWchb0yVA0"
     }
   },
-  "clinicalEducation": {
-    "activity_level": [
-      "exercise-guide",
-      "when-to-seek-help"
-    ],
-    "heart_rate": [
-      "when-to-seek-help"
-    ],
-    "respiratory_rate": [
-      "respiratory-care"
-    ],
-    "sleep_quality": [
-      "sleep-hygiene"
-    ],
-    "spo2": [
-      "respiratory-care"
-    ],
-    "sugar_intake": [
-      "diet-control",
-      "nutrition-grow-tall",
-      "when-to-seek-help"
-    ],
-    "temperature": [
-      "when-to-seek-help"
-    ]
-  },
   "educationSlugToTriggers": {
     "diet-control": [
       "cdss.sugar_intake.critical.infant",
-      "cdss.sugar_intake.critical.preschool",
-      "cdss.sugar_intake.critical.toddler"
+      "cdss.sugar_intake.critical.toddler",
+      "cdss.sugar_intake.critical.preschool"
     ],
     "language-stimulation": [
       "cdsa.domain.language.anomaly.13-24m"
     ],
     "respiratory-care": [
       "cdss.respiratory_rate.critical.infant",
-      "cdss.respiratory_rate.critical.preschool",
-      "cdss.respiratory_rate.critical.toddler"
+      "cdss.respiratory_rate.critical.toddler",
+      "cdss.respiratory_rate.critical.preschool"
     ],
     "sleep-hygiene": [
       "cdss.sleep_quality.critical.infant",
-      "cdss.sleep_quality.critical.preschool",
-      "cdss.sleep_quality.critical.toddler"
+      "cdss.sleep_quality.critical.toddler",
+      "cdss.sleep_quality.critical.preschool"
     ],
     "when-to-seek-help": [
-      "cdsa.triage.refer.13-24m",
       "cdsa.triage.refer.2-6m",
+      "cdsa.triage.refer.7-12m",
+      "cdsa.triage.refer.13-24m",
       "cdsa.triage.refer.25-36m",
       "cdsa.triage.refer.37-48m",
       "cdsa.triage.refer.49-60m",
       "cdsa.triage.refer.61-72m",
-      "cdsa.triage.refer.7-12m",
       "cdss.heart_rate.critical.infant",
       "cdss.temperature.critical.infant",
-      "cdss.temperature.critical.preschool",
-      "cdss.temperature.critical.toddler"
-    ]
-  },
-  "recommendations": {
-    "monitor::behavior::13-24m": [
-      {
-        "slug": "sleep-hygiene",
-        "source": "internal"
-      }
-    ],
-    "monitor::behavior::25-36m": [
-      {
-        "slug": "sleep-hygiene",
-        "source": "internal"
-      }
-    ],
-    "monitor::behavior::37-48m": [
-      {
-        "slug": "sleep-hygiene",
-        "source": "internal"
-      }
-    ],
-    "monitor::behavior::49-60m": [
-      {
-        "slug": "sleep-hygiene",
-        "source": "internal"
-      }
-    ],
-    "monitor::behavior::61-72m": [
-      {
-        "slug": "sleep-hygiene",
-        "source": "internal"
-      }
-    ],
-    "monitor::cognition::13-24m": [
-      {
-        "slug": "cognitive-play",
-        "source": "internal"
-      }
-    ],
-    "monitor::cognition::25-36m": [
-      {
-        "slug": "cognitive-play",
-        "source": "internal"
-      }
-    ],
-    "monitor::cognition::37-48m": [
-      {
-        "slug": "cognitive-play",
-        "source": "internal"
-      }
-    ],
-    "monitor::cognition::49-60m": [
-      {
-        "slug": "cognitive-play",
-        "source": "internal"
-      }
-    ],
-    "monitor::cognition::61-72m": [
-      {
-        "slug": "cognitive-play",
-        "source": "internal"
-      }
-    ],
-    "monitor::fine_motor::13-24m": [
-      {
-        "slug": "fine-motor-activities",
-        "source": "internal"
-      }
-    ],
-    "monitor::fine_motor::25-36m": [
-      {
-        "slug": "fine-motor-activities",
-        "source": "internal"
-      }
-    ],
-    "monitor::fine_motor::37-48m": [
-      {
-        "slug": "fine-motor-activities",
-        "source": "internal"
-      }
-    ],
-    "monitor::fine_motor::49-60m": [
-      {
-        "slug": "fine-motor-activities",
-        "source": "internal"
-      }
-    ],
-    "monitor::fine_motor::61-72m": [
-      {
-        "slug": "fine-motor-activities",
-        "source": "internal"
-      }
-    ],
-    "monitor::fine_motor::7-12m": [
-      {
-        "slug": "fine-motor-activities",
-        "source": "internal"
-      }
-    ],
-    "monitor::gross_motor::13-24m": [
-      {
-        "slug": "exercise-guide",
-        "source": "internal"
-      },
-      {
-        "slug": "gross-motor-activities",
-        "source": "internal"
-      }
-    ],
-    "monitor::gross_motor::2-6m": [
-      {
-        "slug": "exercise-guide",
-        "source": "internal"
-      },
-      {
-        "slug": "gross-motor-activities",
-        "source": "internal"
-      }
-    ],
-    "monitor::gross_motor::25-36m": [
-      {
-        "slug": "exercise-guide",
-        "source": "internal"
-      },
-      {
-        "slug": "gross-motor-activities",
-        "source": "internal"
-      }
-    ],
-    "monitor::gross_motor::37-48m": [
-      {
-        "slug": "exercise-guide",
-        "source": "internal"
-      },
-      {
-        "slug": "gross-motor-activities",
-        "source": "internal"
-      }
-    ],
-    "monitor::gross_motor::49-60m": [
-      {
-        "slug": "exercise-guide",
-        "source": "internal"
-      },
-      {
-        "slug": "gross-motor-activities",
-        "source": "internal"
-      }
-    ],
-    "monitor::gross_motor::61-72m": [
-      {
-        "slug": "exercise-guide",
-        "source": "internal"
-      },
-      {
-        "slug": "gross-motor-activities",
-        "source": "internal"
-      }
-    ],
-    "monitor::gross_motor::7-12m": [
-      {
-        "slug": "exercise-guide",
-        "source": "internal"
-      },
-      {
-        "slug": "gross-motor-activities",
-        "source": "internal"
-      }
-    ],
-    "monitor::language::13-24m": [
-      {
-        "slug": "language-stimulation",
-        "source": "internal"
-      }
-    ],
-    "monitor::language_comprehension::13-24m": [
-      {
-        "slug": "language-stimulation",
-        "source": "internal"
-      }
-    ],
-    "monitor::language_comprehension::25-36m": [
-      {
-        "slug": "language-stimulation",
-        "source": "internal"
-      }
-    ],
-    "monitor::language_comprehension::37-48m": [
-      {
-        "slug": "language-stimulation",
-        "source": "internal"
-      }
-    ],
-    "monitor::language_comprehension::49-60m": [
-      {
-        "slug": "language-stimulation",
-        "source": "internal"
-      }
-    ],
-    "monitor::language_comprehension::61-72m": [
-      {
-        "slug": "language-stimulation",
-        "source": "internal"
-      }
-    ],
-    "monitor::language_comprehension::7-12m": [
-      {
-        "slug": "language-stimulation",
-        "source": "internal"
-      }
-    ],
-    "monitor::language_expression::13-24m": [
-      {
-        "slug": "language-stimulation",
-        "source": "internal"
-      }
-    ],
-    "monitor::language_expression::25-36m": [
-      {
-        "slug": "language-stimulation",
-        "source": "internal"
-      }
-    ],
-    "monitor::language_expression::37-48m": [
-      {
-        "slug": "language-stimulation",
-        "source": "internal"
-      }
-    ],
-    "monitor::language_expression::49-60m": [
-      {
-        "slug": "language-stimulation",
-        "source": "internal"
-      }
-    ],
-    "monitor::language_expression::61-72m": [
-      {
-        "slug": "language-stimulation",
-        "source": "internal"
-      }
-    ],
-    "monitor::social_emotional::13-24m": [
-      {
-        "slug": "social-emotional-guide",
-        "source": "internal"
-      }
-    ],
-    "monitor::social_emotional::25-36m": [
-      {
-        "slug": "social-emotional-guide",
-        "source": "internal"
-      }
-    ],
-    "monitor::social_emotional::37-48m": [
-      {
-        "slug": "social-emotional-guide",
-        "source": "internal"
-      }
-    ],
-    "monitor::social_emotional::49-60m": [
-      {
-        "slug": "social-emotional-guide",
-        "source": "internal"
-      }
-    ],
-    "monitor::social_emotional::61-72m": [
-      {
-        "slug": "social-emotional-guide",
-        "source": "internal"
-      }
-    ],
-    "monitor::social_emotional::7-12m": [
-      {
-        "slug": "social-emotional-guide",
-        "source": "internal"
-      }
-    ],
-    "refer::behavior::13-24m": [
-      {
-        "slug": "sleep-hygiene",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::behavior::25-36m": [
-      {
-        "slug": "sleep-hygiene",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::behavior::37-48m": [
-      {
-        "slug": "sleep-hygiene",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::behavior::49-60m": [
-      {
-        "slug": "sleep-hygiene",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::behavior::61-72m": [
-      {
-        "slug": "sleep-hygiene",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::cognition::13-24m": [
-      {
-        "slug": "cognitive-play",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::cognition::25-36m": [
-      {
-        "slug": "cognitive-play",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::cognition::37-48m": [
-      {
-        "slug": "cognitive-play",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::cognition::49-60m": [
-      {
-        "slug": "cognitive-play",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::cognition::61-72m": [
-      {
-        "slug": "cognitive-play",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::fine_motor::13-24m": [
-      {
-        "slug": "fine-motor-activities",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::fine_motor::25-36m": [
-      {
-        "slug": "fine-motor-activities",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::fine_motor::37-48m": [
-      {
-        "slug": "fine-motor-activities",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::fine_motor::49-60m": [
-      {
-        "slug": "fine-motor-activities",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::fine_motor::61-72m": [
-      {
-        "slug": "fine-motor-activities",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::fine_motor::7-12m": [
-      {
-        "slug": "fine-motor-activities",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::gross_motor::13-24m": [
-      {
-        "slug": "exercise-guide",
-        "source": "internal"
-      },
-      {
-        "slug": "gross-motor-activities",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::gross_motor::2-6m": [
-      {
-        "slug": "exercise-guide",
-        "source": "internal"
-      },
-      {
-        "slug": "gross-motor-activities",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::gross_motor::25-36m": [
-      {
-        "slug": "exercise-guide",
-        "source": "internal"
-      },
-      {
-        "slug": "gross-motor-activities",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::gross_motor::37-48m": [
-      {
-        "slug": "exercise-guide",
-        "source": "internal"
-      },
-      {
-        "slug": "gross-motor-activities",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::gross_motor::49-60m": [
-      {
-        "slug": "exercise-guide",
-        "source": "internal"
-      },
-      {
-        "slug": "gross-motor-activities",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::gross_motor::61-72m": [
-      {
-        "slug": "exercise-guide",
-        "source": "internal"
-      },
-      {
-        "slug": "gross-motor-activities",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::gross_motor::7-12m": [
-      {
-        "slug": "exercise-guide",
-        "source": "internal"
-      },
-      {
-        "slug": "gross-motor-activities",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::language::13-24m": [
-      {
-        "slug": "language-stimulation",
-        "source": "internal"
-      }
-    ],
-    "refer::language_comprehension::13-24m": [
-      {
-        "slug": "language-stimulation",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::language_comprehension::25-36m": [
-      {
-        "slug": "language-stimulation",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::language_comprehension::37-48m": [
-      {
-        "slug": "language-stimulation",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::language_comprehension::49-60m": [
-      {
-        "slug": "language-stimulation",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::language_comprehension::61-72m": [
-      {
-        "slug": "language-stimulation",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::language_comprehension::7-12m": [
-      {
-        "slug": "language-stimulation",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::language_expression::13-24m": [
-      {
-        "slug": "language-stimulation",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::language_expression::25-36m": [
-      {
-        "slug": "language-stimulation",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::language_expression::37-48m": [
-      {
-        "slug": "language-stimulation",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::language_expression::49-60m": [
-      {
-        "slug": "language-stimulation",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::language_expression::61-72m": [
-      {
-        "slug": "language-stimulation",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::social_emotional::13-24m": [
-      {
-        "slug": "social-emotional-guide",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::social_emotional::25-36m": [
-      {
-        "slug": "social-emotional-guide",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::social_emotional::37-48m": [
-      {
-        "slug": "social-emotional-guide",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::social_emotional::49-60m": [
-      {
-        "slug": "social-emotional-guide",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::social_emotional::61-72m": [
-      {
-        "slug": "social-emotional-guide",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
-    ],
-    "refer::social_emotional::7-12m": [
-      {
-        "slug": "social-emotional-guide",
-        "source": "internal"
-      },
-      {
-        "slug": "when-to-seek-help",
-        "source": "internal"
-      }
+      "cdss.temperature.critical.toddler",
+      "cdss.temperature.critical.preschool"
     ]
   },
   "triggers": {
-    "cdsa.domain.behavior.anomaly.13-24m": {
-      "educationSlug": "sleep-hygiene",
-      "inapplicable": false,
-      "videoIds": []
-    },
     "cdsa.domain.behavior.anomaly.2-6m": {
       "inapplicable": true,
-      "videoIds": []
-    },
-    "cdsa.domain.behavior.anomaly.25-36m": {
-      "educationSlug": "sleep-hygiene",
-      "inapplicable": false,
-      "videoIds": []
-    },
-    "cdsa.domain.behavior.anomaly.37-48m": {
-      "educationSlug": "sleep-hygiene",
-      "inapplicable": false,
-      "videoIds": []
-    },
-    "cdsa.domain.behavior.anomaly.49-60m": {
-      "educationSlug": "sleep-hygiene",
-      "inapplicable": false,
-      "videoIds": []
-    },
-    "cdsa.domain.behavior.anomaly.61-72m": {
-      "educationSlug": "sleep-hygiene",
-      "inapplicable": false,
       "videoIds": []
     },
     "cdsa.domain.behavior.anomaly.7-12m": {
@@ -1151,37 +390,37 @@
       "videoIds": []
     },
     "cdsa.domain.gross_motor.anomaly.13-24m": {
-      "educationSlug": "exercise-guide",
+      "educationSlug": "gross-motor-activities",
       "inapplicable": false,
       "videoIds": []
     },
     "cdsa.domain.gross_motor.anomaly.2-6m": {
-      "educationSlug": "exercise-guide",
+      "educationSlug": "gross-motor-activities",
       "inapplicable": false,
       "videoIds": []
     },
     "cdsa.domain.gross_motor.anomaly.25-36m": {
-      "educationSlug": "exercise-guide",
+      "educationSlug": "gross-motor-activities",
       "inapplicable": false,
       "videoIds": []
     },
     "cdsa.domain.gross_motor.anomaly.37-48m": {
-      "educationSlug": "exercise-guide",
+      "educationSlug": "gross-motor-activities",
       "inapplicable": false,
       "videoIds": []
     },
     "cdsa.domain.gross_motor.anomaly.49-60m": {
-      "educationSlug": "exercise-guide",
+      "educationSlug": "gross-motor-activities",
       "inapplicable": false,
       "videoIds": []
     },
     "cdsa.domain.gross_motor.anomaly.61-72m": {
-      "educationSlug": "exercise-guide",
+      "educationSlug": "gross-motor-activities",
       "inapplicable": false,
       "videoIds": []
     },
     "cdsa.domain.gross_motor.anomaly.7-12m": {
-      "educationSlug": "exercise-guide",
+      "educationSlug": "gross-motor-activities",
       "inapplicable": false,
       "videoIds": []
     },
@@ -1198,67 +437,12 @@
       "inapplicable": true,
       "videoIds": []
     },
-    "cdsa.domain.language_comprehension.anomaly.13-24m": {
-      "educationSlug": "language-stimulation",
-      "inapplicable": false,
-      "videoIds": []
-    },
     "cdsa.domain.language_comprehension.anomaly.2-6m": {
       "inapplicable": true,
       "videoIds": []
     },
-    "cdsa.domain.language_comprehension.anomaly.25-36m": {
-      "educationSlug": "language-stimulation",
-      "inapplicable": false,
-      "videoIds": []
-    },
-    "cdsa.domain.language_comprehension.anomaly.37-48m": {
-      "educationSlug": "language-stimulation",
-      "inapplicable": false,
-      "videoIds": []
-    },
-    "cdsa.domain.language_comprehension.anomaly.49-60m": {
-      "educationSlug": "language-stimulation",
-      "inapplicable": false,
-      "videoIds": []
-    },
-    "cdsa.domain.language_comprehension.anomaly.61-72m": {
-      "educationSlug": "language-stimulation",
-      "inapplicable": false,
-      "videoIds": []
-    },
-    "cdsa.domain.language_comprehension.anomaly.7-12m": {
-      "educationSlug": "language-stimulation",
-      "inapplicable": false,
-      "videoIds": []
-    },
-    "cdsa.domain.language_expression.anomaly.13-24m": {
-      "educationSlug": "language-stimulation",
-      "inapplicable": false,
-      "videoIds": []
-    },
     "cdsa.domain.language_expression.anomaly.2-6m": {
       "inapplicable": true,
-      "videoIds": []
-    },
-    "cdsa.domain.language_expression.anomaly.25-36m": {
-      "educationSlug": "language-stimulation",
-      "inapplicable": false,
-      "videoIds": []
-    },
-    "cdsa.domain.language_expression.anomaly.37-48m": {
-      "educationSlug": "language-stimulation",
-      "inapplicable": false,
-      "videoIds": []
-    },
-    "cdsa.domain.language_expression.anomaly.49-60m": {
-      "educationSlug": "language-stimulation",
-      "inapplicable": false,
-      "videoIds": []
-    },
-    "cdsa.domain.language_expression.anomaly.61-72m": {
-      "educationSlug": "language-stimulation",
-      "inapplicable": false,
       "videoIds": []
     },
     "cdsa.domain.language_expression.anomaly.7-12m": {
@@ -1359,17 +543,17 @@
       ]
     },
     "cdss.activity_level.critical.infant": {
-      "educationSlug": "exercise-guide",
+      "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": []
     },
     "cdss.activity_level.critical.preschool": {
-      "educationSlug": "exercise-guide",
+      "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": []
     },
     "cdss.activity_level.critical.toddler": {
-      "educationSlug": "exercise-guide",
+      "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": []
     },
