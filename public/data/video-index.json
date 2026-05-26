@@ -1,10 +1,13 @@
 {
   "articleSlugs": [
+    "behavior-guidance",
     "cognitive-play",
     "diet-control",
     "exercise-guide",
     "fine-motor-activities",
     "gross-motor-activities",
+    "language-comprehension",
+    "language-expression",
     "language-stimulation",
     "milestones/0-6m",
     "milestones/1-2y",
@@ -479,6 +482,13 @@
     ]
   },
   "educationSlugToTriggers": {
+    "behavior-guidance": [
+      "cdsa.domain.behavior.anomaly.13-24m",
+      "cdsa.domain.behavior.anomaly.25-36m",
+      "cdsa.domain.behavior.anomaly.37-48m",
+      "cdsa.domain.behavior.anomaly.49-60m",
+      "cdsa.domain.behavior.anomaly.61-72m"
+    ],
     "cognitive-play": [
       "cdsa.domain.cognition.anomaly.13-24m",
       "cdsa.domain.cognition.anomaly.25-36m",
@@ -508,8 +518,28 @@
       "cdsa.domain.gross_motor.anomaly.61-72m",
       "cdsa.domain.gross_motor.anomaly.7-12m"
     ],
+    "language-comprehension": [
+      "cdsa.domain.language_comprehension.anomaly.7-12m",
+      "cdsa.domain.language_comprehension.anomaly.13-24m",
+      "cdsa.domain.language_comprehension.anomaly.25-36m",
+      "cdsa.domain.language_comprehension.anomaly.37-48m",
+      "cdsa.domain.language_comprehension.anomaly.49-60m",
+      "cdsa.domain.language_comprehension.anomaly.61-72m"
+    ],
+    "language-expression": [
+      "cdsa.domain.language_expression.anomaly.13-24m",
+      "cdsa.domain.language_expression.anomaly.25-36m",
+      "cdsa.domain.language_expression.anomaly.37-48m",
+      "cdsa.domain.language_expression.anomaly.49-60m",
+      "cdsa.domain.language_expression.anomaly.61-72m"
+    ],
     "language-stimulation": [
-      "cdsa.domain.language.anomaly.13-24m"
+      "cdsa.domain.language.anomaly.7-12m",
+      "cdsa.domain.language.anomaly.13-24m",
+      "cdsa.domain.language.anomaly.25-36m",
+      "cdsa.domain.language.anomaly.37-48m",
+      "cdsa.domain.language.anomaly.49-60m",
+      "cdsa.domain.language.anomaly.61-72m"
     ],
     "respiratory-care": [
       "cdss.respiratory_rate.critical.infant",
@@ -546,6 +576,12 @@
   "recommendations": {
     "monitor::behavior::13-24m": [
       {
+        "slug": "behavior-guidance",
+        "source": "internal",
+        "summary": "幫助孩子建立常規、正向教養策略與情緒行為引導的實用技巧",
+        "title": "行為發展引導"
+      },
+      {
         "slug": "sleep-hygiene",
         "source": "internal",
         "summary": "建立良好睡眠習慣，改善兒童睡眠品質的實用建議",
@@ -553,6 +589,12 @@
       }
     ],
     "monitor::behavior::25-36m": [
+      {
+        "slug": "behavior-guidance",
+        "source": "internal",
+        "summary": "幫助孩子建立常規、正向教養策略與情緒行為引導的實用技巧",
+        "title": "行為發展引導"
+      },
       {
         "slug": "sleep-hygiene",
         "source": "internal",
@@ -562,6 +604,12 @@
     ],
     "monitor::behavior::37-48m": [
       {
+        "slug": "behavior-guidance",
+        "source": "internal",
+        "summary": "幫助孩子建立常規、正向教養策略與情緒行為引導的實用技巧",
+        "title": "行為發展引導"
+      },
+      {
         "slug": "sleep-hygiene",
         "source": "internal",
         "summary": "建立良好睡眠習慣，改善兒童睡眠品質的實用建議",
@@ -570,6 +618,12 @@
     ],
     "monitor::behavior::49-60m": [
       {
+        "slug": "behavior-guidance",
+        "source": "internal",
+        "summary": "幫助孩子建立常規、正向教養策略與情緒行為引導的實用技巧",
+        "title": "行為發展引導"
+      },
+      {
         "slug": "sleep-hygiene",
         "source": "internal",
         "summary": "建立良好睡眠習慣，改善兒童睡眠品質的實用建議",
@@ -577,6 +631,12 @@
       }
     ],
     "monitor::behavior::61-72m": [
+      {
+        "slug": "behavior-guidance",
+        "source": "internal",
+        "summary": "幫助孩子建立常規、正向教養策略與情緒行為引導的實用技巧",
+        "title": "行為發展引導"
+      },
       {
         "slug": "sleep-hygiene",
         "source": "internal",
@@ -820,6 +880,12 @@
     ],
     "monitor::language_comprehension::13-24m": [
       {
+        "slug": "language-comprehension",
+        "source": "internal",
+        "summary": "促進孩子聽懂指令、擴展詞彙理解與提升互動回應能力的居家活動",
+        "title": "語言理解促進"
+      },
+      {
         "slug": "language-stimulation",
         "source": "internal",
         "summary": "透過日常互動促進兒童語言理解與表達能力",
@@ -827,6 +893,12 @@
       }
     ],
     "monitor::language_comprehension::25-36m": [
+      {
+        "slug": "language-comprehension",
+        "source": "internal",
+        "summary": "促進孩子聽懂指令、擴展詞彙理解與提升互動回應能力的居家活動",
+        "title": "語言理解促進"
+      },
       {
         "slug": "language-stimulation",
         "source": "internal",
@@ -836,6 +908,12 @@
     ],
     "monitor::language_comprehension::37-48m": [
       {
+        "slug": "language-comprehension",
+        "source": "internal",
+        "summary": "促進孩子聽懂指令、擴展詞彙理解與提升互動回應能力的居家活動",
+        "title": "語言理解促進"
+      },
+      {
         "slug": "language-stimulation",
         "source": "internal",
         "summary": "透過日常互動促進兒童語言理解與表達能力",
@@ -843,6 +921,12 @@
       }
     ],
     "monitor::language_comprehension::49-60m": [
+      {
+        "slug": "language-comprehension",
+        "source": "internal",
+        "summary": "促進孩子聽懂指令、擴展詞彙理解與提升互動回應能力的居家活動",
+        "title": "語言理解促進"
+      },
       {
         "slug": "language-stimulation",
         "source": "internal",
@@ -852,6 +936,12 @@
     ],
     "monitor::language_comprehension::61-72m": [
       {
+        "slug": "language-comprehension",
+        "source": "internal",
+        "summary": "促進孩子聽懂指令、擴展詞彙理解與提升互動回應能力的居家活動",
+        "title": "語言理解促進"
+      },
+      {
         "slug": "language-stimulation",
         "source": "internal",
         "summary": "透過日常互動促進兒童語言理解與表達能力",
@@ -859,6 +949,12 @@
       }
     ],
     "monitor::language_comprehension::7-12m": [
+      {
+        "slug": "language-comprehension",
+        "source": "internal",
+        "summary": "促進孩子聽懂指令、擴展詞彙理解與提升互動回應能力的居家活動",
+        "title": "語言理解促進"
+      },
       {
         "slug": "language-stimulation",
         "source": "internal",
@@ -868,6 +964,12 @@
     ],
     "monitor::language_expression::13-24m": [
       {
+        "slug": "language-expression",
+        "source": "internal",
+        "summary": "鼓勵孩子開口說話、擴充詞彙量與練習造句表達的實用居家活動",
+        "title": "語言表達促進"
+      },
+      {
         "slug": "language-stimulation",
         "source": "internal",
         "summary": "透過日常互動促進兒童語言理解與表達能力",
@@ -875,6 +977,12 @@
       }
     ],
     "monitor::language_expression::25-36m": [
+      {
+        "slug": "language-expression",
+        "source": "internal",
+        "summary": "鼓勵孩子開口說話、擴充詞彙量與練習造句表達的實用居家活動",
+        "title": "語言表達促進"
+      },
       {
         "slug": "language-stimulation",
         "source": "internal",
@@ -884,6 +992,12 @@
     ],
     "monitor::language_expression::37-48m": [
       {
+        "slug": "language-expression",
+        "source": "internal",
+        "summary": "鼓勵孩子開口說話、擴充詞彙量與練習造句表達的實用居家活動",
+        "title": "語言表達促進"
+      },
+      {
         "slug": "language-stimulation",
         "source": "internal",
         "summary": "透過日常互動促進兒童語言理解與表達能力",
@@ -892,6 +1006,12 @@
     ],
     "monitor::language_expression::49-60m": [
       {
+        "slug": "language-expression",
+        "source": "internal",
+        "summary": "鼓勵孩子開口說話、擴充詞彙量與練習造句表達的實用居家活動",
+        "title": "語言表達促進"
+      },
+      {
         "slug": "language-stimulation",
         "source": "internal",
         "summary": "透過日常互動促進兒童語言理解與表達能力",
@@ -899,6 +1019,12 @@
       }
     ],
     "monitor::language_expression::61-72m": [
+      {
+        "slug": "language-expression",
+        "source": "internal",
+        "summary": "鼓勵孩子開口說話、擴充詞彙量與練習造句表達的實用居家活動",
+        "title": "語言表達促進"
+      },
       {
         "slug": "language-stimulation",
         "source": "internal",
@@ -956,6 +1082,12 @@
     ],
     "refer::behavior::13-24m": [
       {
+        "slug": "behavior-guidance",
+        "source": "internal",
+        "summary": "幫助孩子建立常規、正向教養策略與情緒行為引導的實用技巧",
+        "title": "行為發展引導"
+      },
+      {
         "slug": "sleep-hygiene",
         "source": "internal",
         "summary": "建立良好睡眠習慣，改善兒童睡眠品質的實用建議",
@@ -969,6 +1101,12 @@
       }
     ],
     "refer::behavior::25-36m": [
+      {
+        "slug": "behavior-guidance",
+        "source": "internal",
+        "summary": "幫助孩子建立常規、正向教養策略與情緒行為引導的實用技巧",
+        "title": "行為發展引導"
+      },
       {
         "slug": "sleep-hygiene",
         "source": "internal",
@@ -984,6 +1122,12 @@
     ],
     "refer::behavior::37-48m": [
       {
+        "slug": "behavior-guidance",
+        "source": "internal",
+        "summary": "幫助孩子建立常規、正向教養策略與情緒行為引導的實用技巧",
+        "title": "行為發展引導"
+      },
+      {
         "slug": "sleep-hygiene",
         "source": "internal",
         "summary": "建立良好睡眠習慣，改善兒童睡眠品質的實用建議",
@@ -998,6 +1142,12 @@
     ],
     "refer::behavior::49-60m": [
       {
+        "slug": "behavior-guidance",
+        "source": "internal",
+        "summary": "幫助孩子建立常規、正向教養策略與情緒行為引導的實用技巧",
+        "title": "行為發展引導"
+      },
+      {
         "slug": "sleep-hygiene",
         "source": "internal",
         "summary": "建立良好睡眠習慣，改善兒童睡眠品質的實用建議",
@@ -1011,6 +1161,12 @@
       }
     ],
     "refer::behavior::61-72m": [
+      {
+        "slug": "behavior-guidance",
+        "source": "internal",
+        "summary": "幫助孩子建立常規、正向教養策略與情緒行為引導的實用技巧",
+        "title": "行為發展引導"
+      },
       {
         "slug": "sleep-hygiene",
         "source": "internal",
@@ -1368,6 +1524,12 @@
     ],
     "refer::language_comprehension::13-24m": [
       {
+        "slug": "language-comprehension",
+        "source": "internal",
+        "summary": "促進孩子聽懂指令、擴展詞彙理解與提升互動回應能力的居家活動",
+        "title": "語言理解促進"
+      },
+      {
         "slug": "language-stimulation",
         "source": "internal",
         "summary": "透過日常互動促進兒童語言理解與表達能力",
@@ -1381,6 +1543,12 @@
       }
     ],
     "refer::language_comprehension::25-36m": [
+      {
+        "slug": "language-comprehension",
+        "source": "internal",
+        "summary": "促進孩子聽懂指令、擴展詞彙理解與提升互動回應能力的居家活動",
+        "title": "語言理解促進"
+      },
       {
         "slug": "language-stimulation",
         "source": "internal",
@@ -1396,6 +1564,12 @@
     ],
     "refer::language_comprehension::37-48m": [
       {
+        "slug": "language-comprehension",
+        "source": "internal",
+        "summary": "促進孩子聽懂指令、擴展詞彙理解與提升互動回應能力的居家活動",
+        "title": "語言理解促進"
+      },
+      {
         "slug": "language-stimulation",
         "source": "internal",
         "summary": "透過日常互動促進兒童語言理解與表達能力",
@@ -1409,6 +1583,12 @@
       }
     ],
     "refer::language_comprehension::49-60m": [
+      {
+        "slug": "language-comprehension",
+        "source": "internal",
+        "summary": "促進孩子聽懂指令、擴展詞彙理解與提升互動回應能力的居家活動",
+        "title": "語言理解促進"
+      },
       {
         "slug": "language-stimulation",
         "source": "internal",
@@ -1424,6 +1604,12 @@
     ],
     "refer::language_comprehension::61-72m": [
       {
+        "slug": "language-comprehension",
+        "source": "internal",
+        "summary": "促進孩子聽懂指令、擴展詞彙理解與提升互動回應能力的居家活動",
+        "title": "語言理解促進"
+      },
+      {
         "slug": "language-stimulation",
         "source": "internal",
         "summary": "透過日常互動促進兒童語言理解與表達能力",
@@ -1437,6 +1623,12 @@
       }
     ],
     "refer::language_comprehension::7-12m": [
+      {
+        "slug": "language-comprehension",
+        "source": "internal",
+        "summary": "促進孩子聽懂指令、擴展詞彙理解與提升互動回應能力的居家活動",
+        "title": "語言理解促進"
+      },
       {
         "slug": "language-stimulation",
         "source": "internal",
@@ -1452,6 +1644,12 @@
     ],
     "refer::language_expression::13-24m": [
       {
+        "slug": "language-expression",
+        "source": "internal",
+        "summary": "鼓勵孩子開口說話、擴充詞彙量與練習造句表達的實用居家活動",
+        "title": "語言表達促進"
+      },
+      {
         "slug": "language-stimulation",
         "source": "internal",
         "summary": "透過日常互動促進兒童語言理解與表達能力",
@@ -1465,6 +1663,12 @@
       }
     ],
     "refer::language_expression::25-36m": [
+      {
+        "slug": "language-expression",
+        "source": "internal",
+        "summary": "鼓勵孩子開口說話、擴充詞彙量與練習造句表達的實用居家活動",
+        "title": "語言表達促進"
+      },
       {
         "slug": "language-stimulation",
         "source": "internal",
@@ -1480,6 +1684,12 @@
     ],
     "refer::language_expression::37-48m": [
       {
+        "slug": "language-expression",
+        "source": "internal",
+        "summary": "鼓勵孩子開口說話、擴充詞彙量與練習造句表達的實用居家活動",
+        "title": "語言表達促進"
+      },
+      {
         "slug": "language-stimulation",
         "source": "internal",
         "summary": "透過日常互動促進兒童語言理解與表達能力",
@@ -1494,6 +1704,12 @@
     ],
     "refer::language_expression::49-60m": [
       {
+        "slug": "language-expression",
+        "source": "internal",
+        "summary": "鼓勵孩子開口說話、擴充詞彙量與練習造句表達的實用居家活動",
+        "title": "語言表達促進"
+      },
+      {
         "slug": "language-stimulation",
         "source": "internal",
         "summary": "透過日常互動促進兒童語言理解與表達能力",
@@ -1507,6 +1723,12 @@
       }
     ],
     "refer::language_expression::61-72m": [
+      {
+        "slug": "language-expression",
+        "source": "internal",
+        "summary": "鼓勵孩子開口說話、擴充詞彙量與練習造句表達的實用居家活動",
+        "title": "語言表達促進"
+      },
       {
         "slug": "language-stimulation",
         "source": "internal",
@@ -1607,28 +1829,50 @@
   },
   "triggers": {
     "cdsa.domain.behavior.anomaly.13-24m": {
+      "educationSlug": "behavior-guidance",
       "inapplicable": false,
-      "videoIds": []
+      "videoIds": [
+        "B8ozZqQyB7E",
+        "OjcwWrVIJHc"
+      ]
     },
     "cdsa.domain.behavior.anomaly.2-6m": {
       "inapplicable": true,
       "videoIds": []
     },
     "cdsa.domain.behavior.anomaly.25-36m": {
+      "educationSlug": "behavior-guidance",
       "inapplicable": false,
-      "videoIds": []
+      "videoIds": [
+        "B8ozZqQyB7E",
+        "OjcwWrVIJHc",
+        "mLocMGU1Z3U"
+      ]
     },
     "cdsa.domain.behavior.anomaly.37-48m": {
+      "educationSlug": "behavior-guidance",
       "inapplicable": false,
-      "videoIds": []
+      "videoIds": [
+        "OjcwWrVIJHc",
+        "UEk0sO93NnE",
+        "mLocMGU1Z3U"
+      ]
     },
     "cdsa.domain.behavior.anomaly.49-60m": {
+      "educationSlug": "behavior-guidance",
       "inapplicable": false,
-      "videoIds": []
+      "videoIds": [
+        "UEk0sO93NnE",
+        "mLocMGU1Z3U"
+      ]
     },
     "cdsa.domain.behavior.anomaly.61-72m": {
+      "educationSlug": "behavior-guidance",
       "inapplicable": false,
-      "videoIds": []
+      "videoIds": [
+        "UEk0sO93NnE",
+        "mLocMGU1Z3U"
+      ]
     },
     "cdsa.domain.behavior.anomaly.7-12m": {
       "inapplicable": true,
@@ -1808,79 +2052,152 @@
     "cdsa.domain.language.anomaly.25-36m": {
       "educationSlug": "language-stimulation",
       "inapplicable": false,
-      "videoIds": []
+      "videoIds": [
+        "yzRi9GlSptM",
+        "-d0DmEv8qVs",
+        "G7COjy4hpqA"
+      ]
     },
     "cdsa.domain.language.anomaly.37-48m": {
       "educationSlug": "language-stimulation",
       "inapplicable": false,
-      "videoIds": []
+      "videoIds": [
+        "yzRi9GlSptM",
+        "-d0DmEv8qVs",
+        "G7COjy4hpqA"
+      ]
     },
     "cdsa.domain.language.anomaly.49-60m": {
       "educationSlug": "language-stimulation",
       "inapplicable": false,
-      "videoIds": []
+      "videoIds": [
+        "yzRi9GlSptM",
+        "-d0DmEv8qVs",
+        "G7COjy4hpqA"
+      ]
     },
     "cdsa.domain.language.anomaly.61-72m": {
       "educationSlug": "language-stimulation",
       "inapplicable": false,
-      "videoIds": []
+      "videoIds": [
+        "yzRi9GlSptM",
+        "-d0DmEv8qVs",
+        "G7COjy4hpqA"
+      ]
     },
     "cdsa.domain.language.anomaly.7-12m": {
       "educationSlug": "language-stimulation",
       "inapplicable": false,
-      "videoIds": []
+      "videoIds": [
+        "yzRi9GlSptM",
+        "G7COjy4hpqA"
+      ]
     },
     "cdsa.domain.language_comprehension.anomaly.13-24m": {
+      "educationSlug": "language-comprehension",
       "inapplicable": false,
-      "videoIds": []
+      "videoIds": [
+        "yzRi9GlSptM",
+        "-d0DmEv8qVs",
+        "G7COjy4hpqA"
+      ]
     },
     "cdsa.domain.language_comprehension.anomaly.2-6m": {
       "inapplicable": true,
       "videoIds": []
     },
     "cdsa.domain.language_comprehension.anomaly.25-36m": {
+      "educationSlug": "language-comprehension",
       "inapplicable": false,
-      "videoIds": []
+      "videoIds": [
+        "yzRi9GlSptM",
+        "-d0DmEv8qVs",
+        "G7COjy4hpqA"
+      ]
     },
     "cdsa.domain.language_comprehension.anomaly.37-48m": {
+      "educationSlug": "language-comprehension",
       "inapplicable": false,
-      "videoIds": []
+      "videoIds": [
+        "yzRi9GlSptM",
+        "-d0DmEv8qVs",
+        "G7COjy4hpqA"
+      ]
     },
     "cdsa.domain.language_comprehension.anomaly.49-60m": {
+      "educationSlug": "language-comprehension",
       "inapplicable": false,
-      "videoIds": []
+      "videoIds": [
+        "yzRi9GlSptM",
+        "-d0DmEv8qVs",
+        "G7COjy4hpqA"
+      ]
     },
     "cdsa.domain.language_comprehension.anomaly.61-72m": {
+      "educationSlug": "language-comprehension",
       "inapplicable": false,
-      "videoIds": []
+      "videoIds": [
+        "yzRi9GlSptM",
+        "-d0DmEv8qVs",
+        "G7COjy4hpqA"
+      ]
     },
     "cdsa.domain.language_comprehension.anomaly.7-12m": {
+      "educationSlug": "language-comprehension",
       "inapplicable": false,
-      "videoIds": []
+      "videoIds": [
+        "yzRi9GlSptM",
+        "G7COjy4hpqA"
+      ]
     },
     "cdsa.domain.language_expression.anomaly.13-24m": {
+      "educationSlug": "language-expression",
       "inapplicable": false,
-      "videoIds": []
+      "videoIds": [
+        "yzRi9GlSptM",
+        "-d0DmEv8qVs",
+        "G7COjy4hpqA"
+      ]
     },
     "cdsa.domain.language_expression.anomaly.2-6m": {
       "inapplicable": true,
       "videoIds": []
     },
     "cdsa.domain.language_expression.anomaly.25-36m": {
+      "educationSlug": "language-expression",
       "inapplicable": false,
-      "videoIds": []
+      "videoIds": [
+        "yzRi9GlSptM",
+        "-d0DmEv8qVs",
+        "G7COjy4hpqA"
+      ]
     },
     "cdsa.domain.language_expression.anomaly.37-48m": {
+      "educationSlug": "language-expression",
       "inapplicable": false,
-      "videoIds": []
+      "videoIds": [
+        "yzRi9GlSptM",
+        "-d0DmEv8qVs",
+        "G7COjy4hpqA"
+      ]
     },
     "cdsa.domain.language_expression.anomaly.49-60m": {
+      "educationSlug": "language-expression",
       "inapplicable": false,
-      "videoIds": []
+      "videoIds": [
+        "yzRi9GlSptM",
+        "-d0DmEv8qVs",
+        "G7COjy4hpqA"
+      ]
     },
     "cdsa.domain.language_expression.anomaly.61-72m": {
+      "educationSlug": "language-expression",
       "inapplicable": false,
-      "videoIds": []
+      "videoIds": [
+        "yzRi9GlSptM",
+        "-d0DmEv8qVs",
+        "G7COjy4hpqA"
+      ]
     },
     "cdsa.domain.language_expression.anomaly.7-12m": {
       "inapplicable": true,

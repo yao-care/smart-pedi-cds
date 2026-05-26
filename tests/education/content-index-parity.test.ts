@@ -92,26 +92,9 @@ describe('triggers', () => {
     }
   });
 
-  it('no new non-empty applicable trigger appears in neu that was absent in before', () => {
-    const beforeTriggers = before.triggers as Record<
-      string,
-      { videoIds: string[]; inapplicable: boolean }
-    >;
-    const neuTriggers = (neu.triggers ?? {}) as typeof beforeTriggers;
-
-    for (const [k, n] of Object.entries(neuTriggers)) {
-      if (k in beforeTriggers) continue;
-      // New keys only allowed if empty-applicable
-      expect(
-        n.inapplicable || n.videoIds.length === 0,
-        `new trigger ${k} appears with non-empty videos — not allowed`,
-      ).toBe(true);
-      expect(
-        n.inapplicable,
-        `new trigger ${k} must not be inapplicable (absent from before, so it was applicable but empty)`,
-      ).toBe(false);
-    }
-  });
+  // NOTE: Intentionally removed — content work legitimately adds video-bearing cells
+  // (behavior/language_comprehension/language_expression ages). The new
+  // "every applicable cell has article + video" test below is the durable guard.
 });
 
 // ---------------------------------------------------------------------------
@@ -230,16 +213,55 @@ describe('matrix educationSlug parity', () => {
     >;
     const neuTriggers = (neu.triggers ?? {}) as typeof beforeTriggers;
 
-    // Cells PRESENT before must keep their educationSlug (guards against silently
-    // losing/changing a curated matrix article). Content work MAY add matrix
-    // articles to NEW cells (e.g. task 1 added language-stimulation across language
-    // ages) — that is intentional, so new cells are not prohibited here.
+    // Cells that HAD a non-null educationSlug before must keep it (guards against
+    // silently losing/changing a curated matrix article).
+    // Cells that had no article before (null educationSlug) MAY gain one —
+    // intentional content additions are allowed.
     for (const [k, b] of Object.entries(beforeTriggers)) {
       if (!k.startsWith('cdsa.domain.')) continue;
+      const beforeSlug = (b as { educationSlug?: string }).educationSlug ?? null;
+      if (beforeSlug === null) continue; // cell had no article before — additions allowed
       const n = neuTriggers[k] ?? {};
-      expect((n as { educationSlug?: string }).educationSlug ?? null, k).toBe(
-        (b as { educationSlug?: string }).educationSlug ?? null,
-      );
+      expect((n as { educationSlug?: string }).educationSlug ?? null, k).toBe(beforeSlug);
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 7. every applicable cell has article + video (durable coverage guard)
+// ---------------------------------------------------------------------------
+describe('every applicable cell has article + video', () => {
+  const DOMAINS = [
+    'behavior', 'gross_motor', 'fine_motor', 'language',
+    'language_comprehension', 'language_expression', 'cognition', 'social_emotional',
+  ] as const;
+  const AGE_GROUPS = ['2-6m', '7-12m', '13-24m', '25-36m', '37-48m', '49-60m', '61-72m'] as const;
+
+  it('each non-inapplicable cdsa.domain cell has a non-empty educationSlug AND ≥1 videoId', () => {
+    const neuTriggers = (neu.triggers ?? {}) as Record<
+      string,
+      { videoIds: string[]; inapplicable: boolean; educationSlug?: string }
+    >;
+
+    // Load inapplicable map from content-relevance.yaml (already embedded in the
+    // built index as inapplicable:true on the trigger key)
+    for (const domain of DOMAINS) {
+      for (const age of AGE_GROUPS) {
+        const key = `cdsa.domain.${domain}.anomaly.${age}`;
+        const cell = neuTriggers[key];
+        if (!cell) continue; // absent key = inapplicable (not in YAML triggers)
+        if (cell.inapplicable) continue;
+
+        expect(
+          cell.educationSlug,
+          `${key}: missing matrix article (educationSlug is empty)`,
+        ).toBeTruthy();
+
+        expect(
+          (cell.videoIds ?? []).length,
+          `${key}: missing video (videoIds is empty)`,
+        ).toBeGreaterThanOrEqual(1);
+      }
     }
   });
 });

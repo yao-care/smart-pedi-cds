@@ -19,8 +19,15 @@ inapplicable:
     - 2-6m
 triggers:
   - trigger: cdsa.domain.behavior.anomaly.13-24m
-    videoIds: []
+    videoIds:
+      - B8ozZqQyB7E
+      - OjcwWrVIJHc
     articles:
+      - slug: behavior-guidance
+        severities:
+          - monitor
+          - refer
+        browse: true
       - slug: sleep-hygiene
         severities:
           - monitor
@@ -29,8 +36,16 @@ triggers:
         severities:
           - refer
   - trigger: cdsa.domain.behavior.anomaly.25-36m
-    videoIds: []
+    videoIds:
+      - B8ozZqQyB7E
+      - OjcwWrVIJHc
+      - mLocMGU1Z3U
     articles:
+      - slug: behavior-guidance
+        severities:
+          - monitor
+          - refer
+        browse: true
       - slug: sleep-hygiene
         severities:
           - monitor
@@ -39,8 +54,16 @@ triggers:
         severities:
           - refer
   - trigger: cdsa.domain.behavior.anomaly.37-48m
-    videoIds: []
+    videoIds:
+      - OjcwWrVIJHc
+      - UEk0sO93NnE
+      - mLocMGU1Z3U
     articles:
+      - slug: behavior-guidance
+        severities:
+          - monitor
+          - refer
+        browse: true
       - slug: sleep-hygiene
         severities:
           - monitor
@@ -49,8 +72,15 @@ triggers:
         severities:
           - refer
   - trigger: cdsa.domain.behavior.anomaly.49-60m
-    videoIds: []
+    videoIds:
+      - UEk0sO93NnE
+      - mLocMGU1Z3U
     articles:
+      - slug: behavior-guidance
+        severities:
+          - monitor
+          - refer
+        browse: true
       - slug: sleep-hygiene
         severities:
           - monitor
@@ -59,8 +89,15 @@ triggers:
         severities:
           - refer
   - trigger: cdsa.domain.behavior.anomaly.61-72m
-    videoIds: []
+    videoIds:
+      - UEk0sO93NnE
+      - mLocMGU1Z3U
     articles:
+      - slug: behavior-guidance
+        severities:
+          - monitor
+          - refer
+        browse: true
       - slug: sleep-hygiene
         severities:
           - monitor
@@ -333,7 +370,9 @@ triggers:
         severities:
           - refer
   - trigger: cdsa.domain.language.anomaly.7-12m
-    videoIds: []
+    videoIds:
+      - yzRi9GlSptM
+      - G7COjy4hpqA
     articles:
       - slug: language-stimulation
         severities:
@@ -352,7 +391,10 @@ triggers:
           - refer
         browse: true
   - trigger: cdsa.domain.language.anomaly.25-36m
-    videoIds: []
+    videoIds:
+      - yzRi9GlSptM
+      - "-d0DmEv8qVs"
+      - G7COjy4hpqA
     articles:
       - slug: language-stimulation
         severities:
@@ -360,7 +402,10 @@ triggers:
           - refer
         browse: true
   - trigger: cdsa.domain.language.anomaly.37-48m
-    videoIds: []
+    videoIds:
+      - yzRi9GlSptM
+      - "-d0DmEv8qVs"
+      - G7COjy4hpqA
     articles:
       - slug: language-stimulation
         severities:
@@ -368,7 +413,10 @@ triggers:
           - refer
         browse: true
   - trigger: cdsa.domain.language.anomaly.49-60m
-    videoIds: []
+    videoIds:
+      - yzRi9GlSptM
+      - "-d0DmEv8qVs"
+      - G7COjy4hpqA
     articles:
       - slug: language-stimulation
         severities:
@@ -376,16 +424,44 @@ triggers:
           - refer
         browse: true
   - trigger: cdsa.domain.language.anomaly.61-72m
-    videoIds: []
+    videoIds:
+      - yzRi9GlSptM
+      - "-d0DmEv8qVs"
+      - G7COjy4hpqA
     articles:
       - slug: language-stimulation
         severities:
           - monitor
           - refer
         browse: true
-  - trigger: cdsa.domain.language_comprehension.anomaly.13-24m
-    videoIds: []
+  - trigger: cdsa.domain.language_comprehension.anomaly.7-12m
+    videoIds:
+      - yzRi9GlSptM
+      - G7COjy4hpqA
     articles:
+      - slug: language-comprehension
+        severities:
+          - monitor
+          - refer
+        browse: true
+      - slug: language-stimulation
+        severities:
+          - monitor
+          - refer
+      - slug: when-to-seek-help
+        severities:
+          - refer
+  - trigger: cdsa.domain.language_comprehension.anomaly.13-24m
+    videoIds:
+      - yzRi9GlSptM
+      - "-d0DmEv8qVs"
+      - G7COjy4hpqA
+    articles:
+      - slug: language-comprehension
+        severities:
+          - monitor
+          - refer
+        browse: true
       - slug: language-stimulation
         severities:
           - monitor
@@ -394,8 +470,16 @@ triggers:
         severities:
           - refer
   - trigger: cdsa.domain.language_comprehension.anomaly.25-36m
-    videoIds: []
+    videoIds:
+      - yzRi9GlSptM
+      - "-d0DmEv8qVs"
+      - G7COjy4hpqA
     articles:
+      - slug: language-comprehension
+        severities:
+          - monitor
+          - refer
+        browse: true
       - slug: language-stimulation
         severities:
           - monitor
@@ -404,8 +488,16 @@ triggers:
         severities:
           - refer
   - trigger: cdsa.domain.language_comprehension.anomaly.37-48m
-    videoIds: []
+    videoIds:
+      - yzRi9GlSptM
+      - "-d0DmEv8qVs"
+      - G7COjy4hpqA
     articles:
+      - slug: language-comprehension
+        severities:
+          - monitor
+          - refer
+        browse: true
       - slug: language-stimulation
         severities:
           - monitor
@@ -414,8 +506,16 @@ triggers:
         severities:
           - refer
   - trigger: cdsa.domain.language_comprehension.anomaly.49-60m
-    videoIds: []
+    videoIds:
+      - yzRi9GlSptM
+      - "-d0DmEv8qVs"
+      - G7COjy4hpqA
     articles:
+      - slug: language-comprehension
+        severities:
+          - monitor
+          - refer
+        browse: true
       - slug: language-stimulation
         severities:
           - monitor
@@ -424,18 +524,16 @@ triggers:
         severities:
           - refer
   - trigger: cdsa.domain.language_comprehension.anomaly.61-72m
-    videoIds: []
+    videoIds:
+      - yzRi9GlSptM
+      - "-d0DmEv8qVs"
+      - G7COjy4hpqA
     articles:
-      - slug: language-stimulation
+      - slug: language-comprehension
         severities:
           - monitor
           - refer
-      - slug: when-to-seek-help
-        severities:
-          - refer
-  - trigger: cdsa.domain.language_comprehension.anomaly.7-12m
-    videoIds: []
-    articles:
+        browse: true
       - slug: language-stimulation
         severities:
           - monitor
@@ -444,8 +542,16 @@ triggers:
         severities:
           - refer
   - trigger: cdsa.domain.language_expression.anomaly.13-24m
-    videoIds: []
+    videoIds:
+      - yzRi9GlSptM
+      - "-d0DmEv8qVs"
+      - G7COjy4hpqA
     articles:
+      - slug: language-expression
+        severities:
+          - monitor
+          - refer
+        browse: true
       - slug: language-stimulation
         severities:
           - monitor
@@ -454,8 +560,16 @@ triggers:
         severities:
           - refer
   - trigger: cdsa.domain.language_expression.anomaly.25-36m
-    videoIds: []
+    videoIds:
+      - yzRi9GlSptM
+      - "-d0DmEv8qVs"
+      - G7COjy4hpqA
     articles:
+      - slug: language-expression
+        severities:
+          - monitor
+          - refer
+        browse: true
       - slug: language-stimulation
         severities:
           - monitor
@@ -464,8 +578,16 @@ triggers:
         severities:
           - refer
   - trigger: cdsa.domain.language_expression.anomaly.37-48m
-    videoIds: []
+    videoIds:
+      - yzRi9GlSptM
+      - "-d0DmEv8qVs"
+      - G7COjy4hpqA
     articles:
+      - slug: language-expression
+        severities:
+          - monitor
+          - refer
+        browse: true
       - slug: language-stimulation
         severities:
           - monitor
@@ -474,8 +596,16 @@ triggers:
         severities:
           - refer
   - trigger: cdsa.domain.language_expression.anomaly.49-60m
-    videoIds: []
+    videoIds:
+      - yzRi9GlSptM
+      - "-d0DmEv8qVs"
+      - G7COjy4hpqA
     articles:
+      - slug: language-expression
+        severities:
+          - monitor
+          - refer
+        browse: true
       - slug: language-stimulation
         severities:
           - monitor
@@ -484,8 +614,16 @@ triggers:
         severities:
           - refer
   - trigger: cdsa.domain.language_expression.anomaly.61-72m
-    videoIds: []
+    videoIds:
+      - yzRi9GlSptM
+      - "-d0DmEv8qVs"
+      - G7COjy4hpqA
     articles:
+      - slug: language-expression
+        severities:
+          - monitor
+          - refer
+        browse: true
       - slug: language-stimulation
         severities:
           - monitor
