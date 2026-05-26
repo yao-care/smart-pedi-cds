@@ -34,3 +34,6 @@ scripts/curate/.last-build.json
 
 # Superpowers brainstorm visual-companion scratch
 .superpowers/
+
+# Local Claude Code project config/plans
+.claude/
