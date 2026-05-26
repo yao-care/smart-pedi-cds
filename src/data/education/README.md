@@ -24,13 +24,13 @@
 下列欄位**不可**出現在 markdown frontmatter；違反會被 `tests/data/education-no-video-fields.test.ts` 抓到：
 
 - `videoUrl` — 影片網址移到 `src/data/video-catalog/<tier>.yaml`
-- `triggerIndicators` — trigger 對應移到 `src/data/education-videos/<category>.yaml`
+- `triggerIndicators` — trigger 對應移到 `src/data/education/content-relevance.yaml`
 - `format: "video"` — 走 yaml catalog，不存在 markdown 中
 
 ## 影片要加在哪裡？
 
 - **影片元資料**（title / channel / duration / sourceTier / score）→ `src/data/video-catalog/<tier>.yaml`
-- **影片對應到哪些評估結果**（cdsa.triage.refer.13-24m / cdss.spo2.critical.infant 等）→ `src/data/education-videos/<category>.yaml`
+- **影片對應到哪些評估結果**（cdsa.triage.refer.13-24m / cdss.spo2.critical.infant 等）→ `src/data/education/content-relevance.yaml`
 
 詳見 `../video-catalog/README.md`。
 
