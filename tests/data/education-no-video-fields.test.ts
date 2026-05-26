@@ -12,7 +12,7 @@ import path from 'node:path';
  * 改 schema 禁止 format='video'。本測試守住此 invariant — 防止未來 PR 又把影片塞回 markdown。
  *
  * 違反此守則的正確修法：把影片元資料寫進 src/data/video-catalog/<tier>.yaml + 對應 trigger
- * 寫進 src/data/education-videos/<file>.yaml，不要動 markdown。
+ * 寫進 src/data/education/content-relevance.yaml，不要動 markdown。
  */
 describe('education markdown — single-source invariant', () => {
   it('沒有任何 .md 含 videoUrl frontmatter 欄位', async () => {
@@ -40,7 +40,7 @@ describe('education markdown — single-source invariant', () => {
         offenders.push(f);
       }
     }
-    expect(offenders, 'trigger 對應應寫進 education-videos/*.yaml').toEqual([]);
+    expect(offenders, 'trigger 對應應寫進 content-relevance.yaml').toEqual([]);
   });
 
   it('沒有任何 .md 含 format: "video"', async () => {

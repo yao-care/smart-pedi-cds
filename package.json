@@ -22,7 +22,6 @@
     "generate:cards": "node scripts/generate-placeholder-cards.mjs",
     "generate:icons": "node scripts/generate-pwa-icons.mjs",
     "postbuild": "pagefind --site dist && node scripts/build-sw.mjs && node scripts/build-manifest.mjs",
-    "build:video-index": "tsx scripts/build-video-index.ts",
     "curate:videos": "tsx scripts/curate-videos.ts",
     "curate:clean": "tsx scripts/curate-videos.ts --clean"
   },

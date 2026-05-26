@@ -23,8 +23,8 @@ export function buildMatrixData(triggers: TriggerMap): MatrixData {
   const data: Record<string, MatrixCellData> = {};
 
   // Initialise all cells as applicable (empty → contributable).
-  // Source of truth for inapplicability is scripts/curate/inapplicable-matrix.json,
-  // whose 10 inapplicable combos are emitted as explicit cdsa.domain triggers with
+  // Source of truth for inapplicability is src/data/education/content-relevance.yaml,
+  // whose inapplicable section is compiled into cdsa.domain triggers with
   // inapplicable:true; only those flip a cell back to inapplicable below.
   for (const domain of CDSA_DOMAINS) {
     for (const age of AGE_GROUPS_CDSA) {
