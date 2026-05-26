@@ -79,7 +79,7 @@ const baselinesCollection = defineCollection({
 // ---------- education collection (glob loader, markdown) ----------
 // Education markdown 為「純文章衛教」的單一來源。
 // 影片資料（含 videoUrl / channel / trigger 對應）全部走 src/data/video-catalog/*.yaml
-// 與 src/data/education-videos/*.yaml — schema 已禁止 markdown 再帶 video 欄位
+// 與 src/data/education/content-relevance.yaml — schema 已禁止 markdown 再帶 video 欄位
 // 與 format='video'，防止雙資料來源死灰復燃。
 const educationCollection = defineCollection({
   loader: glob({ pattern: ['**/*.md', '!**/README.md'], base: './src/data/education' }),

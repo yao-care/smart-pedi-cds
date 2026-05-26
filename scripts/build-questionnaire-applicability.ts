@@ -1,10 +1,10 @@
 #!/usr/bin/env tsx
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import yaml from 'js-yaml';
 
-interface InapplicableMatrix {
-  version: number;
-  'cdsa.domain': Record<string, { inapplicable: string[] }>;
+interface ContentRelevance {
+  inapplicable: Record<string, string[]>;
 }
 
 const QUESTIONNAIRE_DOMAINS = [
@@ -18,13 +18,13 @@ const AGE_GROUPS_CDSA = [
 
 async function main(): Promise<void> {
   const cwd = process.cwd();
-  const matrixPath = path.join(cwd, 'scripts/curate/inapplicable-matrix.json');
-  const matrix: InapplicableMatrix = JSON.parse(await fs.readFile(matrixPath, 'utf8'));
+  const relevancePath = path.join(cwd, 'src/data/education/content-relevance.yaml');
+  const relevance = yaml.load(await fs.readFile(relevancePath, 'utf8')) as ContentRelevance;
 
   const result: Record<string, string[]> = {};
   for (const ag of AGE_GROUPS_CDSA) {
     result[ag] = QUESTIONNAIRE_DOMAINS.filter(domain => {
-      const inapp = matrix['cdsa.domain'][domain]?.inapplicable ?? [];
+      const inapp = relevance.inapplicable[domain] ?? [];
       return !inapp.includes(ag);
     });
   }

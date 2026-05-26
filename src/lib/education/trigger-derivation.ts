@@ -1,18 +1,12 @@
 import type { TriageResult } from '../../engine/cdsa/triage';
 import type { AgeGroupCDSA } from '../utils/age-groups';
 import type { IndicatorResult } from '../../engine/workers/rule-engine.worker';
+import { CDSA_DOMAIN_NAMES, CDSS_INDICATOR_NAMES } from './schemas';
 
 type AgeGroupCDSS = 'infant' | 'toddler' | 'preschool';
 
-const KNOWN_DOMAINS = new Set([
-  'behavior', 'gross_motor', 'fine_motor', 'language',
-  'cognition', 'language_comprehension', 'language_expression', 'social_emotional',
-]);
-
-const KNOWN_INDICATORS = new Set([
-  'heart_rate', 'spo2', 'respiratory_rate', 'temperature',
-  'sleep_quality', 'activity_level', 'sugar_intake',
-]);
+const KNOWN_DOMAINS = new Set<string>(CDSA_DOMAIN_NAMES);
+const KNOWN_INDICATORS = new Set<string>(CDSS_INDICATOR_NAMES);
 
 export function deriveCdsaTriggers(
   triage: TriageResult,

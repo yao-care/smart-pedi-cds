@@ -39,10 +39,10 @@
 ## 架構：單一真相源 → 編譯 → 三投影
 
 ```
-單一來源（內容導向，每筆內容只宣告一次）
+單一來源（cell / 情境導向：每格列 videoIds + articles）
         │  scripts/build-content-index.ts（取代 build-video-index.ts）
         ▼
-public/data/content-index.json（編譯產物，含 catalog + 關聯）
+public/data/video-index.json（編譯產物，超集：保留舊三鍵 + 新 recommendations/clinicalEducation）
         │
    ┌────┴─────────────┬──────────────────────┐
    ▼                  ▼                       ▼
@@ -52,12 +52,12 @@ public/data/content-index.json（編譯產物，含 catalog + 關聯）
                  ResultView/EducationMatch  TriggerVideoList
 ```
 
-### 單一來源（內容導向）
+### 單一來源（cell / 情境導向）
 
-每個內容項目（文章或影片）**只宣告一次**它的關聯，用多值陣列取代「一格一列」的重複：
+每個「情境格」(trigger) 列出該格的影片與文章；文章可標適用嚴重度。**合三份 education-videos yaml + `default.json` + `inapplicable-matrix.json` 為這一份。** 結構接近現有 yaml，故 parity 易證。
 
 ```yaml
-# src/data/education/content-relevance.yaml（唯一關聯真相源，含「不適用」定義）
+# src/data/education/content-relevance.yaml（唯一關聯真相源）
 inapplicable:                 # 哪些 領域×年齡 不評估（取代 inapplicable-matrix.json）
   behavior: [2-6m, 7-12m]
   fine_motor: [2-6m]
@@ -68,23 +68,34 @@ inapplicable:                 # 哪些 領域×年齡 不評估（取代 inappli
   social_emotional: [2-6m]
   # gross_motor：無（全年齡適用）
 
-relevance:                    # 每個內容項目只宣告一次
-  - ref: { type: article, slug: gross-motor-activities }
-    cdsa:
-      domains: [gross_motor]
-      ageGroups: [2-6m, 7-12m, 13-24m, 25-36m, 37-48m, 49-60m, 61-72m]
-      severities: [monitor, refer]   # 哪些分流結果適用（normal/monitor/refer）
+triggers:                     # 每個情境格列出該格內容
+  # 發展領域格：cdsa.domain.<領域>.anomaly.<年齡>
+  - trigger: cdsa.domain.language.anomaly.13-24m
+    videoIds: [yzRi9GlSptM, "-d0DmEv8qVs", G7COjy4hpqA]
+    articles:
+      - { slug: language-stimulation, severities: [monitor, refer] }
 
-  - ref: { type: article, slug: when-to-seek-help }
-    cdsa: { domains: [all], severities: [refer] }
-    clinical: [cdsa.triage.refer.*]  # 臨床觸發（cdss/triage trigger 字串，支援 * 萬用）
+  - trigger: cdsa.domain.gross_motor.anomaly.13-24m
+    articles:
+      - { slug: gross-motor-activities, severities: [monitor, refer] }
+      - { slug: exercise-guide,         severities: [monitor, refer] }
 
-  - ref: { type: article, slug: respiratory-care }
-    clinical: [cdss.respiratory_rate.critical.*]
+  # 生理警示格：cdss.<指標>.<層級>.<年齡>
+  - trigger: cdss.sugar_intake.critical.infant
+    videoIds: [oRDPgoXP9Ik]
+    articles:
+      - { slug: diet-control }
+      - { slug: nutrition-grow-tall }     # 原 default.json diet 格收編於此
 
-  - ref: { type: video, videoId: yzRi9GlSptM }
-    cdsa: { domains: [language], ageGroups: [13-24m] }
+  # 轉介格：cdsa.triage.<類別>.<年齡>
+  - trigger: cdsa.triage.refer.13-24m
+    articles:
+      - { slug: when-to-seek-help }
 ```
+
+- `severities`：只有 `cdsa.domain.*` 格的文章需要（決定哪些分流結果推薦它）；省略時預設 `[monitor, refer]`。
+- `videoIds` / `articles` 皆可省略（預設空陣列）。
+- 不採「內容導向（每篇宣告一次）」是因為它在 (領域×嚴重度) 配對、空 trigger、diet 死格上會破壞 parity；cell 導向天然保留正確配對。
 
 ### 「一個檔」的邊界（100% 承諾）
 
@@ -98,13 +109,16 @@ relevance:                    # 每個內容項目只宣告一次
 
 ### 三視圖投影邏輯（純函式，可單測）
 
-- **矩陣瀏覽**：對每個 (domain, age) cell，收集 `cdsa.domains ∋ domain && ageGroups ∋ age` 的內容（不分嚴重度）。
-- **評估後推薦**：給 (anomalousDomain, childAge, triageCategory)，收集 `domains∋d && ageGroups∋age && severities∋category` 的文章，**再疊租戶 overlay**。
-- **觸發影片**：給 trigger 字串，收集 `clinical` 命中該 trigger（或 cdsa 投影出的對應 trigger）的影片。
+- **矩陣瀏覽**：取所有 `cdsa.domain.<d>.anomaly.<age>` 格 → (d, age) 顯示其 videoIds + articles；`inapplicable` 區的格標「—」。
+- **評估後推薦（年齡感知）**：給 (anomalousDomain d, childAge a, triageCategory c)，取 `cdsa.domain.d.anomaly.a` 中 `severities ∋ c` 的文章 **＋** `cdsa.triage.c.a` 格的文章（c≠normal）；再疊租戶 overlay。
+- **觸發影片 / closed-loop**：給 trigger 字串直接查該格 videoIds；closed-loop 指標 → `cdss.<指標>.*` 格的文章。
+
+> **diet 死格決策**：`default.json` 的 `diet` 非發展領域，評估流程從不以 `diet` 查推薦（已驗證 `ResultView` 只傳異常發展領域）→ `diet-control`/`nutrition-grow-tall` 收編到 `cdss.sugar_intake.*` 臨床格；parity 對 diet 列記為「已驗證不可達」的刻意整併。
 
 ### 租戶 overlay（只在推薦層）
 
-- 沿用現有 IndexedDB overlay 機制，但 key 改為 `tenant::category::domain::ageGroup`（加入年齡，配合 D3）。
+- **沿用現有 IndexedDB overlay 機制與 key 不變**（`tenant::category::domain`，年齡無關）→ **不需 Dexie 遷移**，既有租戶自訂零風險保留。
+- 「推薦看年齡」由**預設值**承擔（來自 content-relevance 各年齡格）；overlay 維持 `(category, domain)` 粒度、套用到該領域所有年齡的預設清單上。D3 仍成立（推薦輸出依年齡），且 YAGNI 不引入「分齡自訂」此非必要能力。
 - overlay 疊在「評估後推薦」投影結果上（預設清單 + 租戶增減），矩陣/觸發不受影響。
 
 ---
@@ -113,7 +127,7 @@ relevance:                    # 每個內容項目只宣告一次
 
 | 現有檔案 | 動作 |
 |----------|------|
-| `src/data/recommendations/default.json` | **刪除**；內容折入 `content-relevance.yaml` 的 `severities` 標記 |
+| `src/data/recommendations/default.json` | **刪除**；發展領域格折入對應 `cdsa.domain` trigger 的文章 `severities`；diet 格收編至 `cdss.sugar_intake.*` 臨床格 |
 | `src/data/education-videos/cdsa-domains.yaml` | **遷移**進 `content-relevance.yaml` 後刪除 |
 | `src/data/education-videos/cdsa-triage.yaml` | **遷移**進 `clinical` 後刪除 |
 | `src/data/education-videos/cdss-vital-signs.yaml` | **遷移**進 `clinical` 後刪除 |
@@ -129,7 +143,7 @@ relevance:                    # 每個內容項目只宣告一次
 | `src/lib/education/trigger-derivation.ts` ⑥ | 保留「情境→trigger 字串」邏輯，但 `KNOWN_DOMAINS`/`KNOWN_INDICATORS` 改從 `schemas.ts` 單一 enum 源匯入（不再各自硬寫） |
 | `src/components/education/EducationRecommend.svelte` 🗑️ | **刪除**（死代碼，無 import、指向不存在 slug） |
 | `src/data/education/milestones/*.md` 📄 | 在 `content-relevance.yaml` 補上 relevance（依年齡），否則維持孤兒；**預設補上** |
-| `src/lib/db/custom-education.ts` + `schema.ts` 🏥 | 租戶自訂內容併入「推薦投影」；overlay/custom key 加 `ageGroup`（配合 D3）。runtime 投影函式需把 default + custom + overlay 合併 |
+| `src/lib/db/custom-education.ts` + `schema.ts` 🏥 | overlay key **不變**（`tenant::category::domain`），**不需 Dexie 遷移**；custom-education 沿用現有 `resolveItemDisplay` 解析（透過 overlay 的 `source:custom` 項目）。投影函式 = 各年齡預設 + overlay（年齡無關） |
 | `src/content.config.ts` | education frontmatter 不變（關聯不放 frontmatter，維持方向 B） |
 | 消費端 | `index.astro`、`ResultView`/`ResultViewWrapper`/`EducationMatch`、`TriggerVideoList`/`EducationRelatedVideos`、`PatientList`/`ResultDetail`、`CustomEducationList`、`[...slug].astro`、`RecommendationsManager` 全部改接新投影 API |
 
