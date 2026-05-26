@@ -16,9 +16,6 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 
 let neu: RuntimeIndex;
 let before: RuntimeIndex;
-let defaultJson: {
-  matrix: Record<string, Record<string, Array<{ source: string; slug?: string }>>>;
-};
 
 beforeAll(async () => {
   // Import the new build script (must export buildContentIndex)
@@ -31,13 +28,6 @@ beforeAll(async () => {
       'utf8',
     ),
   ) as RuntimeIndex;
-
-  defaultJson = JSON.parse(
-    await fs.readFile(
-      path.join(ROOT, 'src/data/recommendations/default.json'),
-      'utf8',
-    ),
-  );
 }, 30_000);
 
 // ---------------------------------------------------------------------------
@@ -119,50 +109,30 @@ describe('triggers', () => {
 });
 
 // ---------------------------------------------------------------------------
-// 4. recommendations covers default.json (non-diet, non-normal domains)
+// 4. recommendations — structural integrity (default.json removed; parity was
+//    verified at migration time and is now enforced by content-relevance.yaml)
 // ---------------------------------------------------------------------------
 describe('recommendations', () => {
-  // Normalize domain names from default.json abbreviated forms
-  const normalizeDomain = (d: string): string => {
-    if (d === 'language_comp') return 'language_comprehension';
-    if (d === 'language_expr') return 'language_expression';
-    return d;
-  };
-
-  // Age groups used in CDSA domain triggers
-  const CDSA_AGES = ['2-6m', '7-12m', '13-24m', '25-36m', '37-48m', '49-60m', '61-72m'];
-
   it('exists and is a non-empty object', () => {
     expect(neu.recommendations).toBeDefined();
     expect(typeof neu.recommendations).toBe('object');
     expect(Object.keys(neu.recommendations).length).toBeGreaterThan(0);
   });
 
-  it('every non-diet slug in default.json appears in recommendations for at least one age', () => {
+  it('all keys match pattern <severity>::<domain>::<ageGroup>', () => {
+    for (const key of Object.keys(neu.recommendations)) {
+      expect(key, `malformed recommendations key: ${key}`).toMatch(
+        /^(normal|monitor|refer)::[a-z_]+::[0-9]+-[0-9]+m$/,
+      );
+    }
+  });
+
+  it('all recommendation items have source=internal and a slug', () => {
     const recs = neu.recommendations as Record<string, Array<{ source: string; slug?: string }>>;
-
-    for (const [category, domains] of Object.entries(defaultJson.matrix)) {
-      for (const [rawDomain, items] of Object.entries(domains)) {
-        if (rawDomain === 'diet') continue; // diet excluded per spec
-
-        const domain = normalizeDomain(rawDomain);
-
-        for (const item of items) {
-          if (!item.slug) continue;
-
-          // There must be at least one age A where recommendations[`${category}::${domain}::${A}`]
-          // contains an item with this slug
-          const foundAge = CDSA_AGES.some(age => {
-            const key = `${category}::${domain}::${age}`;
-            const list = recs[key];
-            return Array.isArray(list) && list.some(r => r.slug === item.slug);
-          });
-
-          expect(
-            foundAge,
-            `slug "${item.slug}" for ${category}::${domain} not found in any recommendations[${category}::${domain}::*]`,
-          ).toBe(true);
-        }
+    for (const [key, items] of Object.entries(recs)) {
+      for (const item of items) {
+        expect(item.source, `${key}: item missing source`).toBe('internal');
+        expect(item.slug, `${key}: item missing slug`).toBeTruthy();
       }
     }
   });
