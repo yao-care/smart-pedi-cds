@@ -8,15 +8,22 @@
 
 ## 背景與問題
 
-目前有**三套獨立**的「內容 ↔ 情境」對應，同一篇文章要在多個檔案各登記一次，沒有單一真相源：
+經全 codebase 掃描，目前「內容 ↔ 情境」對應**散在 6 處活的來源 + 死代碼 + 孤兒內容**，同一篇文章在多處各登記一次，沒有單一真相源：
 
-| 系統 | 來源檔 | 軸 | 引入時間 |
-|------|--------|-----|----------|
-| ① 矩陣瀏覽 | `src/data/education-videos/cdsa-domains.yaml` | 領域 × 年齡 | 2026-05-25 |
-| ② 評估後推薦 | `src/data/recommendations/default.json` | 分流類別 × 領域（無年齡）+ 租戶 overlay | 2026-05-14 |
-| ③ 觸發影片 | `education-videos/*.yaml`（cdsa-domains / cdsa-triage / cdss-vital-signs） | trigger（領域×年齡 / cdss / triage） | 2026-05-19 |
+| # | 對應來源 | 軸 / 形式 | 狀態 |
+|---|----------|-----------|------|
+| ① | `data/education-videos/cdsa-domains.yaml` | 領域 × 年齡（矩陣 + 觸發） | 活 |
+| ② | `data/recommendations/default.json` + `lib/db/recommendations.ts` | 分流類別 × 領域（無年齡）+ 租戶 overlay | 活 |
+| ③ | `data/education-videos/cdsa-triage.yaml`、`cdss-vital-signs.yaml` | trigger（triage / cdss 生理） | 活 |
+| ④ | `engine/closed-loop.ts` `getEducationRecommendations` | **硬寫** `{sugar_intake→diet-control, sleep_quality→sleep-hygiene, spo2→respiratory-care, activity_level→exercise-guide}` | 活 |
+| ⑤ | `components/settings/RecommendationsManager.svelte:45-49` | **硬寫** 15 個 slug 清單（設定 UI 可選項） | 活 |
+| ⑥ | `lib/education/trigger-derivation.ts` | **硬寫** `KNOWN_DOMAINS` / `KNOWN_INDICATORS` 兩份清單 + 組 trigger 字串 | 活 |
+| — | `data/curate/inapplicable-matrix.json` | 哪些 領域×年齡 不適用 | 活 |
+| 🗑️ | `components/education/EducationRecommend.svelte` | `CONTENT_META` 指向 5 個不存在的 slug，無任何 import | **死代碼** |
+| 📄 | `data/education/milestones/*.md`（5 篇） | 不在任何對應裡 | 孤兒 |
+| 🏥 | `lib/db/custom-education.ts`（IndexedDB `customEducation` 表） | 租戶自訂內容，自帶 category/domain/ageGroup/indicators | 活（租戶層） |
 
-**痛點**：`gross-motor-activities` 同時登記在 ①（cdsa-domains.yaml）和 ②（default.json），改一邊忘另一邊就不一致。①③ 其實共用同一份 yaml，真正分家的是 ②（軸不同：用分流類別、無年齡）。這是「每次加新功能就多一套設定、不管以前」累積出來的。
+**痛點**：`gross-motor-activities` 同時登記在 ①、②、⑤；`diet-control` 在 ②③④。改一處忘其他就不一致。`KNOWN_DOMAINS`（⑥）和領域 enum（`schemas.ts`）、`closed-loop` 的 indicator map（④）各自為政。這是「每次加新功能就多一套設定、不管以前」累積出來的典型結果。
 
 ---
 
@@ -116,9 +123,15 @@ relevance:                    # 每個內容項目只宣告一次
 | `src/lib/db/recommendations.ts` | 改寫：投影自 content-index + 套 overlay（年齡感知） |
 | `src/lib/education/matrix-data.ts` | 改為投影自 content-index |
 | `src/lib/education/video-lookup.ts` | 改為投影自 content-index |
-| `src/lib/education/schemas.ts` | 更新 schema（content-relevance + 新 runtime index） |
+| `src/lib/education/schemas.ts` | 更新 schema（content-relevance + 新 runtime index）；領域/指標 enum 成為**唯一** enum 源 |
+| `src/engine/closed-loop.ts` ④ | **移除**硬寫的 `getEducationRecommendations` indicator→slug map，改呼叫 content-index 的 clinical 投影 |
+| `src/components/settings/RecommendationsManager.svelte` ⑤ | **移除**硬寫的 15-slug 清單，改從 content-index 取「可選內容」 |
+| `src/lib/education/trigger-derivation.ts` ⑥ | 保留「情境→trigger 字串」邏輯，但 `KNOWN_DOMAINS`/`KNOWN_INDICATORS` 改從 `schemas.ts` 單一 enum 源匯入（不再各自硬寫） |
+| `src/components/education/EducationRecommend.svelte` 🗑️ | **刪除**（死代碼，無 import、指向不存在 slug） |
+| `src/data/education/milestones/*.md` 📄 | 在 `content-relevance.yaml` 補上 relevance（依年齡），否則維持孤兒；**預設補上** |
+| `src/lib/db/custom-education.ts` + `schema.ts` 🏥 | 租戶自訂內容併入「推薦投影」；overlay/custom key 加 `ageGroup`（配合 D3）。runtime 投影函式需把 default + custom + overlay 合併 |
 | `src/content.config.ts` | education frontmatter 不變（關聯不放 frontmatter，維持方向 B） |
-| 消費端 | `index.astro`、`ResultView`/`EducationMatch`、`TriggerVideoList`/`EducationRelatedVideos`、`[...slug].astro`、`/settings/recommendations` 改接新投影 API |
+| 消費端 | `index.astro`、`ResultView`/`ResultViewWrapper`/`EducationMatch`、`TriggerVideoList`/`EducationRelatedVideos`、`PatientList`/`ResultDetail`、`CustomEducationList`、`[...slug].astro`、`RecommendationsManager` 全部改接新投影 API |
 
 遷移驗證：build 後比對「遷移前 video-index.json + default.json 表達的關聯」與「遷移後 content-index.json 投影結果」逐筆一致（migration parity test），確保沒有任何內容掉落或改變行為（除 D3 年齡感知為刻意行為變更）。
 
@@ -136,6 +149,7 @@ relevance:                    # 每個內容項目只宣告一次
 ## 成功標準
 
 1. `content-relevance.yaml` 是唯一宣告「內容 ↔ 情境」的地方；新增/搬移一篇文章只改這一處。
-2. `default.json`、三份 education-videos yaml、`inapplicable-matrix.json` 全部刪除，無重複登記。關聯只在 `content-relevance.yaml` 一處。
+2. **關聯資料 100% 在 `content-relevance.yaml` 一處**：①②③ 的資料檔（`default.json`、三份 education-videos yaml）、`inapplicable-matrix.json` 全部刪除；④⑤ 的硬寫 map/清單移除改讀投影；⑥ 的 enum 改從 `schemas.ts` 單一源匯入；死代碼 `EducationRecommend.svelte` 刪除。
+   - 釐清：**關聯**（誰出現在哪）→ `content-relevance.yaml`；**分類法 enum**（領域/年齡/嚴重度/指標清單）→ `schemas.ts` 單一源；**內容自身事實** → `.md` / `video-catalog`。三者各有唯一源，互不重複。
 3. 三視圖行為：矩陣（10 不適用 / 其餘可貢獻，現有內容如實顯示）、推薦（年齡感知 + 租戶 overlay 仍可用）、觸發影片（與遷移前一致）。
 4. migration parity test 通過：除年齡感知外，關聯關係與遷移前等價。
