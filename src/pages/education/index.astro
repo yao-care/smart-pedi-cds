@@ -7,7 +7,7 @@ import { buildMatrixData, CDSA_DOMAINS, AGE_GROUPS_CDSA, type MatrixCellData } f
 import videoIndex from '../../../public/data/video-index.json';
 import JsonLd from '../../components/seo/JsonLd.astro';
 import { articleListSchema } from '../../lib/seo/schema';
-import { CORE_ARTICLE_SLUGS } from '../../lib/education/core-articles';
+import { CORE_ARTICLE_SLUGS, MATRIX_ARTICLE_SLUGS } from '../../lib/education/core-articles';
 
 const allEducation = await getCollection('education');
 
@@ -28,8 +28,12 @@ const articleListJsonLd = articleListSchema(
 const articleTitles = new Map(allEducation.map(e => [e.id, e.data.title]));
 
 // Article content map for edit pre-fill (slug → { title, summary, content })
+// 只含矩陣可編輯文章（被 trigger 對應），排除無編輯入口的孤兒食譜，避免其全文嵌入頁面
+const editableSet = new Set(MATRIX_ARTICLE_SLUGS);
 const articleContent = Object.fromEntries(
-  allEducation.map(e => [e.id, { title: e.data.title, summary: e.data.summary ?? '', content: e.body ?? '' }])
+  allEducation
+    .filter(e => editableSet.has(e.id))
+    .map(e => [e.id, { title: e.data.title, summary: e.data.summary ?? '', content: e.body ?? '' }])
 );
 
 // Catalog lookup: videoId → { title, channel, duration, videoId }

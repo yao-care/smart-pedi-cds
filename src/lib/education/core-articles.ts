@@ -40,3 +40,14 @@ export const CORE_ARTICLE_SLUGS: readonly string[] = [
 export function isCoreArticle(slug: string): boolean {
   return CORE_ARTICLE_SLUGS.includes(slug);
 }
+
+/**
+ * 被任一 trigger 對應到的文章 slug（會出現在矩陣/推薦、含 browse 核心與情境補充，去重排序）。
+ * 排除純配合影片、未被任何 trigger 對應的孤兒文章（如 nutrition-* 食譜）。
+ * 用於 /education 矩陣編輯功能的 pre-fill 資料範圍——孤兒不在矩陣、無編輯入口，不需其內容。
+ */
+export const MATRIX_ARTICLE_SLUGS: readonly string[] = [
+  ...new Set(
+    (doc.triggers ?? []).flatMap((t) => (t.articles ?? []).map((a) => a.slug)),
+  ),
+].sort();

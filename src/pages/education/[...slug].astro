@@ -5,13 +5,19 @@ import InteractionTracker from '../../components/education/InteractionTracker.sv
 import EducationRelatedVideos from '../../components/education/EducationRelatedVideos.svelte';
 import JsonLd from '../../components/seo/JsonLd.astro';
 import { medicalWebPageSchema } from '../../lib/seo/schema';
+import { MATRIX_ARTICLE_SLUGS } from '../../lib/education/core-articles';
 
 export async function getStaticPaths() {
   const entries = await getCollection('education');
-  return entries.map((entry) => ({
-    params: { slug: entry.id },
-    props: { entry },
-  }));
+  const matrixSet = new Set(MATRIX_ARTICLE_SLUGS);
+  // 只產生「矩陣對應文章」與「里程碑」頁；排除無對外入口的孤兒食譜（nutrition-*），
+  // 使其不存在於 dist → 不進 sitemap、不被 Pagefind 索引、頁面 source 無食譜全文
+  return entries
+    .filter((entry) => matrixSet.has(entry.id) || entry.data.category === 'milestone')
+    .map((entry) => ({
+      params: { slug: entry.id },
+      props: { entry },
+    }));
 }
 
 const { entry } = Astro.props;
