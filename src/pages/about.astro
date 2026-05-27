@@ -350,58 +350,6 @@ const outcomes = [
     font-style: italic;
   }
 
-  /* ---------- FAQ ---------- */
-  .faq-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-  }
-
-  .faq-item {
-    background-color: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-  }
-
-  .faq-question {
-    padding: var(--space-4) var(--space-5);
-    font-size: var(--text-base);
-    font-weight: var(--font-medium);
-    color: var(--text);
-    cursor: pointer;
-    list-style: none;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-3);
-  }
-
-  .faq-question::-webkit-details-marker {
-    display: none;
-  }
-
-  .faq-question::after {
-    content: '+';
-    font-size: var(--text-xl);
-    line-height: 1;
-    color: color-mix(in srgb, var(--text), var(--bg) 45%);
-    flex-shrink: 0;
-    transition: transform 0.2s ease;
-  }
-
-  .faq-item[open] .faq-question::after {
-    content: '-';
-  }
-
-  .faq-answer {
-    padding: 0 var(--space-5) var(--space-5);
-    font-size: var(--text-sm);
-    line-height: var(--lh-sm);
-    color: color-mix(in srgb, var(--text), var(--bg) 30%);
-    max-width: 72ch;
-  }
-
   /* ---------- 底部 CTA ---------- */
   .about-cta {
     text-align: center;
