@@ -167,7 +167,7 @@ export async function buildContentIndex(opts: BuildOptions = {}): Promise<Runtim
 
   const triggers: Record<
     string,
-    { videoIds: string[]; inapplicable: boolean; educationSlug?: string }
+    { videoIds: string[]; inapplicable: boolean; educationSlug?: string; articleSlugs?: string[] }
   > = {};
 
   // (a) Inapplicable cells
@@ -189,10 +189,13 @@ export async function buildContentIndex(opts: BuildOptions = {}): Promise<Runtim
     const educationSlugSource = browseArticle
       ? browseArticle.slug
       : (entry.trigger.startsWith('cdsa.domain.') ? undefined : entry.articles[0]?.slug);
+    // 該情境的所有相關文章（browse 主文章 + 補充推薦），去重保序，供矩陣每格列出。
+    const allArticleSlugs = [...new Set(entry.articles.map(a => a.slug))];
     triggers[entry.trigger] = {
       videoIds: verifiedVideoIds,
       inapplicable: false,
       ...(educationSlugSource ? { educationSlug: educationSlugSource } : {}),
+      ...(allArticleSlugs.length ? { articleSlugs: allArticleSlugs } : {}),
     };
   }
 

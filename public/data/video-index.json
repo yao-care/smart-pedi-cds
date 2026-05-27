@@ -1829,6 +1829,11 @@
   },
   "triggers": {
     "cdsa.domain.behavior.anomaly.13-24m": {
+      "articleSlugs": [
+        "behavior-guidance",
+        "sleep-hygiene",
+        "when-to-seek-help"
+      ],
       "educationSlug": "behavior-guidance",
       "inapplicable": false,
       "videoIds": [
@@ -1841,6 +1846,11 @@
       "videoIds": []
     },
     "cdsa.domain.behavior.anomaly.25-36m": {
+      "articleSlugs": [
+        "behavior-guidance",
+        "sleep-hygiene",
+        "when-to-seek-help"
+      ],
       "educationSlug": "behavior-guidance",
       "inapplicable": false,
       "videoIds": [
@@ -1850,6 +1860,11 @@
       ]
     },
     "cdsa.domain.behavior.anomaly.37-48m": {
+      "articleSlugs": [
+        "behavior-guidance",
+        "sleep-hygiene",
+        "when-to-seek-help"
+      ],
       "educationSlug": "behavior-guidance",
       "inapplicable": false,
       "videoIds": [
@@ -1859,6 +1874,11 @@
       ]
     },
     "cdsa.domain.behavior.anomaly.49-60m": {
+      "articleSlugs": [
+        "behavior-guidance",
+        "sleep-hygiene",
+        "when-to-seek-help"
+      ],
       "educationSlug": "behavior-guidance",
       "inapplicable": false,
       "videoIds": [
@@ -1867,6 +1887,11 @@
       ]
     },
     "cdsa.domain.behavior.anomaly.61-72m": {
+      "articleSlugs": [
+        "behavior-guidance",
+        "sleep-hygiene",
+        "when-to-seek-help"
+      ],
       "educationSlug": "behavior-guidance",
       "inapplicable": false,
       "videoIds": [
@@ -1879,6 +1904,10 @@
       "videoIds": []
     },
     "cdsa.domain.cognition.anomaly.13-24m": {
+      "articleSlugs": [
+        "cognitive-play",
+        "when-to-seek-help"
+      ],
       "educationSlug": "cognitive-play",
       "inapplicable": false,
       "videoIds": [
@@ -1892,6 +1921,10 @@
       "videoIds": []
     },
     "cdsa.domain.cognition.anomaly.25-36m": {
+      "articleSlugs": [
+        "cognitive-play",
+        "when-to-seek-help"
+      ],
       "educationSlug": "cognitive-play",
       "inapplicable": false,
       "videoIds": [
@@ -1901,6 +1934,10 @@
       ]
     },
     "cdsa.domain.cognition.anomaly.37-48m": {
+      "articleSlugs": [
+        "cognitive-play",
+        "when-to-seek-help"
+      ],
       "educationSlug": "cognitive-play",
       "inapplicable": false,
       "videoIds": [
@@ -1910,6 +1947,10 @@
       ]
     },
     "cdsa.domain.cognition.anomaly.49-60m": {
+      "articleSlugs": [
+        "cognitive-play",
+        "when-to-seek-help"
+      ],
       "educationSlug": "cognitive-play",
       "inapplicable": false,
       "videoIds": [
@@ -1918,6 +1959,10 @@
       ]
     },
     "cdsa.domain.cognition.anomaly.61-72m": {
+      "articleSlugs": [
+        "cognitive-play",
+        "when-to-seek-help"
+      ],
       "educationSlug": "cognitive-play",
       "inapplicable": false,
       "videoIds": [
@@ -1930,6 +1975,10 @@
       "videoIds": []
     },
     "cdsa.domain.fine_motor.anomaly.13-24m": {
+      "articleSlugs": [
+        "fine-motor-activities",
+        "when-to-seek-help"
+      ],
       "educationSlug": "fine-motor-activities",
       "inapplicable": false,
       "videoIds": [
@@ -1942,6 +1991,10 @@
       "videoIds": []
     },
     "cdsa.domain.fine_motor.anomaly.25-36m": {
+      "articleSlugs": [
+        "fine-motor-activities",
+        "when-to-seek-help"
+      ],
       "educationSlug": "fine-motor-activities",
       "inapplicable": false,
       "videoIds": [
@@ -1950,6 +2003,10 @@
       ]
     },
     "cdsa.domain.fine_motor.anomaly.37-48m": {
+      "articleSlugs": [
+        "fine-motor-activities",
+        "when-to-seek-help"
+      ],
       "educationSlug": "fine-motor-activities",
       "inapplicable": false,
       "videoIds": [
@@ -1958,6 +2015,10 @@
       ]
     },
     "cdsa.domain.fine_motor.anomaly.49-60m": {
+      "articleSlugs": [
+        "fine-motor-activities",
+        "when-to-seek-help"
+      ],
       "educationSlug": "fine-motor-activities",
       "inapplicable": false,
       "videoIds": [
@@ -1967,6 +2028,10 @@
       ]
     },
     "cdsa.domain.fine_motor.anomaly.61-72m": {
+      "articleSlugs": [
+        "fine-motor-activities",
+        "when-to-seek-help"
+      ],
       "educationSlug": "fine-motor-activities",
       "inapplicable": false,
       "videoIds": [
@@ -1975,6 +2040,10 @@
       ]
     },
     "cdsa.domain.fine_motor.anomaly.7-12m": {
+      "articleSlugs": [
+        "fine-motor-activities",
+        "when-to-seek-help"
+      ],
       "educationSlug": "fine-motor-activities",
       "inapplicable": false,
       "videoIds": [
@@ -1983,6 +2052,11 @@
       ]
     },
     "cdsa.domain.gross_motor.anomaly.13-24m": {
+      "articleSlugs": [
+        "exercise-guide",
+        "gross-motor-activities",
+        "when-to-seek-help"
+      ],
       "educationSlug": "gross-motor-activities",
       "inapplicable": false,
       "videoIds": [
@@ -1991,6 +2065,11 @@
       ]
     },
     "cdsa.domain.gross_motor.anomaly.2-6m": {
+      "articleSlugs": [
+        "exercise-guide",
+        "gross-motor-activities",
+        "when-to-seek-help"
+      ],
       "educationSlug": "gross-motor-activities",
       "inapplicable": false,
       "videoIds": [
@@ -1999,6 +2078,11 @@
       ]
     },
     "cdsa.domain.gross_motor.anomaly.25-36m": {
+      "articleSlugs": [
+        "exercise-guide",
+        "gross-motor-activities",
+        "when-to-seek-help"
+      ],
       "educationSlug": "gross-motor-activities",
       "inapplicable": false,
       "videoIds": [
@@ -2007,6 +2091,11 @@
       ]
     },
     "cdsa.domain.gross_motor.anomaly.37-48m": {
+      "articleSlugs": [
+        "exercise-guide",
+        "gross-motor-activities",
+        "when-to-seek-help"
+      ],
       "educationSlug": "gross-motor-activities",
       "inapplicable": false,
       "videoIds": [
@@ -2014,6 +2103,11 @@
       ]
     },
     "cdsa.domain.gross_motor.anomaly.49-60m": {
+      "articleSlugs": [
+        "exercise-guide",
+        "gross-motor-activities",
+        "when-to-seek-help"
+      ],
       "educationSlug": "gross-motor-activities",
       "inapplicable": false,
       "videoIds": [
@@ -2021,6 +2115,11 @@
       ]
     },
     "cdsa.domain.gross_motor.anomaly.61-72m": {
+      "articleSlugs": [
+        "exercise-guide",
+        "gross-motor-activities",
+        "when-to-seek-help"
+      ],
       "educationSlug": "gross-motor-activities",
       "inapplicable": false,
       "videoIds": [
@@ -2028,6 +2127,11 @@
       ]
     },
     "cdsa.domain.gross_motor.anomaly.7-12m": {
+      "articleSlugs": [
+        "exercise-guide",
+        "gross-motor-activities",
+        "when-to-seek-help"
+      ],
       "educationSlug": "gross-motor-activities",
       "inapplicable": false,
       "videoIds": [
@@ -2037,6 +2141,9 @@
       ]
     },
     "cdsa.domain.language.anomaly.13-24m": {
+      "articleSlugs": [
+        "language-stimulation"
+      ],
       "educationSlug": "language-stimulation",
       "inapplicable": false,
       "videoIds": [
@@ -2050,6 +2157,9 @@
       "videoIds": []
     },
     "cdsa.domain.language.anomaly.25-36m": {
+      "articleSlugs": [
+        "language-stimulation"
+      ],
       "educationSlug": "language-stimulation",
       "inapplicable": false,
       "videoIds": [
@@ -2059,6 +2169,9 @@
       ]
     },
     "cdsa.domain.language.anomaly.37-48m": {
+      "articleSlugs": [
+        "language-stimulation"
+      ],
       "educationSlug": "language-stimulation",
       "inapplicable": false,
       "videoIds": [
@@ -2068,6 +2181,9 @@
       ]
     },
     "cdsa.domain.language.anomaly.49-60m": {
+      "articleSlugs": [
+        "language-stimulation"
+      ],
       "educationSlug": "language-stimulation",
       "inapplicable": false,
       "videoIds": [
@@ -2077,6 +2193,9 @@
       ]
     },
     "cdsa.domain.language.anomaly.61-72m": {
+      "articleSlugs": [
+        "language-stimulation"
+      ],
       "educationSlug": "language-stimulation",
       "inapplicable": false,
       "videoIds": [
@@ -2086,6 +2205,9 @@
       ]
     },
     "cdsa.domain.language.anomaly.7-12m": {
+      "articleSlugs": [
+        "language-stimulation"
+      ],
       "educationSlug": "language-stimulation",
       "inapplicable": false,
       "videoIds": [
@@ -2094,6 +2216,11 @@
       ]
     },
     "cdsa.domain.language_comprehension.anomaly.13-24m": {
+      "articleSlugs": [
+        "language-comprehension",
+        "language-stimulation",
+        "when-to-seek-help"
+      ],
       "educationSlug": "language-comprehension",
       "inapplicable": false,
       "videoIds": [
@@ -2107,6 +2234,11 @@
       "videoIds": []
     },
     "cdsa.domain.language_comprehension.anomaly.25-36m": {
+      "articleSlugs": [
+        "language-comprehension",
+        "language-stimulation",
+        "when-to-seek-help"
+      ],
       "educationSlug": "language-comprehension",
       "inapplicable": false,
       "videoIds": [
@@ -2116,6 +2248,11 @@
       ]
     },
     "cdsa.domain.language_comprehension.anomaly.37-48m": {
+      "articleSlugs": [
+        "language-comprehension",
+        "language-stimulation",
+        "when-to-seek-help"
+      ],
       "educationSlug": "language-comprehension",
       "inapplicable": false,
       "videoIds": [
@@ -2125,6 +2262,11 @@
       ]
     },
     "cdsa.domain.language_comprehension.anomaly.49-60m": {
+      "articleSlugs": [
+        "language-comprehension",
+        "language-stimulation",
+        "when-to-seek-help"
+      ],
       "educationSlug": "language-comprehension",
       "inapplicable": false,
       "videoIds": [
@@ -2134,6 +2276,11 @@
       ]
     },
     "cdsa.domain.language_comprehension.anomaly.61-72m": {
+      "articleSlugs": [
+        "language-comprehension",
+        "language-stimulation",
+        "when-to-seek-help"
+      ],
       "educationSlug": "language-comprehension",
       "inapplicable": false,
       "videoIds": [
@@ -2143,6 +2290,11 @@
       ]
     },
     "cdsa.domain.language_comprehension.anomaly.7-12m": {
+      "articleSlugs": [
+        "language-comprehension",
+        "language-stimulation",
+        "when-to-seek-help"
+      ],
       "educationSlug": "language-comprehension",
       "inapplicable": false,
       "videoIds": [
@@ -2151,6 +2303,11 @@
       ]
     },
     "cdsa.domain.language_expression.anomaly.13-24m": {
+      "articleSlugs": [
+        "language-expression",
+        "language-stimulation",
+        "when-to-seek-help"
+      ],
       "educationSlug": "language-expression",
       "inapplicable": false,
       "videoIds": [
@@ -2164,6 +2321,11 @@
       "videoIds": []
     },
     "cdsa.domain.language_expression.anomaly.25-36m": {
+      "articleSlugs": [
+        "language-expression",
+        "language-stimulation",
+        "when-to-seek-help"
+      ],
       "educationSlug": "language-expression",
       "inapplicable": false,
       "videoIds": [
@@ -2173,6 +2335,11 @@
       ]
     },
     "cdsa.domain.language_expression.anomaly.37-48m": {
+      "articleSlugs": [
+        "language-expression",
+        "language-stimulation",
+        "when-to-seek-help"
+      ],
       "educationSlug": "language-expression",
       "inapplicable": false,
       "videoIds": [
@@ -2182,6 +2349,11 @@
       ]
     },
     "cdsa.domain.language_expression.anomaly.49-60m": {
+      "articleSlugs": [
+        "language-expression",
+        "language-stimulation",
+        "when-to-seek-help"
+      ],
       "educationSlug": "language-expression",
       "inapplicable": false,
       "videoIds": [
@@ -2191,6 +2363,11 @@
       ]
     },
     "cdsa.domain.language_expression.anomaly.61-72m": {
+      "articleSlugs": [
+        "language-expression",
+        "language-stimulation",
+        "when-to-seek-help"
+      ],
       "educationSlug": "language-expression",
       "inapplicable": false,
       "videoIds": [
@@ -2204,6 +2381,10 @@
       "videoIds": []
     },
     "cdsa.domain.social_emotional.anomaly.13-24m": {
+      "articleSlugs": [
+        "social-emotional-guide",
+        "when-to-seek-help"
+      ],
       "educationSlug": "social-emotional-guide",
       "inapplicable": false,
       "videoIds": [
@@ -2216,6 +2397,10 @@
       "videoIds": []
     },
     "cdsa.domain.social_emotional.anomaly.25-36m": {
+      "articleSlugs": [
+        "social-emotional-guide",
+        "when-to-seek-help"
+      ],
       "educationSlug": "social-emotional-guide",
       "inapplicable": false,
       "videoIds": [
@@ -2224,6 +2409,10 @@
       ]
     },
     "cdsa.domain.social_emotional.anomaly.37-48m": {
+      "articleSlugs": [
+        "social-emotional-guide",
+        "when-to-seek-help"
+      ],
       "educationSlug": "social-emotional-guide",
       "inapplicable": false,
       "videoIds": [
@@ -2233,6 +2422,10 @@
       ]
     },
     "cdsa.domain.social_emotional.anomaly.49-60m": {
+      "articleSlugs": [
+        "social-emotional-guide",
+        "when-to-seek-help"
+      ],
       "educationSlug": "social-emotional-guide",
       "inapplicable": false,
       "videoIds": [
@@ -2242,6 +2435,10 @@
       ]
     },
     "cdsa.domain.social_emotional.anomaly.61-72m": {
+      "articleSlugs": [
+        "social-emotional-guide",
+        "when-to-seek-help"
+      ],
       "educationSlug": "social-emotional-guide",
       "inapplicable": false,
       "videoIds": [
@@ -2251,6 +2448,10 @@
       ]
     },
     "cdsa.domain.social_emotional.anomaly.7-12m": {
+      "articleSlugs": [
+        "social-emotional-guide",
+        "when-to-seek-help"
+      ],
       "educationSlug": "social-emotional-guide",
       "inapplicable": false,
       "videoIds": [
@@ -2258,6 +2459,9 @@
       ]
     },
     "cdsa.triage.refer.13-24m": {
+      "articleSlugs": [
+        "when-to-seek-help"
+      ],
       "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": [
@@ -2267,6 +2471,9 @@
       ]
     },
     "cdsa.triage.refer.2-6m": {
+      "articleSlugs": [
+        "when-to-seek-help"
+      ],
       "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": [
@@ -2275,6 +2482,9 @@
       ]
     },
     "cdsa.triage.refer.25-36m": {
+      "articleSlugs": [
+        "when-to-seek-help"
+      ],
       "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": [
@@ -2284,6 +2494,9 @@
       ]
     },
     "cdsa.triage.refer.37-48m": {
+      "articleSlugs": [
+        "when-to-seek-help"
+      ],
       "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": [
@@ -2292,6 +2505,9 @@
       ]
     },
     "cdsa.triage.refer.49-60m": {
+      "articleSlugs": [
+        "when-to-seek-help"
+      ],
       "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": [
@@ -2300,6 +2516,9 @@
       ]
     },
     "cdsa.triage.refer.61-72m": {
+      "articleSlugs": [
+        "when-to-seek-help"
+      ],
       "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": [
@@ -2309,6 +2528,9 @@
       ]
     },
     "cdsa.triage.refer.7-12m": {
+      "articleSlugs": [
+        "when-to-seek-help"
+      ],
       "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": [
@@ -2317,21 +2539,33 @@
       ]
     },
     "cdss.activity_level.critical.infant": {
+      "articleSlugs": [
+        "when-to-seek-help"
+      ],
       "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": []
     },
     "cdss.activity_level.critical.preschool": {
+      "articleSlugs": [
+        "when-to-seek-help"
+      ],
       "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": []
     },
     "cdss.activity_level.critical.toddler": {
+      "articleSlugs": [
+        "when-to-seek-help"
+      ],
       "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": []
     },
     "cdss.heart_rate.critical.infant": {
+      "articleSlugs": [
+        "when-to-seek-help"
+      ],
       "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": [
@@ -2339,16 +2573,25 @@
       ]
     },
     "cdss.heart_rate.critical.preschool": {
+      "articleSlugs": [
+        "when-to-seek-help"
+      ],
       "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": []
     },
     "cdss.heart_rate.critical.toddler": {
+      "articleSlugs": [
+        "when-to-seek-help"
+      ],
       "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": []
     },
     "cdss.respiratory_rate.critical.infant": {
+      "articleSlugs": [
+        "respiratory-care"
+      ],
       "educationSlug": "respiratory-care",
       "inapplicable": false,
       "videoIds": [
@@ -2357,6 +2600,9 @@
       ]
     },
     "cdss.respiratory_rate.critical.preschool": {
+      "articleSlugs": [
+        "respiratory-care"
+      ],
       "educationSlug": "respiratory-care",
       "inapplicable": false,
       "videoIds": [
@@ -2366,6 +2612,9 @@
       ]
     },
     "cdss.respiratory_rate.critical.toddler": {
+      "articleSlugs": [
+        "respiratory-care"
+      ],
       "educationSlug": "respiratory-care",
       "inapplicable": false,
       "videoIds": [
@@ -2375,6 +2624,9 @@
       ]
     },
     "cdss.sleep_quality.critical.infant": {
+      "articleSlugs": [
+        "sleep-hygiene"
+      ],
       "educationSlug": "sleep-hygiene",
       "inapplicable": false,
       "videoIds": [
@@ -2383,6 +2635,9 @@
       ]
     },
     "cdss.sleep_quality.critical.preschool": {
+      "articleSlugs": [
+        "sleep-hygiene"
+      ],
       "educationSlug": "sleep-hygiene",
       "inapplicable": false,
       "videoIds": [
@@ -2391,6 +2646,9 @@
       ]
     },
     "cdss.sleep_quality.critical.toddler": {
+      "articleSlugs": [
+        "sleep-hygiene"
+      ],
       "educationSlug": "sleep-hygiene",
       "inapplicable": false,
       "videoIds": [
@@ -2400,21 +2658,33 @@
       ]
     },
     "cdss.spo2.critical.infant": {
+      "articleSlugs": [
+        "respiratory-care"
+      ],
       "educationSlug": "respiratory-care",
       "inapplicable": false,
       "videoIds": []
     },
     "cdss.spo2.critical.preschool": {
+      "articleSlugs": [
+        "respiratory-care"
+      ],
       "educationSlug": "respiratory-care",
       "inapplicable": false,
       "videoIds": []
     },
     "cdss.spo2.critical.toddler": {
+      "articleSlugs": [
+        "respiratory-care"
+      ],
       "educationSlug": "respiratory-care",
       "inapplicable": false,
       "videoIds": []
     },
     "cdss.sugar_intake.critical.infant": {
+      "articleSlugs": [
+        "diet-control"
+      ],
       "educationSlug": "diet-control",
       "inapplicable": false,
       "videoIds": [
@@ -2424,6 +2694,9 @@
       ]
     },
     "cdss.sugar_intake.critical.preschool": {
+      "articleSlugs": [
+        "diet-control"
+      ],
       "educationSlug": "diet-control",
       "inapplicable": false,
       "videoIds": [
@@ -2437,6 +2710,9 @@
       ]
     },
     "cdss.sugar_intake.critical.toddler": {
+      "articleSlugs": [
+        "diet-control"
+      ],
       "educationSlug": "diet-control",
       "inapplicable": false,
       "videoIds": [
@@ -2450,6 +2726,9 @@
       ]
     },
     "cdss.temperature.critical.infant": {
+      "articleSlugs": [
+        "when-to-seek-help"
+      ],
       "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": [
@@ -2459,6 +2738,9 @@
       ]
     },
     "cdss.temperature.critical.preschool": {
+      "articleSlugs": [
+        "when-to-seek-help"
+      ],
       "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": [
@@ -2468,6 +2750,9 @@
       ]
     },
     "cdss.temperature.critical.toddler": {
+      "articleSlugs": [
+        "when-to-seek-help"
+      ],
       "educationSlug": "when-to-seek-help",
       "inapplicable": false,
       "videoIds": [

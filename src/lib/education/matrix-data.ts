@@ -17,7 +17,7 @@ export type MatrixCellData = {
 
 export type MatrixData = Record<MatrixKey, MatrixCellData>;
 
-type TriggerMap = Record<string, { videoIds: string[]; inapplicable: boolean; educationSlug?: string }>;
+type TriggerMap = Record<string, { videoIds: string[]; inapplicable: boolean; educationSlug?: string; articleSlugs?: string[] }>;
 
 export function buildMatrixData(triggers: TriggerMap): MatrixData {
   const data: Record<string, MatrixCellData> = {};
@@ -42,7 +42,12 @@ export function buildMatrixData(triggers: TriggerMap): MatrixData {
     cell.inapplicable = entry.inapplicable;
     if (!entry.inapplicable) {
       cell.videoIds = [...entry.videoIds];
-      if (entry.educationSlug) cell.articleSlugs = [entry.educationSlug];
+      // 列出該情境所有相關文章（含主文章與補充推薦）；舊資料無 articleSlugs 時退回單篇主文章。
+      if (entry.articleSlugs && entry.articleSlugs.length) {
+        cell.articleSlugs = [...entry.articleSlugs];
+      } else if (entry.educationSlug) {
+        cell.articleSlugs = [entry.educationSlug];
+      }
     }
   }
 
