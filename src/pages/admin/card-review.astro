@@ -30,9 +30,9 @@ const domainLabels: Record<string, string> = {
 const presentDomains = Array.from(new Set(sorted.map((c) => c.data.domain))).sort();
 ---
 
-<Base title="圖卡審核" description="人工檢視所有圖卡，編輯 src/data/cards/index.json 修改 reviewStatus">
+<Base title="圖卡審核" description="人工檢視所有圖卡，編輯 src/data/cards/index.json 修改 reviewStatus" noindex>
   <Header />
-  <main id="main-content" class="page" data-pagefind-body>
+  <main id="main-content" class="page" data-pagefind-ignore>
     <h1>圖卡審核（唯讀檢視）</h1>
     <p class="intro">
       實際變更狀態請直接編輯 <code>src/data/cards/index.json</code> 並 commit。

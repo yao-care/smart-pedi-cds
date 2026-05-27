@@ -3,7 +3,7 @@ import Workspace from '../../../layouts/Workspace.astro';
 import ResultDetail from '../../../components/patient/ResultDetail.svelte';
 ---
 
-<Workspace title="評估詳細">
+<Workspace title="評估詳細" noindex>
   <meta slot="head" name="referrer" content="no-referrer" />
   <ResultDetail client:load />
 </Workspace>

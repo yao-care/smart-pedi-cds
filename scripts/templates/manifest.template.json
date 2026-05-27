@@ -1,6 +1,7 @@
 {
-  "name": "CDSA 兒童發展智慧評估",
-  "short_name": "CDSA",
+  "name": "__NAME__",
+  "short_name": "__SHORT_NAME__",
+  "description": "__DESCRIPTION__",
   "start_url": "__BASE_PATH__/",
   "scope": "__BASE_PATH__/",
   "display": "standalone",

@@ -6,15 +6,16 @@ import Footer from '../components/blocks/Footer.astro';
 interface Props {
   title: string;
   description: string;
+  noindex?: boolean;
 }
 
-const { title, description } = Astro.props;
+const { title, description, noindex = false } = Astro.props;
 ---
 
-<Base title={title} description={description}>
+<Base title={title} description={description} noindex={noindex}>
   <div class="app-layout">
     <Header />
-    <main id="main-content" class="container" data-pagefind-body>
+    <main id="main-content" class="container" {...(noindex ? { 'data-pagefind-ignore': true } : { 'data-pagefind-body': true })}>
       <slot />
     </main>
     <Footer />

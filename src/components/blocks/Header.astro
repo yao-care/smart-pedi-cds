@@ -1,8 +1,9 @@
 ---
+import { SITE } from '../../lib/seo/site';
+
 const currentPath = Astro.url.pathname;
 
 const navLinks = [
-  { label: '評估紀錄', href: '/history/' },
   { label: '衛教資源', href: '/education/' },
   { label: '關於', href: '/about/' },
 ];
@@ -14,7 +15,7 @@ function isActive(href: string): boolean {
 
 <header class="site-header">
   <div class="header-inner container">
-    <a href="/" class="site-title">兒童發展智慧評估</a>
+    <a href="/" class="site-title">{SITE.name}</a>
 
     <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-hidden="true" />
     <label for="nav-toggle" class="nav-toggle-label" aria-label="開啟導覽選單">

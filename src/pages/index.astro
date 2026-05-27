@@ -1,6 +1,15 @@
 ---
 import App from '../layouts/App.astro';
-import { siteFaqs, faqJsonLd } from '../data/site-faqs';
+import { siteFaqs } from '../data/site-faqs';
+import JsonLd from '../components/seo/JsonLd.astro';
+import {
+  organizationSchema,
+  webSiteSchema,
+  softwareApplicationSchema,
+  faqPageSchema,
+} from '../lib/seo/schema';
+
+const site = Astro.site!;
 
 const steps = [
   { n: '1', title: '填寫基本資料', desc: '輸入孩子的出生日期與性別，約 30 秒。' },
@@ -23,7 +32,7 @@ const trust = [
 ---
 
 <App title="免費兒童發展篩檢自評" description="免費的兒童發展遲緩自評工具：依年齡引導式問卷，即時提供發展風險分級與衛教建議。資料只在瀏覽器端運算，免登入、保護隱私。">
-  <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
+  <JsonLd data={[organizationSchema(site), webSiteSchema(site), softwareApplicationSchema(site), faqPageSchema(siteFaqs)]} />
 
   <!-- 1. Hero -->
   <section class="hero" aria-label="主要訴求">
