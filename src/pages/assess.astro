@@ -14,6 +14,10 @@ const approvedCards = cardEntries
   <div class="app-layout">
     <Header />
     <main id="main-content" class="app-main" data-pagefind-body>
+      <h1>兒童發展評估</h1>
+      <p class="assess-intro">
+        免費的兒童發展篩檢自評工具：依孩子年齡引導式作答，當下提供六大發展面向的風險分級與衛教建議。所有運算在瀏覽器完成，資料不上傳、免登入。
+      </p>
       <AssessmentShell client:load cards={approvedCards} />
     </main>
   </div>
@@ -32,5 +36,14 @@ const approvedCards = cardEntries
     max-width: 960px;
     width: 100%;
     margin: 0 auto;
+  }
+
+  .assess-intro {
+    font-size: var(--text-base);
+    line-height: var(--lh-base);
+    color: color-mix(in srgb, var(--text), var(--bg) 25%);
+    max-width: 60ch;
+    margin: 0 auto var(--space-5);
+    text-align: center;
   }
 </style>
