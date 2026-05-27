@@ -5,12 +5,13 @@ import ConnectionStatus from '../components/fhir/ConnectionStatus.svelte';
 interface Props {
   title: string;
   description?: string;
+  noindex?: boolean;
 }
 
-const { title, description = 'CDSS 臨床監測工作台' } = Astro.props;
+const { title, description = 'CDSS 臨床監測工作台', noindex = false } = Astro.props;
 ---
 
-<Base title={title} description={description}>
+<Base title={title} description={description} noindex={noindex}>
   <div class="workspace-layout">
     <header class="workspace-header">
       <div class="header-left">
