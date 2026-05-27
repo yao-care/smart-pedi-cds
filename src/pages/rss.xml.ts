@@ -1,12 +1,13 @@
 import rss from '@astrojs/rss';
 import type { APIContext } from 'astro';
 import { getCollection } from 'astro:content';
+import { SITE } from '../lib/seo/site';
 
 export async function GET(context: APIContext) {
   const education = await getCollection('education');
   return rss({
-    title: 'CDSS 兒科臨床決策輔助系統 — 衛教內容',
-    description: '兒科健康衛教資源更新',
+    title: `${SITE.name} — 衛教內容`,
+    description: SITE.description,
     site: context.site!.toString(),
     items: education.map((entry) => ({
       title: entry.data.title,
