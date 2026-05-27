@@ -5,25 +5,23 @@ export interface Faq {
 
 export const siteFaqs: Faq[] = [
   {
-    question: '這個系統需要安裝什麼軟體嗎？',
-    answer: '不需要。Smart Pedi 是一個純瀏覽器端應用程式，只需要現代瀏覽器（Chrome、Firefox、Safari、Edge）即可使用。所有運算邏輯在瀏覽器執行，無需安裝額外軟體或維護後端伺服器。',
+    question: '這個評估是做什麼的？評估孩子哪些發展面向？',
+    answer: 'Smart Pedi 是免費的兒童發展篩檢自評工具，依孩子年齡給適齡題目，評估粗動作、精細動作、語言理解、語言表達、認知、社會情緒六大發展面向，並提供對應的衛教建議。',
   },
   {
-    question: '如何連接醫院的 FHIR Server？',
-    answer: '系統支援兩種連線模式：Standalone Launch 與 EHR Launch。Standalone 模式下，您可以在醫師工作台的設定中輸入 FHIR Server 位址進行連線；家長評估流程亦可選擇性連線。EHR Launch 模式下，醫院 EHR 系統會自動透過 SMART on FHIR 協議啟動本系統並傳入病患資料。',
+    question: '評估結果可以取代醫師診斷嗎？',
+    answer: '不行。評估結果僅為發展篩檢與分流參考，不是醫療診斷，也未經信效度驗證。若您對孩子的發展有疑慮，或孩子有急性症狀，請諮詢小兒科或兒童發展相關專業人員。',
   },
   {
-    question: '病患資料會被傳送到外部伺服器嗎？',
-    answer: '不會。本系統採用「隱私優先」設計，所有資料僅在您的瀏覽器與醫院 FHIR Server 之間流動。我們不收集、不儲存、不轉傳任何病患資料。系統本身為靜態網頁，部署後不需要任何後端伺服器。',
+    question: '我和孩子的資料會被上傳嗎？',
+    answer: '不會。所有運算都在您的瀏覽器內完成，資料不離開裝置、不收集、不轉傳。系統為純靜態網頁，部署後沒有後端伺服器。',
+  },
+  {
+    question: '需要費用、登入或預約嗎？',
+    answer: '都不需要。Smart Pedi 完全免費、免登入、免安裝，用現代瀏覽器（Chrome、Firefox、Safari、Edge）開啟即可使用，也支援離線開啟。',
+  },
+  {
+    question: '評估完發現疑慮，下一步該怎麼辦？',
+    answer: '評估結果會依「分級 × 需注意面向」帶出對應的衛教文章與參考影片，提供居家可做的互動建議。若結果建議進一步評估，請諮詢小兒科或兒童發展專業人員做正式評估。',
   },
 ];
-
-export const faqJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: siteFaqs.map((faq) => ({
-    '@type': 'Question',
-    name: faq.question,
-    acceptedAnswer: { '@type': 'Answer', text: faq.answer },
-  })),
-};
