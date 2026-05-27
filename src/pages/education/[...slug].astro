@@ -3,6 +3,8 @@ import Education from '../../layouts/Education.astro';
 import { getCollection, render } from 'astro:content';
 import InteractionTracker from '../../components/education/InteractionTracker.svelte';
 import EducationRelatedVideos from '../../components/education/EducationRelatedVideos.svelte';
+import JsonLd from '../../components/seo/JsonLd.astro';
+import { medicalWebPageSchema } from '../../lib/seo/schema';
 
 export async function getStaticPaths() {
   const entries = await getCollection('education');
@@ -41,6 +43,15 @@ const breadcrumbs = [
   { label: '衛教內容', href: '/education/' },
   { label: entry.data.title },
 ];
+
+const medicalSchema = medicalWebPageSchema(Astro.site!, {
+  title: entry.data.title,
+  summary: entry.data.summary,
+  ageGroups: entry.data.ageGroup,
+  url: new URL(`/education/${entry.id}/`, Astro.site!).href,
+  publishedAt: entry.data.publishedAt,
+  updatedAt: entry.data.updatedAt,
+});
 ---
 
 <Education
@@ -48,6 +59,9 @@ const breadcrumbs = [
   description={entry.data.summary}
   breadcrumbs={breadcrumbs}
 >
+  <JsonLd data={medicalSchema} />
+  <h1>{entry.data.title}</h1>
+
   <div class="content-meta">
     <span class="meta-badge category-badge">{categoryLabels[entry.data.category] ?? entry.data.category}</span>
     <span class="meta-badge format-badge">{formatLabels[entry.data.format] ?? entry.data.format}</span>
