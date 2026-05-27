@@ -1,11 +1,14 @@
 import type { APIContext } from 'astro';
 import { getCollection } from 'astro:content';
 import { SITE } from '../lib/seo/site';
+import { CORE_ARTICLE_SLUGS } from '../lib/education/core-articles';
 
 export async function GET(context: APIContext) {
   const site = context.site!;
   const abs = (p: string) => new URL(p, site).href;
-  const education = await getCollection('education');
+  // 只列系統核心文章（六大發展領域主衛教），不對外曝光孤兒食譜/補充類
+  const coreSet = new Set(CORE_ARTICLE_SLUGS);
+  const education = (await getCollection('education')).filter((e) => coreSet.has(e.id));
   const topics = education
     .map((e) => `- [${e.data.title}](${abs(`/education/${e.id}/`)}): ${e.data.summary}`)
     .join('\n');

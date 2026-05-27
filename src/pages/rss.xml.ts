@@ -2,9 +2,12 @@ import rss from '@astrojs/rss';
 import type { APIContext } from 'astro';
 import { getCollection } from 'astro:content';
 import { SITE } from '../lib/seo/site';
+import { CORE_ARTICLE_SLUGS } from '../lib/education/core-articles';
 
 export async function GET(context: APIContext) {
-  const education = await getCollection('education');
+  // 只列系統核心文章（六大發展領域主衛教），不對外曝光孤兒食譜/補充類
+  const coreSet = new Set(CORE_ARTICLE_SLUGS);
+  const education = (await getCollection('education')).filter((e) => coreSet.has(e.id));
   return rss({
     title: `${SITE.name} — 衛教內容`,
     description: SITE.description,

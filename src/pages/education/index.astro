@@ -7,10 +7,14 @@ import { buildMatrixData, CDSA_DOMAINS, AGE_GROUPS_CDSA, type MatrixCellData } f
 import videoIndex from '../../../public/data/video-index.json';
 import JsonLd from '../../components/seo/JsonLd.astro';
 import { articleListSchema } from '../../lib/seo/schema';
+import { CORE_ARTICLE_SLUGS } from '../../lib/education/core-articles';
 
 const allEducation = await getCollection('education');
 
+// 只列系統核心文章（六大發展領域主衛教 browse:true），排除孤兒營養食譜與矩陣補充類
+const coreSet = new Set(CORE_ARTICLE_SLUGS);
 const articleEntries = allEducation
+  .filter((e) => coreSet.has(e.id))
   .map((e) => ({ slug: e.id, title: e.data.title }))
   .sort((a, b) => a.title.localeCompare(b.title, 'zh-Hant'));
 const articleListJsonLd = articleListSchema(
