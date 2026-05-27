@@ -1,0 +1,47 @@
+---
+import App from '../layouts/App.astro';
+---
+
+<App title="找不到頁面" description="您要找的頁面不存在。" noindex>
+  <section class="notfound">
+    <h1>找不到這個頁面</h1>
+    <p>您要找的頁面可能已移除，或網址有誤。試試以下連結：</p>
+    <ul>
+      <li><a href="/">回首頁</a></li>
+      <li><a href="/assess/">開始評估</a></li>
+      <li><a href="/education/">瀏覽衛教內容</a></li>
+    </ul>
+  </section>
+</App>
+
+<style>
+  .notfound {
+    text-align: center;
+    padding: var(--space-8) 0;
+  }
+  .notfound h1 {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--space-4);
+    color: var(--text);
+  }
+  .notfound p {
+    font-size: var(--text-base);
+    color: color-mix(in srgb, var(--text), var(--bg) 25%);
+    margin-bottom: var(--space-5);
+  }
+  .notfound ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    align-items: center;
+  }
+  .notfound a {
+    font-size: var(--text-lg);
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+</style>
