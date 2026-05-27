@@ -1,12 +1,13 @@
 ---
 import App from '../layouts/App.astro';
-import { siteFaqs, faqJsonLd } from '../data/site-faqs';
+import JsonLd from '../components/seo/JsonLd.astro';
+import { organizationSchema } from '../lib/seo/schema';
 
 const introHighlights = [
-  '雙角色：家長自評 + 醫護工作台',
+  '家長可自行操作的兒童發展篩檢',
   '隱私優先：資料不離開瀏覽器',
-  '開源免費，免登入',
-  'SMART on FHIR 標準',
+  '開源免費，免登入、免安裝',
+  '六大發展面向，依年齡適性出題',
 ];
 
 const flowSteps = [
@@ -40,19 +41,18 @@ const outcomes = [
 ];
 ---
 
-<App title="關於" description="Smart Pedi 兒科健康評估與臨床決策輔助系統使用說明">
-  <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
+<App title="關於" description="關於 Smart Pedi 兒童發展智慧評估：免費、純瀏覽器、保護隱私的兒童發展篩檢自評工具。">
+  <JsonLd data={organizationSchema(Astro.site!)} />
 
-  <h1>關於 Smart Pedi 兒科健康輔助系統</h1>
+  <h1>關於 Smart Pedi 兒童發展智慧評估</h1>
 
   <section class="about-section about-twocol" aria-label="系統介紹">
     <div class="twocol-main">
       <h2>系統介紹</h2>
       <p>
-        Smart Pedi 是一套開源的兒科健康輔助系統，提供雙角色服務：
-        家長可透過 CDSA（臨床決策輔助應用）進行孩子健康自評並取得衛教建議；
-        醫護人員可透過 CDSS（臨床決策輔助系統）工作台即時監測指標、接收預警。
-        系統以 SMART on FHIR 標準運行於瀏覽器端，確保隱私與互通性。
+        Smart Pedi 是一套開源、免費的兒童發展篩檢自評工具。
+        家長依孩子的年齡引導式作答，當下取得六大發展面向的風險分級與對應衛教建議。
+        所有運算都在瀏覽器端完成，資料不離開裝置、不收集、不轉傳。
       </p>
     </div>
     <aside class="twocol-aside" aria-label="重點摘要">
@@ -63,8 +63,8 @@ const outcomes = [
     </aside>
   </section>
 
-  <section class="about-section flow-section" aria-label="臨床決策流程">
-    <h2>臨床決策流程</h2>
+  <section class="about-section flow-section" aria-label="評估判讀流程">
+    <h2>評估判讀流程</h2>
     <p class="flow-intro">
       從孩子的年齡開始，到產生衛教建議為止，系統的判讀邏輯如下。
       本流程僅為發展分流參考，不取代專業臨床判斷。
@@ -106,18 +106,6 @@ const outcomes = [
         <li><strong>參考影片</strong>：對應主題的精選衛教影片</li>
       </ul>
       <p class="flow-note">判讀為「正常」時，僅顯示結果摘要與發展雷達圖，不另行推送衛教資源。</p>
-    </div>
-  </section>
-
-  <section class="about-section" aria-label="常見問題">
-    <h2>常見問題</h2>
-    <div class="faq-list">
-      {siteFaqs.map((faq) => (
-        <details class="faq-item">
-          <summary class="faq-question">{faq.question}</summary>
-          <p class="faq-answer">{faq.answer}</p>
-        </details>
-      ))}
     </div>
   </section>
 
@@ -198,7 +186,7 @@ const outcomes = [
     }
   }
 
-  /* ---------- 臨床決策流程 ---------- */
+  /* ---------- 評估判讀流程 ---------- */
   .flow-intro {
     max-width: 72ch;
   }
