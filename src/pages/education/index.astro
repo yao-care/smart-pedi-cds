@@ -5,8 +5,20 @@ import ContributionModal from '../../components/education/ContributionModal.svel
 import CustomEducationList from '../../components/education/CustomEducationList.svelte';
 import { buildMatrixData, CDSA_DOMAINS, AGE_GROUPS_CDSA, type MatrixCellData } from '../../lib/education/matrix-data';
 import videoIndex from '../../../public/data/video-index.json';
+import JsonLd from '../../components/seo/JsonLd.astro';
+import { articleListSchema } from '../../lib/seo/schema';
 
 const allEducation = await getCollection('education');
+
+const articleEntries = allEducation
+  .map((e) => ({ slug: e.id, title: e.data.title }))
+  .sort((a, b) => a.title.localeCompare(b.title, 'zh-Hant'));
+const articleListJsonLd = articleListSchema(
+  articleEntries.map((a) => ({
+    name: a.title,
+    url: new URL(`/education/${a.slug}/`, Astro.site!).href,
+  })),
+);
 
 // Article lookup: slug → title
 const articleTitles = new Map(allEducation.map(e => [e.id, e.data.title]));
@@ -55,7 +67,17 @@ function cellVideos(cell: MatrixCellData): VideoInfo[] {
 ---
 
 <App title="衛教資源" description="兒科健康衛教資源（年齡 × 發展領域矩陣）">
+  <JsonLd data={articleListJsonLd} />
   <h1>衛教資源</h1>
+
+  <nav class="all-articles" aria-label="所有衛教文章">
+    <h2>所有衛教文章</h2>
+    <ul>
+      {articleEntries.map((a) => (
+        <li><a href={`/education/${a.slug}/`}>{a.title}</a></li>
+      ))}
+    </ul>
+  </nav>
 
   <div class="matrix-scroll">
     <table class="education-matrix">
@@ -211,6 +233,30 @@ function cellVideos(cell: MatrixCellData): VideoInfo[] {
 
 <style>
   h1 { margin-bottom: var(--space-6); }
+
+  .all-articles {
+    margin-bottom: var(--space-6);
+  }
+  .all-articles h2 {
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--space-3);
+    color: var(--text);
+  }
+  .all-articles ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .all-articles a {
+    font-size: var(--text-base);
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
 
   .matrix-scroll {
     width: 100%;
