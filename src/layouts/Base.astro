@@ -1,19 +1,22 @@
 ---
 import OfflineBanner from '../components/common/OfflineBanner.svelte';
 import { BASE_PATH } from '../../scripts/base.mjs';
+import { SITE } from '../lib/seo/site';
 
 interface Props {
   title: string;
   description: string;
   canonical?: string;
+  noindex?: boolean;
 }
 
-const { title, description, canonical } = Astro.props;
+const { title, description, canonical, noindex = false } = Astro.props;
 const canonicalURL = canonical
   ? new URL(canonical, Astro.site)
   : new URL(Astro.url.pathname, Astro.site);
-const fullTitle = `${title} | 兒童發展智慧評估`;
+const fullTitle = `${title} | ${SITE.shortName}`;
 const base = BASE_PATH;
+const ogImage = new URL(base + SITE.ogImagePath, Astro.site).href;
 
 import '../styles/global.css';
 ---
@@ -26,12 +29,16 @@ import '../styles/global.css';
     <meta http-equiv="Content-Security-Policy" content="frame-src https://www.youtube-nocookie.com;" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonicalURL.href} />
     <link rel="manifest" href={base + '/manifest.json'} />
     <link rel="icon" type="image/png" sizes="32x32" href={base + '/icons/favicon-32.png'} />
     <link rel="icon" type="image/png" sizes="16x16" href={base + '/icons/favicon-16.png'} />
     <link rel="apple-touch-icon" sizes="180x180" href={base + '/icons/apple-touch-icon.png'} />
     <meta name="theme-color" content="#3d6b54" />
+    <meta name="author" content={SITE.organization.name} />
+    <meta name="application-name" content={SITE.shortName} />
+    <link rel="alternate" type="application/rss+xml" title="衛教內容" href={new URL(base + '/rss.xml', Astro.site).href} />
 
     <!-- Open Graph -->
     <meta property="og:title" content={fullTitle} />
@@ -39,11 +46,15 @@ import '../styles/global.css';
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="zh_TW" />
     <meta property="og:url" content={canonicalURL.href} />
-    <meta property="og:image" content={new URL(base + '/icons/icon-512.png', Astro.site).href} />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={SITE.name} />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content={new URL(base + '/icons/icon-512.png', Astro.site).href} />
+    <meta name="twitter:image" content={ogImage} />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
 
