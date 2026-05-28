@@ -206,7 +206,7 @@ commit：`docs(about): 評估判讀流程文案統一為常模 SD 門檻`
 
 > **拍板紀錄（依此執行 Phase 1，下次 session 不必重問）**
 > - §7.1 = **A. ASQ-3 借用**（資料源：ASQ-3 User's Guide Table 18，page 171，PDF 已存：https://agesandstages.com/wp-content/uploads/2019/08/ASQ-3-Technical-Appendix_web.pdf）
-> - §7.2 = **ASQ-3 嚴格 -2 SD**（isAnomaly: z ≤ -2 SD；refer: 任一 ≤ -2 SD；monitor: -1 ~ -2 SD；normal: z > -1 SD）。配套：about.astro 透明標示「高敏感率設計」+「必要時請診」出口
+> - §7.2 = **per-domain z 合成 + ASQ-3 cutoff**（業界正解 D 方案）。每 domain 合成 domain-level z = mean(directionalZ of all details in domain)；refer = 任一 domain z ≤ -2 SD；monitor = 任一 domain z ≤ -1 SD（無 refer）；normal = 所有 domain z > -1 SD。per-detail isAnomaly 改為「detail.directionalZ ≤ -1 SD」僅作 UI 提示，不參與 gating。配套：about.astro 透明標示
 > - §7.3 = **重算所有舊評估**（重算前置已驗證可行：`Assessment.triageResult.details.value` + `maxScore` + `Child.birthDate` + `Assessment.completedAt` 足夠推回當時 ageGroup → z-score；不需要原始 input）
 > - §7.4 = **B. 顯示但灰格警告**（雷達畫但不算 anomaly count，UI 標「資料不足」）
 
@@ -223,12 +223,24 @@ commit：`docs(about): 評估判讀流程文案統一為常模 SD 門檻`
 
 ### 7.2 三級分流的 SD 門檻精確值
 
-ASQ-3 是 `−2 SD = refer` / `−1～−2 SD = monitor`。本系統現有：
-- 問卷 `normalized < 0.5`（得分率<半）= isAnomaly
-- z 模組 `±1.5 SD` = isAnomaly
-- triage `anomalyCount ≥ 3 && anomalyDomainCount ≥ 2` = refer
+**※ 已拍板（2026-05-28）：per-domain z 合成 + ASQ-3 cutoff（業界 Bayley / Battelle / DAYC-2 對齊）**
+- per-detail z 仍計算（給雷達 hover 用，UI 不變）
+- 每個 domain 合成 domain-level z = mean(directionalZ of all details in domain)
+- gating：
+  - **refer** = 任一 domain-level z ≤ -2 SD
+  - **monitor** = 任一 domain-level z ≤ -1 SD（但無 refer）
+  - **normal** = 所有 domain z > -1 SD
+- per-detail isAnomaly 改為提示性質：`detail.directionalZ ≤ -1 SD`（不參與 gating）
 
-**問題**：現有兩套門檻不一致（問卷 0.5 vs z 模組 1.5 SD），新版要統一。建議：
+**為什麼改 per-domain（spec 原本拍板 §8 不改 gating，後因「業界正解」討論再拍板擴大範疇）**：
+
+本系統 `behavior` domain 有 4 個 z 指標（completionRate / operationConsistency / reactionLatency / interactionRhythm）、`fine_motor` 有 2 個（drawing + 問卷）、`language` 有 2-3 個（voice + 問卷理解 + 問卷表達），共 12+ metric。若直接 per-metric 套 ASQ-3 cutoff：
+- 「任一 metric ≤ -2 SD = refer」會放大 false positive（單 domain 內 4 個獨立 metric 機會）
+- 「anomalyCount ≥ 3 metric ≤ -2 SD = refer」會 under-refer（需 3 個 metric 同時極低，統計上 P ≈ 0.2%）
+
+業界 multi-area 篩檢工具（ASQ-3 / Bayley / Battelle / DAYC-2）都是 **per-area 判讀**：area 內多 items 合成一個 score，cutoff 套在 area total。本系統的 per-metric 是設計時的非標準選擇，per-domain 合成是回歸業界標準。
+
+**舊規劃（已過時，留歷史）**：
 - isAnomaly（單一 metric 需注意）：z ≤ −1 SD（較寬，列為 monitor 候選）
 - refer 條件：任一 metric z ≤ −2 SD，**或** 累積跨多 domain ≥N 個 metric ≤ −1.5 SD
 - normal：所有 z > −1 SD
@@ -257,7 +269,7 @@ ASQ-3 是 `−2 SD = refer` / `−1～−2 SD = monitor`。本系統現有：
 - 重新設計問卷題目（保留原題目，只補常模）。
 - 修改影片 catalog / 衛教文章內容（內容層獨立）。
 - 修改 SEO/AEO 基建（已完成、已部署）。
-- 重新設計三級分流的演算法結構（只調整門檻數字，不改 anomalyCount/anomalyDomainCount 的 gating 機制）。
+- ~~重新設計三級分流的演算法結構（只調整門檻數字，不改 anomalyCount/anomalyDomainCount 的 gating 機制）。~~ **2026-05-28 後修正：per-metric → per-domain gating 改造已納入範疇（見 §7.2 修訂），仍不重設整套演算結構，僅把 metric-level isAnomaly 改為 domain-level z 合成判讀。**
 
 ## 9. 風險與緩解
 
