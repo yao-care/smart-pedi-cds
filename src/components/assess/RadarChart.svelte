@@ -42,7 +42,7 @@ function polarToCartesian(angle: number, r: number): { x: number; y: number } {
       <p class="legend">100 = 表現傑出　·　50 = 同齡平均　·　0 = 顯著落後</p>
     {/if}
   </header>
-  <svg viewBox="0 0 {size} {size}" width={size} height={size} class="radar-chart" role="img" aria-label="發展面向雷達圖">
+  <svg viewBox="-48 -48 {size + 96} {size + 96}" width={size} height={size} class="radar-chart" role="img" aria-label="發展面向雷達圖">
     {#if data.length >= 3}
       <polygon
         points={data.map((_, i) => {
@@ -66,19 +66,18 @@ function polarToCartesian(angle: number, r: number): { x: number; y: number } {
     {/if}
 
     {#each data as d, i}
-      {@const labelPos = polarToCartesian(angleStep * i, radius + 20)}
-      {@const scorePos = polarToCartesian(angleStep * i, radius + 38)}
-      <text x={labelPos.x} y={labelPos.y} class="radar-label" text-anchor="middle">
-        {domainLabels[d.domain] ?? d.domain}
+      {@const angle = angleStep * i - Math.PI / 2}
+      {@const labelPos = polarToCartesian(angleStep * i, radius + 22)}
+      {@const anchor = Math.cos(angle) > 0.25 ? 'start' : Math.cos(angle) < -0.25 ? 'end' : 'middle'}
+      <text
+        x={labelPos.x}
+        y={labelPos.y}
+        class="radar-label"
+        text-anchor={anchor}
+        aria-label={d.isHybrid ? `${domainLabels[d.domain] ?? d.domain} ${d.score}（結合問卷與測驗兩種證據之平均）` : undefined}
+      >
+        {domainLabels[d.domain] ?? d.domain}<tspan x={labelPos.x} dy="1.25em" class="radar-score">{d.score}</tspan>{#if d.isHybrid}<tspan dx="3" class="radar-hybrid-icon">⚖</tspan>{/if}
       </text>
-      <text x={scorePos.x} y={scorePos.y} class="radar-score" text-anchor="middle">
-        {d.score}
-      </text>
-      {#if d.isHybrid}
-        <g role="img" aria-label="此面向結合問卷（家長回報）與測驗（實機觀察）兩個證據之平均">
-          <text x={scorePos.x + 14} y={scorePos.y} class="radar-hybrid-icon" text-anchor="middle">⚖</text>
-        </g>
-      {/if}
     {/each}
   </svg>
 </div>
