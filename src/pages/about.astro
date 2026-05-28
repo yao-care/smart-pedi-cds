@@ -20,24 +20,33 @@ const flowSteps = [
     desc: '按年齡組給對應的發展題目，引導家長完成各評估模組：問卷、互動遊戲、語音、繪圖、動作。',
   },
   {
-    title: '逐面向計分、標記「需注意」',
-    desc: '六大發展面向（粗動作、精細動作、語言理解、語言表達、認知、社會情緒）各自評分，符合下列任一條件即標記為「需注意」：',
+    title: '與同齡常模比較',
+    desc: '每個指標都換算成「比同齡平均落後或超前幾個標準差」（z 分數），再依面向合成綜合 z 分數。雷達圖上的 50 代表同齡第 50 百分位（即同齡平均），不是「答對一半」。',
     criteria: [
-      '問卷面向得分未達滿分的一半',
-      '行為／繪圖／語音明顯偏離同齡常模（約 1.5 個標準差）',
-      '動作經 AI 姿態分析判讀為疑似遲緩',
+      '問卷面向：借用國際標準 ASQ-3 各年齡常模並依本系統題數縮放',
+      '互動遊戲、繪圖、語音、動作：使用本平台對應模組的同齡基線',
+      '統一以「相對同齡常模的標準差」呈現，跨面向可比較',
+    ],
+  },
+  {
+    title: '逐面向判讀（per-domain gating）',
+    desc: '依國際多面向發展篩檢工具（ASQ-3／Bayley／Battelle／DAYC-2）共識，各面向以該面向的綜合 z 落點分類：',
+    criteria: [
+      '高於 −1 SD（同齡前 84% 以內）→ 正常',
+      '落在 −1 ～ −2 SD（同齡第 2.5–16 百分位）→ 追蹤觀察',
+      '低於 −2 SD（同齡後 2.5% 以下）→ 建議轉介',
     ],
   },
   {
     title: '綜合判讀（三級分流）',
-    desc: '同時看「需注意」的項目數，以及它們橫跨幾個發展面向，分為三級：',
+    desc: '取各面向中最嚴重的分類作為整體分流（任一面向落到該級即升級）：',
   },
 ];
 
 const outcomes = [
-  { key: 'normal', tag: '正常', cond: '無「需注意」項目', action: '各面向發展在正常範圍' },
-  { key: 'monitor', tag: '追蹤觀察', cond: '1 項以上「需注意」', action: '建議持續追蹤' },
-  { key: 'refer', tag: '建議轉介', cond: '「需注意」≥ 3 項，且橫跨 ≥ 2 個面向', action: '建議進一步專業評估' },
+  { key: 'normal', tag: '正常', cond: '所有面向皆高於 −1 SD', action: '各面向發展在同齡正常範圍' },
+  { key: 'monitor', tag: '追蹤觀察', cond: '任一面向落在 −1 ～ −2 SD', action: '建議持續觀察與居家促進' },
+  { key: 'refer', tag: '建議轉介', cond: '任一面向低於 −2 SD', action: '建議進一步專業評估' },
 ];
 ---
 
@@ -107,6 +116,39 @@ const outcomes = [
       </ul>
       <p class="flow-note">判讀為「正常」時，僅顯示結果摘要與發展雷達圖，不另行推送衛教資源。</p>
     </div>
+  </section>
+
+  <section class="about-section about-norms" aria-label="常模來源說明">
+    <h2>常模來源說明</h2>
+    <p>
+      本系統採「常模參照」判讀（與 ASQ-3、Bayley、Battelle、DAYC-2 等國際多面向發展評估工具一致），
+      每個面向都以「比同齡常模落後幾個標準差」為基準，而非「答對幾趴」。
+      各模組的常模來源公開揭示如下：
+    </p>
+    <ul class="norms-list">
+      <li>
+        <strong>問卷六面向</strong>（粗動作、精細動作、語言理解、語言表達、認知、社會情緒）：
+        借用 <a href="https://agesandstages.com/wp-content/uploads/2019/08/ASQ-3-Technical-Appendix_web.pdf" target="_blank" rel="noopener">ASQ-3 第三版 Technical Appendix Table 18</a>
+        各年齡 mean / SD，依本系統題數做滿分縮放（mean<sub>本</sub> = mean<sub>ASQ-3</sub> × maxScore / 60）。
+      </li>
+      <li>
+        <strong>語言理解 vs 語言表達</strong>：ASQ-3 將兩者合併為單一 Communication 面向，
+        本系統暫共用同一組常模，未來累積在地資料後將分離校正（透明假設：兩 sub-domain 分佈相似）。
+      </li>
+      <li>
+        <strong>61–72 月年齡組</strong>：ASQ-3 常模上限為 60m，本系統 61–72m 直接套用 60m 常模。
+        此年齡的判讀僅供參考，建議搭配學齡前發展檢核。
+      </li>
+      <li>
+        <strong>互動遊戲、繪圖、語音、動作</strong>：使用本平台模組設計時的內部參考常模（同齡基線），
+        非外部標準化工具。本平台累積足夠資料後將以實際分佈校正。
+      </li>
+    </ul>
+    <p class="norms-note">
+      <strong>篩檢敏感性說明</strong>：本系統題目較 ASQ-3 精簡（每面向 1–2 題），統計上分數差 1 分相當於約 1.5–2 個標準差。
+      為了維持「寧錯報不漏報」的篩檢精神，我們仍維持 −2 SD 嚴格門檻，因此假陽性會略高於 ASQ-3 全量表。
+      若標示為「建議轉介」，請務必諮詢小兒科或兒童發展中心進行完整專業評估，本系統的篩檢結果不取代臨床診斷。
+    </p>
   </section>
 
   <section class="about-cta" aria-label="開始評估">
@@ -348,6 +390,44 @@ const outcomes = [
   .flow-note {
     margin-top: var(--space-3);
     font-style: italic;
+  }
+
+  /* ---------- 常模來源說明 ---------- */
+  .about-norms p {
+    margin-bottom: var(--space-3);
+  }
+
+  .norms-list {
+    list-style: disc;
+    padding-left: var(--space-5);
+    margin: 0 0 var(--space-4);
+  }
+
+  .norms-list li {
+    font-size: var(--text-base);
+    line-height: var(--lh-base);
+    color: color-mix(in srgb, var(--text), var(--bg) 25%);
+    margin-bottom: var(--space-3);
+    max-width: 72ch;
+  }
+
+  .norms-list a {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  .norms-note {
+    background-color: color-mix(in srgb, var(--warn) 8%, var(--bg));
+    border-left: 4px solid var(--warn);
+    border-radius: var(--radius-sm);
+    padding: var(--space-4) var(--space-5);
+    margin-top: var(--space-4);
+    font-size: var(--text-sm);
+    line-height: var(--lh-sm);
+  }
+
+  .norms-note strong {
+    color: var(--text);
   }
 
   /* ---------- 底部 CTA ---------- */
