@@ -132,8 +132,32 @@ export function recomputeTriageResult(
 ): PersistedTriageResult {
   if (!oldResult.details || oldResult.details.length === 0) return oldResult;
 
+  // 0. 過濾掉 v5 / v6 之前的「無有效資料但被誤推入 details」紀錄。
+  //    （2026-05-28 bug：drawing 模組沒互動或評分 bug 時 overallScore=0
+  //    fallback 仍被 triage.ts 無條件 push，使 fine_motor domain 被誤判為
+  //    monitor/refer。drawing-analysis 的評分 bug 修好前，採保守假設「v5/v6
+  //    歷史 detail 中 metric='drawingScore' AND value=0」都視為無效資料 drop。
+  //    對「真畫了卻被誤評 0 分」的用戶資料這也是正確處理：保留錯誤分數對
+  //    判讀有害。triage.ts 中 shapes.length>0 guard 處理新評估情境。）
+  const sanitizedDetails = oldResult.details.filter((d) => {
+    if (d.metric === 'drawingScore' && d.value === 0) return false;
+    return true;
+  });
+  if (sanitizedDetails.length === 0) {
+    // 全 details 被視為無效（極端 case）→ 返回 normal baseline 避免空輸出
+    return {
+      category: 'normal',
+      confidence: 0.5,
+      summary: '評估資料不足，無法判讀。',
+      details: [],
+      anomalyCount: 0,
+      domainLevelZ: {},
+      domainCategories: {},
+    };
+  }
+
   // 1. 重算每筆 detail
-  const newDetails = oldResult.details.map((d) => recomputeDetail(d, ageGroup));
+  const newDetails = sanitizedDetails.map((d) => recomputeDetail(d, ageGroup));
 
   // 2. 合成 domain-level z（與 triage.ts:264-274 同邏輯）
   const domainZs: Record<string, number[]> = {};

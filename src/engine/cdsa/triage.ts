@@ -151,19 +151,28 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
     });
   }
 
-  // Drawing
-  const drawingNorm = NORMS['drawingScore'];
-  const drawingZ = zScore(input.drawing.overallScore, drawingNorm.mean, drawingNorm.std);
-  details.push({
-    domain: 'fine_motor',
-    metric: 'drawingScore',
-    value: input.drawing.overallScore,
-    zScore: drawingZ,
-    directionalZ: drawingZ,
-    normMean: drawingNorm.mean,
-    normStd: drawingNorm.std,
-    isAnomaly: drawingZ <= PER_DETAIL_ANOMALY_Z,
-  });
+  // Drawing — guard against "module skipped without drawing" producing
+  // overallScore=0 (drawing-analysis.ts:173-175 fallback) which the
+  // ASQ-3-style norm would then read as z=-2.75 (severe delay) and drag
+  // fine_motor domain into refer/monitor band even though there is no
+  // actual data. Mirror the `voiceDurationTotal > 0` guard at line ~164.
+  // Empty shapes[] == user never drew anything; we drop the detail rather
+  // than synthesising "0/100" out of no-input.
+  const hasDrawingData = (input.drawing.shapes?.length ?? 0) > 0;
+  if (hasDrawingData) {
+    const drawingNorm = NORMS['drawingScore'];
+    const drawingZ = zScore(input.drawing.overallScore, drawingNorm.mean, drawingNorm.std);
+    details.push({
+      domain: 'fine_motor',
+      metric: 'drawingScore',
+      value: input.drawing.overallScore,
+      zScore: drawingZ,
+      directionalZ: drawingZ,
+      normMean: drawingNorm.mean,
+      normStd: drawingNorm.std,
+      isAnomaly: drawingZ <= PER_DETAIL_ANOMALY_Z,
+    });
+  }
 
   // Voice
   if (input.voice.voiceDurationTotal > 0) {

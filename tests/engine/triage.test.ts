@@ -34,11 +34,26 @@ function makeVoice(overrides: Partial<VoiceMetrics> = {}): VoiceMetrics {
 function makeDrawing(overrides: Partial<DrawingAnalysisResult> = {}): DrawingAnalysisResult {
   return {
     overallScore: 60,
+    // shapes presence is how triage tells "user actually drew" from "module
+    // skipped" — a non-empty array means the drawing detail is eligible to
+    // be pushed. Tests that want to exercise the "no drawing" branch should
+    // explicitly pass `shapes: []` to override.
+    shapes: [{
+      shapeId: 'circle',
+      closedness: 0.85,
+      smoothness: 0.8,
+      symmetry: 0.85,
+      sizeConsistency: 0.9,
+      strokeCount: 5,
+      totalPoints: 60,
+      drawingTime: 3500,
+    }],
     strokeCount: 5,
     closure: 0.8,
     smoothness: 0.7,
     classification: 'typical',
     confidence: 0.85,
+    maturityLevel: 'age_appropriate',
     ...overrides,
   };
 }
@@ -148,6 +163,19 @@ describe('computeTriage', () => {
     const drawingDetail = result.details.find((d) => d.metric === 'drawingScore');
     expect(drawingDetail).toBeDefined();
     expect(drawingDetail?.value).toBe(60);
+  });
+
+  it('skips drawing detail when shapes is empty (user did not draw)', async () => {
+    // Scenario from 2026-05-28 bug report: adult tested without actually
+    // drawing in the drawing module. analyzeDrawing returns overallScore=0
+    // for empty input which, without this guard, would feed z=-2.75 into
+    // fine_motor and synthesise a "monitor" diagnosis out of no data.
+    const result = await computeTriage({
+      ...baseInput,
+      drawing: makeDrawing({ overallScore: 0, shapes: [] }),
+    });
+    const drawingDetail = result.details.find((d) => d.metric === 'drawingScore');
+    expect(drawingDetail).toBeUndefined();
   });
 
   it('skips voice metrics when voiceDurationTotal is 0', async () => {

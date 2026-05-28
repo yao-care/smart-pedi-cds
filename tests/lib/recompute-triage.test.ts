@@ -255,6 +255,87 @@ describe('recomputeTriageResult — per-domain gating (spec §7.2)', () => {
   });
 });
 
+describe('recomputeTriageResult — drawing value=0 sanitization (v7)', () => {
+  it('drops drawingScore detail with value=0 before recomputing domain z', () => {
+    // 2026-05-28 bug: user "認真畫了圓圈卻被評為 0 分", drawing 進 fine_motor
+    // domain 把問卷的 +0.67 SD 拉成 -1.04 SD，整體 monitor。修補後 drawing
+    // value=0 視為「無有效資料」直接 drop，fine_motor 只剩問卷 z=+0.67 → normal。
+    const out = recomputeTriageResult({
+      category: 'monitor',
+      confidence: 0.75,
+      summary: '舊',
+      details: [
+        {
+          domain: 'fine_motor',
+          metric: 'drawingScore',
+          value: 0,
+          zScore: -2.75,
+          directionalZ: -2.75,
+          isAnomaly: true,
+        },
+        {
+          domain: 'fine_motor',
+          metric: 'questionnaireScore',
+          value: 4,
+          zScore: 0.67,
+          directionalZ: 0.67,
+          maxScore: 4,
+          isAnomaly: false,
+        },
+      ],
+    }, '61-72m');
+    // drawing detail 應該被 drop
+    const drawingDetail = out.details?.find(d => d.metric === 'drawingScore');
+    expect(drawingDetail).toBeUndefined();
+    // fine_motor 只剩問卷 z (重算後 still ≈ +0.67)
+    expect(out.domainLevelZ?.fine_motor).toBeGreaterThan(0);
+    expect(out.domainCategories?.fine_motor).toBe('normal');
+    expect(out.category).toBe('normal');
+  });
+
+  it('keeps drawing detail when value > 0 (real low score, not bug)', () => {
+    const out = recomputeTriageResult({
+      category: 'monitor',
+      confidence: 0.75,
+      summary: '',
+      details: [
+        {
+          domain: 'fine_motor',
+          metric: 'drawingScore',
+          value: 30,
+          zScore: -1.25,
+          directionalZ: -1.25,
+          isAnomaly: true,
+        },
+      ],
+    }, '61-72m');
+    const drawingDetail = out.details?.find(d => d.metric === 'drawingScore');
+    expect(drawingDetail).toBeDefined();
+    expect(drawingDetail?.value).toBe(30);
+  });
+
+  it('returns safe default when all details are sanitized away', () => {
+    const out = recomputeTriageResult({
+      category: 'monitor',
+      confidence: 0.75,
+      summary: '舊',
+      details: [
+        {
+          domain: 'fine_motor',
+          metric: 'drawingScore',
+          value: 0,
+          zScore: -2.75,
+          directionalZ: -2.75,
+          isAnomaly: true,
+        },
+      ],
+    }, '61-72m');
+    expect(out.category).toBe('normal');
+    expect(out.details).toEqual([]);
+    expect(out.summary).toContain('資料不足');
+  });
+});
+
 describe('recomputeTriageResult — confidence scaling', () => {
   it('refer confidence rises with affected domain count', () => {
     const oneRefer = recomputeTriageResult({
@@ -267,7 +348,8 @@ describe('recomputeTriageResult — confidence scaling', () => {
       ...baseResult,
       details: [
         { domain: 'behavior', metric: 'completionRate', value: 0, zScore: -5, directionalZ: -5, isAnomaly: true },
-        { domain: 'fine_motor', metric: 'drawingScore', value: 0, zScore: -3, directionalZ: -3, isAnomaly: true },
+        // value=10 (not 0) so the v7 drawing-sanitization filter keeps it.
+        { domain: 'fine_motor', metric: 'drawingScore', value: 10, zScore: -3, directionalZ: -3, isAnomaly: true },
       ],
     }, '25-36m');
     expect(twoRefer.confidence).toBeGreaterThan(oneRefer.confidence);

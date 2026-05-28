@@ -158,7 +158,9 @@ export interface Assessment {
    *  so the old triageResult was kept as-is. Absent = pre-v6 record never opened
    *  after the upgrade (shouldn't happen in practice since the version bump
    *  forces the upgrade tx on first open). */
-  schemaVersion?: 'v6-recomputed' | 'v6-no-details' | 'v6-skip-no-completedAt' | 'v6-skip-no-birthDate';
+  schemaVersion?:
+    | 'v6-recomputed' | 'v6-no-details' | 'v6-skip-no-completedAt' | 'v6-skip-no-birthDate'
+    | 'v7-recomputed' | 'v7-no-details' | 'v7-skip-no-completedAt' | 'v7-skip-no-birthDate';
   createdAt: Date;
   updatedAt: Date;
 }
@@ -440,6 +442,69 @@ export class CdssDatabase extends Dexie {
         const ageGroup = ageGroupCDSAAt(birthDate, completedAtDate);
         a.triageResult = recomputeTriageResult(a.triageResult, ageGroup);
         a.schemaVersion = 'v6-recomputed';
+      });
+    });
+    // v7: drop value=0 drawing detail then re-run recompute (spec note 2026-05-28).
+    //
+    // v6 left "user drew 0 strokes / ML 給 0 分" 的 drawing detail intact，造成
+    // fine_motor domain 被「假 0 分」拖入 monitor。recompute-triage 改加 filter
+    // 後，這層 upgrade tx 對已 v6-recomputed 的紀錄也要再跑一次 — 因為 v6
+    // 重算的 detail 即使值=0 也已 mutate；要再過一次 sanitize filter。
+    //
+    // 重跑成本：每筆 assessment 一次 in-memory 重算（O(detail count)）。對單一
+    // device 累積評估 < 100 筆，毫秒級。
+    this.version(7).stores({
+      patients: 'id, ageGroup, currentRiskLevel, lastSyncedAt',
+      observations: 'id, patientId, indicator, effectiveDateTime, [patientId+indicator]',
+      alerts: 'id, patientId, riskLevel, status, createdAt, [patientId+status]',
+      baselines: '[patientId+indicator], patientId, updatedAt',
+      syncQueue: 'id, createdAt',
+      serverConfigs: 'id, lastUsedAt',
+      educationInteractions: 'id, contentSlug, createdAt',
+      ruleVersions: 'id, createdAt',
+      webhookHistory: 'id, webhookId, alertId, createdAt',
+      children: 'id, createdAt',
+      assessments: 'id, childId, status, createdAt, [childId+status]',
+      assessmentEvents: 'id, assessmentId, childId, moduleType, timestamp, [assessmentId+moduleType]',
+      mediaFiles: 'id, assessmentId, childId, fileType, createdAt, [assessmentId+fileType]',
+      normThresholds: 'id, ageGroup, metric, [ageGroup+metric]',
+      customEducation: 'id, tenantId, category, isActive, [tenantId+isActive]',
+      tenantSettings: 'id, tenantId',
+      recommendationOverlays: 'id, tenantId, category, domain, [tenantId+category+domain]',
+    }).upgrade(async tx => {
+      const childRows = await tx.table('children').toArray() as Array<{ id: string; birthDate?: string }>;
+      const birthDateByChild = new Map<string, string>();
+      for (const c of childRows) {
+        if (c.id && c.birthDate) birthDateByChild.set(c.id, c.birthDate);
+      }
+
+      await tx.table('assessments').toCollection().modify((a: {
+        childId?: string;
+        completedAt?: Date | string;
+        triageResult?: PersistedTriageResult;
+        schemaVersion?: string;
+      }) => {
+        if (!a.triageResult || !a.triageResult.details || a.triageResult.details.length === 0) {
+          a.schemaVersion = 'v7-no-details';
+          return;
+        }
+        if (!a.completedAt) {
+          a.schemaVersion = 'v7-skip-no-completedAt';
+          return;
+        }
+        const birthDate = a.childId ? birthDateByChild.get(a.childId) : undefined;
+        if (!birthDate || Number.isNaN(new Date(birthDate).getTime())) {
+          a.schemaVersion = 'v7-skip-no-birthDate';
+          return;
+        }
+        const completedAtDate = a.completedAt instanceof Date ? a.completedAt : new Date(a.completedAt);
+        if (Number.isNaN(completedAtDate.getTime())) {
+          a.schemaVersion = 'v7-skip-no-completedAt';
+          return;
+        }
+        const ageGroup = ageGroupCDSAAt(birthDate, completedAtDate);
+        a.triageResult = recomputeTriageResult(a.triageResult, ageGroup);
+        a.schemaVersion = 'v7-recomputed';
       });
     });
   }
