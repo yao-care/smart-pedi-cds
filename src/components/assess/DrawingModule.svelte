@@ -1,6 +1,7 @@
 <script lang="ts">
   import { assessmentStore } from '../../lib/stores/assessment.svelte';
   import { recordEvent, saveMedia } from '../../lib/db/assessment-events';
+  import { analyzeDrawing } from '../../engine/cdsa/drawing-analysis';
 
   const SHAPES = [
     { id: 'circle', name: '圓形', icon: '⭕', guide: '請畫一個圓形' },
@@ -17,6 +18,13 @@
   let strokes = $state<Array<{ x: number; y: number; t: number }>>([]);
   let allStrokes = $state<Array<Array<{ x: number; y: number; t: number }>>>([]);
   let currentStroke: Array<{ x: number; y: number; t: number }> = [];
+
+  /** 累積所有 submitted shapes 的 event data，最後一張完成時餵 analyzeDrawing。
+   *  本模組原本只把 strokes 寫進 IDB assessmentEvents，沒 set
+   *  assessmentStore.partialAnalysis.drawingResult；ResultView 因 partial
+   *  缺欄位 fallback `{ shapes: [], overallScore: 0 }`，被 triage 餵成假 0 分
+   *  拖垮 fine_motor domain（2026-05-28 bug 報告）。本 state 解決該漏接。 */
+  let submittedShapesData = $state<Array<Record<string, unknown>>>([]);
 
   const currentShape = $derived(SHAPES[currentShapeIndex]);
   const progress = $derived(currentShapeIndex / SHAPES.length);
@@ -104,6 +112,14 @@
         fileSize: blob.size,
       });
 
+      const eventData = {
+        shapeId: currentShape.id,
+        shapeName: currentShape.name,
+        strokeCount: allStrokes.length,
+        totalPoints: allStrokes.reduce((sum, s) => sum + s.length, 0),
+        strokes: JSON.parse(JSON.stringify(allStrokes)),
+        fileSize: blob.size,
+      };
       // Record event with stroke data
       await recordEvent({
         assessmentId: assessmentStore.assessment.id,
@@ -111,15 +127,11 @@
         moduleType: 'drawing',
         eventType: 'drawing_complete',
         timestamp: new Date(),
-        data: {
-          shapeId: currentShape.id,
-          shapeName: currentShape.name,
-          strokeCount: allStrokes.length,
-          totalPoints: allStrokes.reduce((sum, s) => sum + s.length, 0),
-          strokes: JSON.parse(JSON.stringify(allStrokes)),
-          fileSize: blob.size,
-        },
+        data: eventData,
       });
+      // Push into local accumulator so we can analyze the full set when the
+      // user finishes the last shape (see below).
+      submittedShapesData = [...submittedShapesData, eventData];
     }
 
     // Next shape or complete
@@ -127,6 +139,21 @@
     if (currentShapeIndex < SHAPES.length - 1) {
       currentShapeIndex++;
     } else {
+      // 全部形狀畫完 → 跑 analyzeDrawing 並 set partial.drawingResult。
+      // 為什麼在 module 內算而非 ResultView：partialAnalysis 是「即時計算
+      // 流」(<1s)，ResultView 進來就要立即 render；若延後到 ResultView 才從
+      // IDB 重抓 events 跑 analyzeDrawing 會 race + 慢。同 GameModule 在
+      // step 結束時計算 behaviorMetrics 並 addAnalysis 的模式。
+      // ONNX classification 不在這層跑（重 + 5+ 秒）；只跑幾何 features，
+      // ONNX 若要 enabled 應走 ResultView 背景 enrich。
+      try {
+        const drawingResult = analyzeDrawing(
+          submittedShapesData.map(data => ({ data })),
+        );
+        assessmentStore.addAnalysis({ drawingResult });
+      } catch (err) {
+        console.warn('[DrawingModule] analyzeDrawing failed', err);
+      }
       isComplete = true;
     }
   }
