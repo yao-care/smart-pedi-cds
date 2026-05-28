@@ -13,18 +13,21 @@ export const AGE_GROUP_LABELS: Record<AgeGroupCDSA, string> = {
   '61-72m': '61-72 個月',
 };
 
-/** Calculate age in months from birth date */
-export function ageInMonths(birthDate: string | Date): number {
+/** Calculate age in months from birth date to a reference time (defaults to now). */
+export function ageInMonthsAt(birthDate: string | Date, atTime: Date): number {
   const birth = typeof birthDate === 'string' ? new Date(birthDate) : birthDate;
-  const now = new Date();
-  const months = (now.getFullYear() - birth.getFullYear()) * 12 + (now.getMonth() - birth.getMonth());
-  const dayAdjust = now.getDate() < birth.getDate() ? -1 : 0;
+  const months = (atTime.getFullYear() - birth.getFullYear()) * 12 + (atTime.getMonth() - birth.getMonth());
+  const dayAdjust = atTime.getDate() < birth.getDate() ? -1 : 0;
   return Math.max(0, months + dayAdjust);
 }
 
-/** Determine CDSA age group from birth date */
-export function ageGroupCDSA(birthDate: string | Date): AgeGroupCDSA {
-  const months = ageInMonths(birthDate);
+/** Calculate age in months from birth date to now. */
+export function ageInMonths(birthDate: string | Date): number {
+  return ageInMonthsAt(birthDate, new Date());
+}
+
+/** Map months → CDSA age group bucket. */
+function monthsToAgeGroup(months: number): AgeGroupCDSA {
   if (months <= 6) return '2-6m';
   if (months <= 12) return '7-12m';
   if (months <= 24) return '13-24m';
@@ -32,6 +35,18 @@ export function ageGroupCDSA(birthDate: string | Date): AgeGroupCDSA {
   if (months <= 48) return '37-48m';
   if (months <= 60) return '49-60m';
   return '61-72m';
+}
+
+/** Determine CDSA age group from birth date (now). */
+export function ageGroupCDSA(birthDate: string | Date): AgeGroupCDSA {
+  return monthsToAgeGroup(ageInMonths(birthDate));
+}
+
+/** Determine CDSA age group at a specific moment (for retroactive recomputation
+ *  of historical assessments — birthDate + Assessment.completedAt → ageGroup
+ *  at the time of assessment, not at "now"). Spec §13.5. */
+export function ageGroupCDSAAt(birthDate: string | Date, atTime: Date): AgeGroupCDSA {
+  return monthsToAgeGroup(ageInMonthsAt(birthDate, atTime));
 }
 
 /** Check if child is within CDSA target range (0-72 months) */
