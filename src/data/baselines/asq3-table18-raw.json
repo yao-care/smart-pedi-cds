@@ -1,0 +1,73 @@
+{
+  "_meta": {
+    "source": "ASQ-3 User's Guide (Squires, Twombly, Bricker, & Potter, 2009) Table 18, p. 171",
+    "extractedFromPDF": "https://agesandstages.com/wp-content/uploads/2019/08/ASQ-3-Technical-Appendix_web.pdf",
+    "extractedDate": "2026-05-28",
+    "purpose": "問卷常模統一基底（ASQ-3 借用）",
+    "specReference": "docs/superpowers/specs/2026-05-28-questionnaire-norms-design.md §7.1 / §13.3 / §13.4",
+    "maxScore": 60,
+    "asq3Areas": ["communication", "gross_motor", "fine_motor", "problem_solving", "personal_social"],
+    "rowsExtracted": "本檔目前只含本系統 7 個 CDSA ageGroup 對應的 7 個 ASQ-3 interval（4/10/18/30/42/54/60 月）。其餘 14 個 ASQ-3 interval 未抄錄；未來若改用週數平均或細分 mapping 可再補。",
+    "ageGroupMapping": {
+      "2-6m": 4,
+      "7-12m": 10,
+      "13-24m": 18,
+      "25-36m": 30,
+      "37-48m": 42,
+      "49-60m": 54,
+      "61-72m": 60
+    },
+    "verification": "每 cell 含 mean、sd 與三個 reported cutoff (cutoff1Sd / cutoff15Sd / cutoff2Sd)。測試會驗證 |mean - k*sd - reportedCutoffK| < 0.05 三個關係（任一失敗代表 OCR 抄錯，需回 PDF 核對）。"
+  },
+  "intervals": {
+    "4": {
+      "communication":   { "mean": 52.28, "sd":  8.84, "cutoff1Sd": 43.44, "cutoff15Sd": 39.02, "cutoff2Sd": 34.60 },
+      "gross_motor":     { "mean": 54.63, "sd":  8.11, "cutoff1Sd": 46.52, "cutoff15Sd": 42.46, "cutoff2Sd": 38.41 },
+      "fine_motor":      { "mean": 51.58, "sd": 10.98, "cutoff1Sd": 40.60, "cutoff15Sd": 35.11, "cutoff2Sd": 29.62 },
+      "problem_solving": { "mean": 53.79, "sd":  9.41, "cutoff1Sd": 44.38, "cutoff15Sd": 39.68, "cutoff2Sd": 34.98 },
+      "personal_social": { "mean": 51.92, "sd":  9.38, "cutoff1Sd": 42.54, "cutoff15Sd": 37.85, "cutoff2Sd": 33.16 }
+    },
+    "10": {
+      "communication":   { "mean": 48.17, "sd": 12.65, "cutoff1Sd": 35.52, "cutoff15Sd": 29.19, "cutoff2Sd": 22.87 },
+      "gross_motor":     { "mean": 53.02, "sd": 11.47, "cutoff1Sd": 41.54, "cutoff15Sd": 35.81, "cutoff2Sd": 30.07 },
+      "fine_motor":      { "mean": 54.72, "sd":  8.38, "cutoff1Sd": 46.34, "cutoff15Sd": 42.16, "cutoff2Sd": 37.97 },
+      "problem_solving": { "mean": 52.19, "sd":  9.84, "cutoff1Sd": 42.35, "cutoff15Sd": 37.43, "cutoff2Sd": 32.51 },
+      "personal_social": { "mean": 49.49, "sd": 11.12, "cutoff1Sd": 38.37, "cutoff15Sd": 32.81, "cutoff2Sd": 27.25 }
+    },
+    "18": {
+      "communication":   { "mean": 42.30, "sd": 14.62, "cutoff1Sd": 27.68, "cutoff15Sd": 20.37, "cutoff2Sd": 13.06 },
+      "gross_motor":     { "mean": 55.46, "sd":  9.04, "cutoff1Sd": 46.42, "cutoff15Sd": 41.90, "cutoff2Sd": 37.38 },
+      "fine_motor":      { "mean": 52.44, "sd":  9.06, "cutoff1Sd": 43.38, "cutoff15Sd": 38.85, "cutoff2Sd": 34.32 },
+      "problem_solving": { "mean": 51.39, "sd": 10.13, "cutoff1Sd": 41.26, "cutoff15Sd": 36.20, "cutoff2Sd": 31.13 },
+      "personal_social": { "mean": 47.90, "sd": 10.35, "cutoff1Sd": 37.55, "cutoff15Sd": 32.37, "cutoff2Sd": 27.19 }
+    },
+    "30": {
+      "communication":   { "mean": 49.92, "sd": 11.86, "cutoff1Sd": 38.06, "cutoff15Sd": 32.13, "cutoff2Sd": 26.20 },
+      "gross_motor":     { "mean": 53.54, "sd":  8.70, "cutoff1Sd": 44.84, "cutoff15Sd": 40.49, "cutoff2Sd": 36.14 },
+      "fine_motor":      { "mean": 47.97, "sd":  9.99, "cutoff1Sd": 37.98, "cutoff15Sd": 32.99, "cutoff2Sd": 28.01 },
+      "problem_solving": { "mean": 50.65, "sd": 11.86, "cutoff1Sd": 38.79, "cutoff15Sd": 32.86, "cutoff2Sd": 26.92 },
+      "personal_social": { "mean": 50.74, "sd": 10.89, "cutoff1Sd": 39.85, "cutoff15Sd": 34.40, "cutoff2Sd": 28.96 }
+    },
+    "42": {
+      "communication":   { "mean": 50.02, "sd": 11.48, "cutoff1Sd": 38.54, "cutoff15Sd": 32.80, "cutoff2Sd": 27.06 },
+      "gross_motor":     { "mean": 53.71, "sd":  9.40, "cutoff1Sd": 44.31, "cutoff15Sd": 39.61, "cutoff2Sd": 34.91 },
+      "fine_motor":      { "mean": 47.51, "sd": 12.30, "cutoff1Sd": 35.21, "cutoff15Sd": 29.06, "cutoff2Sd": 22.91 },
+      "problem_solving": { "mean": 50.18, "sd": 11.20, "cutoff1Sd": 38.98, "cutoff15Sd": 33.38, "cutoff2Sd": 27.78 },
+      "personal_social": { "mean": 50.50, "sd": 11.86, "cutoff1Sd": 38.64, "cutoff15Sd": 32.71, "cutoff2Sd": 26.78 }
+    },
+    "54": {
+      "communication":   { "mean": 53.79, "sd": 10.97, "cutoff1Sd": 42.82, "cutoff15Sd": 37.34, "cutoff2Sd": 31.85 },
+      "gross_motor":     { "mean": 52.71, "sd":  9.97, "cutoff1Sd": 42.74, "cutoff15Sd": 37.76, "cutoff2Sd": 32.78 },
+      "fine_motor":      { "mean": 46.12, "sd": 14.40, "cutoff1Sd": 31.72, "cutoff15Sd": 24.52, "cutoff2Sd": 17.32 },
+      "problem_solving": { "mean": 50.34, "sd": 11.87, "cutoff1Sd": 38.47, "cutoff15Sd": 32.54, "cutoff2Sd": 26.60 },
+      "personal_social": { "mean": 52.77, "sd": 10.22, "cutoff1Sd": 42.55, "cutoff15Sd": 37.44, "cutoff2Sd": 32.33 }
+    },
+    "60": {
+      "communication":   { "mean": 52.42, "sd":  9.62, "cutoff1Sd": 42.80, "cutoff15Sd": 38.00, "cutoff2Sd": 33.19 },
+      "gross_motor":     { "mean": 52.17, "sd": 10.44, "cutoff1Sd": 41.72, "cutoff15Sd": 36.50, "cutoff2Sd": 31.29 },
+      "fine_motor":      { "mean": 51.57, "sd": 12.52, "cutoff1Sd": 39.05, "cutoff15Sd": 32.79, "cutoff2Sd": 26.54 },
+      "problem_solving": { "mean": 52.59, "sd": 11.30, "cutoff1Sd": 41.29, "cutoff15Sd": 35.64, "cutoff2Sd": 29.99 },
+      "personal_social": { "mean": 54.84, "sd":  7.89, "cutoff1Sd": 46.96, "cutoff15Sd": 43.01, "cutoff2Sd": 39.07 }
+    }
+  }
+}
