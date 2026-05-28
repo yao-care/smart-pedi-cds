@@ -1,7 +1,54 @@
-import Dexie, { type Table } from 'dexie';
+import Dexie, { type Table, type Transaction } from 'dexie';
 import type { RiskLevel } from '../utils/risk-levels';
 import { recomputeTriageResult, type PersistedTriageResult } from '../baselines/recompute-triage';
 import { ageGroupCDSAAt } from '../utils/age-groups';
+
+/** v6 / v7 upgrade tx 共用的「retroactive triage recompute」實作。
+ *  抽成 export 函數的原因：在 schema.ts 內 inline closure 沒辦法被
+ *  fake-indexeddb 整合測試 import + 套用到測試專屬的 db chain 上。
+ *  schema.ts 兩個 .upgrade(tx => ...) 都呼叫這個函數，傳入版本 prefix 影響
+ *  schemaVersion 字串（'v6-recomputed' / 'v7-skip-no-birthDate' 等）。 */
+export async function applyTriageRecomputeUpgrade(
+  tx: Transaction,
+  version: 'v6' | 'v7',
+): Promise<void> {
+  // Pre-load children into a Map so the modify() loop avoids N+1 reads.
+  // children table is small (1 row per child evaluated on this device).
+  const childRows = await tx.table('children').toArray() as Array<{ id: string; birthDate?: string }>;
+  const birthDateByChild = new Map<string, string>();
+  for (const c of childRows) {
+    if (c.id && c.birthDate) birthDateByChild.set(c.id, c.birthDate);
+  }
+
+  await tx.table('assessments').toCollection().modify((a: {
+    childId?: string;
+    completedAt?: Date | string;
+    triageResult?: PersistedTriageResult;
+    schemaVersion?: string;
+  }) => {
+    if (!a.triageResult || !a.triageResult.details || a.triageResult.details.length === 0) {
+      a.schemaVersion = `${version}-no-details`;
+      return;
+    }
+    if (!a.completedAt) {
+      a.schemaVersion = `${version}-skip-no-completedAt`;
+      return;
+    }
+    const birthDate = a.childId ? birthDateByChild.get(a.childId) : undefined;
+    if (!birthDate || Number.isNaN(new Date(birthDate).getTime())) {
+      a.schemaVersion = `${version}-skip-no-birthDate`;
+      return;
+    }
+    const completedAtDate = a.completedAt instanceof Date ? a.completedAt : new Date(a.completedAt);
+    if (Number.isNaN(completedAtDate.getTime())) {
+      a.schemaVersion = `${version}-skip-no-completedAt`;
+      return;
+    }
+    const ageGroup = ageGroupCDSAAt(birthDate, completedAtDate);
+    a.triageResult = recomputeTriageResult(a.triageResult, ageGroup);
+    a.schemaVersion = `${version}-recomputed`;
+  });
+}
 
 export type { RiskLevel };
 export type AlertStatus = 'open' | 'acknowledged' | 'false_positive' | 'resolved';
@@ -406,44 +453,7 @@ export class CdssDatabase extends Dexie {
       customEducation: 'id, tenantId, category, isActive, [tenantId+isActive]',
       tenantSettings: 'id, tenantId',
       recommendationOverlays: 'id, tenantId, category, domain, [tenantId+category+domain]',
-    }).upgrade(async tx => {
-      // Pre-load children into a Map so the modify() loop avoids N+1 reads.
-      // children table is small (1 row per child evaluated on this device).
-      const childRows = await tx.table('children').toArray() as Array<{ id: string; birthDate?: string }>;
-      const birthDateByChild = new Map<string, string>();
-      for (const c of childRows) {
-        if (c.id && c.birthDate) birthDateByChild.set(c.id, c.birthDate);
-      }
-
-      await tx.table('assessments').toCollection().modify((a: {
-        childId?: string;
-        completedAt?: Date | string;
-        triageResult?: PersistedTriageResult;
-        schemaVersion?: string;
-      }) => {
-        if (!a.triageResult || !a.triageResult.details || a.triageResult.details.length === 0) {
-          a.schemaVersion = 'v6-no-details';
-          return;
-        }
-        if (!a.completedAt) {
-          a.schemaVersion = 'v6-skip-no-completedAt';
-          return;
-        }
-        const birthDate = a.childId ? birthDateByChild.get(a.childId) : undefined;
-        if (!birthDate || Number.isNaN(new Date(birthDate).getTime())) {
-          a.schemaVersion = 'v6-skip-no-birthDate';
-          return;
-        }
-        const completedAtDate = a.completedAt instanceof Date ? a.completedAt : new Date(a.completedAt);
-        if (Number.isNaN(completedAtDate.getTime())) {
-          a.schemaVersion = 'v6-skip-no-completedAt';
-          return;
-        }
-        const ageGroup = ageGroupCDSAAt(birthDate, completedAtDate);
-        a.triageResult = recomputeTriageResult(a.triageResult, ageGroup);
-        a.schemaVersion = 'v6-recomputed';
-      });
-    });
+    }).upgrade(tx => applyTriageRecomputeUpgrade(tx, 'v6'));
     // v7: drop value=0 drawing detail then re-run recompute (spec note 2026-05-28).
     //
     // v6 left "user drew 0 strokes / ML 給 0 分" 的 drawing detail intact，造成
@@ -471,42 +481,7 @@ export class CdssDatabase extends Dexie {
       customEducation: 'id, tenantId, category, isActive, [tenantId+isActive]',
       tenantSettings: 'id, tenantId',
       recommendationOverlays: 'id, tenantId, category, domain, [tenantId+category+domain]',
-    }).upgrade(async tx => {
-      const childRows = await tx.table('children').toArray() as Array<{ id: string; birthDate?: string }>;
-      const birthDateByChild = new Map<string, string>();
-      for (const c of childRows) {
-        if (c.id && c.birthDate) birthDateByChild.set(c.id, c.birthDate);
-      }
-
-      await tx.table('assessments').toCollection().modify((a: {
-        childId?: string;
-        completedAt?: Date | string;
-        triageResult?: PersistedTriageResult;
-        schemaVersion?: string;
-      }) => {
-        if (!a.triageResult || !a.triageResult.details || a.triageResult.details.length === 0) {
-          a.schemaVersion = 'v7-no-details';
-          return;
-        }
-        if (!a.completedAt) {
-          a.schemaVersion = 'v7-skip-no-completedAt';
-          return;
-        }
-        const birthDate = a.childId ? birthDateByChild.get(a.childId) : undefined;
-        if (!birthDate || Number.isNaN(new Date(birthDate).getTime())) {
-          a.schemaVersion = 'v7-skip-no-birthDate';
-          return;
-        }
-        const completedAtDate = a.completedAt instanceof Date ? a.completedAt : new Date(a.completedAt);
-        if (Number.isNaN(completedAtDate.getTime())) {
-          a.schemaVersion = 'v7-skip-no-completedAt';
-          return;
-        }
-        const ageGroup = ageGroupCDSAAt(birthDate, completedAtDate);
-        a.triageResult = recomputeTriageResult(a.triageResult, ageGroup);
-        a.schemaVersion = 'v7-recomputed';
-      });
-    });
+    }).upgrade(tx => applyTriageRecomputeUpgrade(tx, 'v7'));
   }
 }
 
