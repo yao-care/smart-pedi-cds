@@ -44,7 +44,7 @@
       // Title
       doc.setFontSize(18);
       doc.setFont('NotoSansTC', 'bold');
-      doc.text('CDSS 兒科臨床決策輔助系統', pageWidth / 2, y, { align: 'center' });
+      doc.text('Smart Pedi 兒童發展評估', pageWidth / 2, y, { align: 'center' });
       y += 10;
       doc.setFontSize(12);
       doc.setFont('NotoSansTC', 'normal');
@@ -105,7 +105,7 @@
       doc.setFontSize(8);
       doc.setTextColor(160, 160, 160);
       doc.text(
-        '由 CDSS 兒科臨床決策輔助系統產製',
+        '由 Smart Pedi 兒童發展評估產製',
         pageWidth / 2,
         footerY,
         { align: 'center' },

@@ -1,6 +1,6 @@
 # 把本架構改作「老化評估」— 完整執行 Checklist
 
-> 用途：以本專案（兒童發展智慧評估 CDSA + CDSS）為基礎，fork 後改造成「老化評估」。
+> 用途：以本專案（兒童發展評估 CDSA + CDSS）為基礎，fork 後改造成「老化評估」。
 > 架構（容器）整套可重用；要換的是「領域內容」與「量測方法」。
 > 標記：**[CONFIG]** 改值/設定 · **[CONTENT]** 重寫文字內容 · **[SCIENCE]** 需臨床+資料科學的新方法。
 > 建議順序：Phase 0 → 1 → 2 先讓「純問卷版」上線；Phase 3（演算法）另案投入。
@@ -15,7 +15,7 @@
 - [ ] `scripts/base.mjs` `BASE_PATH`（GitHub Pages 子路徑；用自訂網域則為空）。 **[CONFIG]**
 - [ ] `.github/workflows/deploy.yml` Pagefind 的 `--base` URL（→ 新網域）。 **[CONFIG]**
 - [ ] `src/lib/db/schema.ts` IndexedDB 資料庫名（`cdss-pediatric` → 新名）。 **[CONFIG]**
-- [ ] `src/lib/fhir/cdsa-resources.ts` FHIR code system URL + display name（內嵌舊網域與「兒童發展智慧評估」）。 **[CONFIG]**
+- [ ] `src/lib/fhir/cdsa-resources.ts` FHIR code system URL + display name（內嵌舊網域與「兒童發展評估」）。 **[CONFIG]**
 - [ ] 部署設定：GitHub Pages 開啟、自訂網域 DNS、`PUBLIC_CONTRIBUTION_WORKER_URL` repo variable（見 Phase 4 Worker）。
 
 ### ⚠️ 部署前必做（本次踩過的坑）
@@ -29,7 +29,7 @@
 ## Phase 1 — 品牌 + 領域骨架（最簡單）
 
 ### 1a. 使用者可見文案 **[CONTENT/CONFIG]**
-- [ ] `src/layouts/Base.astro`（站名後綴 `兒童發展智慧評估`）
+- [ ] `src/layouts/Base.astro`（站名後綴 `兒童發展評估`）
 - [ ] `src/layouts/Assess.astro`（description + 可見標題 `兒童發展評估`）
 - [ ] `src/components/blocks/Header.astro`（導覽列站名）
 - [ ] `scripts/templates/manifest.template.json`（PWA `name`）

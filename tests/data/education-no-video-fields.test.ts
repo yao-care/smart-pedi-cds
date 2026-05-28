@@ -57,7 +57,7 @@ describe('education markdown — single-source invariant', () => {
     expect(offenders, 'format=video markdown 改為 article + 影片寫進 yaml catalog').toEqual([]);
   });
 
-  it('沒有任何 .md 含 format: "questionnaire"（CDSA 評估問卷在 /, 不在衛教頁）', async () => {
+  it('沒有任何 .md 含 format: "questionnaire"（評估問卷在 /, 不在衛教頁）', async () => {
     const dir = 'src/data/education';
     const files = await collectMarkdown(dir);
     const offenders: string[] = [];

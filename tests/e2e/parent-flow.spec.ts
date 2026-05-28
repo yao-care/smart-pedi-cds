@@ -23,7 +23,7 @@ test.describe('Parent assessment flow', () => {
 
   test('home page renders with the assessment shell', async ({ page }) => {
     await page.goto('/assess/');
-    await expect(page).toHaveTitle(/兒童發展智慧評估/);
+    await expect(page).toHaveTitle(/兒童發展評估/);
     // Step indicator with 7 steps is the canonical sign the shell loaded
     await expect(page.getByRole('heading', { name: '兒童基本資料' })).toBeVisible({ timeout: 10000 });
   });

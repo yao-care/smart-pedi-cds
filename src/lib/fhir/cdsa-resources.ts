@@ -12,7 +12,7 @@ export const CONFIDENCE_EXT_URL = 'https://smart-pedi-cds.yao.care/extension/tri
 const REPORT_CODE = {
   system: CODE_SYSTEM,
   code: 'cdsa-assessment',
-  display: 'CDSA 兒童發展智慧評估',
+  display: 'Smart Pedi 兒童發展評估',
 };
 
 /**

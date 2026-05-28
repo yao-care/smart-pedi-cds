@@ -17,7 +17,7 @@ src/data/
 │   ├── content-relevance.yaml   ★ 唯一關聯源：inapplicable + triggers(videoIds/articles) + clinicalAlertEducation
 │   └── README.md                ← 詳細規則
 │
-├── questionnaire/               📝 CDSA 評估問卷（44 題）
+├── questionnaire/               📝 評估問卷（44 題）
 │   └── questions.json
 │
 ├── video-catalog/               🎬 衛教影片元資料（事實，非關聯）

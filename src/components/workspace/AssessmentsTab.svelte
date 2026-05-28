@@ -89,7 +89,7 @@
 
 <section class="assessments-tab" aria-label="所有評估清單">
   <header class="tab-header">
-    <h2>所有 CDSA 評估</h2>
+    <h2>所有評估</h2>
     {#if demoMode}
       <span class="mode-badge mode-demo">示範模式（本機資料）</span>
     {/if}
@@ -108,7 +108,7 @@
         <p>本機尚無評估紀錄。完成一次家長端評估後會出現在這裡。</p>
         <a href="/assess/" class="empty-cta">前往評估流程 →</a>
       {:else}
-        <p>FHIR Server 上目前沒有 CDSA 評估報告。</p>
+        <p>FHIR Server 上目前沒有評估報告。</p>
       {/if}
     </div>
   {:else}

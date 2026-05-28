@@ -79,7 +79,7 @@
       }
 
       // ===== Title =====
-      drawLine('兒童發展智慧評估報告', 16, 'bold', 'center');
+      drawLine('兒童發展評估報告', 16, 'bold', 'center');
       y += 4;
       drawSeparator();
 
@@ -136,7 +136,7 @@
       doc.setFont('NotoSansTC', 'normal');
       doc.setTextColor(150, 150, 150);
       doc.text(`產製時間：${formatTimestamp(new Date())}`, margin, y);
-      doc.text('CDSA 兒童發展智慧評估系統', pageWidth - margin, y, { align: 'right' });
+      doc.text('Smart Pedi 兒童發展評估系統', pageWidth - margin, y, { align: 'right' });
 
       const filename = `cdsa-report-${abbreviateId(assessment.id)}-${assessDate.replace(/\//g, '')}.pdf`;
       doc.save(filename);

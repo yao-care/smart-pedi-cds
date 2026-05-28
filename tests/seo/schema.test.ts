@@ -29,7 +29,7 @@ describe('webSiteSchema', () => {
   it('含 SearchAction，target 指向 /search', () => {
     const s = webSiteSchema(site);
     expect(s['@type']).toBe('WebSite');
-    expect(s.name).toBe('Smart Pedi 兒童發展智慧評估');
+    expect(s.name).toBe('Smart Pedi 兒童發展評估');
     expect(s.potentialAction['@type']).toBe('SearchAction');
     expect(s.potentialAction.target).toContain('/search?q=');
   });

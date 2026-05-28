@@ -1,8 +1,8 @@
-# CDSS 兒科臨床決策輔助系統 — 開發規則
+# Smart Pedi 兒童發展評估 — 開發規則
 
 ## 專案概述
 
-開源兒科臨床決策輔助系統，以 SMART on FHIR 標準運行於瀏覽器端。
+開源 Smart Pedi 兒童發展評估，以 SMART on FHIR 標準運行於瀏覽器端。
 部署於 GitHub Pages，零後端，所有邏輯在瀏覽器執行。
 
 ## 技術棧
