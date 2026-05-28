@@ -1,7 +1,7 @@
 # 兒童發展評估計分統一為常模參照（Questionnaire Norms）— Design
 
-- **日期**: 2026-05-28
-- **狀態**: 設計待執行（用戶已批准方向，執行前需先解決 §7 待決事項）
+- **日期**: 2026-05-28（§7 拍板：2026-05-28；§13 補拍：2026-05-28 同日）
+- **狀態**: §7 全部拍板，可以執行 Phase 1（已先完成「rename 名稱統一」commit `bc56ecd`）
 - **承接自**: SEO/AEO 改造完成並部署上線後（main `f2b8597`），用戶在驗收時發現雷達圖／建議閱讀的判讀矛盾，深入診斷指向評估引擎計分基準混用，搜尋業界共識後用戶選擇「直接走正解」。
 - **本文件為 /clear 前的完整交接**：自包含、不依賴對話 context。
 
@@ -95,7 +95,8 @@
     "social_emotional": { ... }
   }
   ```
-- 需涵蓋所有 cdsa.domain × 7 個年齡組（`2-6m` / `7-12m` / `13-24m` / `25-36m` / `37-48m` / `49-60m` / `61-72m`，定義於 `src/lib/utils/age-groups.ts` 的 `AGE_GROUPS_CDSA`）。
+- 需涵蓋所有問卷 domain × 7 個年齡組（`2-6m` / `7-12m` / `13-24m` / `25-36m` / `37-48m` / `49-60m` / `61-72m`，定義於 `src/lib/utils/age-groups.ts` 的 `AGE_GROUPS_CDSA`）。
+- 問卷 domain 實際 **6 個**（`triage.ts:7-10` `KNOWN_QUESTIONNAIRE_DOMAINS`）：`cognition` / `fine_motor` / `gross_motor` / `language_comprehension` / `language_expression` / `social_emotional`；加上 z 模組的 `behavior`（行為遊戲）與 `language`（語音時長）共 **7 個** radar domain。**spec 早期錯寫 8 領域，以實際 6 為準**。
 - `source` 欄位記常模來源（透明化）：`'asq3-borrowed'` / `'nhi-checklist'` / `'internal-platform'` 等。
 
 ### 5.4 測試
@@ -201,7 +202,13 @@ commit：`docs(about): 評估判讀流程文案統一為常模 SD 門檻`
   - 新行為：雷達顯示真實同齡百分位（≈50 表示確實平均）、isAnomaly 多數 false、建議閱讀只列真正落後的領域。
 - 截圖比對 before/after，請臨床確認判讀合理。
 
-## 7. 待決事項（**Phase 1 前必須完成**）
+## 7. 待決事項（**全部已拍板，2026-05-28**）
+
+> **拍板紀錄（依此執行 Phase 1，下次 session 不必重問）**
+> - §7.1 = **A. ASQ-3 借用**（資料源：ASQ-3 User's Guide Table 18，page 171，PDF 已存：https://agesandstages.com/wp-content/uploads/2019/08/ASQ-3-Technical-Appendix_web.pdf）
+> - §7.2 = **ASQ-3 嚴格 -2 SD**（isAnomaly: z ≤ -2 SD；refer: 任一 ≤ -2 SD；monitor: -1 ~ -2 SD；normal: z > -1 SD）。配套：about.astro 透明標示「高敏感率設計」+「必要時請診」出口
+> - §7.3 = **重算所有舊評估**（重算前置已驗證可行：`Assessment.triageResult.details.value` + `maxScore` + `Child.birthDate` + `Assessment.completedAt` 足夠推回當時 ageGroup → z-score；不需要原始 input）
+> - §7.4 = **B. 顯示但灰格警告**（雷達畫但不算 anomaly count，UI 標「資料不足」）
 
 ### 7.1 問卷常模從哪來？
 
@@ -282,6 +289,7 @@ main 分支已 push 到 origin/main 並部署上線（GitHub Pages 自訂域名 
 | `8d8dc7a` | fix(seo): 對外只主打系統核心文章 + 還原 nav 評估紀錄 |
 | `8688018` | feat(education): 矩陣每格列出該情境**所有**相關文章（不只主文章） |
 | `f2b8597` | fix(radar): 雷達圖標籤與分數重疊修正（既有元件 bug，非 SEO 改造引入） |
+| `bc56ecd` | rename: 系統名稱統一為「Smart Pedi 兒童發展評估」（本 spec 動工前的 prerequisite，2026-05-28 與 §7 拍板同日完成） |
 
 衛教內容治理：
 - 系統核心文章 = `content-relevance.yaml` 中 `browse:true` 的 8 篇（六大發展領域主衛教）
@@ -292,7 +300,87 @@ main 分支已 push 到 origin/main 並部署上線（GitHub Pages 自訂域名 
 ## 12. 給下次 session 的開頭指引
 
 1. 讀本 spec（`docs/superpowers/specs/2026-05-28-questionnaire-norms-design.md`）。
-2. 確認 §7 待決事項是否已由用戶/臨床拍板（特別 §7.1 常模來源、§7.2 SD 門檻）。
-3. 若已拍板 → 依 §6 Phase 1 起執行，每 Phase 各自 commit。
-4. 若未拍板 → 先跟用戶逐項釐清 §7（不要擅自決定臨床判讀門檻）。
-5. 注意：評估引擎涉及臨床判讀，**所有門檻/常模值都需用戶或臨床顧問拍板**，不可自行設定。
+2. §7 已全部拍板（§7.1/7.2/7.3/7.4），可直接進 Phase 1。
+3. 依 §6 Phase 1 起執行，每 Phase 各自 commit。
+4. **§13 是 Phase 1 動工前必讀的工程細節（核心粒度問題 + ASQ-3 mapping 設計），動工前要先了解。**
+5. 注意：評估引擎涉及臨床判讀，**所有門檻/常模值都需用戶或臨床顧問拍板**，§7 已拍板的不再重問；新出現的細節（如 ASQ-3 Communication 拆 lang_comp/lang_exp 之外的替代方案）若涉臨床判讀仍需問用戶。
+
+## 13. 2026-05-28 §7 拍板後新增工程細節（Phase 1 動工前必讀）
+
+### 13.1 本系統題目粒度的核心限制
+
+從 `src/data/questionnaire/questions.json` 統計（用 jq 跑過）：
+
+| 維度 | 本系統 | ASQ-3 |
+|---|---|---|
+| 每 (domain × ageGroup) 題目數 | **1-2 題**（多為 2，少數 1） | 6 題 |
+| 每題滿分 | 2（yes=2 / sometimes=1 / no=0） | 10（yes=10 / sometimes=5 / not yet=0） |
+| (domain × ageGroup) maxScore | **2 或 4**（多為 4） | **60** |
+| 得分離散值數 | 5 個（0/1/2/3/4） | 13 個（0/5/10/...) |
+
+**含意**：直接「滿分比例縮放」(`mean_local = mean_asq/60 × maxScore_local`, `SD` 同理) 後，本系統「分數差 1 分 ≈ 跳 1.5-2 SD」。即「答對一半」(2/4) 在 ASQ-3 嚴格 -2 SD 門檻下會直接觸發 refer。
+
+**用戶選擇**：仍維持 ASQ-3 嚴格 -2 SD，但配套：
+- about.astro / index.astro 透明標示「本工具針對高敏感率（寧錯報不漏報）設計」
+- 結果頁加「必要時請諮詢專業」出口（既有的醫療免責聲明可加強）
+
+### 13.2 缺漏的 (domain × ageGroup) 格
+
+本系統問卷有 4 格沒有題目：
+- `cognition::2-6m`（嬰兒太小沒認知題）
+- `language_expression::2-6m`（嬰兒太小沒表達題）
+
+這跟「無常模 fallback」(§7.4) 不同——是「無題目導致無 score」，會自動跳過（沒 `questionnaireScores[domain]`），不會送進 triage。
+
+但常模本身：ASQ-3 Table 18 對所有 5 面向 × 21 個 interval 都有資料。**所以實際上問卷常模 6 個 domain × 7 個 ageGroup = 42 格都會有常模可填**（只是 2-6m 的 cognition/lang_expression 沒題目所以用不到）。
+
+### 13.3 ASQ-3 → CDSA mapping 設計
+
+**21 個 ASQ-3 interval → 7 個 CDSA ageGroup**（取中位 interval）：
+
+| CDSA ageGroup | 取用 ASQ-3 interval | 備註 |
+|---|---|---|
+| 2-6m | 4-month | |
+| 7-12m | 10-month | |
+| 13-24m | 18-month | |
+| 25-36m | 30-month | |
+| 37-48m | 42-month | |
+| 49-60m | 54-month | |
+| 61-72m | 60-month | ASQ-3 最大 60m，本系統 61-72m **超出 ASQ-3 範圍**，用 60-month 常模並在文案標明 |
+
+**5 個 ASQ-3 area → 6 個 CDSA 問卷 domain**：
+
+| CDSA domain | 對應 ASQ-3 area |
+|---|---|
+| `cognition` | Problem Solving |
+| `fine_motor` | Fine Motor |
+| `gross_motor` | Gross Motor |
+| `social_emotional` | Personal-Social |
+| `language_comprehension` | **Communication（共用）** |
+| `language_expression` | **Communication（共用，同組）** |
+
+ASQ-3 Communication 是「理解+表達」混在一起的單一面向。本系統把 lang_comp + lang_exp 拆為兩個 domain，**共用同一組 ASQ-3 Communication 常模**（簡化假設：兩 sub-domain 分佈相似）。未來換 PLS-5 / 內部資料校正時可拆。**這個假設要在文案透明標示。**
+
+### 13.4 ASQ-3 Table 18 萃取方法
+
+PDF 來源已存：https://agesandstages.com/wp-content/uploads/2019/08/ASQ-3-Technical-Appendix_web.pdf（page 171 是 Table 18，含 21 個 interval × 5 個面向 × 5 欄 `Mean / SD / 1.0 SD cutoff / 1.5 SD cutoff / 2.0 SD cutoff`）。
+
+**抄錄 + 自動驗證方法**：每 cell 同時抄 `mean`、`SD`、`reported_2SD_cutoff` 三欄，寫一個測試自動驗證 `|mean - 2*SD - reported_cutoff| < 0.05`。任一 cell 失敗代表 OCR 抄錯，可立即定位。
+
+Phase 1.1 只需萃取 7 個 row（4m, 10m, 18m, 30m, 42m, 54m, 60m）× 5 area × 3 col = 105 個數字。Phase 1 動工腳本（未來步驟）：
+1. 萃取 → `src/data/baselines/asq3-table18-raw.json`（含三欄）
+2. mapping + 縮放 → `src/data/baselines/questionnaire-norms.json`（最終本系統用）
+3. cell-level cutoff verification 測試
+4. 完整性測試（6 domain × 7 ageGroup = 42 格）
+
+### 13.5 §7.3 IndexedDB 重算前置已驗證可行
+
+從 `src/lib/db/schema.ts` 確認：
+- `Assessment.triageResult.details` 每筆有 `value`（score）、`maxScore`、`domain`
+- `Assessment.completedAt` + `Child.birthDate` 可推回「評估當時的 ageGroup」（用 `ageInMonths` 算到當時時間）
+
+→ **重算 z-score 所需資訊都在 IndexedDB**，不需要原始 `TriageInput`。Phase 5 IndexedDB v6 upgrade tx 可用 `tx.table('assessments').modify(...)` 重算 details，並加 `schemaVersion: 2` 標示新版本。
+
+### 13.6 §7.2 拍板過程紀錄
+
+§7.2 在分析「本系統粒度粗」（§13.1）後**重新問過用戶**，用戶仍維持 ASQ-3 嚴格 -2 SD（理由：寧錯報不漏報），與最初拍板一致。文案層配套（高敏感率告知 + 出口）由 Phase 4 處理。
