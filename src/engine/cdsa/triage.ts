@@ -3,11 +3,30 @@ import type { VoiceMetrics } from './voice-analysis';
 import type { DrawingAnalysisResult } from './drawing-analysis';
 import type { AgeGroupCDSA } from '../../lib/utils/age-groups';
 import { db } from '../../lib/db/schema';
+import {
+  getQuestionnaireNorm,
+  type QuestionnaireDomain,
+} from '../../lib/baselines/questionnaire-norms';
 
-const KNOWN_QUESTIONNAIRE_DOMAINS = new Set([
+const KNOWN_QUESTIONNAIRE_DOMAINS = new Set<QuestionnaireDomain>([
   'cognition', 'fine_motor', 'gross_motor',
   'language_comprehension', 'language_expression', 'social_emotional',
 ]);
+
+function isQuestionnaireDomain(d: string): d is QuestionnaireDomain {
+  return KNOWN_QUESTIONNAIRE_DOMAINS.has(d as QuestionnaireDomain);
+}
+
+/** Per-detail isAnomaly threshold (z ≤ this = anomaly mark on detail).
+ *  Per spec §7.2 (2026-05-28 rev): per-detail isAnomaly is UI 提示 only,
+ *  does NOT participate in triage gating (gating uses per-domain z).
+ *  Threshold lowered from previous mix (-1.5 / <0.5 raw) to a uniform -1 SD. */
+const PER_DETAIL_ANOMALY_Z = -1;
+
+/** Gating thresholds for per-domain z composition (spec §7.2 2026-05-28 rev).
+ *  ASQ-3-style: refer = any domain ≤ -2 SD; monitor = any domain ≤ -1 SD. */
+const DOMAIN_REFER_Z = -2;
+const DOMAIN_MONITOR_Z = -1;
 
 export interface TriageInput {
   ageGroup: AgeGroupCDSA;
@@ -46,8 +65,18 @@ export interface TriageResult {
     /** Per-metric maximum used to compute isAnomaly for questionnaire rows
      *  (null for z-based metrics). */
     maxScore?: number | null;
+    /** UI-only 提示性 anomaly mark (directionalZ ≤ -1 SD). Spec §7.2 (2026-05-28 rev):
+     *  does NOT participate in gating; gating uses per-domain composite z. */
     isAnomaly: boolean;
   }>;
+  /** Per-domain composite z (mean of all details' directionalZ in that domain).
+   *  Drives the per-domain gating (spec §7.2 2026-05-28 rev). Optional for
+   *  backward compat with older persisted TriageResult records. */
+  domainLevelZ?: Record<string, number>;
+  /** Per-domain classification by domain-level z. Same gating thresholds as
+   *  TriageResult.category but at domain granularity (so the UI can mark
+   *  individual domains, not only the overall result). */
+  domainCategories?: Record<string, 'normal' | 'monitor' | 'refer'>;
 }
 
 /** Load norms from DB, fall back to hardcoded defaults */
@@ -104,16 +133,16 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
     const z = zScore(m.value, norm.mean, norm.std);
     // For latency and rhythm, higher is worse (reverse direction)
     const isReversed = m.metric === 'reactionLatency' || m.metric === 'interactionRhythm';
-    const effectiveZ = isReversed ? z : -z; // positive effectiveZ = worse
+    const directionalZ = isReversed ? -z : z; // negative = worse than norm; uniform across metrics
     details.push({
       domain: m.domain,
       metric: m.metric,
       value: m.value,
       zScore: z,
-      directionalZ: isReversed ? -z : z, // negative = worse than norm; uniform across metrics
+      directionalZ,
       normMean: norm.mean,
       normStd: norm.std,
-      isAnomaly: effectiveZ >= 1.5, // 1.5 SD worse than mean
+      isAnomaly: directionalZ <= PER_DETAIL_ANOMALY_Z, // UI 提示用，不參與 gating
     });
   }
 
@@ -128,7 +157,7 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
     directionalZ: drawingZ,
     normMean: drawingNorm.mean,
     normStd: drawingNorm.std,
-    isAnomaly: drawingZ <= -1.5,
+    isAnomaly: drawingZ <= PER_DETAIL_ANOMALY_Z,
   });
 
   // Voice
@@ -143,14 +172,18 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
       directionalZ: voiceZ,
       normMean: voiceNorm.mean,
       normStd: voiceNorm.std,
-      isAnomaly: voiceZ <= -1.5,
+      isAnomaly: voiceZ <= PER_DETAIL_ANOMALY_Z,
     });
   }
 
-  // Questionnaire scores (if available)
+  // Questionnaire scores (if available) — z-based per spec §7.2 (2026-05-28)
+  // Each domain × ageGroup borrows ASQ-3 Table 18 mean/SD via questionnaire-norms.ts,
+  // scaled by maxScore_local / 60. Per-detail isAnomaly is UI 提示 (z ≤ -1 SD); the
+  // gating that produces the refer/monitor/normal category lives in the per-domain
+  // composition further down.
   if (input.questionnaireScores && import.meta.env?.DEV) {
     for (const domain of Object.keys(input.questionnaireScores)) {
-      if (!KNOWN_QUESTIONNAIRE_DOMAINS.has(domain)) {
+      if (!isQuestionnaireDomain(domain)) {
         console.warn(`[triage] Unknown questionnaire domain: ${domain}`);
       }
     }
@@ -160,57 +193,118 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
   }
   if (input.questionnaireScores) {
     for (const [domain, score] of Object.entries(input.questionnaireScores)) {
-      // Use the actual per-domain maximum when caller supplies it
-      // (questions × 2). Fall back to 10 only when the caller didn't.
-      const maxScore = input.questionnaireMaxScores?.[domain] ?? 10;
-      const normalized = maxScore > 0 ? score / maxScore : 0;
+      if (!isQuestionnaireDomain(domain)) continue; // skip unknown defensively
+      const maxScore = input.questionnaireMaxScores?.[domain];
+      if (!maxScore || maxScore <= 0) {
+        // Without a valid maxScore we can't scale the ASQ-3 norm; skip rather than
+        // fall back to 10 (which would silently mis-scale z). The store path always
+        // provides maxScores; assessment-analyzer now also provides them.
+        if (import.meta.env?.DEV) {
+          console.warn(`[triage] questionnaire ${domain}: missing/invalid maxScore, skip`);
+        }
+        continue;
+      }
+      try {
+        const norm = getQuestionnaireNorm(domain, input.ageGroup, maxScore);
+        const z = (score - norm.mean) / norm.sd;
+        details.push({
+          domain,
+          metric: 'questionnaireScore',
+          value: score,
+          zScore: z,
+          directionalZ: z, // 負 = 比常模差，與 drawing/voice 一致
+          normMean: norm.mean,
+          normStd: norm.sd,
+          maxScore,
+          isAnomaly: z <= PER_DETAIL_ANOMALY_Z,
+        });
+      } catch (err) {
+        // Norm lookup failed (should not happen if questionnaire-norms完整性測試 passes).
+        // Per §7.4 fallback B (灰格), we skip the detail here and rely on UI to draw
+        // a 「資料不足」 grey cell. UI integration is left to Phase 4.
+        if (import.meta.env?.DEV) {
+          console.warn(`[triage] norm lookup failed for ${domain}::${input.ageGroup}:`, err);
+        }
+      }
+    }
+  }
+
+  // Gross motor (from MediaPipe Pose analysis).
+  // Map categorical classification → directionalZ so it participates in
+  // per-domain gating uniformly with other metrics. 'delayed' → -2 SD strong
+  // signal; 'normal' → 0; absent → no push.
+  if (input.grossMotor) {
+    let poseDirectionalZ: number | null = null;
+    if (input.grossMotor.classification === 'delayed') poseDirectionalZ = -2;
+    else if (input.grossMotor.classification === 'normal') poseDirectionalZ = 0;
+    if (poseDirectionalZ !== null) {
       details.push({
-        domain,
-        metric: 'questionnaireScore',
-        value: score,
-        zScore: null,
-        directionalZ: null, // questionnaire 不走 z；radar 改路徑識別 (ResultView)
-        maxScore,
-        isAnomaly: normalized < 0.5,
+        domain: 'gross_motor',
+        metric: 'poseClassification',
+        value: input.grossMotor.confidence,
+        zScore: poseDirectionalZ,
+        directionalZ: poseDirectionalZ,
+        isAnomaly: poseDirectionalZ <= PER_DETAIL_ANOMALY_Z,
       });
     }
   }
 
-  // Gross motor (from MediaPipe Pose analysis)
-  if (input.grossMotor && input.grossMotor.classification === 'delayed') {
-    details.push({
-      domain: 'gross_motor',
-      metric: 'poseClassification',
-      value: input.grossMotor.confidence,
-      zScore: null,
-      directionalZ: null, // classification, not a continuous z; radar skips
-      isAnomaly: true,
-    });
+  // Triage decision (per spec §7.2 2026-05-28 rev — per-domain z composition).
+  //
+  // Why per-domain not per-metric: this system has 12+ metrics across 7 radar
+  // domains (behavior alone has 4 z metrics: completionRate / operationConsistency /
+  // reactionLatency / interactionRhythm). Applying ASQ-3 cutoffs (-1/-2 SD) per
+  // metric would amplify false positives in domains with multiple metrics. Industry
+  // multi-area screeners (ASQ-3 / Bayley / Battelle / DAYC-2) all judge per-area:
+  // metrics within an area compose into a single area score, cutoff applies at
+  // area total. Composing directionalZ per domain (mean) restores that property.
+  //
+  // The per-detail isAnomaly above remains as a UI 提示 ("which metrics drove the
+  // domain low?") but does NOT participate in this gating.
+  const domainZs: Record<string, number[]> = {};
+  for (const d of details) {
+    if (d.directionalZ !== null && d.directionalZ !== undefined) {
+      if (!domainZs[d.domain]) domainZs[d.domain] = [];
+      domainZs[d.domain].push(d.directionalZ);
+    }
+  }
+  const domainLevelZ: Record<string, number> = {};
+  for (const [domain, zs] of Object.entries(domainZs)) {
+    domainLevelZ[domain] = zs.reduce((a, b) => a + b, 0) / zs.length;
+  }
+  const domainCategories: Record<string, 'normal' | 'monitor' | 'refer'> = {};
+  for (const [domain, z] of Object.entries(domainLevelZ)) {
+    if (z <= DOMAIN_REFER_Z) domainCategories[domain] = 'refer';
+    else if (z <= DOMAIN_MONITOR_Z) domainCategories[domain] = 'monitor';
+    else domainCategories[domain] = 'normal';
   }
 
-  // Triage decision — gate by both number of anomalous metrics AND how
-  // many distinct domains they spread across. Six low scores all under
-  // "behavior" is one signal; six low scores across six domains is six
-  // independent signals. The dual-axis threshold avoids over-referring
-  // when a single domain misfires and under-referring when many domains
-  // each flag only one metric.
-  const anomalousDetails = details.filter((d) => d.isAnomaly);
-  const anomalyCount = anomalousDetails.length;
-  const anomalyDomainCount = new Set(anomalousDetails.map((d) => d.domain)).size;
+  const referDomains = Object.entries(domainCategories).filter(([_, c]) => c === 'refer').map(([d]) => d);
+  const monitorDomains = Object.entries(domainCategories).filter(([_, c]) => c === 'monitor').map(([d]) => d);
 
+  // Confidence rationale (per spec §7.2 2026-05-28 rev):
+  //   - normal baseline 0.85 (clearest signal: nothing breaches even -1 SD).
+  //   - monitor 0.65 + 0.1·monitorDomains (cap 0.90): "in-between" zone is the
+  //     least certain band by design — closer to the cutoff = lower confidence.
+  //   - refer 0.85 + 0.03·refer + 0.02·monitor (cap 0.95): more affected domains
+  //     = stronger signal; always > normal baseline since refer should never read
+  //     "less sure than normal".
   let category: TriageResult['category'];
   let confidence: number;
-
-  if (anomalyCount >= 3 && anomalyDomainCount >= 2) {
+  if (referDomains.length > 0) {
     category = 'refer';
-    confidence = Math.min(0.95, 0.7 + 0.04 * anomalyCount + 0.05 * anomalyDomainCount);
-  } else if (anomalyCount >= 1) {
+    confidence = Math.min(0.95, 0.85 + 0.03 * referDomains.length + 0.02 * monitorDomains.length);
+  } else if (monitorDomains.length > 0) {
     category = 'monitor';
-    confidence = Math.min(0.90, 0.6 + 0.08 * anomalyCount + 0.04 * anomalyDomainCount);
+    confidence = Math.min(0.90, 0.65 + 0.1 * monitorDomains.length);
   } else {
     category = 'normal';
     confidence = 0.85;
   }
+
+  // anomalyCount retained for backward compat with persisted records / UI that
+  // still reads it; now reflects per-detail UI 提示 count (not gating-relevant).
+  const anomalyCount = details.filter((d) => d.isAnomaly).length;
 
   // Summary — translate domain ids to user-facing Chinese labels so the
   // sentence doesn't leak technical identifiers like "behavior, fine_motor".
@@ -225,19 +319,19 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
     social_emotional: '社交情緒',
     diet: '飲食',
   };
-  const anomalyDomains = [...new Set(details.filter(d => d.isAnomaly).map(d => d.domain))];
-  const anomalyLabels = anomalyDomains.map(d => DOMAIN_LABELS[d] ?? d);
-  const summaryMap: Record<TriageResult['category'], string> = {
-    'normal': '各面向發展在正常範圍內。',
-    'monitor': `${anomalyLabels.join('、')}面向有待觀察。建議持續追蹤。`,
-    'refer': `${anomalyLabels.join('、')}面向顯示異常。建議進一步專業評估。`,
-  };
+  const labelDomains = (ds: string[]) => ds.map(d => DOMAIN_LABELS[d] ?? d).join('、');
+  const summary =
+    category === 'normal' ? '各面向發展在正常範圍內。' :
+    category === 'monitor' ? `${labelDomains(monitorDomains)}面向有待觀察。建議持續追蹤。` :
+    `${labelDomains(referDomains)}面向顯示異常。建議進一步專業評估。`;
 
   return {
     category,
     confidence,
-    summary: summaryMap[category],
+    summary,
     anomalyCount,
     details,
+    domainLevelZ,
+    domainCategories,
   };
 }

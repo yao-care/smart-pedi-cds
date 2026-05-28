@@ -5,6 +5,7 @@ import { analyzeDrawing } from './drawing-analysis';
 import { analyzeGrossMotor, type GrossMotorResult } from './gross-motor-analysis';
 import { computeTriage, type TriageResult } from './triage';
 import type { AgeGroupCDSA } from '../../lib/utils/age-groups';
+import { getQuestionnaireMaxScores } from '../../lib/questionnaire/max-scores';
 
 export interface AssessmentAnalysisResult {
   triageResult: TriageResult;
@@ -72,7 +73,11 @@ export async function analyzeAssessment(
     // MediaPipe may fail — non-blocking
   }
 
-  // Extract questionnaire scores by domain
+  // Extract questionnaire scores by domain.
+  // questionnaireMaxScores derives from questions.json (single source of truth) so
+  // re-analysis can produce the same z-score as the live store path. Without this
+  // the ASQ-3 norm scaling (mean_local = mean_asq × maxScore/60) would mis-scale
+  // and z would be wrong. See spec §13.1 / Phase 2 commit.
   const questionnaireScores: Record<string, number> = {};
   for (const e of questionnaireEvents) {
     const domain = e.data.domain as string;
@@ -81,6 +86,8 @@ export async function analyzeAssessment(
       questionnaireScores[domain] = (questionnaireScores[domain] ?? 0) + score;
     }
   }
+  const hasQuestionnaire = Object.keys(questionnaireScores).length > 0;
+  const questionnaireMaxScores = hasQuestionnaire ? getQuestionnaireMaxScores(ageGroup) : undefined;
 
   // Compute triage
   const triageResult = await computeTriage({
@@ -88,7 +95,8 @@ export async function analyzeAssessment(
     behavior: behaviorMetrics,
     voice: voiceMetrics,
     drawing: drawingResult,
-    questionnaireScores: Object.keys(questionnaireScores).length > 0 ? questionnaireScores : undefined,
+    questionnaireScores: hasQuestionnaire ? questionnaireScores : undefined,
+    questionnaireMaxScores,
     grossMotor: grossMotorResult ? {
       classification: grossMotorResult.classification,
       confidence: grossMotorResult.confidence,

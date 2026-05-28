@@ -58,20 +58,23 @@ describe('computeTriage', () => {
     expect(result.summary).toContain('正常範圍');
   });
 
-  it('returns monitor when 1-2 anomalies present', async () => {
+  it('returns monitor when a domain composite z lands in [-2, -1] (per-domain gating, spec §7.2)', async () => {
+    // behavior domain has 4 z metrics. Two moderately low + two default → mean z in monitor band.
+    // completionRate=0.30 (z=-3.0), operationConsistency=0.40 (z=-2.0), other 2 default (z=0) → mean ≈ -1.25.
     const result = await computeTriage({
       ...baseInput,
-      // Push completion rate well below normal
-      behavior: makeBehavior({ completionRate: 0.2 }),
+      behavior: makeBehavior({ completionRate: 0.30, operationConsistency: 0.40 }),
     });
-    expect(['monitor', 'refer']).toContain(result.category);
-    expect(result.anomalyCount).toBeGreaterThanOrEqual(1);
+    expect(result.category).toBe('monitor');
+    expect(result.domainCategories?.behavior).toBe('monitor');
+    expect(result.domainLevelZ?.behavior).toBeLessThanOrEqual(-1);
+    expect(result.domainLevelZ?.behavior).toBeGreaterThan(-2);
   });
 
-  it('returns refer when >=3 anomalies span >=2 domains', async () => {
+  it('returns refer when ANY domain composite z ≤ -2 SD (spec §7.2)', async () => {
+    // behavior 3 severe + drawing severe → both domains push below -2 SD composite.
     const result = await computeTriage({
       ...baseInput,
-      // 3 behavior anomalies + 1 drawing anomaly = 2 domains
       behavior: makeBehavior({
         completionRate: 0.1,
         operationConsistency: 0.2,
@@ -80,41 +83,50 @@ describe('computeTriage', () => {
       drawing: makeDrawing({ overallScore: 10 }),
     });
     expect(result.category).toBe('refer');
-    expect(result.anomalyCount).toBeGreaterThanOrEqual(3);
+    expect(result.domainCategories?.behavior).toBe('refer');
+    expect(result.domainCategories?.fine_motor).toBe('refer');
     expect(result.summary).toContain('專業評估');
   });
 
-  it('stays monitor when 3+ anomalies all live in the same domain', async () => {
+  it('escalates to refer when severe anomalies cluster in same domain (NEW: per-domain composite, not per-metric count)', async () => {
+    // OLD gating: 3 anomalies but 1 domain → monitor (dual-axis dampener).
+    // NEW gating: behavior composite z = mean(-4.33, -3.33, -7.5, 0) ≈ -3.79 → refer.
+    // This is the intended behaviour shift in spec §7.2 (2026-05-28 rev).
     const result = await computeTriage({
       ...baseInput,
-      // 3 behavior-only anomalies, drawing fine → 1 domain affected
       behavior: makeBehavior({
         completionRate: 0.1,
         operationConsistency: 0.2,
         reactionLatency: 8000,
       }),
     });
-    // 3 anomalies but only 1 domain → caught by the dual-axis gate
-    expect(result.category).toBe('monitor');
+    expect(result.category).toBe('refer');
+    expect(result.domainCategories?.behavior).toBe('refer');
   });
 
-  it('honours questionnaireMaxScores when provided', async () => {
+  it('honours questionnaireMaxScores when provided (z-based ASQ-3 norm)', async () => {
+    // cognition: score=8 over maxScore=20 in 25-36m. ASQ-3 Problem Solving @ 30m: mean=53.54, sd=8.70.
+    // Scaled to maxScore=20: mean=17.85, sd=2.90 → z=(8-17.85)/2.90 ≈ -3.40 → isAnomaly (z ≤ -1).
     const result = await computeTriage({
       ...baseInput,
       questionnaireScores: { cognition: 8 },
-      questionnaireMaxScores: { cognition: 20 }, // 8/20 = 40% → anomaly
+      questionnaireMaxScores: { cognition: 20 },
     });
     const cog = result.details.find((d) => d.metric === 'questionnaireScore');
+    expect(cog).toBeDefined();
     expect(cog?.isAnomaly).toBe(true);
+    expect(cog?.directionalZ).toBeLessThan(-2);
   });
 
-  it('falls back to maxScore=10 when no questionnaireMaxScores supplied', async () => {
+  it('skips questionnaire detail when maxScore missing (no unsafe fallback)', async () => {
+    // OLD behaviour: silently used maxScore=10 fallback (wrong scaling under new norms).
+    // NEW behaviour: skip the detail rather than mis-scale.
     const result = await computeTriage({
       ...baseInput,
-      questionnaireScores: { cognition: 8 }, // 8/10 = 80% → normal
+      questionnaireScores: { cognition: 8 },
     });
     const cog = result.details.find((d) => d.metric === 'questionnaireScore');
-    expect(cog?.isAnomaly).toBe(false);
+    expect(cog).toBeUndefined();
   });
 
   it('confidence rises with more anomalies', async () => {
@@ -176,24 +188,37 @@ describe('computeTriage', () => {
     expect(detail?.directionalZ).toBe(detail?.zScore); // same sign
   });
 
-  it('questionnaireScore detail has directionalZ === null', async () => {
+  it('questionnaire detail now exposes z-score (after ASQ-3 norm integration; spec §7.2 2026-05-28 rev)', async () => {
+    // OLD behaviour: questionnaire had no norms → directionalZ was null.
+    // NEW behaviour: ASQ-3 borrow → directionalZ is a real z-score.
     const result = await computeTriage({
       ...baseInput,
       questionnaireScores: { cognition: 3 },
+      questionnaireMaxScores: { cognition: 4 },
     });
     const detail = result.details.find((d) => d.metric === 'questionnaireScore');
-    expect(detail?.directionalZ).toBeNull();
+    expect(detail).toBeDefined();
+    expect(typeof detail?.directionalZ).toBe('number');
+    expect(detail?.zScore).not.toBeNull();
+    expect(detail?.normMean).toBeGreaterThan(0);
+    expect(detail?.normStd).toBeGreaterThan(0);
   });
 
-  it('includes questionnaire anomaly when score below 50% of max', async () => {
+  it('questionnaire isAnomaly mirrors z ≤ -1 SD per-detail UI 提示 threshold (NOT score<50% anymore)', async () => {
+    // ASQ-3 Problem Solving @ 30m: mean=53.54, sd=8.70. Scaled to maxScore=4:
+    //   mean ≈ 3.57, sd ≈ 0.58.
+    //   score=3 → z=(3-3.57)/0.58 ≈ -0.98 (just above -1) → isAnomaly=false (borderline).
+    //   score=1 → z ≈ -4.43 → isAnomaly=true (severe).
+    // Similarly for language_comprehension (ASQ-3 Communication @ 30m).
     const result = await computeTriage({
       ...baseInput,
-      questionnaireScores: { cognition: 3, language_comprehension: 8 },
+      questionnaireScores: { cognition: 1, language_comprehension: 4 },
+      questionnaireMaxScores: { cognition: 4, language_comprehension: 4 },
     });
-    const cognitionDetail = result.details.find((d) => d.domain === 'cognition' && d.metric === 'questionnaireScore');
-    expect(cognitionDetail?.isAnomaly).toBe(true);
+    const cogDetail = result.details.find((d) => d.domain === 'cognition' && d.metric === 'questionnaireScore');
+    expect(cogDetail?.isAnomaly).toBe(true);
     const langDetail = result.details.find((d) => d.domain === 'language_comprehension' && d.metric === 'questionnaireScore');
-    expect(langDetail?.isAnomaly).toBe(false);
+    expect(langDetail?.isAnomaly).toBe(false); // full score → z ≈ 0 → normal
   });
 });
 
