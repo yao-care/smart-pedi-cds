@@ -1,7 +1,11 @@
 <script lang="ts">
+  // 「新版已可用」橫幅已移除（2026-05-28）：
+  // SW 用 install:skipWaiting + activate:clients.claim 立刻接管所有 client，
+  // HTML 又是 network-first，刷新時 page 內容必為新版 → 提示「重整套用」沒
+  // 實質意義，反而造成「已 hard refresh 卻仍見橫幅」的 UX 困惑。
+  // 保留 offline 偵測，仍對使用者有用（顯示「離線模式」）。
   let online = $state(true);
   let mounted = $state(false);
-  let updateAvailable = $state(false);
 
   $effect(() => {
     online = navigator.onLine;
@@ -9,34 +13,20 @@
 
     function onOnline() { online = true; }
     function onOffline() { online = false; }
-    function onSwUpdate() { updateAvailable = true; }
 
     window.addEventListener('online', onOnline);
     window.addEventListener('offline', onOffline);
-    window.addEventListener('sw-updated', onSwUpdate);
 
     return () => {
       window.removeEventListener('online', onOnline);
       window.removeEventListener('offline', onOffline);
-      window.removeEventListener('sw-updated', onSwUpdate);
     };
   });
-
-  function reload() {
-    location.reload();
-  }
 </script>
 
 {#if mounted && !online}
   <div class="banner banner-offline" role="status">
     離線模式 — 部分功能可能受限
-  </div>
-{/if}
-
-{#if mounted && updateAvailable}
-  <div class="banner banner-update" role="status">
-    新版已可用
-    <button type="button" onclick={reload}>重新整理套用</button>
   </div>
 {/if}
 
@@ -56,21 +46,5 @@
   .banner-offline {
     background: var(--warn);
     color: white;
-  }
-
-  .banner-update {
-    background: var(--warn);
-    color: white;
-  }
-
-  .banner-update button {
-    background: oklch(1 0 0 / 0.2);
-    color: white;
-    border: 1px solid oklch(1 0 0 / 0.4);
-    border-radius: 4px;
-    padding: 2px 8px;
-    margin-left: 0.5rem;
-    cursor: pointer;
-    font: inherit;
   }
 </style>

@@ -17,6 +17,10 @@ self.addEventListener('install', () => {
 });
 
 self.addEventListener('activate', (event) => {
+  // 2026-05-28：先前對所有 client postMessage SW_UPDATED 通知前端顯示
+  // 「新版已可用」橫幅。因 install:skipWaiting + activate:claim 已立即
+  // 接管 + HTML network-first 必為新版，橫幅成 UX 噪音，整套通知移除。
+  // activate 仍要做的：清舊 cache + 對所有現有 client 接管。
   event.waitUntil(
     (async () => {
       const keys = await caches.keys();
@@ -24,8 +28,6 @@ self.addEventListener('activate', (event) => {
         keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)),
       );
       await self.clients.claim();
-      const all = await self.clients.matchAll();
-      all.forEach((c) => c.postMessage({ type: 'SW_UPDATED', version: SW_VERSION }));
     })(),
   );
 });

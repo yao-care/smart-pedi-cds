@@ -20,7 +20,9 @@ const template = await readFile(resolve(repoRoot, 'scripts/templates/sw.template
  *
  * Result: changes that don't affect the UI bundle — docs, tests, lockfiles,
  * comments — do NOT bump the SW version. Only real UI-affecting changes
- * trigger the "新版已可用" banner.
+ * cause SW to re-install and bust the cache name; legacy comment used to
+ * reference the now-removed「新版已可用」banner. The cache invalidation
+ * itself is still useful.
  *
  * Falls back to git SHA on first invocation before `astro build` runs
  * (e.g. local diagnostics); CI always sees dist/_astro and hits the hash path.
