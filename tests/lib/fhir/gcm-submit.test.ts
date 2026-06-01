@@ -18,7 +18,7 @@ describe('makePkce', () => {
   });
 });
 
-import { browserCode } from '../../../src/lib/fhir/gcm-submit';
+import { browserCode, intakeResponse } from '../../../src/lib/fhir/gcm-submit';
 
 describe('browserCode', () => {
   it('同一 session 回傳相同值並寫入 localStorage', () => {
@@ -38,5 +38,21 @@ describe('browserCode', () => {
     expect(ls.getItem('gcm.browserCode')).toBe(a);
 
     vi.unstubAllGlobals();
+  });
+});
+
+describe('intakeResponse', () => {
+  it('email + phone 都帶時各一個 item', () => {
+    const qr = intakeResponse('a@b.com', '0912345678') as any;
+    expect(qr.resourceType).toBe('QuestionnaireResponse');
+    expect(qr.status).toBe('completed');
+    expect(qr.questionnaire).toBe('https://gcm.org.tw/fhir/Questionnaire/gcm-intake');
+    const linkIds = qr.item.map((i: any) => i.linkId);
+    expect(linkIds).toEqual(['email', 'phone']);
+  });
+
+  it('只帶 email 時只有 email item', () => {
+    const qr = intakeResponse('a@b.com', undefined) as any;
+    expect(qr.item.map((i: any) => i.linkId)).toEqual(['email']);
   });
 });
