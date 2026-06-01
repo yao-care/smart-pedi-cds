@@ -20,6 +20,11 @@
   const hasSelectedPatient = $derived(patientStore.selectedPatientId !== null);
   const isAuth = $derived(authStore.isAuthenticated);
 
+  // 從 /launch/ 交接過來的 SMART auth（in-memory store 不跨頁，需從 session 還原）。
+  $effect(() => {
+    if (!authStore.isAuthenticated) authStore.hydrateFromSession();
+  });
+
   $effect(() => {
     if (isAuth) {
       // First load after auth → drop the guide-first stance for an actual feed.
