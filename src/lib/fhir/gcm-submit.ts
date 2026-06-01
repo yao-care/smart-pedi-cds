@@ -2,6 +2,8 @@ import { GCM } from './gcm-config';
 import { buildAssessmentObservations, buildTriageDiagnosticReport } from './cdsa-resources';
 import type { Assessment } from '../db/schema';
 import type { TriageResult } from '../../engine/cdsa/triage';
+import { db } from '../db/schema';
+import { markGcmSubmitted } from '../db/assessments';
 
 // ---------------------------------------------------------------------------
 // Task 2: PKCE + b64url helpers
@@ -214,4 +216,56 @@ export async function startGcmUpload(redirectUri: string, input: StartGcmUploadI
     loginHint: browserCode(), nickname: input.nickname,
   });
   window.location.assign(url);
+}
+
+// ---------------------------------------------------------------------------
+// Task 11: completeGcmUpload（callback 換 token + 重建 Bundle 上傳）
+// ---------------------------------------------------------------------------
+
+export async function completeGcmUpload(): Promise<{ caseId: string; result: unknown }> {
+  const raw = sessionStorage.getItem('gcm.flow');
+  if (!raw) throw new Error('找不到 GCM 流程狀態');
+  const flow = JSON.parse(raw) as GcmFlowState;
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('state') !== flow.state) throw new Error('state 不符（CSRF）');
+  const code = params.get('code');
+  if (!code) throw new Error(params.get('error') ?? '授權未取得 code');
+
+  const tok = await fetch(`${GCM.base}/token`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'authorization_code',
+      code,
+      redirect_uri: flow.redirectUri,
+      code_verifier: flow.verifier,
+      client_id: flow.clientId,
+    }).toString(),
+  });
+  if (!tok.ok) throw new Error(`token 失敗 ${tok.status}`);
+  const t = await tok.json();
+  const accessToken = t.access_token as string;
+  const caseId = t.patient as string;
+
+  const assessment = await db.assessments.get(flow.assessmentId);
+  if (!assessment) throw new Error('找不到評估資料');
+  if (!assessment.triageResult) throw new Error('評估結果不完整，無法上傳');
+  const bundle = assembleTransactionBundle(
+    assessment,
+    assessment.triageResult as unknown as TriageResult,
+    { email: flow.email, phone: flow.phone },
+  );
+
+  const up = await fetch(`${GCM.base}/`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/fhir+json', authorization: `Bearer ${accessToken}` },
+    body: JSON.stringify(bundle),
+  });
+  if (!up.ok) throw new Error(`上傳失敗 ${up.status}`);
+
+  await markGcmSubmitted(flow.assessmentId, caseId);
+  sessionStorage.removeItem('gcm.flow');
+  localStorage.setItem(`gcm.case.${browserCode()}.${flow.nickname}`, caseId);
+  return { caseId, result: await up.json() };
 }

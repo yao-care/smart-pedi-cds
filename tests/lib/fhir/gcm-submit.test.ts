@@ -192,3 +192,69 @@ describe('startGcmUpload', () => {
     Object.defineProperty(window, 'location', { configurable: true, value: orig });
   });
 });
+
+// ---------------------------------------------------------------------------
+// Task 11: completeGcmUpload
+// ---------------------------------------------------------------------------
+
+import { completeGcmUpload } from '../../../src/lib/fhir/gcm-submit';
+import { db } from '../../../src/lib/db/schema';
+
+describe('completeGcmUpload', () => {
+  it('驗 state → 換 token → 重建 Bundle 上傳 → 回 caseId 並標記 assessment', async () => {
+    await db.assessments.clear();
+    await db.children.clear();
+    const assessment = makeAssessment();
+    assessment.triageResult = {
+      category: 'monitor', confidence: 0.8, summary: '部分面向需追蹤',
+      anomalyCount: 1,
+      details: [
+        { domain: 'fine_motor', metric: 'drawingScore', value: 40, zScore: -1.2, directionalZ: -1.2, isAnomaly: true },
+      ],
+    };
+    await db.assessments.put(assessment);
+
+    sessionStorage.setItem('gcm.flow', JSON.stringify({
+      verifier: 'v', state: 'st', redirectUri: 'https://app/launch/', clientId: 'cid',
+      assessmentId: assessment.id, nickname: '小明', email: 'a@b.com',
+    }));
+    window.history.replaceState({}, '', '/launch/?code=AUTHCODE&state=st');
+
+    let postedBundle: unknown = null;
+    const fetchSpy = vi.fn().mockImplementation((url: string, opts: { body: string }) => {
+      if (url.endsWith('/token')) {
+        return Promise.resolve({ ok: true, json: () => Promise.resolve({
+          access_token: 'AT', patient: 'GCM-0042', refresh_token: 'RT',
+        }) });
+      }
+      postedBundle = JSON.parse(opts.body);
+      return Promise.resolve({ ok: true, json: () => Promise.resolve({ resourceType: 'Bundle', type: 'transaction-response' }) });
+    });
+    vi.stubGlobal('fetch', fetchSpy);
+
+    const { caseId } = await completeGcmUpload();
+    expect(caseId).toBe('GCM-0042');
+
+    const bundle = postedBundle as { type: string; entry: Array<{ resource: { resourceType: string } }> };
+    expect(bundle.type).toBe('transaction');
+    const types = bundle.entry.map((e) => e.resource.resourceType);
+    expect(types).toContain('QuestionnaireResponse');
+    expect(types).toContain('Observation');
+    expect(types).toContain('DiagnosticReport');
+
+    const after = await db.assessments.get(assessment.id);
+    expect(after?.gcmCaseId).toBe('GCM-0042');
+    expect(sessionStorage.getItem('gcm.flow')).toBeNull();
+
+    vi.unstubAllGlobals();
+  });
+
+  it('state 不符時丟錯且不上傳', async () => {
+    sessionStorage.setItem('gcm.flow', JSON.stringify({
+      verifier: 'v', state: 'EXPECTED', redirectUri: 'https://app/launch/', clientId: 'cid',
+      assessmentId: 'x', nickname: 'n',
+    }));
+    window.history.replaceState({}, '', '/launch/?code=c&state=WRONG');
+    await expect(completeGcmUpload()).rejects.toThrow(/state/);
+  });
+});
