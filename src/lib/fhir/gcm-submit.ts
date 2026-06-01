@@ -174,3 +174,44 @@ export async function getClientId(redirectUri: string): Promise<string> {
   localStorage.setItem('gcm.clientId', j.client_id);
   return j.client_id as string;
 }
+
+// ---------------------------------------------------------------------------
+// Task 10: startGcmUpload（授權導向）
+// ---------------------------------------------------------------------------
+
+export interface GcmFlowState {
+  verifier: string;
+  state: string;
+  redirectUri: string;
+  clientId: string;
+  assessmentId: string;
+  nickname: string;
+  email?: string;
+  phone?: string;
+}
+
+export interface StartGcmUploadInput {
+  assessmentId: string;
+  nickname: string;
+  email?: string;
+  phone?: string;
+}
+
+export async function startGcmUpload(redirectUri: string, input: StartGcmUploadInput): Promise<void> {
+  const clientId = await getClientId(redirectUri);
+  const { verifier, challenge } = await makePkce();
+  const state = crypto.randomUUID();
+  const flow: GcmFlowState = {
+    verifier, state, redirectUri, clientId,
+    assessmentId: input.assessmentId,
+    nickname: input.nickname,
+    email: input.email,
+    phone: input.phone,
+  };
+  sessionStorage.setItem('gcm.flow', JSON.stringify(flow));
+  const url = buildAuthorizeUrl({
+    clientId, redirectUri, state, challenge,
+    loginHint: browserCode(), nickname: input.nickname,
+  });
+  window.location.assign(url);
+}

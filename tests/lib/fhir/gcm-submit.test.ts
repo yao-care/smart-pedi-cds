@@ -156,3 +156,39 @@ describe('getClientId', () => {
     vi.unstubAllGlobals();
   });
 });
+
+// ---------------------------------------------------------------------------
+// Task 10: startGcmUpload
+// ---------------------------------------------------------------------------
+
+import { startGcmUpload } from '../../../src/lib/fhir/gcm-submit';
+
+describe('startGcmUpload', () => {
+  it('寫入 gcm.flow（只存 assessmentId，不存大 payload）並導向 /authorize', async () => {
+    localStorage.setItem('gcm.clientId', 'cid');
+    sessionStorage.removeItem('gcm.flow');
+    const assign = vi.fn();
+    const orig = window.location;
+    Object.defineProperty(window, 'location', {
+      configurable: true,
+      value: { ...orig, assign },
+    });
+
+    await startGcmUpload('https://app/launch/', {
+      assessmentId: 'aid-1', nickname: '小明', email: 'a@b.com',
+    });
+
+    const flow = JSON.parse(sessionStorage.getItem('gcm.flow')!);
+    expect(flow.assessmentId).toBe('aid-1');
+    expect(flow.nickname).toBe('小明');
+    expect(flow.clientId).toBe('cid');
+    expect(flow.verifier).toBeTruthy();
+    expect(flow.state).toBeTruthy();
+    expect('payload' in flow).toBe(false);
+
+    expect(assign).toHaveBeenCalledTimes(1);
+    expect(assign.mock.calls[0][0]).toContain('https://gcm.fhir.yao.care/authorize');
+
+    Object.defineProperty(window, 'location', { configurable: true, value: orig });
+  });
+});
