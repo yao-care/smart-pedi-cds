@@ -257,4 +257,128 @@ describe('completeGcmUpload', () => {
     window.history.replaceState({}, '', '/launch/?code=c&state=WRONG');
     await expect(completeGcmUpload()).rejects.toThrow(/state/);
   });
+
+  it('gcm.flow 不存在時丟錯', async () => {
+    sessionStorage.removeItem('gcm.flow');
+    await expect(completeGcmUpload()).rejects.toThrow(/流程狀態/);
+  });
+
+  it('token 非 ok 時丟錯', async () => {
+    sessionStorage.setItem('gcm.flow', JSON.stringify({
+      verifier: 'v', state: 'st', redirectUri: 'https://app/launch/', clientId: 'cid',
+      assessmentId: 'x', nickname: 'n',
+    }));
+    window.history.replaceState({}, '', '/launch/?code=c&state=st');
+    vi.stubGlobal('fetch', vi.fn().mockImplementation((url: string) => {
+      if (url.endsWith('/token')) return Promise.resolve({ ok: false, status: 400 });
+      return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
+    }));
+    await expect(completeGcmUpload()).rejects.toThrow(/token 失敗/);
+    vi.unstubAllGlobals();
+  });
+
+  it('token 回應缺 patient 時丟錯', async () => {
+    sessionStorage.setItem('gcm.flow', JSON.stringify({
+      verifier: 'v', state: 'st', redirectUri: 'https://app/launch/', clientId: 'cid',
+      assessmentId: 'x', nickname: 'n',
+    }));
+    window.history.replaceState({}, '', '/launch/?code=c&state=st');
+    vi.stubGlobal('fetch', vi.fn().mockImplementation((url: string) => {
+      if (url.endsWith('/token')) {
+        return Promise.resolve({ ok: true, json: () => Promise.resolve({ access_token: 'AT' }) });
+      }
+      return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
+    }));
+    await expect(completeGcmUpload()).rejects.toThrow(/patient/);
+    vi.unstubAllGlobals();
+  });
+
+  it('找不到 assessment 時丟錯', async () => {
+    await db.assessments.clear();
+    sessionStorage.setItem('gcm.flow', JSON.stringify({
+      verifier: 'v', state: 'st', redirectUri: 'https://app/launch/', clientId: 'cid',
+      assessmentId: 'missing-id', nickname: 'n',
+    }));
+    window.history.replaceState({}, '', '/launch/?code=c&state=st');
+    vi.stubGlobal('fetch', vi.fn().mockImplementation((url: string) => {
+      if (url.endsWith('/token')) {
+        return Promise.resolve({ ok: true, json: () => Promise.resolve({ access_token: 'AT', patient: 'GCM-1' }) });
+      }
+      return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
+    }));
+    await expect(completeGcmUpload()).rejects.toThrow(/找不到評估資料/);
+    vi.unstubAllGlobals();
+  });
+
+  it('assessment 無 triageResult 時丟錯', async () => {
+    await db.assessments.clear();
+    const assessment = makeAssessment();
+    // no triageResult set
+    await db.assessments.put(assessment);
+    sessionStorage.setItem('gcm.flow', JSON.stringify({
+      verifier: 'v', state: 'st', redirectUri: 'https://app/launch/', clientId: 'cid',
+      assessmentId: assessment.id, nickname: 'n',
+    }));
+    window.history.replaceState({}, '', '/launch/?code=c&state=st');
+    vi.stubGlobal('fetch', vi.fn().mockImplementation((url: string) => {
+      if (url.endsWith('/token')) {
+        return Promise.resolve({ ok: true, json: () => Promise.resolve({ access_token: 'AT', patient: 'GCM-1' }) });
+      }
+      return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
+    }));
+    await expect(completeGcmUpload()).rejects.toThrow(/評估結果不完整/);
+    vi.unstubAllGlobals();
+  });
+
+  it('上傳非 ok 時保留 gcm.flow 供重試', async () => {
+    await db.assessments.clear();
+    const assessment = makeAssessment();
+    assessment.triageResult = {
+      category: 'monitor', confidence: 0.8, summary: '部分面向需追蹤',
+      anomalyCount: 1,
+      details: [
+        { domain: 'fine_motor', metric: 'drawingScore', value: 40, zScore: -1.2, directionalZ: -1.2, isAnomaly: true },
+      ],
+    };
+    await db.assessments.put(assessment);
+    sessionStorage.setItem('gcm.flow', JSON.stringify({
+      verifier: 'v', state: 'st', redirectUri: 'https://app/launch/', clientId: 'cid',
+      assessmentId: assessment.id, nickname: 'n',
+    }));
+    window.history.replaceState({}, '', '/launch/?code=c&state=st');
+    vi.stubGlobal('fetch', vi.fn().mockImplementation((url: string) => {
+      if (url.endsWith('/token')) {
+        return Promise.resolve({ ok: true, json: () => Promise.resolve({ access_token: 'AT', patient: 'GCM-1' }) });
+      }
+      // bundle POST
+      return Promise.resolve({ ok: false, status: 422 });
+    }));
+    await expect(completeGcmUpload()).rejects.toThrow(/上傳失敗/);
+    expect(sessionStorage.getItem('gcm.flow')).not.toBeNull();
+    vi.unstubAllGlobals();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getClientId error-path tests
+// ---------------------------------------------------------------------------
+
+describe('getClientId — 錯誤路徑', () => {
+  it('register 回應缺 client_id 時丟錯且不污染快取', async () => {
+    localStorage.removeItem('gcm.clientId');
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({}),
+    }));
+    await expect(getClientId('https://app/launch/')).rejects.toThrow(/client_id/);
+    expect(localStorage.getItem('gcm.clientId')).toBeNull();
+    vi.unstubAllGlobals();
+  });
+
+  it('register 非 ok 時丟錯', async () => {
+    localStorage.removeItem('gcm.clientId');
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 500 }));
+    await expect(getClientId('https://app/launch/')).rejects.toThrow(/register 失敗/);
+    vi.unstubAllGlobals();
+  });
 });

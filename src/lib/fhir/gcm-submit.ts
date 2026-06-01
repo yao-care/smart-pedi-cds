@@ -173,6 +173,7 @@ export async function getClientId(redirectUri: string): Promise<string> {
   });
   if (!r.ok) throw new Error(`register 失敗 ${r.status}`);
   const j = await r.json();
+  if (!j.client_id) throw new Error('register 回應缺少 client_id');
   localStorage.setItem('gcm.clientId', j.client_id);
   return j.client_id as string;
 }
@@ -247,6 +248,7 @@ export async function completeGcmUpload(): Promise<{ caseId: string; result: unk
   const t = await tok.json();
   const accessToken = t.access_token as string;
   const caseId = t.patient as string;
+  if (!caseId) throw new Error('token 回應缺少 patient context');
 
   const assessment = await db.assessments.get(flow.assessmentId);
   if (!assessment) throw new Error('找不到評估資料');
@@ -267,5 +269,11 @@ export async function completeGcmUpload(): Promise<{ caseId: string; result: unk
   await markGcmSubmitted(flow.assessmentId, caseId);
   sessionStorage.removeItem('gcm.flow');
   localStorage.setItem(`gcm.case.${browserCode()}.${flow.nickname}`, caseId);
-  return { caseId, result: await up.json() };
+  let result: unknown = null;
+  try {
+    result = await up.json();
+  } catch {
+    /* 上傳已成功（up.ok）；回應 body 解析失敗不影響結果 */
+  }
+  return { caseId, result };
 }
