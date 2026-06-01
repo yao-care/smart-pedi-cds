@@ -10,6 +10,7 @@
   import AssessmentPdfReport from './AssessmentPdfReport.svelte';
   import { deriveCdsaTriggers } from '$lib/education/trigger-derivation';
   import TriggerVideoList from '../education/TriggerVideoList.svelte';
+  import GcmUploadForm from './GcmUploadForm.svelte';
 
   let fhirSubmitting = $state(false);
   let fhirSubmitted = $state(false);
@@ -174,6 +175,10 @@
 
     {#if fhirError}
       <p class="fhir-error">{fhirError}</p>
+    {/if}
+
+    {#if assessmentStore.assessment}
+      <GcmUploadForm assessmentId={assessmentStore.assessment.id} />
     {/if}
 
     {#if assessmentStore.assessment && assessmentStore.child}
