@@ -23,6 +23,7 @@ export async function makePkce(): Promise<{ verifier: string; challenge: string 
 // Task 3: browserCode 持久化
 // ---------------------------------------------------------------------------
 
+/** 取得（或首次建立並持久化）此瀏覽器的匿名識別碼，存於 localStorage。 */
 export function browserCode(): string {
   let c = localStorage.getItem('gcm.browserCode');
   if (!c) {
@@ -36,6 +37,11 @@ export function browserCode(): string {
 // Task 4: intakeResponse builder
 // ---------------------------------------------------------------------------
 
+/**
+ * 初診 QuestionnaireResponse（帶 email/phone，供 server $extract 寫入 Patient.telecom）。
+ * 刻意不帶 subject：GCM server 會把 transaction 內每個資源的 subject 強制覆寫為
+ * patient context（瀏覽器碼+暱稱 match-or-create），故 app 不需、也不應自算 subject。
+ */
 export function intakeResponse(email?: string, phone?: string): object {
   const item: object[] = [];
   if (email) {
