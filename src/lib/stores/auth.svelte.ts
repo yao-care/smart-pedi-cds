@@ -23,6 +23,28 @@ class AuthStore {
     this.fhirUser = null;
     this.scopes = [];
   }
+
+  /** 把目前 auth 寫進 sessionStorage，供跨頁（/launch/ → /workspace/）交接。 */
+  persistToSession(): void {
+    sessionStorage.setItem('smartAuth', JSON.stringify({
+      accessToken: this.accessToken,
+      baseUrl: this.fhirBaseUrl,
+      fhirUser: this.fhirUser,
+      scopes: this.scopes,
+    }));
+  }
+
+  /** 從 sessionStorage 還原 auth（workspace 等頁掛載時呼叫）。 */
+  hydrateFromSession(): void {
+    const raw = sessionStorage.getItem('smartAuth');
+    if (!raw) return;
+    try {
+      const a = JSON.parse(raw) as { accessToken: string; baseUrl: string; fhirUser: string; scopes: string[] };
+      if (a.accessToken) this.setAuth(a.accessToken, a.baseUrl, a.fhirUser, a.scopes);
+    } catch {
+      /* 損毀的 session 資料：忽略，維持未登入 */
+    }
+  }
 }
 
 export const authStore = new AuthStore();
