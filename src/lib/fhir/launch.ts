@@ -47,6 +47,7 @@ export async function handleEhrLaunch(): Promise<void> {
  */
 export async function handleCallback(): Promise<{
   client: Client;
+  serverUrl: string;
   accessToken: string;
   fhirUser: string;
   scopes: string[];
@@ -54,6 +55,7 @@ export async function handleCallback(): Promise<{
   const client = await completeAuth();
   return {
     client,
+    serverUrl: client.state.serverUrl,
     accessToken: getAccessToken(),
     fhirUser: getFhirUser(),
     scopes: getScopes(),
