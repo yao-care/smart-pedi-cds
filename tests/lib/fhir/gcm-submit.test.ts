@@ -18,7 +18,7 @@ describe('makePkce', () => {
   });
 });
 
-import { browserCode, intakeResponse, assembleTransactionBundle, buildAuthorizeUrl } from '../../../src/lib/fhir/gcm-submit';
+import { browserCode, intakeResponse, assembleTransactionBundle, buildAuthorizeUrl, detectLaunchCallbackMode } from '../../../src/lib/fhir/gcm-submit';
 import type { Assessment } from '../../../src/lib/db/schema';
 import type { TriageResult } from '../../../src/engine/cdsa/triage';
 
@@ -134,5 +134,18 @@ describe('buildAuthorizeUrl', () => {
     expect(u.searchParams.get('login_hint')).toBe('bc');
     expect(u.searchParams.get('nickname')).toBe('小明');
     expect(u.searchParams.get('scope')).not.toMatch(/openid/);
+  });
+});
+
+describe('detectLaunchCallbackMode', () => {
+  it('有 gcm.flow 一律走 gcm', () => {
+    expect(detectLaunchCallbackMode('?code=x', true)).toBe('gcm');
+    expect(detectLaunchCallbackMode('', true)).toBe('gcm');
+  });
+  it('無 gcm.flow 但有 code 走 fhir', () => {
+    expect(detectLaunchCallbackMode('?code=x&state=y', false)).toBe('fhir');
+  });
+  it('皆無走 none', () => {
+    expect(detectLaunchCallbackMode('', false)).toBe('none');
   });
 });
