@@ -13,7 +13,18 @@
   });
 
   async function run() {
-    const hasGcmFlow = sessionStorage.getItem('gcm.flow') !== null;
+    const flowRaw = sessionStorage.getItem('gcm.flow');
+    const urlState = new URLSearchParams(window.location.search).get('state');
+    // 只有當 gcm.flow 存在且其 state 與本次 callback 的 state 相符，才視為 GCM 回呼；
+    // 否則（殘留的舊 flow）讓給 fhirclient 分支，避免劫持醫院登入。
+    let hasGcmFlow = false;
+    if (flowRaw) {
+      try {
+        hasGcmFlow = (JSON.parse(flowRaw) as { state?: string }).state === urlState;
+      } catch {
+        hasGcmFlow = false;
+      }
+    }
     const mode = detectLaunchCallbackMode(window.location.search, hasGcmFlow);
 
     if (mode === 'gcm') {
@@ -22,6 +33,9 @@
         caseId = id;
         view = 'gcm-success';
       } catch (err) {
+        // OAuth code 為單次使用；失敗後清掉 flow，避免重整時用已失效 code 重試造成死迴圈。
+        // 重試請從評估結果頁重新發起（會取得新的授權碼）。
+        sessionStorage.removeItem('gcm.flow');
         message = err instanceof Error ? err.message : '上傳失敗，請稍後重試';
         view = 'error';
       }

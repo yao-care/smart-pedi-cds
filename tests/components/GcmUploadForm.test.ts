@@ -21,7 +21,7 @@ describe('GcmUploadForm', () => {
     await fireEvent.input(screen.getByLabelText(/暱稱/), { target: { value: '小明' } });
     await fireEvent.click(screen.getByRole('button', { name: /上傳到 GCM/ }));
     expect(startGcmUpload).toHaveBeenCalledTimes(1);
-    const [, payload] = (startGcmUpload as any).mock.calls[0];
+    const [, payload] = vi.mocked(startGcmUpload).mock.calls[0];
     expect(payload).toMatchObject({ assessmentId: 'aid-1', nickname: '小明' });
   });
 });

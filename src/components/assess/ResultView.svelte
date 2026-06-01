@@ -178,7 +178,11 @@
     {/if}
 
     {#if assessmentStore.assessment}
-      <GcmUploadForm assessmentId={assessmentStore.assessment.id} />
+      <GcmUploadForm
+        assessmentId={assessmentStore.assessment.id}
+        alreadySubmitted={!!assessmentStore.assessment.gcmCaseId}
+        caseId={assessmentStore.assessment.gcmCaseId ?? ''}
+      />
     {/if}
 
     {#if assessmentStore.assessment && assessmentStore.child}

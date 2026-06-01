@@ -13,9 +13,7 @@
   let submitting = $state(false);
   let error = $state<string | null>(null);
 
-  const redirectUri = $derived(
-    typeof window !== 'undefined' ? `${window.location.origin}/launch/` : '',
-  );
+  const redirectUri = typeof window !== 'undefined' ? `${window.location.origin}/launch/` : '';
 
   async function submit() {
     error = null;
@@ -56,7 +54,7 @@
       <span>電話（選填）</span>
       <input type="tel" bind:value={phone} autocomplete="off" />
     </label>
-    {#if error}<p class="gcm-error">{error}</p>{/if}
+    {#if error}<p class="gcm-error" role="alert">{error}</p>{/if}
     <button class="btn-gcm" onclick={submit} disabled={submitting}>
       {submitting ? '前往授權…' : '上傳到 GCM 收案'}
     </button>
