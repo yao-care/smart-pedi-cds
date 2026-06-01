@@ -191,6 +191,9 @@ export interface Assessment {
   };
   fhirSubmitted: boolean;
   fhirDiagnosticReportId?: string;
+  /** GCM 收案上傳結果：病例唯一碼（GCM-XXXX）。非索引欄位，無需 Dexie 版本升級。 */
+  gcmCaseId?: string;
+  gcmSubmittedAt?: Date;
   physicianNote?: string | null;
   physicianNoteUpdatedAt?: Date | null;
   /** Origin of the record. Undefined / 'idb' = produced on this device.

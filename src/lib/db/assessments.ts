@@ -63,6 +63,14 @@ export async function markFhirSubmitted(id: string, fhirDiagnosticReportId: stri
   });
 }
 
+export async function markGcmSubmitted(id: string, caseId: string): Promise<void> {
+  await db.assessments.update(id, {
+    gcmCaseId: caseId,
+    gcmSubmittedAt: new Date(),
+    updatedAt: new Date(),
+  });
+}
+
 export async function getIncompleteAssessments(): Promise<Assessment[]> {
   return db.assessments.where('status').anyOf(['started', 'paused', 'resumed']).reverse().sortBy('createdAt');
 }
