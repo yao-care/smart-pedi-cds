@@ -39,6 +39,8 @@
         message = err instanceof Error ? err.message : '上傳失敗，請稍後重試';
         view = 'error';
       }
+      // 清掉網址上已用過的 ?code&state，避免重整誤觸 fhirclient 分支顯示假錯誤。
+      window.history.replaceState({}, '', window.location.pathname);
       return;
     }
 

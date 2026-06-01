@@ -268,7 +268,6 @@ export async function completeGcmUpload(): Promise<{ caseId: string; result: unk
 
   await markGcmSubmitted(flow.assessmentId, caseId);
   sessionStorage.removeItem('gcm.flow');
-  localStorage.setItem(`gcm.case.${browserCode()}.${flow.nickname}`, caseId);
   let result: unknown = null;
   try {
     result = await up.json();
