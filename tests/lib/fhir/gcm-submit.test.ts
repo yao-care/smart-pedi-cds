@@ -18,7 +18,9 @@ describe('makePkce', () => {
   });
 });
 
-import { browserCode, intakeResponse } from '../../../src/lib/fhir/gcm-submit';
+import { browserCode, intakeResponse, assembleTransactionBundle } from '../../../src/lib/fhir/gcm-submit';
+import type { Assessment } from '../../../src/lib/db/schema';
+import type { TriageResult } from '../../../src/engine/cdsa/triage';
 
 describe('browserCode', () => {
   it('同一 session 回傳相同值並寫入 localStorage', () => {
@@ -54,5 +56,65 @@ describe('intakeResponse', () => {
   it('只帶 email 時只有 email item', () => {
     const qr = intakeResponse('a@b.com', undefined) as any;
     expect(qr.item.map((i: any) => i.linkId)).toEqual(['email']);
+  });
+});
+
+function makeAssessment(): Assessment {
+  const now = new Date('2026-06-01T10:00:00Z');
+  return {
+    id: 'aaaaaaaa-bbbb-4ccc-dddd-eeeeeeeeeeee',
+    childId: 'child-1',
+    status: 'completed',
+    language: 'zh-TW',
+    currentStep: 6,
+    startedAt: now,
+    completedAt: new Date('2026-06-01T10:20:00Z'),
+    fhirSubmitted: false,
+    createdAt: now,
+    updatedAt: now,
+  };
+}
+
+function makeTriage(): TriageResult {
+  return {
+    category: 'monitor',
+    confidence: 0.8,
+    summary: '部分面向需追蹤',
+    anomalyCount: 1,
+    details: [
+      { domain: 'fine_motor', metric: 'drawingScore', value: 40, zScore: -1.2, directionalZ: -1.2, isAnomaly: true },
+      { domain: 'language', metric: 'questionnaire', value: 8, zScore: 0.5, directionalZ: 0.5, isAnomaly: false },
+    ],
+  } as TriageResult;
+}
+
+describe('assembleTransactionBundle', () => {
+  it('是 transaction Bundle，每個 entry 帶 request.method=POST', () => {
+    const bundle = assembleTransactionBundle(makeAssessment(), makeTriage()) as any;
+    expect(bundle.resourceType).toBe('Bundle');
+    expect(bundle.type).toBe('transaction');
+    for (const e of bundle.entry) {
+      expect(e.request.method).toBe('POST');
+      expect(typeof e.request.url).toBe('string');
+      expect(e.fullUrl).toMatch(/^urn:uuid:/);
+    }
+  });
+
+  it('DiagnosticReport.result 以 urn:uuid reference 對齊各 Observation entry', () => {
+    const bundle = assembleTransactionBundle(makeAssessment(), makeTriage()) as any;
+    const obsEntries = bundle.entry.filter((e: any) => e.resource.resourceType === 'Observation');
+    const report = bundle.entry.find((e: any) => e.resource.resourceType === 'DiagnosticReport').resource;
+    const obsUrns = obsEntries.map((e: any) => e.fullUrl).sort();
+    const refUrns = report.result.map((r: any) => r.reference).sort();
+    expect(obsEntries.length).toBe(2);
+    expect(refUrns).toEqual(obsUrns);
+  });
+
+  it('無 intake 時不含 QuestionnaireResponse；有 intake 時含且排在最前', () => {
+    const without = assembleTransactionBundle(makeAssessment(), makeTriage()) as any;
+    expect(without.entry.some((e: any) => e.resource.resourceType === 'QuestionnaireResponse')).toBe(false);
+
+    const withIntake = assembleTransactionBundle(makeAssessment(), makeTriage(), { email: 'a@b.com' }) as any;
+    expect(withIntake.entry[0].resource.resourceType).toBe('QuestionnaireResponse');
   });
 });
