@@ -156,3 +156,21 @@ export function detectLaunchCallbackMode(search: string, hasGcmFlow: boolean): L
   if (new URLSearchParams(search).has('code')) return 'fhir';
   return 'none';
 }
+
+// ---------------------------------------------------------------------------
+// Task 8: getClientId（動態註冊 + localStorage 快取）
+// ---------------------------------------------------------------------------
+
+export async function getClientId(redirectUri: string): Promise<string> {
+  const cached = localStorage.getItem('gcm.clientId');
+  if (cached) return cached;
+  const r = await fetch(`${GCM.base}/register`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ redirect_uris: [redirectUri], token_endpoint_auth_method: 'none' }),
+  });
+  if (!r.ok) throw new Error(`register 失敗 ${r.status}`);
+  const j = await r.json();
+  localStorage.setItem('gcm.clientId', j.client_id);
+  return j.client_id as string;
+}

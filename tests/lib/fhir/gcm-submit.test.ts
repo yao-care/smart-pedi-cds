@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { browserCode, intakeResponse, assembleTransactionBundle, buildAuthorizeUrl, detectLaunchCallbackMode } from '../../../src/lib/fhir/gcm-submit';
 import type { Assessment } from '../../../src/lib/db/schema';
 import type { TriageResult } from '../../../src/engine/cdsa/triage';
@@ -117,5 +117,42 @@ describe('detectLaunchCallbackMode', () => {
   });
   it('皆無走 none', () => {
     expect(detectLaunchCallbackMode('', false)).toBe('none');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Task 8: getClientId
+// ---------------------------------------------------------------------------
+
+import { getClientId } from '../../../src/lib/fhir/gcm-submit';
+
+describe('getClientId', () => {
+  it('快取命中時不打 /register', async () => {
+    localStorage.setItem('gcm.clientId', 'cached-cid');
+    const fetchSpy = vi.fn();
+    vi.stubGlobal('fetch', fetchSpy);
+    const id = await getClientId('https://app/launch/');
+    expect(id).toBe('cached-cid');
+    expect(fetchSpy).not.toHaveBeenCalled();
+    vi.unstubAllGlobals();
+  });
+
+  it('未命中時 POST /register 並快取 client_id', async () => {
+    localStorage.removeItem('gcm.clientId');
+    const fetchSpy = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ client_id: 'new-cid' }),
+    });
+    vi.stubGlobal('fetch', fetchSpy);
+    const id = await getClientId('https://app/launch/');
+    expect(id).toBe('new-cid');
+    expect(localStorage.getItem('gcm.clientId')).toBe('new-cid');
+    const [url, opts] = fetchSpy.mock.calls[0];
+    expect(url).toBe('https://gcm.fhir.yao.care/register');
+    expect(JSON.parse(opts.body)).toMatchObject({
+      redirect_uris: ['https://app/launch/'],
+      token_endpoint_auth_method: 'none',
+    });
+    vi.unstubAllGlobals();
   });
 });
