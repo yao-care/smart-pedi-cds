@@ -18,7 +18,7 @@ describe('makePkce', () => {
   });
 });
 
-import { browserCode, intakeResponse, assembleTransactionBundle } from '../../../src/lib/fhir/gcm-submit';
+import { browserCode, intakeResponse, assembleTransactionBundle, buildAuthorizeUrl } from '../../../src/lib/fhir/gcm-submit';
 import type { Assessment } from '../../../src/lib/db/schema';
 import type { TriageResult } from '../../../src/engine/cdsa/triage';
 
@@ -116,5 +116,23 @@ describe('assembleTransactionBundle', () => {
 
     const withIntake = assembleTransactionBundle(makeAssessment(), makeTriage(), { email: 'a@b.com' }) as any;
     expect(withIntake.entry[0].resource.resourceType).toBe('QuestionnaireResponse');
+  });
+});
+
+describe('buildAuthorizeUrl', () => {
+  it('組出帶 aud / S256 / login_hint / nickname 且不含 openid 的 /authorize URL', () => {
+    const url = buildAuthorizeUrl({
+      clientId: 'cid', redirectUri: 'https://app/launch/', state: 'st',
+      challenge: 'ch', loginHint: 'bc', nickname: '小明',
+    });
+    const u = new URL(url);
+    expect(u.origin + u.pathname).toBe('https://gcm.fhir.yao.care/authorize');
+    expect(u.searchParams.get('aud')).toBe('https://gcm.fhir.yao.care');
+    expect(u.searchParams.get('response_type')).toBe('code');
+    expect(u.searchParams.get('code_challenge_method')).toBe('S256');
+    expect(u.searchParams.get('code_challenge')).toBe('ch');
+    expect(u.searchParams.get('login_hint')).toBe('bc');
+    expect(u.searchParams.get('nickname')).toBe('小明');
+    expect(u.searchParams.get('scope')).not.toMatch(/openid/);
   });
 });
