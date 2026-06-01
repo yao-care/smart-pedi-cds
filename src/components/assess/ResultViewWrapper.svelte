@@ -6,6 +6,7 @@
   import { deriveCdsaTriggers } from '$lib/education/trigger-derivation';
   import { ageGroupCDSA } from '$lib/utils/age-groups';
   import TriggerVideoList from '../education/TriggerVideoList.svelte';
+  import GcmUploadForm from './GcmUploadForm.svelte';
   import type { Child } from '../../lib/db/schema';
 
   // Stand-alone result page entry. Reads ?id= from the URL, loads the
@@ -157,6 +158,13 @@
     <div class="result-actions">
       {#if child}
         <AssessmentPdfReport {assessment} {child} />
+      {/if}
+      {#if assessment}
+        <GcmUploadForm
+          assessmentId={assessment.id}
+          alreadySubmitted={!!assessment.gcmCaseId}
+          caseId={assessment.gcmCaseId ?? ''}
+        />
       {/if}
       <a href="/history/" class="btn-history">查看評估紀錄</a>
       <a href="/assess/" class="btn-home">開始新評估</a>
