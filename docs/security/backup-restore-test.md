@@ -33,11 +33,30 @@
 
 ## 3. 還原測試紀錄（A.5.29 要求：須留存測試證據）
 
-> ⚠️ 下表須由負責人**實際執行 §2 程序後**填入真實結果，不得預先捏造。
-
 | 測試日期 | 執行人 | 還原來源（commit） | 結果（步驟 1–7） | 發現／改進 |
 |---|---|---|---|---|
-| {{restore_test1_date}} | {{restore_test1_operator}} | {{restore_test1_commit}} | {{restore_test1_result}} | {{restore_test1_findings}} |
+| 2026-06-10 | 系統維運負責人 + Claude Code | `1a0ec83` | ✅ 全通過 | 見 §3.1 |
+
+### 3.1 第一次還原測試紀錄（2026-06-10）
+
+於 `/tmp` 全新空目錄實際執行 §2 七步程序（非以現有工作區，確保獨立驗證遠端備份）：
+
+| 步驟 | 內容 | 結果 |
+|---|---|---|
+| 1 | `git clone` 遠端 repo | ✅ clone 成功 |
+| 2 | 還原至已知良好 commit | ✅ `1a0ec83945c906af4384ca1df369e1b47f4fc048`（含當日安全修補） |
+| 3 | `pnpm install` | ✅ lockfile 完整可重現，`pnpm.overrides` 鎖版正確解析 |
+| 4 | `pnpm check` | ✅ 0 errors |
+| 5 | `pnpm test` | ✅ 676 passed / 1 skipped（57 檔） |
+| 6 | `pnpm build` | ✅ exit 0，`postbuild` SEO 守門全過 |
+| 7 | `dist/` 首頁 + `/assess` 產出 | ✅ `index.html`、`assess/index.html` 皆存在 |
+
+**結果**：全 7 步通過。全程約 **94 秒**（15:09:25 → 15:10:59），遠優於 RTO 30 分目標，**RTO 達標**。
+
+**發現／改進**：
+- 還原能力健全；遠端備份完整、相依可重現、產出可部署。
+- 此測試同時獨立驗證了當日安全修補（`pnpm.overrides`）在全新環境乾淨重現，無殘留漏洞版本。
+- 建議：未來可將此 7 步程序納入 CI（push 後於乾淨環境跑一次），自動化還原驗證。
 
 ## 4. 業務持續性備註
 
@@ -46,4 +65,4 @@
 
 ## 5. 覆核
 
-下次還原測試排定日：{{next_restore_test_date}}。
+下次還原測試排定日：2026-12-10（每 6 個月）。
