@@ -237,7 +237,7 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
         // Per §7.4 fallback B (灰格), we skip the detail here and rely on UI to draw
         // a 「資料不足」 grey cell. UI integration is left to Phase 4.
         if (import.meta.env?.DEV) {
-          console.warn(`[triage] norm lookup failed for ${domain}::${input.ageGroup}:`, err);
+          console.warn('[triage] norm lookup failed for %s::%s', domain, input.ageGroup, err);
         }
       }
     }

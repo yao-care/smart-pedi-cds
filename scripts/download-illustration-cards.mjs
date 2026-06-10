@@ -4,12 +4,23 @@
 // before flipping to 'approved' in src/data/cards/index.json.
 
 import { writeFile, mkdir, readFile, access } from 'fs/promises';
-import { resolve, dirname } from 'path';
+import { resolve, dirname, sep } from 'path';
 import { fileURLToPath } from 'url';
 import sharp from 'sharp';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(__dirname, '..');
+const cardsRoot = resolve(repoRoot, 'public/cards');
+
+// 路徑白名單：卡片寫入路徑（含 domain/slug 等動態片段）解析後必須仍落在
+// public/cards 內，否則中止（防 path traversal 寫入任意檔）。
+const safeCardPath = (...parts) => {
+  const p = resolve(cardsRoot, ...parts);
+  if (p !== cardsRoot && !p.startsWith(cardsRoot + sep)) {
+    throw new Error(`card path escapes public/cards: ${p}`);
+  }
+  return p;
+};
 
 const PEXELS_API_KEY = process.env.PEXELS_API_KEY;
 if (!PEXELS_API_KEY) {
@@ -74,7 +85,7 @@ async function downloadDomain(domain) {
   for (const { photo, keyword } of collected.values()) {
     const slug = slugify(keyword);
     const filename = `${domain}/${String(seq).padStart(2, '0')}-${slug}.webp`;
-    const destPath = resolve(repoRoot, 'public/cards', filename);
+    const destPath = safeCardPath(filename);
     await mkdir(dirname(destPath), { recursive: true });
 
     try {

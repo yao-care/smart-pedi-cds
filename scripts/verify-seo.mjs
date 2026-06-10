@@ -1,11 +1,22 @@
 import { readFile, access, readdir } from 'fs/promises';
-import { resolve } from 'path';
+import { resolve, sep } from 'path';
 
 const dist = resolve(process.cwd(), 'dist');
+
+// 路徑白名單：解析後必須仍落在 dist 內，否則中止（防 path traversal）。
+// 本腳本所有非字面路徑片段（CLI/readdir entry name）一律先過此函式。
+const safeResolve = (base, ...parts) => {
+  const p = resolve(base, ...parts);
+  if (p !== base && !p.startsWith(base + sep)) {
+    throw new Error(`path escapes allowed base: ${p}`);
+  }
+  return p;
+};
+
 let failed = false;
 const ok = (m) => console.log('✓', m);
 const fail = (m) => { console.error('✗', m); failed = true; };
-const exists = (p) => access(resolve(dist, p)).then(() => true).catch(() => false);
+const exists = (p) => access(safeResolve(dist, p)).then(() => true).catch(() => false);
 
 // robots.txt 含 Sitemap
 const robots = await readFile(resolve(dist, 'robots.txt'), 'utf-8').catch(() => '');
@@ -29,7 +40,7 @@ async function findIndexHtml(dir) {
   const out = [];
   const entries = await readdir(dir, { withFileTypes: true }).catch(() => []);
   for (const e of entries) {
-    const full = resolve(dir, e.name);
+    const full = safeResolve(dist, dir, e.name);
     if (e.isDirectory()) out.push(...(await findIndexHtml(full)));
     else if (e.name === 'index.html') out.push(full);
   }
