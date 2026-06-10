@@ -2,7 +2,7 @@
 
 > ISO/IEC 27001:2022 控制點 **A.5.24 — 資安事件管理規劃與準備**
 > 對象系統：Smart Pedi 兒童發展評估（`https://smart-pedi-cds.yao.care`）
-> 文件版本：1.0　建立日期：2026-06-10　負責人：{{pm_name}}（系統維運負責人）
+> 文件版本：1.0　建立日期：2026-06-10　負責人：系統維運負責人（藥提醒科技有限公司，單人維運）
 
 ## 1. 系統脈絡（決定本計畫範圍）
 
@@ -43,7 +43,7 @@ flowchart TD
 - **惡意部署**：於 GitHub repo Settings 暫停 Pages 部署或還原至前一個已知良好 commit（見 [備份還原測試](backup-restore-test.md)）。
 - **供應鏈／相依套件**：以 `pnpm.overrides` 鎖定安全版本（本 repo `package.json` 已有先例），重建並重新部署。
 - **FHIR token 洩漏**：本系統不長期保存 token；通知對應 FHIR 主機方撤銷 client 註冊／旋轉密鑰。
-- **DNS／網域挾持**：聯繫網域註冊商（{{domain_registrar}}）與 DNS 服務方還原紀錄。
+- **DNS／網域挾持**：以網域登記人（藥提醒科技有限公司）帳號登入註冊服務商，與 DNS 服務方還原紀錄。
 
 ## 4. 演練紀錄（A.5.24 要求：須留存演練證據）
 
