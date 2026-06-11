@@ -8,6 +8,7 @@ async function fetchFontBase64(filename: string, exportName: string): Promise<st
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
   const text = await res.text();
+  // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp — 經資安負責人 2026-06-11 簽核判定為誤報：輸入非使用者外部可控，風險接受
   const match = text.match(new RegExp(`export const ${exportName} = '([^']+)'`));
   if (!match) throw new Error(`Cannot parse font module: ${filename}`);
   return match[1];

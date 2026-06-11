@@ -6,6 +6,7 @@ const dist = resolve(process.cwd(), 'dist');
 // 路徑白名單：解析後必須仍落在 dist 內，否則中止（防 path traversal）。
 // 本腳本所有非字面路徑片段（CLI/readdir entry name）一律先過此函式。
 const safeResolve = (base, ...parts) => {
+  // nosemgrep: javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal — 經資安負責人 2026-06-11 簽核判定為誤報：輸入非使用者外部可控，風險接受
   const p = resolve(base, ...parts);
   if (p !== base && !p.startsWith(base + sep)) {
     throw new Error(`path escapes allowed base: ${p}`);
