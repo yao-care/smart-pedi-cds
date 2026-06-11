@@ -7,6 +7,7 @@
 | **A.5.24** 事件管理規劃與準備 | [incident-response-plan.md](incident-response-plan.md) | ✅ 計畫完整；**首次桌面推演已於 2026-06-10 執行並留存紀錄**（§4.1） |
 | **A.5.26** 資安事件之回應（聯絡窗口） | [incident-response-contacts.md](incident-response-contacts.md) | ✅ 內外部窗口已填實（單人維運） |
 | **A.5.29** 中斷期間之資訊安全（備份還原） | [backup-restore-test.md](backup-restore-test.md) | ✅ 程序完整；**首次還原測試已於 2026-06-10 實跑通過並留存紀錄**（§3.1） |
+| **A.8.26** 應用程式安全需求（Web 安全標頭） | [web-headers-risk-acceptance.md](web-headers-risk-acceptance.md) | ✅ ZAP 7 項標頭告警已評估；repo 內可強化者已落地，平台限制項已風險接受（2026-06-11） |
 
 ## 完成狀態
 

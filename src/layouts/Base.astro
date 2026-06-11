@@ -26,7 +26,15 @@ import '../styles/global.css';
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="Content-Security-Policy" content="frame-src https://www.youtube-nocookie.com;" />
+    <!--
+      CSP 經 <meta> 投遞（GitHub Pages 無法送 HTTP 回應標頭）。
+      僅能設定零破壞風險的強化指令：object-src/base-uri/form-action。
+      script-src/style-src 未收緊，因本站需 'wasm-unsafe-eval'（ONNX/MediaPipe）
+      與執行期 inline style（D3/Svelte），且 FHIR connect-src 為租戶任填的任意 https。
+      residual unsafe-inline 與只能用 HTTP 標頭的項目（HSTS/XFO/XCTO/Permissions-Policy/
+      COOP-COEP）已於 docs/security/web-headers-risk-acceptance.md 風險接受。
+    -->
+    <meta http-equiv="Content-Security-Policy" content="frame-src https://www.youtube-nocookie.com; object-src 'none'; base-uri 'self'; form-action 'self';" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}

@@ -1,0 +1,20 @@
+# ZAP Baseline 規則 — smart-pedi-cds
+#
+# 用途：餵給外部 OWASP ZAP baseline 掃描（pentest_scan.py / zaproxy action 的 -c 參數）。
+#       本 repo CI 不跑 ZAP；此檔為掃描器的單一真相源，與 ISMS 風險接受紀錄對齊。
+#
+# 系統脈絡：GitHub Pages 靜態 CDS 工具，零後端、無使用者帳號/登入、無 session cookie、
+#           不存 PII（assessment id 為隨機 UUID v4）。下列全為「缺少安全『回應標頭』」類告警，
+#           GitHub Pages 自訂網域無法送出自訂 HTTP 回應標頭，且威脅模型下殘餘風險低。
+#
+# 完整風險評估與補償控制：docs/security/web-headers-risk-acceptance.md
+#
+# 格式：<ruleid>	<IGNORE|WARN|FAIL>	<說明>
+#
+10035	IGNORE	(HSTS — Enforce HTTPS 已開但僅做 301 轉址；自訂網域非 *.github.io 拿不到 HSTS 標頭。無 session/cookie，殘餘風險低。已風險接受)
+10055	IGNORE	(CSP — 已用 <meta> 加 object-src 'none' / base-uri 'self' / form-action 'self'；script/style-src 因 WASM(ONNX/MediaPipe)+執行期 inline style(D3/Svelte)+任意 FHIR connect 無法移除 unsafe-inline。靜態工具無 PII，殘餘 XSS 風險低。已風險接受)
+10020	IGNORE	(Anti-clickjacking / X-Frame-Options — 只能用 HTTP 標頭或 frame-ancestors(meta 被忽略)，GitHub Pages 無法設定。無敏感狀態變更操作可被劫持。已風險接受)
+10098	IGNORE	(Cross-Domain Misconfiguration / CORS — access-control-allow-origin: * 由 GitHub CDN 對靜態資產預設送出，無法變更；站內無受保護 API/憑證。已風險接受)
+90004	IGNORE	(COOP/COEP Site Isolation — 只能用 HTTP 標頭，GitHub Pages 無法設定。未用 SharedArrayBuffer 跨源隔離高權能 API。已風險接受)
+10063	IGNORE	(Permissions-Policy — 只能用 HTTP 標頭(meta 不支援)，GitHub Pages 無法設定。已風險接受)
+10021	IGNORE	(X-Content-Type-Options — 只能用 HTTP 標頭，GitHub Pages 無法設定；資產 Content-Type 由 GitHub 正確標示。已風險接受)
