@@ -1,145 +1,95 @@
 # Smart Pedi 兒童發展評估
 
-開源的 Smart Pedi 兒童發展評估，以 SMART on FHIR 標準運行於瀏覽器端，任何擁有 FHIR R4 Server 的醫療機構皆可免費使用。
+**免費、免登入、保護隱私的兒童發展篩檢自評工具。**
+家長花幾分鐘，就能初步了解孩子的發展是否跟上同齡。
 
-## 特色
+🔗 線上使用：<https://smart-pedi-cds.yao.care>
 
-- **零後端** — 所有邏輯在瀏覽器執行，部署於 GitHub Pages
-- **即插即用** — 醫院接上自己的 FHIR Server 即可運作
-- **隱私優先** — 資料僅在瀏覽器與醫院 FHIR Server 之間流動
-- **AI 預警** — 規則引擎 + ONNX ML 混合判定，即時風險評估
-- **閉環追蹤** — 監測 → 預警 → 介入 → 追蹤 → 結案 自動化流程
-- **可客製化** — Fork repo 替換規則與衛教內容即可
+---
 
-## 技術棧
+## 這是什麼
 
-| 元件 | 技術 |
-|------|------|
-| 框架 | [Astro 5](https://astro.build/) SSG |
-| 互動元件 | [Svelte 5](https://svelte.dev/) (runes) |
-| 圖表 | D3 子模組 |
-| 樣式 | CSS Custom Properties + OKLCH |
-| FHIR | [fhirclient.js](https://docs.smarthealthit.org/client-js/) |
-| ML 推論 | [ONNX Runtime Web](https://onnxruntime.ai/) (WASM) |
-| 資料庫 | IndexedDB via [Dexie.js 4](https://dexie.org/) |
-| 搜尋 | [Pagefind](https://pagefind.app/) |
-| PDF | jsPDF |
-| 部署 | GitHub Pages + GitHub Actions |
+Smart Pedi 是一套**開源、免費**的兒童發展篩檢工具，家長可以自行操作。它依孩子的年齡顯示對應的發展題目與小活動，引導你完成評估，再把結果與同齡常模比較，告訴你「是否需要進一步留意或就醫」，並附上對應的衛教內容。
 
-## 快速開始
+整個過程**只在你的瀏覽器裡運算**——不需註冊、不需登入，資料預設留在你的裝置上，不會自動上傳到任何伺服器。
 
-```bash
-# 安裝依賴
-pnpm install
+> ⚠️ **這是篩檢工具，不是診斷。** 評估結果不能取代專業醫療判斷。若標示為「建議轉介」，或你對孩子的發展有疑慮、孩子有急性症狀，請諮詢小兒科或兒童發展中心進行完整專業評估。
 
-# 開發模式
-pnpm dev
+## 適合誰
 
-# 建置
-pnpm build
+- **家長／照顧者** — 自我評估，了解孩子發展狀況、取得衛教與就醫參考（站台主要對象）。
+- **醫療機構／醫師** — 透過醫師工作台收案、檢視個案趨勢，並可將評估結果寫回院內 FHIR 系統。
 
-# 預覽建置結果
-pnpm preview
-```
+## 評估涵蓋
 
-開發伺服器預設在 `http://localhost:4321/smart-pedi-cds/` 啟動。
+- **年齡範圍**：2 個月 ～ 6 歲（72 個月），分 7 個年齡組，各組給不同的發展題目。
+- **發展面向**：行為、粗動作、細動作、語言（理解／表達）、認知、社交情緒。架構與國民健康署「學前兒童發展檢核表」、國際工具 ASQ-3 一致，題目經兒科專業人員審閱（2026-05）。
 
-## 專案結構
+## 評估怎麼進行
 
-```
-src/
-├── components/        # Svelte 5 互動元件
-│   ├── ui/           # 通用 UI (Button, Badge, Modal, Toast...)
-│   ├── blocks/       # 頁面區塊 (Header, Footer, Hero, Breadcrumb)
-│   ├── fhir/         # FHIR 連線 (LaunchSelector, ConnectionStatus...)
-│   ├── dashboard/    # 儀表板 (PatientList, RiskSummary, AlertFeed)
-│   ├── patient/      # 個案檢視 (TrendChart, AlertTimeline, PatientView)
-│   ├── alerts/       # 預警管理 (AlertCard, AlertFilter, AlertManager)
-│   ├── education/    # 衛教 (ContentViewer, InteractionTracker)
-│   └── settings/     # 設定 (RuleEditor, WebhookConfig, ModelManager...)
-├── engine/           # 客戶端引擎
-│   ├── workers/      # Web Workers (rule-engine, baseline, ml-inference)
-│   ├── closed-loop.ts
-│   ├── notification.ts
-│   ├── webhook.ts
-│   ├── risk-analyzer.ts
-│   ├── fhir-writer.ts
-│   └── tab-coordinator.ts
-├── lib/              # 共用函式庫
-│   ├── fhir/         # SMART on FHIR client + sync
-│   ├── db/           # IndexedDB DAOs (Dexie.js)
-│   ├── stores/       # Svelte 5 runes stores
-│   └── utils/        # 工具 (risk-levels, loinc-map, date)
-├── data/             # Content Layer 資料
-│   ├── education/    # 衛教 Markdown
-│   ├── rules/        # YAML 閾值規則
-│   └── baselines/    # 人群基線 JSON
-├── layouts/          # Astro 佈局
-├── pages/            # 頁面路由
-└── styles/           # 設計系統 (OKLCH tokens)
-```
+家長端是一段引導式流程，依孩子實際情況點選即可：
 
-## SMART on FHIR 連線
+1. **基本資料** — 填孩子的出生年月，系統據此挑選對應年齡的題目。
+2. **問卷** — 各發展面向的核心題目。
+3. **互動遊戲** — 圖卡認知小活動。
+4. **語音互動** — 透過麥克風收集語音表現。
+5. **影片錄製** — 記錄孩子的動作表現。
+6. **繪圖測試** — 在畫布上臨摹形狀，評估精細動作。
+7. **評估結果** — 即時呈現判讀與建議。
 
-### Standalone Launch
+> 問卷是核心；互動遊戲、語音、影片、繪圖若不方便進行可略過，系統會自動調整判讀。整體約 3 分鐘。
 
-1. 開啟系統，選擇「獨立啟動」
-2. 輸入醫院 FHIR Server URL 和 Client ID
-3. 完成 OAuth 2.0 + PKCE 授權
+## 結果怎麼判讀
 
-### EHR Launch
+採「**常模參照**」判讀（與 ASQ-3、Bayley、Battelle、DAYC-2 等國際多面向發展評估工具一致）：每個面向都以「比同齡常模落後幾個標準差（SD）」為基準，而非「答對幾趴」。
 
-從醫院 HIS/EHR 系統內嵌啟動，自動繼承病患上下文。
+- **雷達圖**：各面向以同齡平均為 50 分呈現，跨面向可直接比較。
+- **分流分級**：
 
-### FHIR Server 需求
+  | 分級 | 條件 | 建議 |
+  |------|------|------|
+  | 🟢 **正常** | 所有面向都高於 −1 SD | 持續觀察 |
+  | 🟡 **追蹤觀察** | 任一面向低於 −1 SD（同齡後約 16%） | 留意並追蹤該面向 |
+  | 🔴 **建議轉介** | 任一面向低於 −2 SD（同齡後約 2.5%） | 建議進一步專業評估 |
 
-- FHIR R4 相容
-- 支援 SMART App Launch Framework
-- 允許 GitHub Pages 網域的 CORS 請求
+- **衛教建議**：判讀為追蹤觀察或建議轉介時，依「分級 × 需注意的面向」自動帶出對應的衛教文章與影片。
+- **報告**：可下載 PDF 評估報告；也可選擇將結果上傳到醫療機構的 FHIR 系統。
 
-## 監測指標
+### 常模來源（透明聲明）
 
-| 指標 | LOINC Code | 單位 |
-|------|-----------|------|
-| 心率 | 8867-4 | bpm |
-| 血氧飽和度 | 2708-6 | % |
-| 呼吸頻率 | 9279-1 | breaths/min |
-| 體溫 | 8310-5 | °C |
-| 睡眠品質 | 93832-4 | 分 (0-100) |
-| 活動量 | 82290-8 | 分 |
-| 醣類攝取 | 2339-0 | g |
+- **問卷面向**：借用 [ASQ-3 第三版 Technical Appendix Table 18](https://agesandstages.com/wp-content/uploads/2019/08/ASQ-3-Technical-Appendix_web.pdf) 各年齡 mean／SD，依本系統題數做滿分縮放。
+- **互動遊戲、繪圖、語音、動作**：使用本平台模組的內部參考常模（同齡基線）。
+- 本系統題目較 ASQ-3 精簡，為維持「寧錯報不漏報」的篩檢精神，採較嚴格的 −2 SD 轉介門檻，假陽性會略高於 ASQ-3 全量表——這是刻意的篩檢設計，目的是不漏接需要協助的孩子。
 
-## 預警等級
+## 隱私與資料
 
-| 等級 | 說明 | 動作 |
-|------|------|------|
-| normal | 所有指標正常 | 無 |
-| advisory | 單一指標輕微偏離 | 推薦衛教 |
-| warning | 多指標偏離或持續異常 | 通知 + 衛教 + Webhook |
-| critical | 嚴重異常 | 通知 + 音效 + Webhook + FHIR 寫回 |
+- **本機優先**：評估全程在瀏覽器端運算，資料預設只存在你的裝置（IndexedDB），不會自動上傳。
+- **免登入**：家長端不需帳號。
+- **選擇性上傳**：只有在你（或醫療機構）主動選擇時，才會透過 SMART on FHIR 標準把結果送到指定的 FHIR 伺服器：
+  - **醫院 standalone**：醫師連上院內 FHIR Server（OAuth 2.0 + PKCE）後逐筆寫回。
+  - **收案上傳**：家長可將結果上傳至預防醫學收案點（動態註冊 + PKCE，無需預設帳號）。
 
-## 客製化
+## 給醫療機構
 
-### 自訂規則
+任何擁有 FHIR R4 Server 的醫療機構皆可**免費使用**，並可自行客製：
 
-替換 `src/data/rules/pediatric-default.yaml`，定義年齡組 × 指標 × 閾值。
-
-### 自訂衛教內容
-
-在 `src/data/education/` 新增 Markdown 檔案，frontmatter 需符合 Content Layer schema。
-
-### 自訂 ML 模型
-
-在設定頁面上傳新的 ONNX 模型（7 inputs → 4 outputs），即時替換。
+- **接上自己的 FHIR Server** — 支援 SMART App Launch（Standalone 或 EHR 內嵌啟動）即可運作。
+- **自訂衛教內容** — 替換或擴充各面向、各年齡的衛教文章與影片。
+- **自訂判讀規則與常模** — 依在地族群調整。
+- **Fork 即用** — 開源 MIT 授權，可自由 fork、修改、自行部署。
 
 ## 授權
 
-MIT License
+MIT License — 自由使用、修改與散布。
 
 ## 致謝
 
-- [Astro](https://astro.build/)
-- [Svelte](https://svelte.dev/)
-- [SMART on FHIR](https://docs.smarthealthit.org/)
-- [ONNX Runtime](https://onnxruntime.ai/)
-- [Dexie.js](https://dexie.org/)
+本工具站在開放標準與開源社群的基礎上：
+[SMART on FHIR](https://docs.smarthealthit.org/) ·
+[ASQ-3](https://agesandstages.com/) ·
+[Astro](https://astro.build/) ·
+[Svelte](https://svelte.dev/)
+
+---
+
+> 🛠️ **想參與開發或自行部署？** 技術棧、專案結構、建置指令與開發規則見 [`CLAUDE.md`](./CLAUDE.md)。
