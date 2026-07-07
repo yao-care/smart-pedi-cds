@@ -25,15 +25,25 @@
 - voice 無上傳音檔功能
 - PDF / FHIR / GCM / 歷史下載 四匯出出口不含媒體
 
-## 待辦（下一階段）
+## 待辦（下一階段）—— 已於 2026-07-08 全數完成
 
-1. **主動模組 live 自動化穩定化**（本次卡點）：
-   - `playGame` canvas 互動 flaky（同 case 時綠時紅，時序敏感）— 需更穩健的完成偵測（用 `.game-complete`/進度文字）與更高迴圈上限
-   - voice / video / drawing 三模組尚未對真實 DOM + fake media 收斂
-   - `coverage-recorder` 非 worker-safe：多 worker 平行寫 `coverage-actual.json` 會 race，需改每 worker 獨立檔再合併，或序列跑
-   - 並發打 live 會連鎖崩潰 → 建議降並發 / 分批
-2. **Task 12 / 13 / 14 未完成**（主動模組媒體落地、匯出完整性、串接稽核閘門）
-3. **修 hydration race bug**（產品 bug，獨立於測試工程）
+1. ~~**主動模組 live 自動化穩定化**~~ ✅（commit `9ad3791`）：
+   - `playGame` 改「等 feedback overlay 消失同步 + 45s wall-clock 上限」，不再固定等待。
+   - driver 全部改狀態驅動、**絕不 throw**（移除結尾盲點 click——先前 flaky 主因）；voice/video 維度①走確定性 skip、維度②走真錄製。
+   - `coverage-recorder` 改「每 worker NDJSON shard + appendFileSync」worker-safe，一次性 reset 移到 `global-setup.ts`。
+   - 並發：Chromium 停背景節流 flags + timeout 120s + 本機 workers 上限 2（CI 1）。
+2. ~~**Task 12 / 13 / 14**~~ ✅（commit `387a399`）：
+   - Task 12 維度②媒體落地：破解 headless TTS 掛住的 linchpin（`installMediaStubs`），voice/video/drawing 真錄 blob>0，**voice→language 接線硬斷言端到端驗證 cb54605**。
+   - Task 13 維度③匯出完整性稽核（PDF 真下載 + GCM/FHIR/歷史出口 annotation）。
+   - Task 14 `test:detection` / `test:coverage-audit` scripts + `tests/e2e/README.md`。
+3. ~~**修 hydration race bug**~~ ✅（commit `2ff6dba`）。
 
-## 教訓
-主動模組（尤其 canvas 遊戲）的無頭瀏覽器自動化，比 plan 假設的重很多，且對 live 並發不穩定。核心驗證價值（z 落地正確）用問卷路徑已達成；主動模組的完整 live 覆蓋應另立穩定化任務、控管投入。
+**額外**：voice/gross-motor wiring gap（原「預期缺口」）也已修（commit `cb54605`）——分析函式接進 live triage 而非只掛 dead code。
+
+## 最終驗證（實際 config workers=2 + retries=1）
+- full 198（維度①190 + ②7 + ③1）→ **195 passed + 3 flaky（retry 過）+ 0 failed，exit 0**。
+- `pnpm test:coverage-audit` → **涵蓋率 100%、漏測 0、逾測 0**（全 7 齡 ✓）。
+- unit 697 綠。3 筆 flaky 為單機長跑資源競爭，非邏輯；workers=1 全淨。
+
+## 教訓（修正）
+主動模組無頭自動化確實比 plan 假設重，但**並非不可行**：voice 的卡點是 headless speechSynthesis 不回 onend（stub 即解），video/drawing 的 fake media 本就可用。真正需控管的是「單機高並發長跑的資源競爭」——用 workers 上限 + retries 處理，非降低覆蓋。
