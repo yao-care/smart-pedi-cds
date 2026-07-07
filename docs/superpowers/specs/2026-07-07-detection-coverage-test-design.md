@@ -141,17 +141,42 @@ tests/e2e/
 
 ## 6. 測試完整性稽核腳本
 
+`detection-coverage.spec.ts` 驗「檢測有沒有落地」；`coverage-completeness` 是它的**後設檢查**，驗「測試自己有沒有漏掉任何真實資料單元」。採**執行期收集**（非靜態解析 test 標題——後者靠字串猜測、脆弱不可靠）。
+
 ```mermaid
-flowchart LR
-  SRC["真實 source of truth<br/>questions.json + AGE_GROUPS_CDSA + 模組清單"] --> EXP["自動產生應測格子清單<br/>40 問卷格 + 主動模組格"]
-  SPEC["靜態掃 detection-coverage.spec.ts<br/>實際涵蓋的格子"] --> CMP["比對"]
-  EXP --> CMP
-  CMP --> REP["報告：漏測格 / 無題卻誤測格 / 涵蓋率%"]
+flowchart TD
+  SRC["真實 source：questions.json + AGE_GROUPS_CDSA + 模組適用規則"] --> EXP["expected：自動展開<br/>(domain,age,score) 190 單元 + 主動模組 ~26 格"]
+  RUN["detection-coverage.spec 執行期<br/>recordCoverage() 每驗一單元記一筆"] --> ACT["actual：coverage-actual.json"]
+  EXP --> CMP["coverage-completeness.ts 比對"]
+  ACT --> CMP
+  CMP --> REP["報告：涵蓋率% / 漏測清單 / 逾測清單 / 分齡明細"]
 ```
 
-- 應測清單由真實資料自動推導（例如讀 `questions.json` 得 40 有題格；讀 `AGE_GROUPS_CDSA` × 模組適用性得主動模組格），非人工列舉。
-- 測試檔涵蓋格子的辨識方式：測試以結構化 metadata（如 `test.info().annotations` 或標準化 test title）標注它覆蓋的 (domain, age, module)，稽核腳本靜態解析。
-- 輸出漏測清單即「測試自己的缺口」，防止測試有洞卻誤判「全覆蓋」。
+**第一步——自動產生應測清單（expected），純讀真實資料、零測試執行：**
+- 讀 `questions.json`：每題 domain × 每個 ageGroups → 有題格；每格 maxScore（題數×2）→ 展開分數點 `0..maxScore`。共 **190 個 `(domain, age, score)` 單元**（2-6m 14、7-12m 26、13-24m 起每齡 30）。
+- 讀 `AGE_GROUPS_CDSA` + 模組適用規則 → 主動模組單元 `(module, age)`，約 26 格（game/video/drawing 全 7 齡、voice 僅 13m+ 共 5 齡）。
+- 加題、改年齡層時，此清單自動跟著真實資料更新，無需人工維護。
+
+**第二步——測試執行期記錄實測清單（actual）：**
+- `detection-coverage.spec.ts` 每驗一個單元即呼叫 `recordCoverage({domain, age, score})` / `recordCoverage({module, age})`，累積寫入 `test-results/coverage-actual.json`。
+- 記錄的是**真的執行到的斷言**，非宣稱要測的。
+
+**第三步——比對 + 報告：**
+- `coverage-completeness.ts` 讀 expected vs actual，輸出報告，範例：
+
+```
+檢測覆蓋完整性稽核
+應測 190 問卷單元 + 26 主動模組格　實測 190 + 26　涵蓋率 100%
+漏測（應測未跑）：無
+逾測（無題卻測，如 2-6m cognition）：無
+── 分齡明細 ──
+2-6m   14/14 ✓   主動 4/4 ✓
+7-12m  26/26 ✓   主動 4/4 ✓
+...
+```
+
+- 有漏測時印出具體 `(domain, age, score)`。CI 可設「涵蓋率 <100% 或有漏測 → 失敗」。
+- **使用方式**：跑 `pnpm test:coverage-audit`，看報告末行「漏測：無、涵蓋率 100%」即確認測試無漏；有數字即知漏在何處。
 
 ## 7. 缺口預測（＝腳本跑完的紅格預測，也是第二階段修復清單）
 
