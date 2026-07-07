@@ -3,7 +3,7 @@ import { ALL_AGE_GROUPS, birthDateForAgeGroup } from './helpers/age-fixtures';
 import { answerQuestionnaire } from './helpers/questionnaire-driver';
 import { readLatestTriage } from './helpers/idb-reader';
 import { expectedQuestionnaireZ } from './helpers/expected-norms';
-import { recordCoverage, resetCoverage } from './helpers/coverage-recorder';
+import { recordCoverage } from './helpers/coverage-recorder';
 import { playGame, doVoice, doVideo, doDrawing } from './helpers/active-module-driver';
 import { getQuestionnaireMaxScores } from '../../src/lib/questionnaire/max-scores';
 import type { AgeGroupCDSA } from '../../src/lib/utils/age-groups';
@@ -22,7 +22,8 @@ import type { AgeGroupCDSA } from '../../src/lib/utils/age-groups';
  * game 模組永遠不會被跳過（不在 SkippableModule 判斷式內），一律要跑。
  */
 
-test.beforeAll(() => resetCoverage());
+// 覆蓋紀錄的一次性 reset 移到 playwright globalSetup（見 coverage-recorder 註解）；
+// 這裡不再 per-worker reset，否則後啟動的 worker 會清掉先啟動 worker 的資料。
 
 async function startAssessment(page: Page, ageGroup: AgeGroupCDSA): Promise<void> {
   await page.goto('/assess/');
@@ -48,7 +49,7 @@ async function startAssessment(page: Page, ageGroup: AgeGroupCDSA): Promise<void
  * store 的 $effect 自動 skip、瞬間跳過未渲染），就短暫等待讓狀態機前進。
  */
 async function advanceToResult(page: Page): Promise<void> {
-  for (let i = 0; i < 15; i++) {
+  for (let i = 0; i < 20; i++) {
     if (await page.getByRole('heading', { name: '各面向評估' }).isVisible().catch(() => false)) return;
     if (await page.locator('.game-module').isVisible().catch(() => false)) { await playGame(page); continue; }
     if (await page.locator('.voice-module').isVisible().catch(() => false)) { await doVoice(page); continue; }
@@ -56,7 +57,9 @@ async function advanceToResult(page: Page): Promise<void> {
     if (await page.locator('.drawing-module').isVisible().catch(() => false)) { await doDrawing(page); continue; }
     await page.waitForTimeout(400);
   }
-  await page.getByRole('heading', { name: '各面向評估' }).waitFor({ timeout: 15_000 });
+  // 唯一硬斷言：結果頁「各面向評估」必須出現（ResultView 背景 enrich 可能含
+  // MediaPipe，故給較寬裕的 20s）。
+  await page.getByRole('heading', { name: '各面向評估' }).waitFor({ timeout: 20_000 });
 }
 
 for (const ageGroup of ALL_AGE_GROUPS) {
@@ -67,7 +70,9 @@ for (const ageGroup of ALL_AGE_GROUPS) {
     for (const domain of domains) {
       for (let score = 0; score <= maxScores[domain]; score++) {
         test(`${ageGroup} ${domain} score=${score} → z 落地正確`, async ({ page }) => {
-          test.setTimeout(90_000);
+          // 全流程（profile→問卷 N 題→game 多回合→視情況其他模組→result）在並發
+          // 負載下耗時較長；120s 給足裕度（背景節流已由 launch flags 停用）。
+          test.setTimeout(120_000);
           await startAssessment(page, ageGroup);
           // 目標 domain 取 score，其餘 domain 滿分（隔離）
           await answerQuestionnaire(page, ageGroup, { [domain]: score });

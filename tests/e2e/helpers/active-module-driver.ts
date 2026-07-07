@@ -1,69 +1,82 @@
 import type { Page } from '@playwright/test';
 
-/** 互動遊戲：GameModule 的選項畫在 `<canvas>` 上（座標 hit-test），且採
- *  always-positive feedback——點 canvas 任意位置都會 advance（handleCanvasClick
- *  不論命中與否都 showFeedback + setTimeout(advance,800)）。故點 canvas 中心、
- *  等 feedback+advance（~900ms）、重複到「遊戲完成！」出現即可。圖卡不足時走
- *  「跳過遊戲評估」。完成後點「繼續下一步」才 finishAndContinue → addAnalysis。 */
+/**
+ * 主動模組穿越 helper（維度①問卷 spec 用）。
+ *
+ * 設計原則（2026-07-07 穩定化重構）：
+ * 1. **絕不 throw**——每個 driver 都是 best-effort 穿越，唯一的硬斷言留給
+ *    advanceToResult 的 final `waitFor 各面向評估`。舊版每個 driver 結尾有一行
+ *    盲點「繼續下一步」的 `.click({timeout})`，一旦模組已前進 / 負載下時序漂移
+ *    就 10s 逾時整組紅——這是先前 flaky 的主因。
+ * 2. **狀態驅動非固定等待**——game 等 feedback overlay 出現→消失（advance 完成）
+ *    再點下一次，取代固定 900ms（並發負載下 800ms advance 會漂移）。
+ * 3. **voice / video 走 skip 路徑**——headless 的 speechSynthesis / 攝影機錄製
+ *    時序不可靠（TTS onend 不觸發、錄製後 ResultView 背景跑 MediaPipe 依賴 CDN）；
+ *    本 spec 只需穿越模組抵達結果頁驗證問卷 z，語音 / 粗大動作的檢測落地由 unit /
+ *    整合測試涵蓋（active-module-analysis / ResultView enrich）。
+ */
+
+/** 按鈕可見則點擊並回傳 true（點擊失敗吞掉，不 throw）。 */
+async function clickIfVisible(page: Page, name: RegExp): Promise<boolean> {
+  const btn = page.getByRole('button', { name });
+  if (await btn.isVisible().catch(() => false)) {
+    await btn.click().catch(() => {});
+    return true;
+  }
+  return false;
+}
+
+/** 互動遊戲：GameModule 選項畫在 `<canvas>`（座標 hit-test，always-positive
+ *  feedback——點任意位置都 showFeedback + setTimeout(advance,800)）。點中心、
+ *  等本回合 feedback overlay 消失再點下一次，直到「遊戲完成！→繼續下一步」或
+ *  圖卡不足的「跳過遊戲評估」。canvas 消失（已離開模組）即交還上層重判。 */
 export async function playGame(page: Page): Promise<void> {
-  for (let i = 0; i < 40; i++) {
-    const next = page.getByRole('button', { name: /繼續下一步/ });
-    if (await next.isVisible().catch(() => false)) { await next.click(); return; }
-    const skip = page.getByRole('button', { name: /跳過遊戲評估/ });
-    if (await skip.isVisible().catch(() => false)) { await skip.click(); return; }
+  // wall-clock 上限：避免點擊在負載下不進展時空轉到吃光整個 test budget（120s）。
+  // 遊戲正常 6–10 回合、每回合 ~1s，45s 綽綽有餘；逾時則交還 advanceToResult 的
+  // 硬斷言（各面向評估）給出明確結果，而非讓整個 test 因 driver 空轉而 timeout。
+  const deadline = Date.now() + 45_000;
+  while (Date.now() < deadline) {
+    if (await clickIfVisible(page, /繼續下一步/)) return;
+    if (await clickIfVisible(page, /跳過遊戲評估/)) return;
     const canvas = page.locator('.game-module canvas');
-    if (await canvas.isVisible().catch(() => false)) {
-      const box = await canvas.boundingBox();
-      if (box) await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
-      await page.waitForTimeout(900); // 800ms feedback + advance
-      continue;
-    }
-    await page.waitForTimeout(400);
+    if (!(await canvas.isVisible().catch(() => false))) return;
+    const box = await canvas.boundingBox();
+    if (box) await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+    // handleCanvasClick 在 showFeedback 時忽略點擊，故等 overlay 消失（advance 完成）
+    // 再進下一輪；比固定等待抗並發負載。點擊被忽略時 overlay 早已隱藏，waitFor 立即
+    // 返回，下一輪重點。
+    await page.locator('.game-module .feedback-overlay')
+      .waitFor({ state: 'hidden', timeout: 2_500 }).catch(() => {});
   }
-  await page.getByRole('button', { name: /繼續下一步/ }).click({ timeout: 10_000 });
 }
 
-/** 語音：授權麥克風（fake audio）→ 播放+錄音 → 下一題，走完所有 prompt。 */
+/** 語音：走確定性 skip 路徑穿越（見檔頭原則 3）。 */
 export async function doVoice(page: Page): Promise<void> {
-  const allow = page.getByRole('button', { name: /允許使用麥克風/ });
-  if (await allow.isVisible().catch(() => false)) await allow.click();
-  for (let i = 0; i < 6; i++) {
-    const done = page.getByRole('button', { name: /繼續下一步/ });
-    if (await done.isVisible().catch(() => false)) break;
-    const record = page.getByRole('button', { name: /播放指令 \+ 開始錄音/ });
-    if (await record.isVisible().catch(() => false)) {
-      await record.click();
-      // 15s 自動停；提早按停止錄音縮短
-      const stop = page.getByRole('button', { name: /停止錄音/ });
-      await stop.click({ timeout: 20_000 }).catch(() => {});
-      await page.getByRole('button', { name: /下一題/ }).click({ timeout: 5_000 }).catch(() => {});
-    } else {
-      break;
-    }
-    await page.waitForTimeout(400);
+  for (let i = 0; i < 15; i++) {
+    if (await clickIfVisible(page, /繼續下一步/)) return;
+    if (await clickIfVisible(page, /跳過語音互動/)) return;
+    if (await clickIfVisible(page, /跳過此題/)) { await page.waitForTimeout(150); continue; }
+    if (!(await page.locator('.voice-module').isVisible().catch(() => false))) return;
+    await page.waitForTimeout(300);
   }
-  await page.getByRole('button', { name: /繼續下一步/ }).click({ timeout: 10_000 });
 }
 
-/** 影片：授權攝影機（fake）→ 錄 → 下一步。 */
+/** 影片：走確定性 skip 路徑穿越（見檔頭原則 3）。 */
 export async function doVideo(page: Page): Promise<void> {
-  const open = page.getByRole('button', { name: /開啟攝影機/ });
-  if (await open.isVisible().catch(() => false)) await open.click();
-  const rec = page.getByRole('button', { name: /開始錄製/ });
-  if (await rec.isVisible().catch(() => false)) {
-    await rec.click();
-    await page.waitForTimeout(2_000);
-    await page.getByRole('button', { name: /停止錄製/ }).click().catch(() => {});
+  for (let i = 0; i < 15; i++) {
+    if (await clickIfVisible(page, /繼續下一步/)) return;
+    if (await clickIfVisible(page, /跳過影片錄製/)) return;
+    if (!(await page.locator('.video-module').isVisible().catch(() => false))) return;
+    await page.waitForTimeout(300);
   }
-  await page.getByRole('button', { name: /繼續下一步/ }).click({ timeout: 15_000 });
 }
 
-/** 繪圖：對 canvas 派發指標事件畫線，逐一送出所有形狀。 */
+/** 繪圖：對 canvas 派發指標事件畫線，逐一送出所有形狀直到「繼續下一步」。 */
 export async function doDrawing(page: Page): Promise<void> {
-  for (let shape = 0; shape < 5; shape++) {
-    const done = page.getByRole('button', { name: /繼續下一步/ });
-    if (await done.isVisible().catch(() => false)) break;
-    const canvas = page.locator('canvas');
+  for (let i = 0; i < 12; i++) {
+    if (await clickIfVisible(page, /繼續下一步/)) return;
+    const canvas = page.locator('.drawing-module canvas');
+    if (!(await canvas.isVisible().catch(() => false))) return;
     const box = await canvas.boundingBox();
     if (box) {
       await page.mouse.move(box.x + 80, box.y + 80);
@@ -72,8 +85,7 @@ export async function doDrawing(page: Page): Promise<void> {
       await page.mouse.move(box.x + 160, box.y + 240, { steps: 8 });
       await page.mouse.up();
     }
-    await page.getByRole('button', { name: /完成此圖/ }).click({ timeout: 5_000 });
-    await page.waitForTimeout(300);
+    if (await clickIfVisible(page, /完成此圖/)) { await page.waitForTimeout(250); continue; }
+    await page.waitForTimeout(250);
   }
-  await page.getByRole('button', { name: /繼續下一步/ }).click({ timeout: 10_000 });
 }
