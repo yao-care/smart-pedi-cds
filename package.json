@@ -18,6 +18,8 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
+    "test:detection": "playwright test detection-coverage",
+    "test:coverage-audit": "tsx tests/e2e/coverage-completeness.ts",
     "rebuild:pdf-font": "node scripts/build-pdf-font.mjs",
     "download:cards": "node scripts/download-illustration-cards.mjs",
     "generate:cards": "node scripts/generate-placeholder-cards.mjs",

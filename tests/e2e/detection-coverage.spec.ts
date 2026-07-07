@@ -4,7 +4,10 @@ import { answerQuestionnaire } from './helpers/questionnaire-driver';
 import { readLatestTriage } from './helpers/idb-reader';
 import { expectedQuestionnaireZ } from './helpers/expected-norms';
 import { recordCoverage } from './helpers/coverage-recorder';
-import { playGame, doVoice, doVideo, doDrawing } from './helpers/active-module-driver';
+import { playGame, doVoice, doVideo, doDrawing, recordVoice, recordVideo, installMediaStubs } from './helpers/active-module-driver';
+import { readMediaCounts } from './helpers/idb-reader';
+import { downloadPdf, hasHistoryDownload } from './helpers/export-inspector';
+import { expectedActiveModuleCells } from './coverage-expected';
 import { getQuestionnaireMaxScores } from '../../src/lib/questionnaire/max-scores';
 import type { AgeGroupCDSA } from '../../src/lib/utils/age-groups';
 
@@ -26,6 +29,10 @@ import type { AgeGroupCDSA } from '../../src/lib/utils/age-groups';
 // 這裡不再 per-worker reset，否則後啟動的 worker 會清掉先啟動 worker 的資料。
 
 async function startAssessment(page: Page, ageGroup: AgeGroupCDSA): Promise<void> {
+  // 在 goto 前裝 media stub（headless speechSynthesis 不回 onend 會讓語音模組
+  // 的 playTTS 掛住；game 的 speak() 也受益）。維度①走 skip 不受影響，維度②
+  // 真錄音才靠它。
+  await installMediaStubs(page);
   await page.goto('/assess/');
   await page.getByRole('heading', { name: '兒童基本資料' }).waitFor({ timeout: 15_000 });
   await page.getByLabel(/出生日期/).fill(birthDateForAgeGroup(ageGroup));
@@ -48,12 +55,15 @@ async function startAssessment(page: Page, ageGroup: AgeGroupCDSA): Promise<void
  * active-module-driver 對應的 helper 跑完；若都偵測不到（例如該步驟被
  * store 的 $effect 自動 skip、瞬間跳過未渲染），就短暫等待讓狀態機前進。
  */
-async function advanceToResult(page: Page): Promise<void> {
+async function advanceToResult(page: Page, opts: { record?: boolean } = {}): Promise<void> {
+  // record=true（維度②）：voice/video 走真錄製 driver；否則（維度①）走 skip。
+  const voiceDriver = opts.record ? recordVoice : doVoice;
+  const videoDriver = opts.record ? recordVideo : doVideo;
   for (let i = 0; i < 20; i++) {
     if (await page.getByRole('heading', { name: '各面向評估' }).isVisible().catch(() => false)) return;
     if (await page.locator('.game-module').isVisible().catch(() => false)) { await playGame(page); continue; }
-    if (await page.locator('.voice-module').isVisible().catch(() => false)) { await doVoice(page); continue; }
-    if (await page.locator('.video-module').isVisible().catch(() => false)) { await doVideo(page); continue; }
+    if (await page.locator('.voice-module').isVisible().catch(() => false)) { await voiceDriver(page); continue; }
+    if (await page.locator('.video-module').isVisible().catch(() => false)) { await videoDriver(page); continue; }
     if (await page.locator('.drawing-module').isVisible().catch(() => false)) { await doDrawing(page); continue; }
     await page.waitForTimeout(400);
   }
@@ -94,3 +104,97 @@ for (const ageGroup of ALL_AGE_GROUPS) {
     }
   });
 }
+
+/**
+ * 維度②：主動模組媒體落地 + 接線稽核。
+ *
+ * 對每個年齡層跑一次「完整評估」（全 domain=0 → skippedModules 為空、所有主動
+ * 模組都跑），真的錄音/錄影/繪圖，斷言 mediaFiles blob bytes>0。同時稽核接線：
+ * voice→language（voiceDurationTotal 事件數學，確定性 → 硬斷言）、video→gross_motor
+ * （MediaPipe on fake video，網路 + 合成畫面不確定 → soft annotation）。這一段
+ * 同時端到端驗證 cb54605 的 voice/gross-motor wiring fix。
+ *
+ * 用 per-age（7 個測試）而非 per-(module×age)（26 個冗餘全跑）：每齡一次完整
+ * 評估即涵蓋該齡所有 module 格，時間與 flaky 大幅降低。
+ */
+function cellsByAge(age: AgeGroupCDSA): Set<string> {
+  return new Set(expectedActiveModuleCells().filter(c => c.age === age).map(c => c.module));
+}
+
+for (const ageGroup of ALL_AGE_GROUPS) {
+  const modules = cellsByAge(ageGroup);
+
+  test.describe(`維度②媒體落地 ${ageGroup}`, () => {
+    test(`${ageGroup} 主動模組媒體 + 接線落地`, async ({ page }) => {
+      // 完整評估：問卷 + game + voice（≥13m）+ video + drawing + result（含 MediaPipe
+      // 背景 enrich）。真錄製較慢，給 150s。
+      test.setTimeout(150_000);
+      await startAssessment(page, ageGroup);
+      const domains = Object.keys(getQuestionnaireMaxScores(ageGroup));
+      await answerQuestionnaire(page, ageGroup, Object.fromEntries(domains.map(d => [d, 0])));
+      await page.getByRole('button', { name: '跑完整評估' }).click();
+      await advanceToResult(page, { record: true });
+
+      // ── 媒體落地（blob bytes>0）──
+      const media = await readMediaCounts(page);
+      if (modules.has('voice')) {
+        expect(media['voice']?.bytes ?? 0, `${ageGroup} voice 音檔應真的錄到`).toBeGreaterThan(0);
+      }
+      expect(media['video']?.bytes ?? 0, `${ageGroup} video 應真的錄到`).toBeGreaterThan(0);
+      expect(media['drawing']?.bytes ?? 0, `${ageGroup} drawing 應存 PNG`).toBeGreaterThan(0);
+
+      // ── 接線落地 ──
+      const triage = await readLatestTriage(page);
+      expect(triage, 'triageResult 應已落地').not.toBeNull();
+      if (modules.has('voice')) {
+        // voiceDurationTotal 由 voice_end 事件加總（確定性）→ language voiceDuration detail
+        const langDetail = triage!.details.find(d => d.domain === 'language' && d.metric === 'voiceDuration');
+        expect(langDetail, `${ageGroup} voice→language 接線應落地（cb54605）`).toBeTruthy();
+      }
+      // gross_motor 走 MediaPipe on fake video，不確定 → soft 記錄不讓測試紅
+      const gmDetail = triage!.details.find(d => d.domain === 'gross_motor' && d.metric === 'poseClassification');
+      test.info().annotations.push({ type: 'wiring', description: `${ageGroup} video→gross_motor:${!!gmDetail}` });
+
+      // ── 覆蓋紀錄（該齡所有 module 格）──
+      for (const m of modules) recordCoverage({ kind: 'module', module: m, age: ageGroup });
+    });
+  });
+}
+
+/**
+ * 維度③：匯出完整性稽核（PDF / FHIR / GCM / 歷史下載 四出口是否帶媒體）。
+ *
+ * 缺口報告性質——目前四出口皆不含媒體（僅 Patient ID + 數值），以 annotation
+ * 如實記錄，不因缺口讓測試紅。GCM/FHIR 上傳點下去會跳 OAuth 授權 redirect
+ * （導航離開），故只驗 UI 存在、不真觸發。PDF 走真實下載事件。
+ *
+ * 用全 domain 滿分 → 主動模組自動 skip（只跑 game）→ 快速抵達結果頁。
+ */
+test.describe('維度③匯出完整性', () => {
+  test('PDF / FHIR / GCM / 歷史 四出口媒體稽核', async ({ page }) => {
+    test.setTimeout(120_000);
+    const age: AgeGroupCDSA = '25-36m';
+    await startAssessment(page, age);
+    const domains = getQuestionnaireMaxScores(age);
+    await answerQuestionnaire(page, age, { ...domains }); // 全滿分 → 模組 skip
+    await page.getByRole('button', { name: '依建議繼續' }).click();
+    await advanceToResult(page);
+
+    // PDF 出口：真實下載，檢查是否含音檔/媒體標記
+    const pdf = await downloadPdf(page, async () => {
+      await page.getByRole('button', { name: /下載 PDF 報告/ }).click();
+    }).catch(() => Buffer.alloc(0));
+    const pdfHasMedia = pdf.includes(Buffer.from('audio')) || pdf.includes(Buffer.from('Media'));
+    expect(pdf.length, 'PDF 應能產生下載').toBeGreaterThan(0);
+    test.info().annotations.push({ type: 'export', description: `PDF bytes:${pdf.length} hasMedia:${pdfHasMedia}` });
+
+    // GCM / FHIR 上傳出口存在性（不觸發 OAuth）
+    const gcmUi = await page.getByRole('button', { name: /上傳到 GCM 收案/ }).isVisible().catch(() => false);
+    const fhirUi = await page.getByRole('button', { name: /上傳|送出.*FHIR|FHIR/ }).first().isVisible().catch(() => false);
+    test.info().annotations.push({ type: 'export', description: `GCM upload UI:${gcmUi} FHIR upload UI:${fhirUi}` });
+
+    // 歷史頁下載出口
+    const histDl = await hasHistoryDownload(page);
+    test.info().annotations.push({ type: 'export', description: `history download exists:${histDl}` });
+  });
+});

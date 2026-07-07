@@ -1,4 +1,4 @@
-import questionsJson from '../../src/data/questionnaire/questions.json';
+import questionsJson from '../../src/data/questionnaire/questions.json' with { type: 'json' };
 import { AGE_GROUPS_CDSA, type AgeGroupCDSA } from '../../src/lib/utils/age-groups';
 
 export interface QUnit { domain: string; age: AgeGroupCDSA; score: number; maxScore: number; }

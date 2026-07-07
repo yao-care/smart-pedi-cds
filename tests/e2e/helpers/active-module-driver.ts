@@ -71,6 +71,69 @@ export async function doVideo(page: Page): Promise<void> {
   }
 }
 
+/**
+ * 安裝媒體 stub：讓 headless 的 speechSynthesis 立即觸發 utterance.onend。
+ * 產品 VoiceModule.handlePrompt 是 `await playTTS()` 後才 startRecording，而
+ * headless Chromium 的 speechSynthesis.speak 不會回 onend/onerror → playTTS 的
+ * Promise 永久掛住 → 錄音鏈斷。stub 後語音模組能真的走 record→stop→next。
+ * 必須在 page.goto 前呼叫（addInitScript 於每次 document 建立時注入）。
+ */
+export async function installMediaStubs(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    try {
+      const ss = window.speechSynthesis;
+      if (ss) {
+        const proto = Object.getPrototypeOf(ss) as SpeechSynthesis;
+        proto.speak = function (u: SpeechSynthesisUtterance) {
+          setTimeout(() => { try { u.onend?.(new Event('end') as SpeechSynthesisEvent); } catch { /* noop */ } }, 0);
+        };
+        proto.cancel = function () { /* noop */ };
+      }
+    } catch { /* noop */ }
+  });
+}
+
+/** 語音（錄製版，維度②用）：授權麥克風 → 每題 播放+錄音→停止→下一題，真的把
+ *  fake audio 錄進 mediaFiles。需先 installMediaStubs（否則 TTS 掛住）。 */
+export async function recordVoice(page: Page): Promise<void> {
+  await clickIfVisible(page, /允許使用麥克風/);
+  for (let i = 0; i < 12; i++) {
+    if (await clickIfVisible(page, /繼續下一步/)) return;
+    if (await clickIfVisible(page, /下一題/)) { await page.waitForTimeout(150); continue; }
+    const rec = page.getByRole('button', { name: /播放指令 \+ 開始錄音/ });
+    if (await rec.isVisible().catch(() => false)) {
+      await rec.click();
+      // TTS 已 stub → 立即進錄音態；等「停止錄音」出現、錄到資料再停
+      await page.getByRole('button', { name: /停止錄音/ }).waitFor({ state: 'visible', timeout: 6_000 }).catch(() => {});
+      await page.waitForTimeout(700); // 讓 MediaRecorder 收到 fake audio chunk
+      await clickIfVisible(page, /停止錄音/);
+      await page.getByRole('button', { name: /下一題|繼續下一步/ }).first().waitFor({ state: 'visible', timeout: 6_000 }).catch(() => {});
+      continue;
+    }
+    if (!(await page.locator('.voice-module').isVisible().catch(() => false))) return;
+    await page.waitForTimeout(300);
+  }
+}
+
+/** 影片（錄製版，維度②用）：開攝影機 → 錄 ~2s → 停 → 下一步，真的把 fake video
+ *  錄進 mediaFiles（後續 ResultView 會背景跑 MediaPipe，10s timeout / 失敗回 null）。 */
+export async function recordVideo(page: Page): Promise<void> {
+  for (let i = 0; i < 12; i++) {
+    if (await clickIfVisible(page, /繼續下一步/)) return;
+    await clickIfVisible(page, /開啟攝影機/);
+    const rec = page.getByRole('button', { name: /開始錄製/ });
+    if (await rec.isVisible().catch(() => false)) {
+      await rec.click();
+      await page.waitForTimeout(2_000);
+      await clickIfVisible(page, /停止錄製/);
+      await page.getByRole('button', { name: /繼續下一步/ }).waitFor({ state: 'visible', timeout: 8_000 }).catch(() => {});
+      continue;
+    }
+    if (!(await page.locator('.video-module').isVisible().catch(() => false))) return;
+    await page.waitForTimeout(300);
+  }
+}
+
 /** 繪圖：對 canvas 派發指標事件畫線，逐一送出所有形狀直到「繼續下一步」。 */
 export async function doDrawing(page: Page): Promise<void> {
   for (let i = 0; i < 12; i++) {
