@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test';
-import questionsJson from '../../../src/data/questionnaire/questions.json';
+import questionsJson from '../../../src/data/questionnaire/questions.json' with { type: 'json' };
 import type { AgeGroupCDSA } from '../../../src/lib/utils/age-groups';
 
 interface Q { id: string; domain: string; ageGroups: string[]; options: { score: number }[]; }

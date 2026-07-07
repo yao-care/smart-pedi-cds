@@ -10,7 +10,7 @@
  * spec: docs/superpowers/specs/2026-05-28-questionnaire-norms-design.md §6 Phase 2 + §13.1
  */
 
-import questionsJson from '../../data/questionnaire/questions.json';
+import questionsJson from '../../data/questionnaire/questions.json' with { type: 'json' };
 import type { AgeGroupCDSA } from '../utils/age-groups';
 
 interface QuestionOption {

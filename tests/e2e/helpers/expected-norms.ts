@@ -1,4 +1,4 @@
-import rawTable18 from '../../../src/data/baselines/asq3-table18-raw.json';
+import rawTable18 from '../../../src/data/baselines/asq3-table18-raw.json' with { type: 'json' };
 import type { AgeGroupCDSA } from '../../../src/lib/utils/age-groups';
 
 type Area = 'communication' | 'gross_motor' | 'fine_motor' | 'problem_solving' | 'personal_social';
