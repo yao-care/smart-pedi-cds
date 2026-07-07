@@ -5,6 +5,7 @@
   import { submitAssessmentToFhir } from '../../lib/fhir/cdsa-submit';
   import { computeTriage, type TriageResult } from '../../engine/cdsa/triage';
   import { computeDomainScores } from '../../engine/cdsa/radar-scoring';
+  import { analyzeGrossMotorForAssessment } from '../../lib/assessment/active-module-analysis';
   import RadarChart from './RadarChart.svelte';
   import EducationMatch from './EducationMatch.svelte';
   import AssessmentPdfReport from './AssessmentPdfReport.svelte';
@@ -38,34 +39,52 @@
 
   // 進入結果頁時，從 partialAnalysis 即時計算分流（<1 秒）
   $effect(() => {
-    if (!assessmentStore.ageGroup) return;
+    const ageGroup = assessmentStore.ageGroup;
+    if (!ageGroup) return;
     const pa = assessmentStore.partialAnalysis;
+    const assessmentId = assessmentStore.assessment?.id;
+    void runTriage(ageGroup, pa, assessmentId);
+  });
 
-    computeTriage({
-      ageGroup: assessmentStore.ageGroup,
-      behavior: pa.behaviorMetrics ?? {
-        responseTimeDistribution: { p50: 0, p95: 0, std: 0 },
-        interactionRhythm: 0, operationConsistency: 0, retryCount: 0,
-        interruptionPattern: 0, reactionLatency: 0, completionRate: 0,
-      },
-      voice: pa.voiceMetrics ?? {
-        pitchMean: null, pitchStd: null, intensityMean: null, intensityStd: null,
-        speechRate: null, fluencyPauseCount: 0, voiceLatencyMean: null,
-        voiceDurationTotal: 0, speechRatio: 0, mfccMean: null, spectralCentroid: null,
-      },
-      drawing: pa.drawingResult ?? { shapes: [], overallScore: 0, maturityLevel: 'age_appropriate' },
-      questionnaireScores: pa.questionnaireScores,
-      questionnaireMaxScores: pa.questionnaireMaxScores,
-      grossMotor: pa.grossMotorResult ? {
-        classification: pa.grossMotorResult.classification,
-        confidence: pa.grossMotorResult.confidence,
-        features: pa.grossMotorResult.features as unknown as Record<string, number>,
-      } : undefined,
-    }).then(result => {
+  async function runTriage(
+    ageGroup: NonNullable<typeof assessmentStore.ageGroup>,
+    pa: typeof assessmentStore.partialAnalysis,
+    assessmentId: string | undefined,
+  ) {
+    try {
+      // 粗大動作背景 enrich：VideoModule 只存影片、不算分析（MediaPipe 重 ML 不宜
+      // 在錄影後的 module 層跑，會拖累接續的 drawing 互動）。這裡在結果頁的 async
+      // 載入態下補跑（有 isComputing spinner），逾時 / 失敗 → null → triage 跳過。
+      let grossMotor = pa.grossMotorResult ?? null;
+      if (!grossMotor && assessmentId) {
+        grossMotor = await analyzeGrossMotorForAssessment(assessmentId, ageGroup);
+      }
+
+      const result = await computeTriage({
+        ageGroup,
+        behavior: pa.behaviorMetrics ?? {
+          responseTimeDistribution: { p50: 0, p95: 0, std: 0 },
+          interactionRhythm: 0, operationConsistency: 0, retryCount: 0,
+          interruptionPattern: 0, reactionLatency: 0, completionRate: 0,
+        },
+        voice: pa.voiceMetrics ?? {
+          pitchMean: null, pitchStd: null, intensityMean: null, intensityStd: null,
+          speechRate: null, fluencyPauseCount: 0, voiceLatencyMean: null,
+          voiceDurationTotal: 0, speechRatio: 0, mfccMean: null, spectralCentroid: null,
+        },
+        drawing: pa.drawingResult ?? { shapes: [], overallScore: 0, maturityLevel: 'age_appropriate' },
+        questionnaireScores: pa.questionnaireScores,
+        questionnaireMaxScores: pa.questionnaireMaxScores,
+        grossMotor: grossMotor ? {
+          classification: grossMotor.classification,
+          confidence: grossMotor.confidence,
+          features: grossMotor.features as unknown as Record<string, number>,
+        } : undefined,
+      });
       triageResult = result;
       isComputing = false;
       saveResult(result);
-    }).catch(() => {
+    } catch {
       // 分流計算失敗時用預設結果
       triageResult = {
         category: 'normal', confidence: 0.5,
@@ -73,8 +92,8 @@
         anomalyCount: 0, details: [],
       };
       isComputing = false;
-    });
-  });
+    }
+  }
 
   const domainScores = $derived(computeDomainScores(triageResult));
 

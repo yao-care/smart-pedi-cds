@@ -2,6 +2,7 @@
   import { assessmentStore } from '../../lib/stores/assessment.svelte';
   import { recordEvent, saveMedia } from '../../lib/db/assessment-events';
   import { instructionLevel } from '../../lib/utils/age-groups';
+  import { analyzeVoiceForAssessment } from '../../lib/assessment/active-module-analysis';
 
   // Voice prompts per age group
   // image: large emoji shown to child; ttsText: what TTS says (may differ from display)
@@ -165,12 +166,24 @@
     await startRecording();
   }
 
-  function nextPrompt() {
+  async function nextPrompt() {
     hasRecorded = false;
     if (currentPromptIndex < activePrompts.length - 1) {
       currentPromptIndex++;
     } else {
       isComplete = true;
+      // 語音全部答完 → 從 voice events 算 VoiceMetrics 並餵進 partialAnalysis，
+      // 讓 triage 收到 language 域訊號（過去只存 events、從不 addAnalysis）。
+      // 事件數學輕算（<1ms），同 DrawingModule 在完成時 inline 計算的模式。
+      const assessmentId = assessmentStore.assessment?.id;
+      if (assessmentId) {
+        try {
+          const voiceMetrics = await analyzeVoiceForAssessment(assessmentId);
+          assessmentStore.addAnalysis({ voiceMetrics });
+        } catch (err) {
+          console.warn('[VoiceModule] voice analysis failed', err);
+        }
+      }
     }
   }
 

@@ -1,8 +1,16 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/svelte';
 import ResultView from '../../src/components/assess/ResultView.svelte';
 import { assessmentStore } from '../../src/lib/stores/assessment.svelte';
+import { saveMedia } from '../../src/lib/db/assessment-events';
+import { analyzeGrossMotor } from '../../src/engine/cdsa/gross-motor-analysis';
+import { db } from '../../src/lib/db/schema';
 import type { Child, Assessment } from '../../src/lib/db/schema';
+
+// MediaPipe 重 ML：mock 掉，讓 ResultView 的 gross-motor 背景 enrich 可確定性測試。
+vi.mock('../../src/engine/cdsa/gross-motor-analysis', () => ({
+  analyzeGrossMotor: vi.fn(),
+}));
 
 /** Build a minimal Child whose age (derived from birthDate) falls in 25-36m. */
 function makeChild(birthOffsetMonths: number): Child {
@@ -28,8 +36,10 @@ function makeAssessment(): Assessment {
 }
 
 describe('ResultView', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     assessmentStore.reset();
+    vi.mocked(analyzeGrossMotor).mockReset();
+    await db.mediaFiles.clear(); // 隔離：避免跨測試殘留影片誤觸 enrich
   });
 
   afterEach(() => {
@@ -86,6 +96,40 @@ describe('ResultView', () => {
     // After resolution, the result section should contain non-empty text.
     // The triage summary is a sentence — assert there's substantive content.
     expect(container.textContent ?? '').toMatch(/評估|建議|追蹤|正常|轉介/);
+  });
+
+  it('enriches triage with gross-motor analysis when a video was recorded', async () => {
+    // VideoModule 只存影片；粗大動作分析由 ResultView 背景 enrich 補跑。此測試證明
+    // 「有影片 → ResultView 觸發 analyzeGrossMotor → 結果進入 triage」整條 wiring。
+    assessmentStore.child = makeChild(30); // 25-36m
+    assessmentStore.assessment = makeAssessment();
+    assessmentStore.partialAnalysis = {
+      questionnaireScores: { gross_motor: 4 },
+      questionnaireMaxScores: { gross_motor: 4 },
+    };
+    await saveMedia({
+      assessmentId: 'test-assess',
+      childId: 'test-child',
+      fileType: 'video',
+      blob: new Blob(['fake-video'], { type: 'video/webm' }),
+      mimeType: 'video/webm',
+      fileSize: 10,
+      duration: 15,
+    });
+    vi.mocked(analyzeGrossMotor).mockResolvedValue({
+      classification: 'delayed',
+      confidence: 0.9,
+      features: {} as never,
+      frameCount: 30,
+      poseDetectionRate: 1,
+    });
+
+    render(ResultView);
+
+    // triage 完成 → 分類標籤出現，且 enrich 確實呼叫過 MediaPipe 分析
+    await screen.findByText(/正常|追蹤觀察|建議轉介/);
+    expect(analyzeGrossMotor).toHaveBeenCalledTimes(1);
+    expect(vi.mocked(analyzeGrossMotor).mock.calls[0][1]).toBe('25-36m');
   });
 
   it.skip('renders all 6 questionnaire domains in radar when all provided', () => {
