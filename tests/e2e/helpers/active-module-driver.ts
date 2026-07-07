@@ -1,22 +1,26 @@
 import type { Page } from '@playwright/test';
 
-/** 互動遊戲：自動點刺激選項直到完成或跳過。GameModule 完成會 addAnalysis(behaviorMetrics)。 */
+/** 互動遊戲：GameModule 的選項畫在 `<canvas>` 上（座標 hit-test），且採
+ *  always-positive feedback——點 canvas 任意位置都會 advance（handleCanvasClick
+ *  不論命中與否都 showFeedback + setTimeout(advance,800)）。故點 canvas 中心、
+ *  等 feedback+advance（~900ms）、重複到「遊戲完成！」出現即可。圖卡不足時走
+ *  「跳過遊戲評估」。完成後點「繼續下一步」才 finishAndContinue → addAnalysis。 */
 export async function playGame(page: Page): Promise<void> {
-  // 遊戲每回合出現數個可點目標；點到出現「繼續下一步」為止，最多 20 回合。
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 40; i++) {
     const next = page.getByRole('button', { name: /繼續下一步/ });
-    if (await next.isVisible().catch(() => false)) break;
-    const stimulus = page.locator('[data-game-option], .stimulus-option, button.card-option').first();
-    if (await stimulus.isVisible().catch(() => false)) {
-      await stimulus.click();
-    } else {
-      // 找不到互動元件 → 用跳過鈕保流程前進
-      const skip = page.getByRole('button', { name: /跳過遊戲評估/ });
-      if (await skip.isVisible().catch(() => false)) { await skip.click(); break; }
+    if (await next.isVisible().catch(() => false)) { await next.click(); return; }
+    const skip = page.getByRole('button', { name: /跳過遊戲評估/ });
+    if (await skip.isVisible().catch(() => false)) { await skip.click(); return; }
+    const canvas = page.locator('.game-module canvas');
+    if (await canvas.isVisible().catch(() => false)) {
+      const box = await canvas.boundingBox();
+      if (box) await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+      await page.waitForTimeout(900); // 800ms feedback + advance
+      continue;
     }
     await page.waitForTimeout(400);
   }
-  await page.getByRole('button', { name: /繼續下一步/ }).click();
+  await page.getByRole('button', { name: /繼續下一步/ }).click({ timeout: 10_000 });
 }
 
 /** 語音：授權麥克風（fake audio）→ 播放+錄音 → 下一題，走完所有 prompt。 */
