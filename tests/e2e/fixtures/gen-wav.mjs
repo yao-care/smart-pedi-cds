@@ -1,4 +1,5 @@
 import { writeFileSync } from 'fs';
+import path from 'path';
 
 const sr = 16000, sec = 3, n = sr * sec;
 const data = Buffer.alloc(44 + n * 2);
@@ -20,5 +21,11 @@ for (let i = 0; i < n; i++) {
   data.writeInt16LE(Math.round(Math.sin(2 * Math.PI * 440 * i / sr) * 8000), 44 + i * 2);
 }
 
-writeFileSync('tests/e2e/fixtures/fake-voice.wav', data);
-console.log('wrote fake-voice.wav');
+try {
+  const filepath = path.resolve('tests/e2e/fixtures/fake-voice.wav');
+  writeFileSync(filepath, data);
+  console.log(`wrote ${filepath}`);
+} catch (e) {
+  console.error('Failed to write WAV:', e.message);
+  process.exit(1);
+}
