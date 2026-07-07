@@ -23,7 +23,7 @@ test.describe('Parent assessment flow', () => {
 
   test('home page renders with the assessment shell', async ({ page }) => {
     await page.goto('/assess/');
-    await expect(page).toHaveTitle(/兒童發展評估/);
+    await expect(page).toHaveTitle(/開始評估 \| Smart Pedi/);
     // Step indicator with 7 steps is the canonical sign the shell loaded
     await expect(page.getByRole('heading', { name: '兒童基本資料' })).toBeVisible({ timeout: 10000 });
   });
@@ -97,5 +97,68 @@ test.describe('Parent assessment flow', () => {
     await page.getByRole('link', { name: '開始評估' }).first().click();
     await expect(page).toHaveURL(/\/assess/);
     await expect(page.getByRole('heading', { name: '兒童基本資料' })).toBeVisible({ timeout: 10000 });
+  });
+});
+
+/**
+ * Regression guard for the ChildProfile hydration race (詳見
+ * detection-coverage-STATUS / memory triage-data-flow).
+ *
+ * 原 bug：SSR 標題先於 client:load island hydration 出現，`type="submit"` 按鈕
+ * 在 hydration 前是一顆原生 submit 按鈕，過早點擊觸發瀏覽器原生 form 提交 →
+ * reload 回同 URL → 已填資料全失、畫面看似卡死。
+ *
+ * 修法把提交路徑從原生 form submit 整個拆掉（button → type="button" + onclick，
+ * form 拿掉 onsubmit，未 hydration 前 disabled）。以下兩個測試各驗一層保證，
+ * 且都是確定性（不賽 hydration 時序）。
+ */
+test.describe('ChildProfile hydration guard (regression)', () => {
+  // 停用 JS → island 永不 hydration，直接檢視 SSR 靜態 HTML 的守門狀態
+  test.describe('pre-hydration (JS disabled)', () => {
+    test.use({ javaScriptEnabled: false });
+
+    test('start button is a disabled non-submit button before hydration', async ({ page }) => {
+      await page.goto('/assess/');
+
+      // SSR 就渲染出「準備中…」且 disabled 的按鈕
+      const btn = page.getByRole('button', { name: '準備中…' });
+      await expect(btn).toBeVisible();
+      await expect(btn).toBeDisabled();
+      // type="button" → 即使被啟用也不觸發原生提交
+      await expect(btn).toHaveAttribute('type', 'button');
+
+      // child-profile 表單內沒有任何 submit 按鈕 → 無原生提交路徑
+      await expect(page.locator('form.child-profile button[type="submit"]')).toHaveCount(0);
+    });
+  });
+
+  test('submitting never triggers a native form reload', async ({ page }) => {
+    await page.goto('/assess/');
+    await expect(page.getByRole('heading', { name: '兒童基本資料' })).toBeVisible({ timeout: 10000 });
+
+    // 種一個 window 標記；整頁 reload（原生提交的症狀）會清掉它
+    await page.evaluate(() => {
+      (window as unknown as { __noReload?: boolean }).__noReload = true;
+    });
+
+    // hydration 完成後按鈕啟用為「開始評估」
+    const startBtn = page.getByRole('button', { name: '開始評估' });
+    await expect(startBtn).toBeEnabled({ timeout: 10000 });
+
+    // 填出生日期（4 個月大 → 2-6m 年齡層）
+    const birth = new Date();
+    birth.setMonth(birth.getMonth() - 4);
+    await page.getByLabel(/出生日期/).fill(birth.toISOString().slice(0, 10));
+
+    await startBtn.click();
+
+    // 進入問卷（SPA 狀態轉換，非整頁導航）
+    await expect(page.getByRole('progressbar')).toBeVisible({ timeout: 5000 });
+
+    // 標記仍在 → 全程沒有整頁 reload
+    const survived = await page.evaluate(
+      () => (window as unknown as { __noReload?: boolean }).__noReload === true,
+    );
+    expect(survived).toBe(true);
   });
 });

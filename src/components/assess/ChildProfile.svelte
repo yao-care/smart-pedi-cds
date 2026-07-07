@@ -7,6 +7,12 @@
   let nickName = $state('');
   let validationError = $state<string | null>(null);
 
+  // hydration 旗標：$effect 只在 client 端 island 完成 hydration 後執行。
+  // 未 hydration 前按鈕保持 disabled，避免使用者過早點「開始評估」觸發
+  // 瀏覽器原生 form 提交（reload 回同 URL、丟失已填資料、畫面看似卡死）。
+  let hydrated = $state(false);
+  $effect(() => { hydrated = true; });
+
   const ageMonths = $derived(birthDate ? ageInMonths(birthDate) : null);
   const eligible = $derived(birthDate ? isEligible(birthDate) : null);
   const ageGroup = $derived(birthDate && eligible ? ageGroupCDSA(birthDate) : null);
@@ -27,7 +33,7 @@
   }
 </script>
 
-<form class="child-profile" onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+<form class="child-profile">
   <h2>兒童基本資料</h2>
   <p class="form-desc">請填寫以下資料，系統將依據年齡自動調整評估內容。</p>
 
@@ -78,8 +84,8 @@
     <p class="error" role="alert">{assessmentStore.error}</p>
   {/if}
 
-  <button type="submit" class="btn-start" disabled={assessmentStore.isLoading}>
-    {assessmentStore.isLoading ? '準備中…' : '開始評估'}
+  <button type="button" class="btn-start" onclick={handleSubmit} disabled={!hydrated || assessmentStore.isLoading}>
+    {!hydrated || assessmentStore.isLoading ? '準備中…' : '開始評估'}
   </button>
 </form>
 
