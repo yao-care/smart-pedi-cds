@@ -244,9 +244,16 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
   }
 
   // Gross motor (from MediaPipe Pose analysis).
-  // Map categorical classification → directionalZ so it participates in
-  // per-domain gating uniformly with other metrics. 'delayed' → -2 SD strong
-  // signal; 'normal' → 0; absent → no push.
+  // DISPLAY-ONLY (followup B1, 2026-07-08): `analyzeGrossMotor` is a placeholder
+  // threshold heuristic (self-documented "In production, this would use an ONNX
+  // model trained on clinical data"), NOT a clinical classifier. Feeding its
+  // categorical z into per-domain gating diluted a genuine questionnaire-based
+  // gross_motor warning toward "normal" (e.g. questionnaire z≈-5.5 averaged with
+  // a placeholder 'normal' z=0 → -2.7, and a borderline refer could slip to
+  // monitor). The questionnaire is the reliable source for gross_motor, so we
+  // still surface the pose detail for the physician view but EXCLUDE it from
+  // the gating composition below (see the `poseClassification` skip in the
+  // domainZs loop).
   if (input.grossMotor) {
     let poseDirectionalZ: number | null = null;
     if (input.grossMotor.classification === 'delayed') poseDirectionalZ = -2;
@@ -277,6 +284,10 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
   // domain low?") but does NOT participate in this gating.
   const domainZs: Record<string, number[]> = {};
   for (const d of details) {
+    // Pose classification is display-only (placeholder heuristic, not a clinical
+    // model) — kept in `details` for the physician view but must not participate
+    // in per-domain gating. See the gross_motor block above (followup B1).
+    if (d.metric === 'poseClassification') continue;
     if (d.directionalZ !== null && d.directionalZ !== undefined) {
       if (!domainZs[d.domain]) domainZs[d.domain] = [];
       domainZs[d.domain].push(d.directionalZ);

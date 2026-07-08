@@ -195,6 +195,47 @@ describe('computeTriage', () => {
     expect(gmDetail?.isAnomaly).toBe(true);
   });
 
+  it('keeps pose detail for display but excludes it from gross_motor gating (B1: display-only)', async () => {
+    // The pose classifier is a placeholder heuristic (not a clinical model),
+    // so it must be display-only: its detail is still surfaced for the
+    // physician view, but it does NOT participate in per-domain gating.
+    const result = await computeTriage({
+      ...baseInput,
+      grossMotor: { classification: 'delayed', confidence: 0.9, features: {} },
+    });
+    const pose = result.details.find((d) => d.metric === 'poseClassification');
+    expect(pose).toBeDefined(); // still shown
+    // No questionnaire gross_motor here → pose is the only gross_motor signal,
+    // and since it is display-only the domain must not be gated at all.
+    expect(result.domainLevelZ?.gross_motor).toBeUndefined();
+    expect(result.domainCategories?.gross_motor).toBeUndefined();
+  });
+
+  it('pose "normal" does NOT dilute a questionnaire gross_motor refer signal (B1)', async () => {
+    // Regression for the followup B1 dilution bug: a placeholder pose 'normal'
+    // (z=0) averaged with a strong questionnaire refer signal previously pulled
+    // the gross_motor composite up toward monitor/normal. Display-only fixes it.
+    const withPose = await computeTriage({
+      ...baseInput,
+      questionnaireScores: { gross_motor: 2 },
+      questionnaireMaxScores: { gross_motor: 20 },
+      grossMotor: { classification: 'normal', confidence: 0.9, features: {} },
+    });
+    const withoutPose = await computeTriage({
+      ...baseInput,
+      questionnaireScores: { gross_motor: 2 },
+      questionnaireMaxScores: { gross_motor: 20 },
+    });
+    // Questionnaire score 2/20 is a severe delay (z ≤ -2 → refer).
+    expect(withoutPose.domainCategories?.gross_motor).toBe('refer');
+    // Adding a placeholder pose 'normal' must NOT change the gating outcome.
+    expect(withPose.domainCategories?.gross_motor).toBe('refer');
+    expect(withPose.domainLevelZ?.gross_motor).toBeCloseTo(
+      withoutPose.domainLevelZ!.gross_motor,
+      10,
+    );
+  });
+
   it('directionalZ is negative when reactionLatency is high (worse than norm)', async () => {
     const result = await computeTriage({
       ...baseInput,
