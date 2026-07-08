@@ -5,6 +5,7 @@ import { assessmentStore } from '../../src/lib/stores/assessment.svelte';
 import { saveMedia } from '../../src/lib/db/assessment-events';
 import { analyzeGrossMotor } from '../../src/engine/cdsa/gross-motor-analysis';
 import { db } from '../../src/lib/db/schema';
+import { getQuestionnaireMaxScores } from '../../src/lib/questionnaire/max-scores';
 import type { Child, Assessment } from '../../src/lib/db/schema';
 
 // MediaPipe 重 ML：mock 掉，讓 ResultView 的 gross-motor 背景 enrich 可確定性測試。
@@ -132,16 +133,24 @@ describe('ResultView', () => {
     expect(vi.mocked(analyzeGrossMotor).mock.calls[0][1]).toBe('25-36m');
   });
 
-  it.skip('renders all 6 questionnaire domains in radar when all provided', () => {
-    // TODO: setup mocking pattern for triageResult emission to ResultView
-    // The radar chart is populated via triageResult.details which is computed
-    // inside ResultView's $effect via computeTriage(). To test the 6-domain
-    // radar we need to either:
-    //   1. inject triageResult directly into assessmentStore (bypassing the effect), or
-    //   2. mock computeTriage to return a controlled TriageResult.
-    // Neither is straightforward with the current architecture where
-    // triageResult is private state inside ResultView. Consider exposing
-    // assessmentStore.triageResult as the single truth source and have
-    // ResultView set it there upon completion.
+  it('renders all questionnaire domains in the radar when all provided', async () => {
+    // 原 skip 顧慮「triageResult 是 ResultView 私有」；改斷言渲染出來的雷達
+    // DOM（RadarChart 對每個 detail 的 domain 畫一個 .radar-label 中文標籤），
+    // 走真實 computeTriage 路徑，不需注入私有 state。
+    assessmentStore.child = makeChild(30); // 25-36m
+    assessmentStore.assessment = makeAssessment();
+    const maxScores = getQuestionnaireMaxScores('25-36m');
+    const scores = Object.fromEntries(
+      Object.entries(maxScores).map(([d, m]) => [d, Math.floor(m / 2)]),
+    );
+    assessmentStore.partialAnalysis = { questionnaireScores: scores, questionnaireMaxScores: maxScores };
+
+    const { container } = render(ResultView);
+    await screen.findByText(/正常|追蹤觀察|建議轉介/);
+
+    // 25-36m 的 6 個問卷面向中文標籤都應出現在雷達
+    for (const zh of ['認知', '細動作', '粗動作', '語言理解', '語言表達', '社會情緒']) {
+      expect(container.textContent ?? '', `雷達應含面向「${zh}」`).toContain(zh);
+    }
   });
 });

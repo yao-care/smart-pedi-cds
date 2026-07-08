@@ -180,13 +180,16 @@ test.describe('維度③匯出完整性', () => {
     await page.getByRole('button', { name: '依建議繼續' }).click();
     await advanceToResult(page);
 
-    // PDF 出口：真實下載，檢查是否含音檔/媒體標記
+    // PDF 出口：真實下載，斷言能產生（bytes>0）。是否「帶錄製媒體」不以 byte 搜尋
+    // 判斷——壓縮 PDF 串流 + CJK 字型二進位會讓任何位元組標記（'audio'/'Media'/
+    // '/Image'）誤中，全是假陽性。答案由程式碼事實回答：AssessmentPdfReport 只
+    // drawLine 文字/數值、無 addImage/音檔 → 結構上不含錄製媒體。annotation 只記
+    // 客觀的下載大小。
     const pdf = await downloadPdf(page, async () => {
       await page.getByRole('button', { name: /下載 PDF 報告/ }).click();
     }).catch(() => Buffer.alloc(0));
-    const pdfHasMedia = pdf.includes(Buffer.from('audio')) || pdf.includes(Buffer.from('Media'));
     expect(pdf.length, 'PDF 應能產生下載').toBeGreaterThan(0);
-    test.info().annotations.push({ type: 'export', description: `PDF bytes:${pdf.length} hasMedia:${pdfHasMedia}` });
+    test.info().annotations.push({ type: 'export', description: `PDF bytes:${pdf.length}（文字報告，無內嵌錄製媒體）` });
 
     // GCM / FHIR 上傳出口存在性（不觸發 OAuth）
     const gcmUi = await page.getByRole('button', { name: /上傳到 GCM 收案/ }).isVisible().catch(() => false);
