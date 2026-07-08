@@ -3,6 +3,12 @@
   import { ageInMonths } from '../../lib/utils/age-groups';
   import { isAuthorized } from '../../lib/fhir/client';
   import type { Assessment, Child } from '../../lib/db/schema';
+  import {
+    buildHistoryExport,
+    historyExportFilename,
+    countExportedAssessments,
+    triggerJsonDownload,
+  } from '../../lib/assessment/export-history';
 
   interface ChildWithAssessments {
     child: Child;
@@ -93,6 +99,16 @@
   const allAssessments = $derived(
     childrenData.flatMap((c) => c.assessments.map((a) => ({ child: c.child, assessment: a }))),
   );
+
+  const exportCount = $derived(countExportedAssessments(childrenData));
+
+  /** Followup B3: download all local assessment data as JSON. Purely local —
+   *  the user's own IndexedDB records saved to their own device, no upload. */
+  function exportData() {
+    const exportedAt = new Date().toISOString();
+    const payload = buildHistoryExport(childrenData, exportedAt);
+    triggerJsonDownload(payload, historyExportFilename(exportedAt));
+  }
 
   const stats = $derived.by(() => {
     const completed = allAssessments.filter(({ assessment }) => assessment.status === 'completed');
@@ -307,6 +323,20 @@
         </strong>
       </div>
     </section>
+
+    <div class="history-toolbar">
+      <button
+        type="button"
+        class="btn-export"
+        onclick={exportData}
+        title="下載本裝置的評估紀錄（JSON），純本地不上傳"
+      >
+        ⤓ 匯出資料（JSON）
+      </button>
+      <span class="export-hint">
+        {exportCount} 筆評估 · 純本地下載，不會上傳
+      </span>
+    </div>
 
     {#each childrenData as { child, assessments }}
       <section class="child-section">
@@ -636,6 +666,36 @@
     font-size: var(--text-lg);
     font-weight: var(--font-bold);
     color: var(--text);
+  }
+
+  .history-toolbar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-6);
+  }
+
+  .btn-export {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    cursor: pointer;
+    min-height: 44px;
+  }
+
+  .btn-export:hover { border-color: var(--accent); color: var(--accent); }
+
+  .export-hint {
+    font-size: var(--text-xs);
+    color: color-mix(in srgb, var(--text), var(--bg) 30%);
   }
 
   .child-section { margin-bottom: var(--space-8); }

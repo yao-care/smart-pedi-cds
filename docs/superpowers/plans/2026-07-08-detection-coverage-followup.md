@@ -3,6 +3,10 @@
 這份是「測試 + 診斷照出的問題」清單，供 /clear 後續作。分三類：**已修待驗**、
 **待決策**、**交付**。每項附驗收條件。
 
+> **2026-07-08 進度**：B1（改 display-only）、B2（MediaPipe 釘版）、B3（/history/
+> JSON 匯出）**已實作＋單元測試**（見各節「✅ 已做」）。單元 710 綠、`pnpm check`
+> 0 error。A1 待真機（需先 push）、C1 push 待用戶確認。
+
 前置事實：本次 8 個 commit 皆**本地、未 push**（`2ff6dba`..`ce28cbf`，見 git log
 `7e50be1..HEAD`）。單元 698 綠、E2E 204（維度①190/②7/③1）、coverage-audit 100%。
 
@@ -37,6 +41,10 @@
   gating（問卷為粗大動作的可靠來源）；(c) 維持現狀。
 - **驗收**：決定並落實其一；若 (b)，triage.ts 移除 gross_motor poseClassification
   進 domainZ 合成，並補測試。
+- **✅ 已做（2026-07-08，選 (b) display-only）**：`triage.ts` domainZs 合成迴圈跳過
+  `metric === 'poseClassification'`（pose detail 仍保留供醫師檢視，但不進 gating）。
+  補 2 測試：pose 保留於 details 但 gross_motor 不被 pose gating；pose 'normal' 不再
+  稀釋問卷 refer 訊號（回歸驗證：稀釋前 z=-2.73 vs 修後 =-5.46）。
 
 ### B2. MediaPipe 用未釘版的 `@latest` CDN URL（可靠性 / 供應鏈 / 隱私）
 - **問題**：`gross-motor-analysis.ts` 載入
@@ -46,6 +54,9 @@
   隱私足跡）。
 - **選項**：釘特定版本；考慮 self-host WASM + 模型（離線 / 隱私 / 穩定）。
 - **驗收**：URL 釘版；（可選）模型改由本站 `public/models/` 提供。
+- **✅ 已做（2026-07-08，釘版）**：抽出 `MEDIAPIPE_WASM_URL`（釘 `@0.10.35`，同 npm
+  依賴）、`POSE_LANDMARKER_MODEL_URL`（釘 `/float16/1/`）常數。兩 URL 皆 HEAD 200 驗過。
+  補 `gross-motor-cdn-pinning.test.ts` 守門防 `@latest` 回歸。self-host 仍列可選後續。
 
 ### B3. /history/ 批次資料匯出（次要功能，非缺陷）
 - **現況**：個別 PDF 匯出已存在（history →「看詳細」→ /result/ → 下載 PDF）。
@@ -53,6 +64,11 @@
 - **選項**：加 client-side「匯出資料（JSON）」於 /history/（純本地、使用者自己的
   資料、不上傳，符合隱私）。
 - **驗收**：/history/ 有匯出鈕，下載使用者本地 IndexedDB 的評估資料 JSON。
+- **✅ 已做（2026-07-08）**：`src/lib/assessment/export-history.ts`（純函式
+  `buildHistoryExport` / `historyExportFilename` / `countExportedAssessments` +
+  瀏覽器端 `triggerJsonDownload`）。AssessmentHistory.svelte 於統計列下加「⤓ 匯出資料
+  （JSON）」鈕（純本地不上傳；含 `format`/`version` 供未來匯入辨識）。補 8 測試。
+  **待部署後 live smoke**（點鈕實際下載，同 A1 不啟本機 server）。
 
 ---
 
