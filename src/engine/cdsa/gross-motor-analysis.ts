@@ -51,6 +51,16 @@ const JOINTS = {
   right_ankle: 28,
 } as const;
 
+// CDN URLs 一律釘版，禁止 `@latest` / `/latest/`（followup B2, 2026-07-08）：
+// 未釘版的 CDN URL 讓上游釋出可無預警破壞或改變行為——對臨床工具是可靠性 /
+// 供應鏈風險。WASM 釘 npm 依賴的同版（package.json `@mediapipe/tasks-vision`），
+// 升級 npm 依賴時同步 bump；模型釘版本目錄 `1`（Google Storage 供應，未來可考慮
+// self-host 至 public/models/）。gross-motor-cdn-pinning.test.ts 守門防回歸。
+export const MEDIAPIPE_WASM_URL =
+  'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.35/wasm';
+export const POSE_LANDMARKER_MODEL_URL =
+  'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task';
+
 // MediaPipe cold-start（下載 WASM + 模型 + 編譯）是 gross-motor 分析的主要成本
 // （實測本機軟體 GPU 冷啟 ~38–52s、暖啟 ~1.7s）。快取 FilesetResolver（WASM loader）
 // 讓跨次分析不重載 WASM；PoseLandmarker 因 VIDEO 模式有單調遞增 timestamp 狀態、
@@ -58,9 +68,7 @@ const JOINTS = {
 // 提前觸發下載/編譯，使到結果頁時走暖啟。
 async function loadVision() {
   const { FilesetResolver } = await import('@mediapipe/tasks-vision');
-  return FilesetResolver.forVisionTasks(
-    'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm',
-  );
+  return FilesetResolver.forVisionTasks(MEDIAPIPE_WASM_URL);
 }
 
 let visionPromise: ReturnType<typeof loadVision> | null = null;
@@ -75,7 +83,7 @@ async function createPoseLandmarker() {
   const vision = await getVision();
   return PoseLandmarker.createFromOptions(vision, {
     baseOptions: {
-      modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task',
+      modelAssetPath: POSE_LANDMARKER_MODEL_URL,
       delegate: 'GPU',
     },
     runningMode: 'VIDEO',
