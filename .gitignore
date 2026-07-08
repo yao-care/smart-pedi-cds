@@ -37,3 +37,9 @@ scripts/curate/.last-build.json
 
 # Local Claude Code project config/plans
 .claude/
+
+# Phase 7 Playwright 驗證舊截圖（未追蹤，勿入 repo）
+docs/superpowers/specs/screenshots/
+
+# MediaPipe WASM —— predev/prebuild 由 copy-mediapipe-assets.mjs 從 node_modules 複製
+public/models/mediapipe-wasm/
