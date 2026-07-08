@@ -164,9 +164,13 @@ for (const ageGroup of ALL_AGE_GROUPS) {
 /**
  * 維度③：匯出完整性稽核（PDF / FHIR / GCM / 歷史下載 四出口是否帶媒體）。
  *
- * 缺口報告性質——目前四出口皆不含媒體（僅 Patient ID + 數值），以 annotation
- * 如實記錄，不因缺口讓測試紅。GCM/FHIR 上傳點下去會跳 OAuth 授權 redirect
- * （導航離開），故只驗 UI 存在、不真觸發。PDF 走真實下載事件。
+ * ⚠ 這些 annotation 記錄「四出口不帶錄製媒體」——by-design，非缺陷：
+ * - 匯出僅帶 Patient ID + 數值、不含孩子語音/影片，是 CLAUDE.md 明訂隱私原則
+ *   （「PDF/FHIR 報告僅使用 Patient ID」）；上傳媒體反而違反隱私設計。
+ * - `history download exists:false` 指「/history/ 列表頁無下載捷徑」，非無法匯出——
+ *   每筆評估的 PDF 匯出可由 history →「看詳細」→ /result/ →「下載 PDF 報告」取得。
+ * 故本段以 annotation 客觀記錄現況、不因此讓測試紅。GCM/FHIR 上傳點下去會跳 OAuth
+ * 授權 redirect（導航離開），故只驗 UI 存在、不真觸發；PDF 走真實下載事件。
  *
  * 用全 domain 滿分 → 主動模組自動 skip（只跑 game）→ 快速抵達結果頁。
  */
