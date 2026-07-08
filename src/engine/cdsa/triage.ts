@@ -211,8 +211,9 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
       const maxScore = input.questionnaireMaxScores?.[domain];
       if (!maxScore || maxScore <= 0) {
         // Without a valid maxScore we can't scale the ASQ-3 norm; skip rather than
-        // fall back to 10 (which would silently mis-scale z). The store path always
-        // provides maxScores; assessment-analyzer now also provides them.
+        // fall back to 10 (which would silently mis-scale z). The live store path
+        // always provides maxScores (QuestionnaireModule → store); the re-analyze
+        // path carries persisted maxScore via recompute-triage.
         if (import.meta.env?.DEV) {
           console.warn(`[triage] questionnaire ${domain}: missing/invalid maxScore, skip`);
         }

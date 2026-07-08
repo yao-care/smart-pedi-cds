@@ -8,11 +8,26 @@ import type { AgeGroupCDSA } from '../utils/age-groups';
  *
  * 為什麼獨立一支：VoiceModule / VideoModule 過去只存 events / media，卻從未把
  * 分析結果餵進 `partialAnalysis`，導致 triage 完全收不到語音 / 粗大動作訊號
- * （分析函式早就存在，但只接在 dead code `assessment-analyzer.analyzeAssessment`
- * 上）。這裡集中 wiring，讓元件呼叫一行、且可脫離 media API / MediaPipe 做
+ * （分析函式早就存在，但當初只接在一支無 caller 的整檔分析器上，已於 2026-07-08
+ * 移除）。這裡集中 wiring，讓元件呼叫一行、且可脫離 media API / MediaPipe 做
  * 確定性單元測試。輕算（voice 事件數學）與重算（gross-motor MediaPipe）分層：
  * voice 由模組完成時 inline 呼叫；gross-motor 由 ResultView 背景 enrich（重 ML
  * 不阻塞錄影後的 drawing 互動流）。
+ *
+ * 全模組 addAnalysis 稽核（2026-07-08，A3 收斂）——每個 triage 訊號在何處落地：
+ *   模組              | 呼叫點                         | partial 欄位          | triage guard
+ *   ----------------- | ------------------------------ | --------------------- | ------------------------
+ *   GameModule        | 模組內 step 結束               | behaviorMetrics       | behavior 恆有
+ *   DrawingModule     | 模組內畫完最後一張             | drawingResult         | shapes.length > 0
+ *   VoiceModule       | 模組內完成 inline（本檔 helper）| voiceMetrics          | voiceDurationTotal > 0
+ *   QuestionnaireModule| 模組完成                       | questionnaireScores   | questionnaireScores 存在
+ *   VideoModule       | 不呼叫；gross-motor 由 ResultView| grossMotorResult      | if (input.grossMotor)
+ *                     | 背景 enrich（本檔 helper）      | （背景補算）          |
+ *
+ * 為何 VideoModule 不比照 voice 在模組內 inline：gross-motor 是重 ML（MediaPipe 下載
+ * WASM + 模型 + 逐幀推論），在錄影後的 module 層同步跑會阻塞接續的 drawing 互動流。
+ * 故 by-design 留在結果頁 async 載入態（有 spinner）背景補算，逾時 / 失敗 → null →
+ * triage guard 自然跳過，不製造假訊號。此為刻意分層，非漏接。
  */
 
 /**

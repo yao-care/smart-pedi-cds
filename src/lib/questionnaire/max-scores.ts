@@ -1,11 +1,11 @@
 /**
  * 從 questions.json 計算每 (domain × ageGroup) 的問卷滿分。
  *
- * 為什麼存在：本系統有兩條呼叫 triage 的路徑：
- *   1. Live 評估：QuestionnaireModule → store → ResultView → triage（store 內已有 maxScores）
- *   2. Re-analyze：assessment-analyzer 從 IndexedDB events 重算（events 沒存 maxScore）
- * Phase 1 引入 ASQ-3 常模縮放後（mean_local = mean_asq × maxScore/60），maxScore 不能再 fallback
- * 到 hardcoded 10，必須準確。本 helper 從 questions.json 真相源算出，兩條路徑共用。
+ * 為什麼存在：ASQ-3 常模縮放（mean_local = mean_asq × maxScore/60）要求 maxScore 準確，
+ * 不能 fallback 到 hardcoded 10。本 helper 從 questions.json 真相源算出每 domain 滿分，
+ * 作為單一真相源供守門測試斷言。live 評估路徑 QuestionnaireModule 直接用 section 的
+ * `s.max` 填 store（值同源）；re-analyze 路徑（schema.ts upgrade → recompute-triage）讀
+ * 持久化 detail 內的 `maxScore`。此 helper 讓「questions.json 算出的滿分」有一處可驗證。
  *
  * spec: docs/superpowers/specs/2026-05-28-questionnaire-norms-design.md §6 Phase 2 + §13.1
  */
