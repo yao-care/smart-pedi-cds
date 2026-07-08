@@ -6,7 +6,7 @@ import { expectedQuestionnaireZ } from './helpers/expected-norms';
 import { recordCoverage } from './helpers/coverage-recorder';
 import { playGame, doVoice, doVideo, doDrawing, recordVoice, recordVideo, installMediaStubs } from './helpers/active-module-driver';
 import { readMediaCounts } from './helpers/idb-reader';
-import { downloadPdf, hasHistoryDownload } from './helpers/export-inspector';
+import { downloadPdf, downloadJson, hasHistoryDownload } from './helpers/export-inspector';
 import { expectedActiveModuleCells } from './coverage-expected';
 import { getQuestionnaireMaxScores } from '../../src/lib/questionnaire/max-scores';
 import type { AgeGroupCDSA } from '../../src/lib/utils/age-groups';
@@ -203,5 +203,103 @@ test.describe('維度③匯出完整性', () => {
     // 歷史頁下載出口
     const histDl = await hasHistoryDownload(page);
     test.info().annotations.push({ type: 'export', description: `history download exists:${histDl}` });
+  });
+});
+
+/**
+ * A4（B3 匯出自動化 smoke，2026-07-08）：/history/「⤓ 匯出資料（JSON）」端到端。
+ *
+ * 先 seed 一次真實評估（全 domain 滿分 → 只跑 game，最快抵達 result、寫入 IDB
+ * children + assessments），再導到 /history/ 點匯出鈕，攔截 download 事件，硬斷言：
+ *   1. 檔名符 `smart-pedi-history-YYYY-MM-DD.json`（historyExportFilename 契約）
+ *   2. 內容 JSON parse 後 format='smart-pedi-history'、version=1、children[] 為陣列
+ *      且首位 child 帶 assessments 陣列（buildHistoryExport 契約）。
+ * 這一項綠 = B3 完全關閉，無殘留手動 smoke。
+ */
+test.describe('A4 匯出資料（JSON）', () => {
+  test('/history/ 匯出 JSON：檔名 + 結構契約', async ({ page }) => {
+    test.setTimeout(120_000);
+    const age: AgeGroupCDSA = '25-36m';
+    await startAssessment(page, age);
+    const domains = getQuestionnaireMaxScores(age);
+    await answerQuestionnaire(page, age, { ...domains }); // 全滿分 → 模組 skip，快速完成
+    await page.getByRole('button', { name: '依建議繼續' }).click();
+    await advanceToResult(page);
+
+    await page.goto('/history/');
+    // 匯出鈕只在有資料時渲染（childrenData.length !== 0）；剛完成的評估已寫入 IDB
+    const exportBtn = page.getByRole('button', { name: /匯出資料（JSON）/ });
+    await exportBtn.waitFor({ timeout: 15_000 });
+
+    const { filename, json } = await downloadJson(page, async () => {
+      await exportBtn.click();
+    });
+
+    expect(filename, '檔名應符 historyExportFilename 契約')
+      .toMatch(/^smart-pedi-history-\d{4}-\d{2}-\d{2}\.json$/);
+
+    const payload = json as {
+      format?: string; version?: number;
+      children?: { assessments?: unknown[] }[];
+    };
+    expect(payload.format, 'format 應為 smart-pedi-history').toBe('smart-pedi-history');
+    expect(payload.version, 'version 應為 1').toBe(1);
+    expect(Array.isArray(payload.children), 'children 應為陣列').toBe(true);
+    expect(payload.children!.length, '應至少含剛 seed 的一名 child').toBeGreaterThan(0);
+    expect(Array.isArray(payload.children![0].assessments), 'child 應帶 assessments 陣列').toBe(true);
+    expect(payload.children![0].assessments!.length, '該 child 應至少一筆評估').toBeGreaterThan(0);
+  });
+});
+
+/**
+ * B1（gross-motor 暖啟 + timeout 落地硬覆蓋，2026-07-08）＋ B2 self-host 活體驗證。
+ *
+ * 維度②只 soft-annotate gross_motor（MediaPipe on fake video 偵測結果不確定）。這裡
+ * 把「不依賴 GPU 時序」的部分硬化：
+ *   1. 供應鏈守門（硬）：整個評估流程中，任何 MediaPipe 資產（wasm / pose 模型）的
+ *      網路請求都不得走外部 host（jsdelivr / googleapis / 跨 origin）——B2 self-host
+ *      的活體回歸守門。gross-motor-cdn-pinning.test.ts 守 URL 常數，這裡守實際網路。
+ *   2. 落地不 hang（硬）：結果頁「各面向評估」必須出現、triageResult 必落地——證明
+ *      gross-motor 背景 enrich 在 GROSS_MOTOR_TIMEOUT_MS 內以結果或 null 收斂，不會
+ *      讓結果頁 spinner 卡死（B1 的核心風險）。
+ * 偵測結果本身（poseClassification detail 是否出現）仍 soft-annotate。
+ * 殘餘（交用戶）：真實裝置目視 gross_motor detail + spinner <3s，見計畫 B1。
+ */
+test.describe('B1 gross-motor self-host + timeout 落地', () => {
+  test('25-36m：資產自本站載入、結果頁在 timeout budget 內收斂', async ({ page }) => {
+    test.setTimeout(150_000);
+    const age: AgeGroupCDSA = '25-36m';
+
+    const MP_ASSET = /pose_landmarker|mediapipe-wasm|vision_wasm|tasks-vision/i;
+    const externalMpReqs: string[] = [];
+    const localMpReqs: string[] = [];
+    page.on('request', (req) => {
+      const url = req.url();
+      if (!MP_ASSET.test(url)) return;
+      let sameOrigin = false;
+      try { sameOrigin = new URL(url).origin === new URL(page.url()).origin; } catch { /* 相對 URL */ }
+      if (url.startsWith('/') || sameOrigin) localMpReqs.push(url);
+      else externalMpReqs.push(url);
+    });
+
+    await startAssessment(page, age);
+    const domains = Object.keys(getQuestionnaireMaxScores(age));
+    await answerQuestionnaire(page, age, Object.fromEntries(domains.map((d) => [d, 0])));
+    await page.getByRole('button', { name: '跑完整評估' }).click();
+    await advanceToResult(page, { record: true }); // 硬等「各面向評估」（含 MediaPipe 背景 enrich）
+
+    // ── 供應鏈守門（硬）：MediaPipe 資產不得走外部 host ──
+    expect(externalMpReqs, `gross-motor 資產不得走外部 CDN：${externalMpReqs.join(', ')}`).toEqual([]);
+
+    // ── 落地不 hang（硬）：triageResult 必落地（pipeline 以結果或 null 收斂）──
+    const triage = await readLatestTriage(page);
+    expect(triage, 'gross-motor enrich 後 triageResult 應落地（未卡死）').not.toBeNull();
+
+    // ── soft：本站資產是否真被抓、pose 偵測是否落地（依裝置/GPU 而定）──
+    const gmDetail = triage!.details.find((d) => d.domain === 'gross_motor' && d.metric === 'poseClassification');
+    test.info().annotations.push({
+      type: 'gross-motor',
+      description: `local MP asset reqs:${localMpReqs.length} pose detail landed:${!!gmDetail}`,
+    });
   });
 });

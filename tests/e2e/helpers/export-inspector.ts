@@ -37,6 +37,21 @@ export async function downloadPdf(page: Page, trigger: () => Promise<void>): Pro
   return Buffer.concat(chunks);
 }
 
+/** 觸發 JSON 下載並回傳 { filename, json }（供 B3 匯出稽核 parse 內容）。 */
+export async function downloadJson(
+  page: Page, trigger: () => Promise<void>,
+): Promise<{ filename: string; json: unknown }> {
+  const [download]: [Download] = await Promise.all([
+    page.waitForEvent('download'),
+    trigger(),
+  ]);
+  const stream = await download.createReadStream();
+  const chunks: Buffer[] = [];
+  for await (const c of stream) chunks.push(c as Buffer);
+  const text = Buffer.concat(chunks).toString('utf-8');
+  return { filename: download.suggestedFilename(), json: JSON.parse(text) };
+}
+
 /** 歷史頁是否存在「下載/匯出資料包」功能。 */
 export async function hasHistoryDownload(page: Page): Promise<boolean> {
   await page.goto('/history/');
