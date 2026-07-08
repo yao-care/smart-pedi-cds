@@ -37,10 +37,15 @@
     refer: 'color-mix(in srgb, var(--danger) 14%, var(--bg))',
   };
 
-  // 進入結果頁時，從 partialAnalysis 即時計算分流（<1 秒）
+  // 進入結果頁時，從 partialAnalysis 即時計算分流。
+  // 一次性 guard：結果頁是終端狀態、partialAnalysis 已定，但 $effect 可能因讀取
+  // reactive proxy 而重觸發，導致昂貴的 gross-motor MediaPipe 分析被重跑（實測跑
+  // 兩次）。以純旗標確保只算一次。
+  let triageRan = false;
   $effect(() => {
     const ageGroup = assessmentStore.ageGroup;
-    if (!ageGroup) return;
+    if (!ageGroup || triageRan) return;
+    triageRan = true;
     const pa = assessmentStore.partialAnalysis;
     const assessmentId = assessmentStore.assessment?.id;
     void runTriage(ageGroup, pa, assessmentId);

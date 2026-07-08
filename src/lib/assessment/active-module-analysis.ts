@@ -15,8 +15,12 @@ import type { AgeGroupCDSA } from '../utils/age-groups';
  * 不阻塞錄影後的 drawing 互動流）。
  */
 
-/** analyzeGrossMotor 的 MediaPipe 推論可能很慢（下載模型），逾時視為無結果。 */
-const GROSS_MOTOR_TIMEOUT_MS = 10_000;
+/**
+ * analyzeGrossMotor 的逾時上限。影片模組已預熱 MediaPipe（warmUpGrossMotor），故
+ * 到結果頁時通常走暖啟（實測 ~2s）；15s 給中低階裝置暖啟推論留 margin，同時避免
+ * 冷啟未完成時結果頁阻塞過久（逾時 → null → triage 以問卷 gross_motor 訊號為準）。
+ */
+const GROSS_MOTOR_TIMEOUT_MS = 15_000;
 
 function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | null> {
   return Promise.race([

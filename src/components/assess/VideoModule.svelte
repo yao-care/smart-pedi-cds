@@ -1,6 +1,12 @@
 <script lang="ts">
   import { assessmentStore } from '../../lib/stores/assessment.svelte';
   import { recordEvent, saveMedia } from '../../lib/db/assessment-events';
+  import { warmUpGrossMotor } from '../../engine/cdsa/gross-motor-analysis';
+
+  // 影片模組一出現就 fire-and-forget 預熱 MediaPipe（下載 WASM + 姿態模型），讓
+  // 下載與使用者的錄影 / 之後的繪圖時間重疊；到結果頁時 analyzeGrossMotor 走暖啟
+  // （~2s）而非冷啟（可能 >10s），使粗大動作 pose 訊號能實際落地。
+  $effect(() => { void warmUpGrossMotor(); });
 
   let videoElement = $state<HTMLVideoElement | null>(null);
   let stream: MediaStream | null = null;

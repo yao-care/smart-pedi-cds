@@ -51,19 +51,29 @@ const JOINTS = {
   right_ankle: 28,
 } as const;
 
-/**
- * Extract pose landmarks from a video blob using MediaPipe PoseLandmarker.
- * This runs in the main thread — for a production app, consider using a Web Worker.
- */
-export async function extractPosesFromVideo(videoBlob: Blob): Promise<PoseFrame[]> {
-  // Dynamically import MediaPipe to avoid SSG issues
-  const { PoseLandmarker, FilesetResolver } = await import('@mediapipe/tasks-vision');
-
-  const vision = await FilesetResolver.forVisionTasks(
-    'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm'
+// MediaPipe cold-start（下載 WASM + 模型 + 編譯）是 gross-motor 分析的主要成本
+// （實測本機軟體 GPU 冷啟 ~38–52s、暖啟 ~1.7s）。快取 FilesetResolver（WASM loader）
+// 讓跨次分析不重載 WASM；PoseLandmarker 因 VIDEO 模式有單調遞增 timestamp 狀態、
+// 跨評估共用會爆，故每次分析仍建新的（暖啟下很快）。warmUpGrossMotor 供影片模組
+// 提前觸發下載/編譯，使到結果頁時走暖啟。
+async function loadVision() {
+  const { FilesetResolver } = await import('@mediapipe/tasks-vision');
+  return FilesetResolver.forVisionTasks(
+    'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm',
   );
+}
 
-  const poseLandmarker = await PoseLandmarker.createFromOptions(vision, {
+let visionPromise: ReturnType<typeof loadVision> | null = null;
+
+function getVision() {
+  if (!visionPromise) visionPromise = loadVision();
+  return visionPromise;
+}
+
+async function createPoseLandmarker() {
+  const { PoseLandmarker } = await import('@mediapipe/tasks-vision');
+  const vision = await getVision();
+  return PoseLandmarker.createFromOptions(vision, {
     baseOptions: {
       modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task',
       delegate: 'GPU',
@@ -71,6 +81,28 @@ export async function extractPosesFromVideo(videoBlob: Blob): Promise<PoseFrame[
     runningMode: 'VIDEO',
     numPoses: 1,
   });
+}
+
+/**
+ * 預熱 MediaPipe：提前下載 WASM + 模型並完成編譯（結果由 browser HTTP-cache
+ * 保留），使後續 extractPosesFromVideo 走暖啟。由影片模組 fire-and-forget 呼叫，
+ * 讓下載與使用者的錄影 / 繪圖時間重疊。失敗非阻斷（結果頁仍會自己再試）。
+ */
+export async function warmUpGrossMotor(): Promise<void> {
+  try {
+    const lm = await createPoseLandmarker();
+    lm.close();
+  } catch {
+    /* 預熱失敗非阻斷 */
+  }
+}
+
+/**
+ * Extract pose landmarks from a video blob using MediaPipe PoseLandmarker.
+ * This runs in the main thread — for a production app, consider using a Web Worker.
+ */
+export async function extractPosesFromVideo(videoBlob: Blob): Promise<PoseFrame[]> {
+  const poseLandmarker = await createPoseLandmarker();
 
   // Create a video element to process frames
   const videoUrl = URL.createObjectURL(videoBlob);
