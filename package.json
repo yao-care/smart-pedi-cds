@@ -6,10 +6,10 @@
   "packageManager": "pnpm@10.32.1",
   "scripts": {
     "dev": "astro dev",
-    "predev": "tsx scripts/build-content-index.ts && tsx scripts/build-questionnaire-applicability.ts",
+    "predev": "tsx scripts/build-content-index.ts && tsx scripts/build-questionnaire-applicability.ts && node scripts/copy-mediapipe-assets.mjs",
     "build": "astro build",
     "build:video-index": "tsx scripts/build-content-index.ts",
-    "prebuild": "tsx scripts/build-content-index.ts && tsx scripts/build-questionnaire-applicability.ts",
+    "prebuild": "tsx scripts/build-content-index.ts && tsx scripts/build-questionnaire-applicability.ts && node scripts/copy-mediapipe-assets.mjs",
     "preview": "astro preview",
     "check": "astro check && svelte-check --tsconfig ./tsconfig.json",
     "lint": "eslint src/",

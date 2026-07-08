@@ -1,4 +1,5 @@
 import type { AgeGroupCDSA } from '../../lib/utils/age-groups';
+import { BASE_PATH } from '../../../scripts/base.mjs';
 
 export interface JointPosition {
   x: number;
@@ -51,15 +52,17 @@ const JOINTS = {
   right_ankle: 28,
 } as const;
 
-// CDN URLs 一律釘版，禁止 `@latest` / `/latest/`（followup B2, 2026-07-08）：
-// 未釘版的 CDN URL 讓上游釋出可無預警破壞或改變行為——對臨床工具是可靠性 /
-// 供應鏈風險。WASM 釘 npm 依賴的同版（package.json `@mediapipe/tasks-vision`），
-// 升級 npm 依賴時同步 bump；模型釘版本目錄 `1`（Google Storage 供應，未來可考慮
-// self-host 至 public/models/）。gross-motor-cdn-pinning.test.ts 守門防回歸。
-export const MEDIAPIPE_WASM_URL =
-  'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.35/wasm';
-export const POSE_LANDMARKER_MODEL_URL =
-  'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task';
+// MediaPipe 資產一律 self-host 自本站 `/models/`（followup B2 收斂，2026-07-08）：
+// 原本 WASM 走 jsdelivr、pose 模型走 Google Storage —— 對臨床工具是外部依賴 +
+// 供應鏈風險（上游可無預警改變 / 下架），且無網路即無法分析。現全部本站供應：
+//   - WASM：npm 包 `@mediapipe/tasks-vision` 自帶（版本由 package.json 釘），
+//     predev/prebuild 由 scripts/copy-mediapipe-assets.mjs 複製到 public/models/mediapipe-wasm/。
+//   - pose 模型（.task）：非 npm 來源，直接 commit 進 public/models/。
+// BASE_PATH 自訂域為空字串（見 scripts/base.mjs），故實際為 root-relative；勿在此
+// 直接讀 import.meta.env.BASE_URL（CLAUDE.md esbuild 陷阱）。
+// gross-motor-cdn-pinning.test.ts 守門，斷言 URL 不含任何外部 host。
+export const MEDIAPIPE_WASM_URL = `${BASE_PATH}/models/mediapipe-wasm`;
+export const POSE_LANDMARKER_MODEL_URL = `${BASE_PATH}/models/pose_landmarker_lite.task`;
 
 // MediaPipe cold-start（下載 WASM + 模型 + 編譯）是 gross-motor 分析的主要成本
 // （實測本機軟體 GPU 冷啟 ~38–52s、暖啟 ~1.7s）。快取 FilesetResolver（WASM loader）
