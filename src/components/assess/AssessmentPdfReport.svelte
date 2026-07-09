@@ -94,10 +94,10 @@
         : formatDate(assessment.startedAt);
       const monthsAtAssess = ageInMonths(child.birthDate);
 
-      drawLine(`兒童識別碼：${abbreviateId(child.id)}`, 10);
-      drawLine(`評估日期：${assessDate}`, 10);
+      drawLine(`兒童識別碼: ${abbreviateId(child.id)}`, 10);
+      drawLine(`評估日期: ${assessDate}`, 10);
       drawLine(`評估時月齡:${monthsAtAssess} 個月`, 10);
-      drawLine(`狀態：${statusLabelsCn[assessment.status] ?? assessment.status}`, 10);
+      drawLine(`狀態: ${statusLabelsCn[assessment.status] ?? assessment.status}`, 10);
       y += 4;
       drawSeparator();
 
@@ -108,9 +108,9 @@
         y += 2;
 
         const catLabel = categoryLabelsCn[triage.category] ?? triage.category;
-        drawLine(`分類：${catLabel}`, 10);
-        drawLine(`信心度：${Math.round(triage.confidence * 100)}%`, 10);
-        const summaryLines = doc.splitTextToSize(`摘要：${triage.summary}`, contentWidth);
+        drawLine(`分類: ${catLabel}`, 10);
+        drawLine(`信心度: ${Math.round(triage.confidence * 100)}%`, 10);
+        const summaryLines = doc.splitTextToSize(`摘要: ${triage.summary}`, contentWidth);
         doc.setFontSize(10);
         doc.setFont('NotoSansTC', 'normal');
         doc.text(summaryLines, margin, y);
@@ -132,11 +132,13 @@
         y += 1;
         drawLine('100 = 表現傑出　·　50 = 同齡平均　·　0 = 顯著落後', 9);
         y += 2;
-        // 低分在前（優先注意）。
+        // 低分在前（優先注意）。用半形冒號分隔——PDF 字型 subset（@fontsource
+        // noto-sans-tc「chinese-traditional」分片）不含全形 ASCII 標點（U+FF00 區，
+        // 如「：（）」）的 glyph，用之會渲染成空白；半形 ": " 屬 ASCII，確定可顯示。
         const sorted = [...domainScores].sort((a, b) => a.score - b.score);
         for (const s of sorted) {
           const label = TRIAGE_DOMAIN_LABELS[s.domain] ?? s.domain;
-          drawLine(`${label}：${s.score}${s.hasAnomaly ? '（需注意）' : ''}`, 10);
+          drawLine(`${label}: ${s.score}${s.hasAnomaly ? '　需注意' : ''}`, 10);
         }
         y += 4;
         drawSeparator();
@@ -160,7 +162,7 @@
       doc.setFontSize(8);
       doc.setFont('NotoSansTC', 'normal');
       doc.setTextColor(150, 150, 150);
-      doc.text(`產製時間：${formatTimestamp(new Date())}`, margin, y);
+      doc.text(`產製時間: ${formatTimestamp(new Date())}`, margin, y);
       doc.text('Smart Pedi 兒童發展評估系統', pageWidth - margin, y, { align: 'right' });
 
       const filename = `cdsa-report-${abbreviateId(assessment.id)}-${assessDate.replace(/\//g, '')}.pdf`;
