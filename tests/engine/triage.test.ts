@@ -74,49 +74,44 @@ describe('computeTriage', () => {
   });
 
   it('returns monitor when a domain composite z lands in [-2, -1] (per-domain gating, spec §7.2)', async () => {
-    // behavior domain has 4 z metrics. Two moderately low + two default → mean z in monitor band.
-    // completionRate=0.30 (z=-3.0), operationConsistency=0.40 (z=-2.0), other 2 default (z=0) → mean ≈ -1.25.
+    // Per-domain gating now driven by questionnaire only. cognition score 11/20 in 25-36m
+    // gives a composite z in monitor band per ASQ-3 norm.
     const result = await computeTriage({
       ...baseInput,
-      behavior: makeBehavior({ completionRate: 0.30, operationConsistency: 0.40 }),
+      questionnaireScores: { cognition: 11 },
+      questionnaireMaxScores: { cognition: 20 },
     });
     expect(result.category).toBe('monitor');
-    expect(result.domainCategories?.behavior).toBe('monitor');
-    expect(result.domainLevelZ?.behavior).toBeLessThanOrEqual(-1);
-    expect(result.domainLevelZ?.behavior).toBeGreaterThan(-2);
+    expect(result.domainCategories?.cognition).toBe('monitor');
+    expect(result.domainLevelZ?.cognition).toBeLessThanOrEqual(-1);
+    expect(result.domainLevelZ?.cognition).toBeGreaterThan(-2);
   });
 
   it('returns refer when ANY domain composite z ≤ -2 SD (spec §7.2)', async () => {
-    // behavior 3 severe + drawing severe → both domains push below -2 SD composite.
+    // Per-domain gating driven by questionnaire. cognition + fine_motor both refer
+    // (low scores) → overall refer category. behavior/drawing are now display-only.
     const result = await computeTriage({
       ...baseInput,
-      behavior: makeBehavior({
-        completionRate: 0.1,
-        operationConsistency: 0.2,
-        reactionLatency: 8000,
-      }),
-      drawing: makeDrawing({ overallScore: 10 }),
+      questionnaireScores: { cognition: 2, fine_motor: 2 },
+      questionnaireMaxScores: { cognition: 20, fine_motor: 20 },
     });
     expect(result.category).toBe('refer');
-    expect(result.domainCategories?.behavior).toBe('refer');
+    expect(result.domainCategories?.cognition).toBe('refer');
     expect(result.domainCategories?.fine_motor).toBe('refer');
     expect(result.summary).toContain('專業評估');
   });
 
   it('escalates to refer when severe anomalies cluster in same domain (NEW: per-domain composite, not per-metric count)', async () => {
-    // OLD gating: 3 anomalies but 1 domain → monitor (dual-axis dampener).
-    // NEW gating: behavior composite z = mean(-4.33, -3.33, -7.5, 0) ≈ -3.79 → refer.
-    // This is the intended behaviour shift in spec §7.2 (2026-05-28 rev).
+    // Per-domain gating: cognition low score (z ≤ -2) → refer.
+    // This demonstrates per-domain composite logic: domain z is mean of its
+    // questionnaire details, applied with ASQ-3 cutoffs.
     const result = await computeTriage({
       ...baseInput,
-      behavior: makeBehavior({
-        completionRate: 0.1,
-        operationConsistency: 0.2,
-        reactionLatency: 8000,
-      }),
+      questionnaireScores: { cognition: 2 },
+      questionnaireMaxScores: { cognition: 20 },
     });
     expect(result.category).toBe('refer');
-    expect(result.domainCategories?.behavior).toBe('refer');
+    expect(result.domainCategories?.cognition).toBe('refer');
   });
 
   it('honours questionnaireMaxScores when provided (z-based ASQ-3 norm)', async () => {
@@ -148,12 +143,8 @@ describe('computeTriage', () => {
     const normalResult = await computeTriage(baseInput);
     const referResult = await computeTriage({
       ...baseInput,
-      behavior: makeBehavior({
-        completionRate: 0.1,
-        operationConsistency: 0.2,
-        reactionLatency: 8000,
-      }),
-      drawing: makeDrawing({ overallScore: 5 }),
+      questionnaireScores: { cognition: 2, fine_motor: 2, language_expression: 3 },
+      questionnaireMaxScores: { cognition: 20, fine_motor: 20, language_expression: 20 },
     });
     expect(referResult.confidence).toBeGreaterThan(normalResult.confidence);
   });
@@ -227,6 +218,50 @@ describe('computeTriage', () => {
       withoutVoice.domainLevelZ!.language_expression,
       10,
     );
+  });
+
+  describe('computeTriage — gating whitelist (drawing/behavior display-only)', () => {
+    it('drawing "normal" does NOT dilute a questionnaire fine_motor refer signal', async () => {
+      const withDrawing = await computeTriage({
+        ...baseInput,
+        drawing: makeDrawing({ overallScore: 60 }), // z≈+0.25（正常）
+        questionnaireScores: { fine_motor: 2 },
+        questionnaireMaxScores: { fine_motor: 20 },
+      });
+      const withoutDrawing = await computeTriage({
+        ...baseInput,
+        drawing: makeDrawing({ shapes: [] }), // 無 drawing detail
+        questionnaireScores: { fine_motor: 2 },
+        questionnaireMaxScores: { fine_motor: 20 },
+      });
+      expect(withoutDrawing.domainCategories?.fine_motor).toBe('refer');
+      expect(withDrawing.domainCategories?.fine_motor).toBe('refer');
+      expect(withDrawing.domainLevelZ?.fine_motor).toBeCloseTo(
+        withoutDrawing.domainLevelZ!.fine_motor, 10,
+      );
+    });
+
+    it('behavior game metrics do NOT produce per-domain gating (display-only)', async () => {
+      const result = await computeTriage({
+        ...baseInput,
+        behavior: makeBehavior({
+          completionRate: 0.1, operationConsistency: 0.1,
+          reactionLatency: 8000, interactionRhythm: 0.05,
+        }), // 極差
+      });
+      expect(result.domainCategories?.behavior).toBeUndefined();
+      expect(result.domainLevelZ?.behavior).toBeUndefined();
+    });
+
+    it('gating reflects ONLY questionnaire domains (whitelist)', async () => {
+      // baseInput 帶 behavior + drawing + voice；只有問卷 cognition 應進 gating。
+      const result = await computeTriage({
+        ...baseInput,
+        questionnaireScores: { cognition: 18 },
+        questionnaireMaxScores: { cognition: 20 },
+      });
+      expect(Object.keys(result.domainCategories ?? {})).toEqual(['cognition']);
+    });
   });
 
   it('flags gross_motor anomaly when classification === delayed', async () => {

@@ -289,12 +289,11 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
   // domain low?") but does NOT participate in this gating.
   const domainZs: Record<string, number[]> = {};
   for (const d of details) {
-    // Display-only sensor signals (placeholder / proxy metrics, not clinical
-    // models) — kept in `details` for the physician view and radar display but
-    // must NOT participate in per-domain gating, else they dilute the
-    // questionnaire's ASQ-3-normed signal (followup B1: pose; 同理 voice 時長
-    // 併入 language_expression 後需同樣排除，避免正常語音拉平問卷 refer)。
-    if (d.metric === 'poseClassification' || d.metric === 'voiceDuration') continue;
+    // 白名單：per-domain gating 只由 ASQ-3 問卷常模驅動。所有感測啟發式
+    // （pose/voice/drawing/behavior）對比的是非臨床效度常模（手寫 defaults 或
+    // 佔位模型），一律 display-only——仍保留在 details 供雷達顯示與醫師檢視，
+    // 但不進 gating，避免稀釋或杜撰問卷的分流判定。
+    if (d.metric !== 'questionnaireScore') continue;
     if (d.directionalZ !== null && d.directionalZ !== undefined) {
       if (!domainZs[d.domain]) domainZs[d.domain] = [];
       domainZs[d.domain].push(d.directionalZ);
