@@ -186,6 +186,49 @@ describe('computeTriage', () => {
     expect(result.details.find((d) => d.metric === 'voiceDuration')).toBeUndefined();
   });
 
+  it('voice detail carries the language_expression domain (not a standalone "language")', async () => {
+    // 語音時長併入「語言表達」面向顯示，消除雷達上與問卷 language_comprehension/
+    // language_expression 並存的孤立「語言」重複格（報告矛盾的根因）。
+    const result = await computeTriage({ ...baseInput, voice: makeVoice({ voiceDurationTotal: 10 }) });
+    const voice = result.details.find((d) => d.metric === 'voiceDuration');
+    expect(voice?.domain).toBe('language_expression');
+    // 不得再出現舊的綜合 'language' domain（那正是重複來源）。
+    expect(result.details.some((d) => d.domain === 'language')).toBe(false);
+  });
+
+  it('keeps voice detail for display but excludes it from language_expression gating (display-only, 同 pose B1)', async () => {
+    // 語音時長是感測 proxy（非 ASQ-3 常模背書），比照 pose 做 display-only：
+    // 仍入 details 供顯示，但不參與 per-domain gating。此處無問卷 language_expression，
+    // voice 是唯一訊號 → 該面向不應被 gate。
+    const result = await computeTriage({ ...baseInput, voice: makeVoice({ voiceDurationTotal: 10 }) });
+    expect(result.details.find((d) => d.metric === 'voiceDuration')).toBeDefined(); // still shown
+    expect(result.domainLevelZ?.language_expression).toBeUndefined();
+    expect(result.domainCategories?.language_expression).toBeUndefined();
+  });
+
+  it('voice "normal" does NOT dilute a questionnaire language_expression refer signal', async () => {
+    // 稀釋回歸測試：正常語音時長（z≈正）與問卷 refer 訊號同桶平均，先前會把
+    // language_expression composite 拉回 monitor/normal。display-only 修正之。
+    const withVoice = await computeTriage({
+      ...baseInput,
+      voice: makeVoice({ voiceDurationTotal: 10 }),
+      questionnaireScores: { language_expression: 2 },
+      questionnaireMaxScores: { language_expression: 20 },
+    });
+    const withoutVoice = await computeTriage({
+      ...baseInput,
+      voice: makeVoice({ voiceDurationTotal: 0 }),
+      questionnaireScores: { language_expression: 2 },
+      questionnaireMaxScores: { language_expression: 20 },
+    });
+    expect(withoutVoice.domainCategories?.language_expression).toBe('refer');
+    expect(withVoice.domainCategories?.language_expression).toBe('refer');
+    expect(withVoice.domainLevelZ?.language_expression).toBeCloseTo(
+      withoutVoice.domainLevelZ!.language_expression,
+      10,
+    );
+  });
+
   it('flags gross_motor anomaly when classification === delayed', async () => {
     const result = await computeTriage({
       ...baseInput,

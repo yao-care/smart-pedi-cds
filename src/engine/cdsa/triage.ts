@@ -179,7 +179,11 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
     const voiceNorm = NORMS['voiceDuration'];
     const voiceZ = zScore(input.voice.voiceDurationTotal, voiceNorm.mean, voiceNorm.std);
     details.push({
-      domain: 'language',
+      // 語音時長併入「語言表達」面向：消除雷達上與問卷 language_comprehension/
+      // language_expression 並存的孤立「語言」重複格。此 voiceDuration 為感測 proxy
+      // （非 ASQ-3 常模背書），與 pose 同屬 display-only——入 details 供顯示，但
+      // 於下方 per-domain gating 迴圈被排除，不稀釋問卷的 language_expression 判定。
+      domain: 'language_expression',
       metric: 'voiceDuration',
       value: input.voice.voiceDurationTotal,
       zScore: voiceZ,
@@ -285,10 +289,12 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
   // domain low?") but does NOT participate in this gating.
   const domainZs: Record<string, number[]> = {};
   for (const d of details) {
-    // Pose classification is display-only (placeholder heuristic, not a clinical
-    // model) — kept in `details` for the physician view but must not participate
-    // in per-domain gating. See the gross_motor block above (followup B1).
-    if (d.metric === 'poseClassification') continue;
+    // Display-only sensor signals (placeholder / proxy metrics, not clinical
+    // models) — kept in `details` for the physician view and radar display but
+    // must NOT participate in per-domain gating, else they dilute the
+    // questionnaire's ASQ-3-normed signal (followup B1: pose; 同理 voice 時長
+    // 併入 language_expression 後需同樣排除，避免正常語音拉平問卷 refer)。
+    if (d.metric === 'poseClassification' || d.metric === 'voiceDuration') continue;
     if (d.directionalZ !== null && d.directionalZ !== undefined) {
       if (!domainZs[d.domain]) domainZs[d.domain] = [];
       domainZs[d.domain].push(d.directionalZ);

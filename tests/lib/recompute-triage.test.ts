@@ -154,6 +154,57 @@ describe('recomputeTriageResult — non-questionnaire detail', () => {
   });
 });
 
+describe('recomputeTriageResult — voice domain migration (v8)', () => {
+  it('migrates legacy voice detail domain language → language_expression', () => {
+    const out = recomputeTriageResult({
+      ...baseResult,
+      details: [{
+        domain: 'language', // legacy
+        metric: 'voiceDuration',
+        value: 10,
+        zScore: 0.4,
+        directionalZ: 0.4,
+        isAnomaly: false,
+      }],
+    }, '25-36m');
+    const d = out.details?.[0];
+    expect(d?.domain).toBe('language_expression'); // migrated
+    expect(d?.metric).toBe('voiceDuration'); // metric unchanged
+    // 遷移後不得再有孤立的 'language' domain（雷達重複來源）。
+    expect(out.details?.some((x) => x.domain === 'language')).toBe(false);
+  });
+
+  it('voice does NOT dilute a questionnaire language_expression refer signal (display-only)', () => {
+    // 語音正常（z 正）與問卷 refer（重算後 z 極負）併入同 domain 後，若未排除
+    // voice 會被平均拉回 monitor/normal。recompute 的 gating 必須排除 voiceDuration。
+    // 問卷 detail 於 recompute 會用真實常模重算 z，故不斷言具體值，改用「有無
+    // voice 的 gating 結果一致」對照驗證未稀釋。
+    const q = { domain: 'language_expression', metric: 'questionnaireScore', value: 2, zScore: -3, directionalZ: -3, maxScore: 20, isAnomaly: true };
+    const voice = { domain: 'language', metric: 'voiceDuration', value: 10, zScore: 0.4, directionalZ: 0.4, isAnomaly: false };
+    const withVoice = recomputeTriageResult({ ...baseResult, details: [voice, q] }, '25-36m');
+    const withoutVoice = recomputeTriageResult({ ...baseResult, details: [q] }, '25-36m');
+    expect(withoutVoice.domainCategories?.language_expression).toBe('refer');
+    expect(withVoice.domainCategories?.language_expression).toBe('refer');
+    expect(withVoice.domainLevelZ?.language_expression).toBeCloseTo(
+      withoutVoice.domainLevelZ!.language_expression, 10,
+    );
+  });
+
+  it('excludes pose from gating too (fixes pre-v8 recompute pose-dilution gap, B1)', () => {
+    // 回歸：此前 recompute 未排除 poseClassification，pose 'normal'(z=0) 會稀釋
+    // 問卷 gross_motor refer。補排除後與 live triage 一致。
+    const q = { domain: 'gross_motor', metric: 'questionnaireScore', value: 2, zScore: -3, directionalZ: -3, maxScore: 20, isAnomaly: true };
+    const pose = { domain: 'gross_motor', metric: 'poseClassification', value: 0.9, zScore: 0, directionalZ: 0, isAnomaly: false };
+    const withPose = recomputeTriageResult({ ...baseResult, details: [pose, q] }, '25-36m');
+    const withoutPose = recomputeTriageResult({ ...baseResult, details: [q] }, '25-36m');
+    expect(withoutPose.domainCategories?.gross_motor).toBe('refer');
+    expect(withPose.domainCategories?.gross_motor).toBe('refer');
+    expect(withPose.domainLevelZ?.gross_motor).toBeCloseTo(
+      withoutPose.domainLevelZ!.gross_motor, 10,
+    );
+  });
+});
+
 describe('recomputeTriageResult — per-domain gating (spec §7.2)', () => {
   it('refer when any domain composite z ≤ -2 SD', () => {
     // behavior domain: 4 metrics avg = mean(-3, -2, -2.5, -3) = -2.625 → refer

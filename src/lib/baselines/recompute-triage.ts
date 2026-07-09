@@ -79,6 +79,17 @@ function isQuestionnaireDomain(d: string): d is QuestionnaireDomain {
  *   - 非問卷 + directionalZ 仍 null：保留 detail 原 isAnomaly（極罕見）
  */
 function recomputeDetail(d: PersistedTriageDetail, ageGroup: AgeGroupCDSA): PersistedTriageDetail {
+  // 語音時長遷移：舊評估 voice detail 的 domain 為 'language'，與問卷的
+  // language_comprehension / language_expression 並存時，雷達會出現孤立且重複
+  // 的「語言」格（報告矛盾根因）。遷移到 language_expression，與 triage.ts 的新
+  // 產生邏輯一致；voiceDuration 仍為 display-only，於下方 domainZs 合成被排除。
+  if (d.metric === 'voiceDuration' && d.domain === 'language') {
+    const migrated = { ...d, domain: 'language_expression' };
+    return d.directionalZ !== null && d.directionalZ !== undefined
+      ? { ...migrated, isAnomaly: d.directionalZ <= PER_DETAIL_ANOMALY_Z }
+      : migrated;
+  }
+
   // 問卷面向：嘗試重算 z
   if (d.metric === 'questionnaireScore' && isQuestionnaireDomain(d.domain)) {
     if (!d.maxScore || d.maxScore <= 0) {
@@ -159,9 +170,14 @@ export function recomputeTriageResult(
   // 1. 重算每筆 detail
   const newDetails = sanitizedDetails.map((d) => recomputeDetail(d, ageGroup));
 
-  // 2. 合成 domain-level z（與 triage.ts:264-274 同邏輯）
+  // 2. 合成 domain-level z（與 triage.ts 同邏輯，含 display-only 排除）
   const domainZs: Record<string, number[]> = {};
   for (const d of newDetails) {
+    // Display-only 感測訊號（佔位/proxy，非臨床模型）不參與 gating，否則稀釋
+    // 問卷 ASQ-3 常模訊號：poseClassification（B1）與 voiceDuration（語音併入
+    // language_expression 後同理）。此前 recompute 漏排除 pose，與 live triage
+    // 不同步；一併補上，使歷史重算與新評估的 gating 結果一致。
+    if (d.metric === 'poseClassification' || d.metric === 'voiceDuration') continue;
     if (d.directionalZ !== null && d.directionalZ !== undefined) {
       if (!domainZs[d.domain]) domainZs[d.domain] = [];
       domainZs[d.domain].push(d.directionalZ);

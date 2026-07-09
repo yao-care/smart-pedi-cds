@@ -10,7 +10,7 @@ import { ageGroupCDSAAt } from '../utils/age-groups';
  *  schemaVersion 字串（'v6-recomputed' / 'v7-skip-no-birthDate' 等）。 */
 export async function applyTriageRecomputeUpgrade(
   tx: Transaction,
-  version: 'v6' | 'v7',
+  version: 'v6' | 'v7' | 'v8',
 ): Promise<void> {
   // Pre-load children into a Map so the modify() loop avoids N+1 reads.
   // children table is small (1 row per child evaluated on this device).
@@ -485,6 +485,32 @@ export class CdssDatabase extends Dexie {
       tenantSettings: 'id, tenantId',
       recommendationOverlays: 'id, tenantId, category, domain, [tenantId+category+domain]',
     }).upgrade(tx => applyTriageRecomputeUpgrade(tx, 'v7'));
+    // v8: 重算讓歷史評估的 voice detail domain 由 'language' 遷移到
+    // 'language_expression'（消除雷達上與問卷 language_comprehension/
+    // language_expression 並存的孤立「語言」重複格），並讓 recompute 的
+    // per-domain gating 排除 poseClassification / voiceDuration（display-only），
+    // 與 live triage 對齊——此前 recompute 漏排除 pose，歷史重算的 gating 與新
+    // 評估不一致。索引無變更（domain 為非索引欄位）；bump 版本純為觸發重算。
+    // 重跑成本同 v6/v7：每筆 assessment 一次 in-memory 重算，毫秒級。
+    this.version(8).stores({
+      patients: 'id, ageGroup, currentRiskLevel, lastSyncedAt',
+      observations: 'id, patientId, indicator, effectiveDateTime, [patientId+indicator]',
+      alerts: 'id, patientId, riskLevel, status, createdAt, [patientId+status]',
+      baselines: '[patientId+indicator], patientId, updatedAt',
+      syncQueue: 'id, createdAt',
+      serverConfigs: 'id, lastUsedAt',
+      educationInteractions: 'id, contentSlug, createdAt',
+      ruleVersions: 'id, createdAt',
+      webhookHistory: 'id, webhookId, alertId, createdAt',
+      children: 'id, createdAt',
+      assessments: 'id, childId, status, createdAt, [childId+status]',
+      assessmentEvents: 'id, assessmentId, childId, moduleType, timestamp, [assessmentId+moduleType]',
+      mediaFiles: 'id, assessmentId, childId, fileType, createdAt, [assessmentId+fileType]',
+      normThresholds: 'id, ageGroup, metric, [ageGroup+metric]',
+      customEducation: 'id, tenantId, category, isActive, [tenantId+isActive]',
+      tenantSettings: 'id, tenantId',
+      recommendationOverlays: 'id, tenantId, category, domain, [tenantId+category+domain]',
+    }).upgrade(tx => applyTriageRecomputeUpgrade(tx, 'v8'));
   }
 }
 
