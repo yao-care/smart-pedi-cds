@@ -257,8 +257,9 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
   // a placeholder 'normal' z=0 → -2.7, and a borderline refer could slip to
   // monitor). The questionnaire is the reliable source for gross_motor, so we
   // still surface the pose detail for the physician view but EXCLUDE it from
-  // the gating composition below (see the `poseClassification` skip in the
-  // domainZs loop).
+  // the gating composition below (the domainZs loop uses a `questionnaireScore`
+  // whitelist, so all sensor heuristics — pose/voice/drawing/behavior — are
+  // display-only and never gate).
   if (input.grossMotor) {
     let poseDirectionalZ: number | null = null;
     if (input.grossMotor.classification === 'delayed') poseDirectionalZ = -2;
