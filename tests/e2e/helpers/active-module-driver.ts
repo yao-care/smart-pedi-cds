@@ -16,22 +16,27 @@ import type { Page } from '@playwright/test';
  *    整合測試涵蓋（active-module-analysis / ResultView enrich）。
  */
 
-/** 按鈕可見則點擊並回傳 true（點擊失敗吞掉，不 throw）。
+/** 按鈕可見且**點擊成功**才回傳 true（不 throw）。回傳值語意＝「模組已被此點擊
+ * 推進」，caller 據此決定 `return`（離開模組）或留在迴圈重試——故必須反映真實點擊
+ * 結果，不可只要可見就回 true。
  *
  * click 必須帶明確 timeout：模組交界（如 game 完成→下一模組載入）點「繼續下一步」
  * 時，冷啟動下按鈕正 re-render / 被 loading 覆蓋 / 尚未 stable，Playwright 的
  * click 會等 actionability。若不設 timeout（config 亦未設 actionTimeout → 預設
- * 無限），這個 await 會一路掛到 test timeout（120s），`.catch` 吞不到 pending，
- * 整個 test 逾時——即 2026-07-08 live run 7/200 flaky 的真因（7 個皆 hang 在此
- * click）。給短 timeout 讓卡住的 click 快速失敗→交還上層迴圈以最新狀態重試，
- * 回復「best-effort、絕不卡死」的設計原意。 */
+ * 無限），這個 await 會一路掛到 test timeout（120s），整個 test 逾時——即
+ * 2026-07-08 live run 7/200 flaky 的真因（7 個皆 hang 在此 click）。給短 timeout
+ * 讓卡住的 click 快速失敗，並**回 false**（不是 true）→ caller 不假性離開、留在
+ * 迴圈以最新狀態重試，回復「best-effort、絕不卡死」的設計原意。迴圈終止不依賴此
+ * 回傳（各 driver 皆有自己的 deadline / i-limit / module-visibility 界限）。 */
 async function clickIfVisible(page: Page, name: RegExp): Promise<boolean> {
   const btn = page.getByRole('button', { name });
-  if (await btn.isVisible().catch(() => false)) {
-    await btn.click({ timeout: 4_000 }).catch(() => {});
-    return true;
+  if (!(await btn.isVisible().catch(() => false))) return false;
+  try {
+    await btn.click({ timeout: 4_000 });
+    return true; // 真的點成功＝模組已推進
+  } catch {
+    return false; // 可見但沒點成（逾時 / 被覆蓋）＝交回迴圈重試
   }
-  return false;
 }
 
 /** 互動遊戲：GameModule 選項畫在 `<canvas>`（座標 hit-test，always-positive
