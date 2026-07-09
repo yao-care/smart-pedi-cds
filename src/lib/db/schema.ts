@@ -10,7 +10,7 @@ import { ageGroupCDSAAt } from '../utils/age-groups';
  *  schemaVersion 字串（'v6-recomputed' / 'v7-skip-no-birthDate' 等）。 */
 export async function applyTriageRecomputeUpgrade(
   tx: Transaction,
-  version: 'v6' | 'v7' | 'v8',
+  version: 'v6' | 'v7' | 'v8' | 'v9',
 ): Promise<void> {
   // Pre-load children into a Map so the modify() loop avoids N+1 reads.
   // children table is small (1 row per child evaluated on this device).
@@ -210,7 +210,9 @@ export interface Assessment {
    *  forces the upgrade tx on first open). */
   schemaVersion?:
     | 'v6-recomputed' | 'v6-no-details' | 'v6-skip-no-completedAt' | 'v6-skip-no-birthDate'
-    | 'v7-recomputed' | 'v7-no-details' | 'v7-skip-no-completedAt' | 'v7-skip-no-birthDate';
+    | 'v7-recomputed' | 'v7-no-details' | 'v7-skip-no-completedAt' | 'v7-skip-no-birthDate'
+    | 'v8-recomputed' | 'v8-no-details' | 'v8-skip-no-completedAt' | 'v8-skip-no-birthDate'
+    | 'v9-recomputed' | 'v9-no-details' | 'v9-skip-no-completedAt' | 'v9-skip-no-birthDate';
   createdAt: Date;
   updatedAt: Date;
 }
@@ -511,6 +513,29 @@ export class CdssDatabase extends Dexie {
       tenantSettings: 'id, tenantId',
       recommendationOverlays: 'id, tenantId, category, domain, [tenantId+category+domain]',
     }).upgrade(tx => applyTriageRecomputeUpgrade(tx, 'v8'));
+    // v9: gating 白名單化——drawing/behavior 改 display-only。此前 gating 只排除
+    // pose/voice，drawing 仍污染 fine_motor、behavior 靠手寫常模獨立產出分流。
+    // recompute 已同步白名單（只收 questionnaireScore）；bump v9 重算歷史，使
+    // 舊評估分流只由 ASQ-3 問卷驅動，與新評估一致。索引無變更。
+    this.version(9).stores({
+      patients: 'id, ageGroup, currentRiskLevel, lastSyncedAt',
+      observations: 'id, patientId, indicator, effectiveDateTime, [patientId+indicator]',
+      alerts: 'id, patientId, riskLevel, status, createdAt, [patientId+status]',
+      baselines: '[patientId+indicator], patientId, updatedAt',
+      syncQueue: 'id, createdAt',
+      serverConfigs: 'id, lastUsedAt',
+      educationInteractions: 'id, contentSlug, createdAt',
+      ruleVersions: 'id, createdAt',
+      webhookHistory: 'id, webhookId, alertId, createdAt',
+      children: 'id, createdAt',
+      assessments: 'id, childId, status, createdAt, [childId+status]',
+      assessmentEvents: 'id, assessmentId, childId, moduleType, timestamp, [assessmentId+moduleType]',
+      mediaFiles: 'id, assessmentId, childId, fileType, createdAt, [assessmentId+fileType]',
+      normThresholds: 'id, ageGroup, metric, [ageGroup+metric]',
+      customEducation: 'id, tenantId, category, isActive, [tenantId+isActive]',
+      tenantSettings: 'id, tenantId',
+      recommendationOverlays: 'id, tenantId, category, domain, [tenantId+category+domain]',
+    }).upgrade(tx => applyTriageRecomputeUpgrade(tx, 'v9'));
   }
 }
 
