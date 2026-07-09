@@ -109,7 +109,7 @@
 
         const catLabel = categoryLabelsCn[triage.category] ?? triage.category;
         drawLine(`分類: ${catLabel}`, 10);
-        drawLine(`信心度: ${Math.round(triage.confidence * 100)}%`, 10);
+        drawLine('此為初步篩檢結果，非診斷', 9);
         const summaryLines = doc.splitTextToSize(`摘要: ${triage.summary}`, contentWidth);
         doc.setFontSize(10);
         doc.setFont('NotoSansTC', 'normal');
@@ -130,7 +130,7 @@
       if (domainScores.length > 0) {
         drawLine('各面向表現位階', 12, 'bold');
         y += 1;
-        drawLine('100 = 表現傑出　·　50 = 同齡平均　·　0 = 顯著落後', 9);
+        drawLine('50 = 與同齡孩子相當　·　高於 50 = 較突出　·　低於 50 = 還在發展中', 9);
         y += 2;
         // 低分在前（優先注意）。用半形冒號分隔——PDF 字型 subset（@fontsource
         // noto-sans-tc「chinese-traditional」分片）不含全形 ASCII 標點（U+FF00 區，
@@ -138,7 +138,7 @@
         const sorted = [...domainScores].sort((a, b) => a.score - b.score);
         for (const s of sorted) {
           const label = TRIAGE_DOMAIN_LABELS[s.domain] ?? s.domain;
-          drawLine(`${label}: ${s.score}${s.hasAnomaly ? '　需注意' : ''}`, 10);
+          drawLine(`${label}: ${s.score}${s.hasAnomaly ? '　可多陪伴' : ''}`, 10);
         }
         y += 4;
         drawSeparator();

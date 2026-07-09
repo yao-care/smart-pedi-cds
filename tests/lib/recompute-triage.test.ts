@@ -238,7 +238,7 @@ describe('recomputeTriageResult — per-domain gating (spec §7.2)', () => {
     expect(out.domainCategories?.cognition).toBe('refer');
     expect(out.domainLevelZ?.cognition).toBeLessThanOrEqual(-2);
     expect(out.summary).toContain('認知');
-    expect(out.summary).toContain('專業評估');
+    expect(out.summary).toContain('專業人員進一步了解');
   });
 
   it('monitor when any domain composite z in (-2, -1]', () => {
@@ -254,7 +254,7 @@ describe('recomputeTriageResult — per-domain gating (spec §7.2)', () => {
     expect(out.domainCategories?.cognition).toBe('monitor');
     expect(out.category).toBe('monitor');
     expect(out.summary).toContain('認知');
-    expect(out.summary).toContain('追蹤');
+    expect(out.summary).toContain('還在發展中');
   });
 
   it('normal when all domains > -1 SD', () => {
@@ -269,7 +269,7 @@ describe('recomputeTriageResult — per-domain gating (spec §7.2)', () => {
     expect(out.category).toBe('normal');
     expect(out.domainCategories?.cognition).toBe('normal');
     expect(out.domainCategories?.fine_motor).toBe('normal');
-    expect(out.summary).toContain('正常範圍');
+    expect(out.summary).toContain('同齡常見範圍');
   });
 
   it('integration: v5 record with stale category gets refreshed end-to-end', () => {

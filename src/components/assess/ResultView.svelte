@@ -161,7 +161,7 @@
     <h2 style="color: {categoryColors[triageResult.category]};">
       {categoryLabels[triageResult.category]}
     </h2>
-    <p class="confidence">信心度 {Math.round(triageResult.confidence * 100)}%</p>
+    <p class="screening-note">此為初步篩檢結果，非診斷</p>
     <p class="summary">{triageResult.summary}</p>
   </div>
 
@@ -253,7 +253,7 @@
     margin-bottom: var(--space-2);
   }
 
-  .confidence {
+  .screening-note {
     font-size: var(--text-sm);
     color: color-mix(in srgb, var(--text), var(--bg) 30%);
     margin-bottom: var(--space-3);

@@ -70,7 +70,7 @@ describe('computeTriage', () => {
     const result = await computeTriage(baseInput);
     expect(result.category).toBe('normal');
     expect(result.anomalyCount).toBe(0);
-    expect(result.summary).toContain('正常範圍');
+    expect(result.summary).toContain('同齡常見範圍');
   });
 
   it('returns monitor when a domain composite z lands in [-2, -1] (per-domain gating, spec §7.2)', async () => {
@@ -98,7 +98,7 @@ describe('computeTriage', () => {
     expect(result.category).toBe('refer');
     expect(result.domainCategories?.cognition).toBe('refer');
     expect(result.domainCategories?.fine_motor).toBe('refer');
-    expect(result.summary).toContain('專業評估');
+    expect(result.summary).toContain('專業人員進一步了解');
   });
 
   it('escalates to refer when severe anomalies cluster in same domain (NEW: per-domain composite, not per-metric count)', async () => {

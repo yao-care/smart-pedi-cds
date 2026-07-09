@@ -39,7 +39,7 @@ function polarToCartesian(angle: number, r: number): { x: number; y: number } {
   <header class="radar-header">
     <h3>{title}</h3>
     {#if showLegend}
-      <p class="legend">100 = 表現傑出　·　50 = 同齡平均　·　0 = 顯著落後</p>
+      <p class="legend">50 = 與同齡孩子相當　·　高於 50 = 這次表現較突出　·　低於 50 = 這次還在發展中</p>
     {/if}
   </header>
   <svg viewBox="-48 -48 {size + 96} {size + 96}" width={size} height={size} class="radar-chart" role="img" aria-label="發展面向雷達圖">

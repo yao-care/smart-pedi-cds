@@ -341,10 +341,13 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
   // Summary — translate domain ids to user-facing Chinese labels (see
   // module-level TRIAGE_DOMAIN_LABELS export).
   const labelDomains = (ds: string[]) => ds.map(d => TRIAGE_DOMAIN_LABELS[d] ?? d).join('、');
+  // 措辭去病理化（2026-07-10 心理專業審查）：避免「異常/落後」等把「一次測量
+  // 切片」講成「孩子的屬性」的定性字眼，改用「這次表現/還在發展中」的狀態描述，
+  // 並強調「篩檢非診斷」。發展是連續、狀態性的。
   const summary =
-    category === 'normal' ? '各面向發展在正常範圍內。' :
-    category === 'monitor' ? `${labelDomains(monitorDomains)}面向有待觀察。建議持續追蹤。` :
-    `${labelDomains(referDomains)}面向顯示異常。建議進一步專業評估。`;
+    category === 'normal' ? '各面向發展都在同齡常見範圍內。' :
+    category === 'monitor' ? `${labelDomains(monitorDomains)}目前還在發展中，多數孩子會隨時間趕上。可以先在家多陪伴，過一段時間再評估一次。` :
+    `這次評估中，${labelDomains(referDomains)}的表現和同齡孩子相比較不一致，建議讓專業人員進一步了解——這是釐清，不是診斷。`;
 
   return {
     category,
