@@ -114,14 +114,16 @@
 
   async function saveResult(result: TriageResult) {
     if (!assessmentStore.assessment) return;
-    await setTriageResult(assessmentStore.assessment.id, {
+    // 同一份 persisted triageResult 同時寫 DB 與記憶體，避免 PDF 讀到 undefined。
+    const persisted = {
       category: result.category,
       confidence: result.confidence,
       summary: result.summary,
       details: result.details,
       anomalyCount: result.anomalyCount,
-    });
-    await assessmentStore.complete();
+    };
+    await setTriageResult(assessmentStore.assessment.id, persisted);
+    await assessmentStore.complete(persisted);
   }
 
   async function submitToFhir() {

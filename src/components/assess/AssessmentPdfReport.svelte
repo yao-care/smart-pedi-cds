@@ -2,6 +2,8 @@
   import type { Assessment, Child } from '../../lib/db/schema';
   import { ageInMonths } from '../../lib/utils/age-groups';
   import { loadChineseFontInto } from '../../lib/pdf/font-loader';
+  import { computeDomainScores } from '../../engine/cdsa/radar-scoring';
+  import { TRIAGE_DOMAIN_LABELS } from '../../engine/cdsa/triage-constants';
 
   interface Props {
     assessment: Assessment;
@@ -113,6 +115,29 @@
         doc.setFont('NotoSansTC', 'normal');
         doc.text(summaryLines, margin, y);
         y += summaryLines.length * 5 + 2;
+        y += 4;
+        drawSeparator();
+      }
+
+      // ===== Domain Scores（各面向表現位階）=====
+      // schema 的 triageResult.details 與 engine TriageResult.details 同構，
+      // computeDomainScores 僅讀 details，故以型別斷言橋接名義型別；details 缺
+      // （舊紀錄）時 scores 為空、整段略過。
+      const domainScores =
+        triage && triage.details && triage.details.length > 0
+          ? computeDomainScores(triage as unknown as import('../../engine/cdsa/triage').TriageResult)
+          : [];
+      if (domainScores.length > 0) {
+        drawLine('各面向表現位階', 12, 'bold');
+        y += 1;
+        drawLine('100 = 表現傑出　·　50 = 同齡平均　·　0 = 顯著落後', 9);
+        y += 2;
+        // 低分在前（優先注意）。
+        const sorted = [...domainScores].sort((a, b) => a.score - b.score);
+        for (const s of sorted) {
+          const label = TRIAGE_DOMAIN_LABELS[s.domain] ?? s.domain;
+          drawLine(`${label}：${s.score}${s.hasAnomaly ? '（需注意）' : ''}`, 10);
+        }
         y += 4;
         drawSeparator();
       }

@@ -204,10 +204,19 @@ class AssessmentStore {
     }
   }
 
-  async complete(): Promise<void> {
+  async complete(triageResult?: Assessment['triageResult']): Promise<void> {
     if (this.assessment) {
       await assessmentDao.updateAssessmentStatus(this.assessment.id, 'completed');
-      this.assessment = { ...this.assessment, status: 'completed', completedAt: new Date() };
+      // triageResult 亦寫回記憶體物件：此前只更新 status/completedAt，導致
+      // ResultView 傳給 AssessmentPdfReport 的 assessmentStore.assessment
+      // 其 triageResult 仍為 undefined → PDF 分流/各面向區塊整段跳過（報告只剩
+      // 表頭）。setTriageResult 只寫 DB，記憶體需在此同步。
+      this.assessment = {
+        ...this.assessment,
+        status: 'completed',
+        completedAt: new Date(),
+        ...(triageResult !== undefined ? { triageResult } : {}),
+      };
     }
   }
 
