@@ -6,7 +6,7 @@ describe('RadarChart', () => {
   it('renders default title and legend', () => {
     render(RadarChart, { data: [{ domain: 'cognition', score: 80, hasAnomaly: false }] });
     expect(screen.getByText('各面向表現位階')).toBeTruthy();
-    expect(screen.getByText(/100 = 表現傑出/)).toBeTruthy();
+    expect(screen.getByText(/與同齡孩子相當/)).toBeTruthy();
   });
 
   it('renders custom title', () => {
@@ -22,7 +22,7 @@ describe('RadarChart', () => {
       data: [{ domain: 'cognition', score: 80, hasAnomaly: false }],
       showLegend: false,
     });
-    expect(screen.queryByText(/100 = 表現傑出/)).toBeNull();
+    expect(screen.queryByText(/與同齡孩子相當/)).toBeNull();
   });
 
   it('renders score next to each domain label', () => {

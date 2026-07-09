@@ -4,6 +4,7 @@
   import { loadChineseFontInto } from '../../lib/pdf/font-loader';
   import { computeDomainScores } from '../../engine/cdsa/radar-scoring';
   import { TRIAGE_DOMAIN_LABELS } from '../../engine/cdsa/triage-constants';
+  import { getNextSteps } from '../../lib/assessment/report-guidance';
 
   interface Props {
     assessment: Assessment;
@@ -62,9 +63,18 @@
       await loadChineseFontInto(doc);
 
       const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
       const margin = 20;
       const contentWidth = pageWidth - margin * 2;
       let y = margin;
+
+      // 內容增多後可能超一頁；需要 `needed` mm 高度但空間不足時換頁。
+      function ensureSpace(needed: number) {
+        if (y + needed > pageHeight - margin) {
+          doc.addPage();
+          y = margin;
+        }
+      }
 
       function drawLine(text: string, fontSize: number, fontStyle: 'normal' | 'bold' = 'normal', align: 'left' | 'center' = 'left') {
         doc.setFontSize(fontSize);
@@ -139,6 +149,23 @@
         for (const s of sorted) {
           const label = TRIAGE_DOMAIN_LABELS[s.domain] ?? s.domain;
           drawLine(`${label}: ${s.score}${s.hasAnomaly ? '　可多陪伴' : ''}`, 10);
+        }
+        y += 4;
+        drawSeparator();
+      }
+
+      // ===== 建議後續（依分流類別的家長行動指引，含在地轉介路徑）=====
+      if (triage) {
+        ensureSpace(50); // 標題 + 數步驟，空間不足先換頁
+        drawLine('建議後續', 12, 'bold');
+        y += 1;
+        doc.setFontSize(10);
+        doc.setFont('NotoSansTC', 'normal');
+        for (const step of getNextSteps(triage.category)) {
+          const lines = doc.splitTextToSize(`· ${step}`, contentWidth);
+          ensureSpace(lines.length * 5 + 1);
+          doc.text(lines, margin, y);
+          y += lines.length * 5 + 1;
         }
         y += 4;
         drawSeparator();

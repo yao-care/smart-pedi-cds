@@ -12,6 +12,7 @@
   import { deriveCdsaTriggers } from '$lib/education/trigger-derivation';
   import TriggerVideoList from '../education/TriggerVideoList.svelte';
   import GcmUploadForm from './GcmUploadForm.svelte';
+  import { getStrengthLabels, getNextSteps, REASSURANCE_TEXT, HOW_TO_USE_ITEMS } from '../../lib/assessment/report-guidance';
 
   let fhirSubmitting = $state(false);
   let fhirSubmitted = $state(false);
@@ -101,6 +102,8 @@
   }
 
   const domainScores = $derived(computeDomainScores(triageResult));
+  // 亮點：表現相當或更好的面向（先呈現強項再談挑戰）。
+  const strengthLabels = $derived(getStrengthLabels(domainScores));
 
   const anomalyDomains = $derived(
     triageResult?.details.filter(d => d.isAnomaly).map(d => d.domain) ?? []
@@ -165,12 +168,43 @@
     <p class="summary">{triageResult.summary}</p>
   </div>
 
+  {#if triageResult.category !== 'normal'}
+    <section class="reassurance" aria-label="給家長的話">
+      <p>{REASSURANCE_TEXT}</p>
+    </section>
+  {/if}
+
+  {#if strengthLabels.length > 0}
+    <section class="highlights" aria-label="孩子的亮點">
+      <h3>🌟 這次的亮點</h3>
+      <p>小朋友在 <strong>{strengthLabels.join('、')}</strong> 的表現和同齡孩子相當或更好，這些是他自然的優勢，平常可以多用這些強項帶著他玩其他面向。</p>
+    </section>
+  {/if}
+
   {#if domainScores.length > 0}
     <section class="radar-section" aria-label="各面向評估結果">
       <h3>各面向評估</h3>
       <RadarChart data={domainScores} />
     </section>
   {/if}
+
+  <section class="next-steps" aria-label="接下來可以怎麼做">
+    <h3>接下來可以怎麼做</h3>
+    <ol>
+      {#each getNextSteps(triageResult.category) as step}
+        <li>{step}</li>
+      {/each}
+    </ol>
+  </section>
+
+  <details class="how-to-use">
+    <summary>如何看待與運用這份結果</summary>
+    <ul>
+      {#each HOW_TO_USE_ITEMS as item}
+        <li>{item}</li>
+      {/each}
+    </ul>
+  </details>
 
   {#if triageResult && assessmentStore.ageGroup && (anomalyDomains.length > 0 || triageResult.category !== 'normal')}
     <section class="education-section" aria-label="衛教建議">
@@ -263,6 +297,77 @@
     font-size: var(--text-base);
     color: var(--text);
     line-height: var(--lh-base);
+  }
+
+  /* 給家長的話 / 亮點 / 下一步 / 如何看待（2026-07-10 三方審查） */
+  .reassurance {
+    background: color-mix(in srgb, var(--accent) 8%, var(--bg));
+    border-left: 3px solid var(--accent);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-4);
+  }
+  .reassurance p {
+    margin: 0;
+    font-size: var(--text-base);
+    line-height: var(--lh-base);
+    color: var(--text);
+  }
+
+  .highlights {
+    background: color-mix(in srgb, var(--accent) 10%, var(--bg));
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-4);
+  }
+  .highlights h3 {
+    margin: 0 0 var(--space-2);
+    font-size: var(--text-lg);
+  }
+  .highlights p {
+    margin: 0;
+    line-height: var(--lh-base);
+    color: var(--text);
+  }
+
+  .next-steps {
+    margin-bottom: var(--space-5);
+  }
+  .next-steps h3 {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-3);
+  }
+  .next-steps ol {
+    margin: 0;
+    padding-left: var(--space-5);
+  }
+  .next-steps li {
+    margin-bottom: var(--space-2);
+    line-height: var(--lh-base);
+    color: var(--text);
+  }
+
+  .how-to-use {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+    margin-bottom: var(--space-5);
+  }
+  .how-to-use summary {
+    cursor: pointer;
+    font-weight: var(--font-bold);
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+  .how-to-use ul {
+    margin: var(--space-2) 0 0;
+    padding-left: var(--space-5);
+  }
+  .how-to-use li {
+    margin-bottom: var(--space-2);
+    line-height: var(--lh-base);
+    color: var(--text);
   }
 
   /* Radar section */
