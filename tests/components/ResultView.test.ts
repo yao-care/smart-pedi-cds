@@ -75,7 +75,10 @@ describe('ResultView', () => {
 
     // computeTriage is async but resolves quickly (no external IO).
     // findByText polls until visible.
-    const label = await screen.findByText(/正常|追蹤觀察|建議轉介/);
+    // 用精確 selector 鎖 triage-card 的分類標籤（h2）。分類為 normal 時 summary
+    // 「各面向發展在正常範圍內」也含「正常」，寬鬆 findByText 會命中 h2+summary
+    // 兩個元素而報 multiple；改用 heading level 2 只匹配分類標籤本身。
+    const label = await screen.findByRole('heading', { level: 2, name: /正常|追蹤觀察|建議轉介/ });
     expect(label).toBeInTheDocument();
 
     // The radar / education match / pdf sections are gated by computing
@@ -92,7 +95,7 @@ describe('ResultView', () => {
     };
 
     const { container } = render(ResultView);
-    await screen.findByText(/正常|追蹤觀察|建議轉介/);
+    await screen.findByRole('heading', { level: 2, name: /正常|追蹤觀察|建議轉介/ });
 
     // After resolution, the result section should contain non-empty text.
     // The triage summary is a sentence — assert there's substantive content.
@@ -128,7 +131,7 @@ describe('ResultView', () => {
     render(ResultView);
 
     // triage 完成 → 分類標籤出現，且 enrich 確實呼叫過 MediaPipe 分析
-    await screen.findByText(/正常|追蹤觀察|建議轉介/);
+    await screen.findByRole('heading', { level: 2, name: /正常|追蹤觀察|建議轉介/ });
     expect(analyzeGrossMotor).toHaveBeenCalledTimes(1);
     expect(vi.mocked(analyzeGrossMotor).mock.calls[0][1]).toBe('25-36m');
   });
@@ -146,7 +149,7 @@ describe('ResultView', () => {
     assessmentStore.partialAnalysis = { questionnaireScores: scores, questionnaireMaxScores: maxScores };
 
     const { container } = render(ResultView);
-    await screen.findByText(/正常|追蹤觀察|建議轉介/);
+    await screen.findByRole('heading', { level: 2, name: /正常|追蹤觀察|建議轉介/ });
 
     // 25-36m 的 6 個問卷面向中文標籤都應出現在雷達
     for (const zh of ['認知', '細動作', '粗動作', '語言理解', '語言表達', '社會情緒']) {
