@@ -16,11 +16,19 @@ import type { Page } from '@playwright/test';
  *    整合測試涵蓋（active-module-analysis / ResultView enrich）。
  */
 
-/** 按鈕可見則點擊並回傳 true（點擊失敗吞掉，不 throw）。 */
+/** 按鈕可見則點擊並回傳 true（點擊失敗吞掉，不 throw）。
+ *
+ * click 必須帶明確 timeout：模組交界（如 game 完成→下一模組載入）點「繼續下一步」
+ * 時，冷啟動下按鈕正 re-render / 被 loading 覆蓋 / 尚未 stable，Playwright 的
+ * click 會等 actionability。若不設 timeout（config 亦未設 actionTimeout → 預設
+ * 無限），這個 await 會一路掛到 test timeout（120s），`.catch` 吞不到 pending，
+ * 整個 test 逾時——即 2026-07-08 live run 7/200 flaky 的真因（7 個皆 hang 在此
+ * click）。給短 timeout 讓卡住的 click 快速失敗→交還上層迴圈以最新狀態重試，
+ * 回復「best-effort、絕不卡死」的設計原意。 */
 async function clickIfVisible(page: Page, name: RegExp): Promise<boolean> {
   const btn = page.getByRole('button', { name });
   if (await btn.isVisible().catch(() => false)) {
-    await btn.click().catch(() => {});
+    await btn.click({ timeout: 4_000 }).catch(() => {});
     return true;
   }
   return false;

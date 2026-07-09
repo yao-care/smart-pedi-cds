@@ -28,6 +28,10 @@ export default defineConfig({
   use: {
     baseURL: liveBase ?? 'http://localhost:4321',
     trace: 'retain-on-failure',
+    // 全域 action 兜底：不設時 Playwright 預設無限，任一 click/fill 卡在 actionability
+    // 都會掛到 test timeout（120s）才被砍。15s 遠大於正常互動、又能讓異常卡死的 action
+    // 快速失敗，避免單一 action 吃光整個 test budget（見 active-module-driver clickIfVisible）。
+    actionTimeout: 15_000,
     // fake 麥克風/攝影機：讓 getUserMedia 不跳權限、可餵測試音檔
     launchOptions: {
       args: [
