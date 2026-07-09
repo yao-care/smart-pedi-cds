@@ -170,14 +170,13 @@ export function recomputeTriageResult(
   // 1. 重算每筆 detail
   const newDetails = sanitizedDetails.map((d) => recomputeDetail(d, ageGroup));
 
-  // 2. 合成 domain-level z（與 triage.ts 同邏輯，含 display-only 排除）
+  // 2. 合成 domain-level z（與 triage.ts 同邏輯：白名單只收問卷）
   const domainZs: Record<string, number[]> = {};
   for (const d of newDetails) {
-    // Display-only 感測訊號（佔位/proxy，非臨床模型）不參與 gating，否則稀釋
-    // 問卷 ASQ-3 常模訊號：poseClassification（B1）與 voiceDuration（語音併入
-    // language_expression 後同理）。此前 recompute 漏排除 pose，與 live triage
-    // 不同步；一併補上，使歷史重算與新評估的 gating 結果一致。
-    if (d.metric === 'poseClassification' || d.metric === 'voiceDuration') continue;
+    // 白名單：只有 ASQ-3 問卷常模驅動 gating。所有感測啟發式
+    // （pose/voice/drawing/behavior）display-only——保留於 details 供顯示，
+    // 不進 gating。與 live triage.ts 一致。
+    if (d.metric !== 'questionnaireScore') continue;
     if (d.directionalZ !== null && d.directionalZ !== undefined) {
       if (!domainZs[d.domain]) domainZs[d.domain] = [];
       domainZs[d.domain].push(d.directionalZ);

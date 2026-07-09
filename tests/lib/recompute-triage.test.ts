@@ -205,70 +205,84 @@ describe('recomputeTriageResult — voice domain migration (v8)', () => {
   });
 });
 
-describe('recomputeTriageResult — per-domain gating (spec §7.2)', () => {
-  it('refer when any domain composite z ≤ -2 SD', () => {
-    // behavior domain: 4 metrics avg = mean(-3, -2, -2.5, -3) = -2.625 → refer
+describe('recomputeTriageResult — gating whitelist (drawing/behavior)', () => {
+  it('drawing does not dilute, and behavior does not gate, after recompute', () => {
     const out = recomputeTriageResult({
       ...baseResult,
       details: [
-        { domain: 'behavior', metric: 'completionRate', value: 0.2, zScore: -3, directionalZ: -3, isAnomaly: true },
-        { domain: 'behavior', metric: 'operationConsistency', value: 0.4, zScore: -2, directionalZ: -2, isAnomaly: true },
-        { domain: 'behavior', metric: 'reactionLatency', value: 4000, zScore: 2.5, directionalZ: -2.5, isAnomaly: true },
-        { domain: 'behavior', metric: 'interactionRhythm', value: 0.1, zScore: -3, directionalZ: -3, isAnomaly: true },
+        { domain: 'fine_motor', metric: 'drawingScore', value: 60, zScore: 0.25, directionalZ: 0.25, isAnomaly: false },
+        { domain: 'behavior', metric: 'completionRate', value: 0.1, zScore: -4, directionalZ: -4, isAnomaly: true },
+        { domain: 'fine_motor', metric: 'questionnaireScore', value: 2, zScore: -3, directionalZ: -3, maxScore: 20, isAnomaly: true },
+      ],
+    }, '25-36m');
+    // fine_motor 只反映問卷（drawing 不稀釋）
+    expect(out.domainCategories?.fine_motor).toBe('refer');
+    // behavior 不 gate（純顯示）
+    expect(out.domainCategories?.behavior).toBeUndefined();
+    expect(out.domainLevelZ?.behavior).toBeUndefined();
+    // drawing detail 仍保留於 details（顯示用）
+    expect(out.details?.some((d) => d.metric === 'drawingScore')).toBe(true);
+  });
+});
+
+describe('recomputeTriageResult — per-domain gating (spec §7.2)', () => {
+  it('refer when any domain composite z ≤ -2 SD', () => {
+    // 白名單：only questionnaireScore gates. cognition z = -3 → refer
+    const out = recomputeTriageResult({
+      ...baseResult,
+      details: [
+        { domain: 'cognition', metric: 'questionnaireScore', value: 1, zScore: -3, directionalZ: -3, maxScore: 20, isAnomaly: true },
       ],
     }, '25-36m');
     expect(out.category).toBe('refer');
-    expect(out.domainCategories?.behavior).toBe('refer');
-    expect(out.domainLevelZ?.behavior).toBeLessThanOrEqual(-2);
-    expect(out.summary).toContain('行為');
+    expect(out.domainCategories?.cognition).toBe('refer');
+    expect(out.domainLevelZ?.cognition).toBeLessThanOrEqual(-2);
+    expect(out.summary).toContain('認知');
     expect(out.summary).toContain('專業評估');
   });
 
   it('monitor when any domain composite z in (-2, -1]', () => {
-    // behavior avg = mean(-1.5, -1, 0, 0) = -0.625 → normal
-    // → bump one to put avg into monitor band: mean(-2, -1, 0, 0) = -0.75 → still normal
-    // try: mean(-2, -2, 0, 0) = -1.0 → monitor (boundary)
+    // 白名單：only questionnaireScore gates. 單個 domain z=-1 → monitor
     const out = recomputeTriageResult({
       ...baseResult,
       details: [
-        { domain: 'behavior', metric: 'completionRate', value: 0.3, zScore: -2, directionalZ: -2, isAnomaly: true },
-        { domain: 'behavior', metric: 'operationConsistency', value: 0.4, zScore: -2, directionalZ: -2, isAnomaly: true },
-        { domain: 'behavior', metric: 'reactionLatency', value: 2000, zScore: 0, directionalZ: 0, isAnomaly: false },
-        { domain: 'behavior', metric: 'interactionRhythm', value: 0.5, zScore: 0, directionalZ: 0, isAnomaly: false },
+        // questionnaire without maxScore: recompute keeps directionalZ as-is
+        { domain: 'cognition', metric: 'questionnaireScore', value: 10, zScore: -1, directionalZ: -1, maxScore: undefined, isAnomaly: true },
       ],
     }, '25-36m');
-    expect(out.domainLevelZ?.behavior).toBeCloseTo(-1.0);
-    expect(out.domainCategories?.behavior).toBe('monitor');
+    expect(out.domainLevelZ?.cognition).toBeCloseTo(-1.0);
+    expect(out.domainCategories?.cognition).toBe('monitor');
     expect(out.category).toBe('monitor');
-    expect(out.summary).toContain('行為');
+    expect(out.summary).toContain('認知');
     expect(out.summary).toContain('追蹤');
   });
 
   it('normal when all domains > -1 SD', () => {
+    // 白名單：only questionnaireScore gates. 兩個 domain 都 z > -1 → normal
     const out = recomputeTriageResult({
       ...baseResult,
       details: [
-        { domain: 'behavior', metric: 'completionRate', value: 0.7, zScore: -0.3, directionalZ: -0.3, isAnomaly: false },
-        { domain: 'fine_motor', metric: 'drawingScore', value: 55, zScore: 0, directionalZ: 0, isAnomaly: false },
+        { domain: 'cognition', metric: 'questionnaireScore', value: 15, zScore: -0.3, directionalZ: -0.3, maxScore: 20, isAnomaly: false },
+        { domain: 'fine_motor', metric: 'questionnaireScore', value: 16, zScore: 0, directionalZ: 0, maxScore: 20, isAnomaly: false },
       ],
     }, '25-36m');
     expect(out.category).toBe('normal');
-    expect(out.domainCategories?.behavior).toBe('normal');
+    expect(out.domainCategories?.cognition).toBe('normal');
     expect(out.domainCategories?.fine_motor).toBe('normal');
     expect(out.summary).toContain('正常範圍');
   });
 
   it('integration: v5 record with stale category gets refreshed end-to-end', () => {
     // v5 saved: triage thought it was "monitor" with anomalyCount=2.
-    // After recompute under per-domain gating: same details now show refer
-    // because cognition composite z is below -2.
+    // After recompute under per-domain gating (whitelist): cognition questionnaireScore → refer,
+    // fine_motor questionnaireScore → monitor, drawing is display-only (excluded from gating).
     const old: PersistedTriageResult = {
       category: 'monitor',
       confidence: 0.75,
       summary: '舊文案',
       anomalyCount: 2,
       details: [
-        // questionnaire — old format with no z
+        // questionnaire cognition — old format with no z, will be recomputed
         {
           domain: 'cognition',
           metric: 'questionnaireScore',
@@ -278,7 +292,17 @@ describe('recomputeTriageResult — per-domain gating (spec §7.2)', () => {
           maxScore: 4,
           isAnomaly: true,
         },
-        // drawing z-based — already had z in v5
+        // questionnaire fine_motor — whitelist gating signal, no maxScore so directionalZ preserved
+        {
+          domain: 'fine_motor',
+          metric: 'questionnaireScore',
+          value: 8,
+          zScore: -1.2,
+          directionalZ: -1.2,
+          maxScore: undefined,
+          isAnomaly: true,
+        },
+        // drawing z-based — already had z in v5 but now display-only
         {
           domain: 'fine_motor',
           metric: 'drawingScore',
@@ -293,13 +317,13 @@ describe('recomputeTriageResult — per-domain gating (spec §7.2)', () => {
     // cognition score=1 maxScore=4 → z ≈ -4.43 → refer at -2 cutoff
     expect(out.domainLevelZ?.cognition).toBeLessThan(-2);
     expect(out.domainCategories?.cognition).toBe('refer');
-    // fine_motor z=-1.2 → monitor band
+    // fine_motor questionnaireScore z=-1.2 → monitor band (drawing excluded)
     expect(out.domainLevelZ?.fine_motor).toBeCloseTo(-1.2);
     expect(out.domainCategories?.fine_motor).toBe('monitor');
     // Overall = refer (any refer wins)
     expect(out.category).toBe('refer');
-    // anomalyCount refreshed: cognition (-4.43) and drawing (-1.2) both ≤ -1
-    expect(out.anomalyCount).toBe(2);
+    // anomalyCount refreshed: cognition (-4.43) and fine_motor (-1.2) both ≤ -1 (drawing counted too)
+    expect(out.anomalyCount).toBe(3);
     // Summary refreshed
     expect(out.summary).toContain('認知');
     expect(out.summary).not.toContain('舊文案');
@@ -389,18 +413,19 @@ describe('recomputeTriageResult — drawing value=0 sanitization (v7)', () => {
 
 describe('recomputeTriageResult — confidence scaling', () => {
   it('refer confidence rises with affected domain count', () => {
+    // 白名單：only questionnaireScore gates. 單個 domain refer
     const oneRefer = recomputeTriageResult({
       ...baseResult,
       details: [
-        { domain: 'behavior', metric: 'completionRate', value: 0, zScore: -5, directionalZ: -5, isAnomaly: true },
+        { domain: 'cognition', metric: 'questionnaireScore', value: 1, zScore: -5, directionalZ: -5, maxScore: 20, isAnomaly: true },
       ],
     }, '25-36m');
+    // 白名單：two domains refer
     const twoRefer = recomputeTriageResult({
       ...baseResult,
       details: [
-        { domain: 'behavior', metric: 'completionRate', value: 0, zScore: -5, directionalZ: -5, isAnomaly: true },
-        // value=10 (not 0) so the v7 drawing-sanitization filter keeps it.
-        { domain: 'fine_motor', metric: 'drawingScore', value: 10, zScore: -3, directionalZ: -3, isAnomaly: true },
+        { domain: 'cognition', metric: 'questionnaireScore', value: 1, zScore: -5, directionalZ: -5, maxScore: 20, isAnomaly: true },
+        { domain: 'fine_motor', metric: 'questionnaireScore', value: 2, zScore: -3, directionalZ: -3, maxScore: 20, isAnomaly: true },
       ],
     }, '25-36m');
     expect(twoRefer.confidence).toBeGreaterThan(oneRefer.confidence);
@@ -408,10 +433,11 @@ describe('recomputeTriageResult — confidence scaling', () => {
   });
 
   it('normal baseline confidence = 0.85', () => {
+    // 白名單：only questionnaireScore gates. normal category baseline confidence
     const out = recomputeTriageResult({
       ...baseResult,
       details: [
-        { domain: 'behavior', metric: 'completionRate', value: 0.75, zScore: 0, directionalZ: 0, isAnomaly: false },
+        { domain: 'cognition', metric: 'questionnaireScore', value: 15, zScore: 0, directionalZ: 0, maxScore: 20, isAnomaly: false },
       ],
     }, '25-36m');
     expect(out.category).toBe('normal');
