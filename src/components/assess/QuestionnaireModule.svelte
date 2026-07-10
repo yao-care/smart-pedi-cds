@@ -150,9 +150,14 @@
       }
     }
 
+    // Per-question raw answers（questionId → score）供 triage 偵測發展警訊。
+    const questionnaireAnswers: Record<string, number> = {};
+    for (const [id, a] of Object.entries(answers)) questionnaireAnswers[id] = a.score;
+
     assessmentStore.addAnalysis({
       questionnaireScores: scores,
       questionnaireMaxScores: maxScores,
+      questionnaireAnswers,
     });
   }
 

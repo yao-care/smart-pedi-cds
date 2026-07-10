@@ -81,6 +81,7 @@
         drawing: pa.drawingResult ?? { shapes: [], overallScore: 0, maturityLevel: 'age_appropriate' },
         questionnaireScores: pa.questionnaireScores,
         questionnaireMaxScores: pa.questionnaireMaxScores,
+        questionnaireAnswers: pa.questionnaireAnswers,
         grossMotor: grossMotor ? {
           classification: grossMotor.classification,
           confidence: grossMotor.confidence,
@@ -124,6 +125,7 @@
       summary: result.summary,
       details: result.details,
       anomalyCount: result.anomalyCount,
+      redFlags: result.redFlags,
     };
     await setTriageResult(assessmentStore.assessment.id, persisted);
     await assessmentStore.complete(persisted);
@@ -167,6 +169,18 @@
     <p class="screening-note">此為初步篩檢結果，非診斷</p>
     <p class="summary">{triageResult.summary}</p>
   </div>
+
+  {#if triageResult.redFlags && triageResult.redFlags.length > 0}
+    <section class="red-flags" role="alert" aria-label="發展警訊">
+      <h3>需要特別留意</h3>
+      <ul>
+        {#each triageResult.redFlags as flag}
+          <li>{flag.label}</li>
+        {/each}
+      </ul>
+      <p class="red-flags-note">這些是建議儘快讓專業人員了解的發展警訊。及早了解能把握孩子發展的機會，這不是診斷。</p>
+    </section>
+  {/if}
 
   {#if triageResult.category !== 'normal'}
     <section class="reassurance" aria-label="給家長的話">

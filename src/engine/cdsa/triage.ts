@@ -2,6 +2,7 @@ import type { BehaviorMetrics } from './behavior-analysis';
 import type { VoiceMetrics } from './voice-analysis';
 import type { DrawingAnalysisResult } from './drawing-analysis';
 import type { AgeGroupCDSA } from '../../lib/utils/age-groups';
+import { detectRedFlags, type RedFlag } from './red-flags';
 import { db } from '../../lib/db/schema';
 import {
   getQuestionnaireNorm,
@@ -43,6 +44,10 @@ export interface TriageInput {
    *  When absent the engine falls back to a conservative 10/domain default
    *  but the radar's normalisation may be inaccurate. */
   questionnaireMaxScores?: Record<string, number>;
+  /** Per-question raw answers (questionId → score). Enables age-band red-flag
+   *  detection (single critical milestone miss → refer, independent of domain
+   *  averaging). Absent for older flows that only carry per-domain scores. */
+  questionnaireAnswers?: Record<string, number>;
   grossMotor?: { classification: string; confidence: number; features: Record<string, number> };
 }
 
@@ -82,6 +87,9 @@ export interface TriageResult {
    *  TriageResult.category but at domain granularity (so the UI can mark
    *  individual domains, not only the overall result). */
   domainCategories?: Record<string, 'normal' | 'monitor' | 'refer'>;
+  /** Age-band developmental red flags hit (independent safety net; any hit
+   *  forces category to refer, not diluted by per-domain averaging). */
+  redFlags?: RedFlag[];
 }
 
 /** Load norms from DB, fall back to hardcoded defaults */
@@ -334,6 +342,16 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
     confidence = 0.85;
   }
 
+  // Age-band red flags: an independent safety net. A single critical milestone
+  // miss (not walking / no words / no name response / no pointing / no pretend
+  // play / no social smile at the appropriate age) forces refer — it must NOT
+  // be diluted by per-domain averaging (spec 2026-07-10 醫師視角審查).
+  const redFlags = detectRedFlags(input.questionnaireAnswers ?? {}, input.ageGroup);
+  if (redFlags.length > 0) {
+    category = 'refer';
+    confidence = Math.max(confidence, 0.9);
+  }
+
   // anomalyCount retained for backward compat with persisted records / UI that
   // still reads it; now reflects per-detail UI 提示 count (not gating-relevant).
   const anomalyCount = details.filter((d) => d.isAnomaly).length;
@@ -345,9 +363,11 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
   // 切片」講成「孩子的屬性」的定性字眼，改用「這次表現/還在發展中」的狀態描述，
   // 並強調「篩檢非診斷」。發展是連續、狀態性的。
   const summary =
-    category === 'normal' ? '各面向發展都在同齡常見範圍內。' :
-    category === 'monitor' ? `${labelDomains(monitorDomains)}目前還在發展中，多數孩子會隨時間趕上。可以先在家多陪伴，過一段時間再評估一次。` :
-    `這次評估中，${labelDomains(referDomains)}的表現和同齡孩子相比較不一致，建議讓專業人員進一步了解——這是釐清，不是診斷。`;
+    redFlags.length > 0
+      ? `發現需要留意的發展警訊（${redFlags.map((f) => f.label).join('、')}），建議儘快讓專業人員評估——及早了解是把握孩子發展的機會，不是診斷。`
+      : category === 'normal' ? '各面向發展都在同齡常見範圍內。' :
+        category === 'monitor' ? `${labelDomains(monitorDomains)}目前還在發展中，多數孩子會隨時間趕上。可以先在家多陪伴，過一段時間再評估一次。` :
+        `這次評估中，${labelDomains(referDomains)}的表現和同齡孩子相比較不一致，建議讓專業人員進一步了解——這是釐清，不是診斷。`;
 
   return {
     category,
@@ -357,5 +377,6 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
     details,
     domainLevelZ,
     domainCategories,
+    redFlags,
   };
 }

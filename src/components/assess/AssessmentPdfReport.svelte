@@ -129,6 +129,23 @@
         drawSeparator();
       }
 
+      // ===== 發展警訊（獨立安全網，命中即建議儘快評估）=====
+      if (triage?.redFlags && triage.redFlags.length > 0) {
+        ensureSpace(30);
+        drawLine('需要特別留意', 12, 'bold');
+        y += 1;
+        doc.setFontSize(10);
+        doc.setFont('NotoSansTC', 'normal');
+        for (const flag of triage.redFlags) {
+          const lines = doc.splitTextToSize(`· ${flag.label}`, contentWidth);
+          ensureSpace(lines.length * 5 + 1);
+          doc.text(lines, margin, y);
+          y += lines.length * 5 + 1;
+        }
+        y += 4;
+        drawSeparator();
+      }
+
       // ===== Domain Scores（各面向表現位階）=====
       // schema 的 triageResult.details 與 engine TriageResult.details 同構，
       // computeDomainScores 僅讀 details，故以型別斷言橋接名義型別；details 缺

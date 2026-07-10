@@ -407,3 +407,29 @@ describe('triage dev-mode warnings', () => {
     vi.unstubAllEnvs();
   });
 });
+
+describe('computeTriage — red flags (age-band safety net)', () => {
+  it('a milestone red flag forces refer regardless of normal domain averages', async () => {
+    // baseInput 為 25-36m。gm-03（走路）答 0 → not-walking 紅旗，即使 gross_motor
+    // domain 總分正常，仍強制 refer（不受平均稀釋）。
+    const result = await computeTriage({
+      ...baseInput,
+      questionnaireScores: { gross_motor: 8 },
+      questionnaireMaxScores: { gross_motor: 10 },
+      questionnaireAnswers: { 'gm-03': 0 },
+    });
+    expect(result.redFlags?.map((f) => f.id)).toContain('not-walking');
+    expect(result.category).toBe('refer');
+    expect(result.summary).toContain('發展警訊');
+  });
+
+  it('no red flags when milestones are met', async () => {
+    const result = await computeTriage({ ...baseInput, questionnaireAnswers: { 'gm-03': 2 } });
+    expect(result.redFlags ?? []).toEqual([]);
+  });
+
+  it('red flags absent when no per-question answers provided', async () => {
+    const result = await computeTriage(baseInput);
+    expect(result.redFlags ?? []).toEqual([]);
+  });
+});

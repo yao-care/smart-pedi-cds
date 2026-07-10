@@ -29,6 +29,9 @@ export interface PartialAnalysis {
    *  questionnaireScores. Lets triage compute the correct normalised
    *  ratio instead of dividing by a hardcoded 10. */
   questionnaireMaxScores?: Record<string, number>;
+  /** Per-question raw answers (questionId → score). Feeds age-band red-flag
+   *  detection in triage (single critical milestone miss → refer). */
+  questionnaireAnswers?: Record<string, number>;
   behaviorMetrics?: BehaviorMetrics;
   voiceMetrics?: VoiceMetrics;
   drawingResult?: DrawingAnalysisResult;

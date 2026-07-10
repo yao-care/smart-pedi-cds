@@ -188,6 +188,15 @@ export interface Assessment {
       isAnomaly: boolean;
     }>;
     anomalyCount?: number;
+    /** Age-band developmental red flags hit（獨立安全網；命中即 refer）。
+     *  僅新評估存有（需 per-question 作答）；非索引欄位，無需 Dexie 版本升級。 */
+    redFlags?: Array<{
+      id: string;
+      questionId: string;
+      minAgeGroup: string;
+      label: string;
+      basis: string;
+    }>;
   };
   fhirSubmitted: boolean;
   fhirDiagnosticReportId?: string;
