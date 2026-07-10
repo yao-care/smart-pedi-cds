@@ -48,21 +48,21 @@ export const RED_FLAGS: readonly RedFlag[] = [
     id: 'no-name-response',
     questionId: 'lc-01', // 「叫寶寶的名字時會轉頭看嗎？」
     minAgeGroup: '13-24m',
-    label: '叫名字時幾乎沒有反應',
+    label: '叫名字時很少有反應',
     basis: '叫名反應 9–12 個月應出現；持續缺乏為自閉症早期警訊（M-CHAT）。',
   },
   {
     id: 'no-first-words',
     questionId: 'le-01', // 「寶寶會發出有意義的聲音嗎？（如叫爸爸、媽媽）」
     minAgeGroup: '13-24m',
-    label: '尚無有意義的單字（如叫爸爸、媽媽）',
+    label: '尚無有意義的單字「如叫爸爸、媽媽」',
     basis: 'CDC：12 個月應有有意義單字，15–18 個月應有數個單字。',
   },
   {
     id: 'no-joint-attention-pointing',
     questionId: 'le-03', // 「寶寶會用手指東西要大人看嗎？」
     minAgeGroup: '13-24m',
-    label: '尚不會用手指東西與大人分享（共享式注意力）',
+    label: '尚不會用手指東西與大人分享「共享式注意力」',
     basis: 'CDC/M-CHAT：15–18 個月應以手指物分享；缺乏為自閉症早期警訊。',
   },
   {
@@ -76,7 +76,7 @@ export const RED_FLAGS: readonly RedFlag[] = [
     id: 'no-pretend-play',
     questionId: 'se-04', // 「孩子玩玩具時會假裝餵娃娃吃東西嗎？」
     minAgeGroup: '25-36m',
-    label: '尚無假裝（象徵）遊戲',
+    label: '尚無假裝「象徵」遊戲',
     basis: 'CDC：18 個月應有假裝遊戲；24 個月後缺乏為發展/自閉警訊。',
   },
 ];

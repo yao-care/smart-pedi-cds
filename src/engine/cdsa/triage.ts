@@ -364,7 +364,7 @@ export async function computeTriage(input: TriageInput): Promise<TriageResult> {
   // 並強調「篩檢非診斷」。發展是連續、狀態性的。
   const summary =
     redFlags.length > 0
-      ? `發現需要留意的發展警訊（${redFlags.map((f) => f.label).join('、')}），建議儘快讓專業人員評估——及早了解是把握孩子發展的機會，不是診斷。`
+      ? `發現需要留意的發展警訊「${redFlags.map((f) => f.label).join('、')}」，建議儘快讓專業人員評估——及早了解是把握孩子發展的機會，不是診斷。`
       : category === 'normal' ? '各面向發展都在同齡常見範圍內。' :
         category === 'monitor' ? `${labelDomains(monitorDomains)}目前還在發展中，多數孩子會隨時間趕上。可以先在家多陪伴，過一段時間再評估一次。` :
         `這次評估中，${labelDomains(referDomains)}的表現和同齡孩子相比較不一致，建議讓專業人員進一步了解——這是釐清，不是診斷。`;
