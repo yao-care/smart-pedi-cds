@@ -89,13 +89,23 @@
 | Trivy High：astro ×2 | 2 | `^6.3.1` → `^6.4.6`（實裝 6.4.8） | `13c33dd` |
 | Trivy High：vite ×1 | 1 | override → `^7.3.5`（實裝 7.3.6） | `13c33dd` |
 | Trivy High：ws ×1 | 1 | override `ws@7` → `^7.5.11`（實裝 7.5.12；見 §6） | `13c33dd` |
-| Trivy Medium/Low：dompurify、js-yaml、@babel/core、esbuild | 多項 | 見 commit 訊息 | `13c33dd` |
+| Trivy Medium/Low：dompurify、js-yaml、@babel/core、esbuild | 多項 | 見 commit 訊息 | `13c33dd`、`cb52e29` |
+
+**Trivy 回報之 18 個 CVE 已全數清零，無殘留。**
 
 ### 掃描器漏報（本次自行發現）
 
 - **`js-yaml@3.14.2`**（CVE-2026-53550，fix: 3.15.0）— 由 `@lhci/cli` 拉入，升級前即存在於 lockfile，但掃描報告僅列出 `js-yaml 4.1.1`。已一併修復（override `js-yaml@3` → `^3.15.0`）。
 - **回饋建議**：同一套件存在多個 major 版本時，應逐一比對各自之 fix 版本。
 
-### 已知殘留（接受風險）
+### 已知殘留
 
-- **`esbuild@0.27.7`** — GHSA-g7r4-m6w7-qqqr（**LOW**）。上游 fix 為 0.28.1，但 `vite@7.3.6` 要求 `^0.27.0`、`astro@6.4.8` 要求 `^0.27.3`；0.x 之 caret 僅允許 patch 浮動（經 semver 實測確認），強制升級會同時打破兩者。屬 build-time devDependency 且等級為 LOW，待上游 vite/astro 升級後自然解決。
+**無。** Trivy 回報之 18 個 CVE 全數修復。
+
+> **過程紀錄（方法論教訓）**：`esbuild@0.27.7` 的 GHSA-g7r4-m6w7-qqqr (LOW) 一度被判定為「無法修復、接受風險」，理由是 `vite` 要求 `^0.27.0`、`astro@6.4.8` 要求 `^0.27.3`，而 0.x 之 caret 僅允許 patch 浮動。**此判定有誤**，原因有二：
+> 1. 該 range 查自 `vite@7.3.5`，但 override 後實裝者為 **`vite@7.3.6`**，其 range 已放寬為 `^0.27.0 || ^0.28.0`，本就支援 0.28。查詢對象與實裝版本不一致。
+> 2. 僅以 semver 推論即斷定「強推會打破」，未實際測試。`pnpm.overrides` 可強制解析，能否運作應由實測認定。
+>
+> 實測結果：全域 override `esbuild` → `^0.28.1` 後，`pnpm check` 0 error、69 檔 736 測試全綠、`pnpm build` 與 SEO 守門全過，產出物與先前基準完全一致（33 頁、39 個 JSON-LD 零錯、抽驗 40 個 JS bundle 語法全通過）。
+>
+> **教訓**：宣告某項「無法修復」之前，須先實測而非僅憑 semver 推論；且查詢相依範圍時必須以**實裝版本**為準，不可沿用升級前查得的資料。
