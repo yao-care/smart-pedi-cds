@@ -8,6 +8,7 @@
 | **A.5.26** 資安事件之回應（聯絡窗口） | [incident-response-contacts.md](incident-response-contacts.md) | ✅ 內外部窗口已填實（單人維運） |
 | **A.5.29** 中斷期間之資訊安全（備份還原） | [backup-restore-test.md](backup-restore-test.md) | ✅ 程序完整；**首次還原測試已於 2026-06-10 實跑通過並留存紀錄**（§3.1） |
 | **A.8.26** 應用程式安全需求（Web 安全標頭） | [web-headers-risk-acceptance.md](web-headers-risk-acceptance.md) | ✅ ZAP 7 項標頭告警已評估；repo 內可強化者已落地，平台限制項已風險接受（2026-06-11） |
+| **A.8.8 / A.8.28** 弱點評估正確性（誤報判定） | [scan-false-positives.md](scan-false-positives.md) | ✅ 掃描 `20260714-231430-127e` 之誤報／規則錯配已逐項實測判定並留證（2026-07-15） |
 
 ## 完成狀態
 
@@ -18,6 +19,13 @@
 - ✅ **A.5.29 還原測試**：已於 2026-06-10 於全新環境實跑 7 步程序通過（RTO ~94 秒達標）。
 
 緊急備援聯絡人已指定（service@yao.care）。
+
+## 掃描處置紀錄
+
+| 掃描 ID | 日期 | Gate | 處置 |
+|---|---|---|---|
+| `20260610-044840-127e` | 2026-06-10 | — | posture-check 三項缺口補齊（見上表）；Web 標頭風險接受（2026-06-11） |
+| `20260714-231430-127e` | 2026-07-14 | FAIL (H:21) | High 21 全數修復：SAST 17 → Actions pin SHA（`1053dd3`）；Trivy High 4 → 依賴升級（`13c33dd`）。誤報／規則錯配逐項判定留證於 [scan-false-positives.md](scan-false-positives.md) |
 
 **後續**：須將本目錄路徑登錄到 ISMS / posture-check 掃描器設定（掃描器原讀取 `runtime/posture-check-result.json`，其記錄來源路徑由 ISMS 端設定，不在本應用程式 repo 內）。
 
