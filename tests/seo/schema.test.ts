@@ -19,9 +19,40 @@ describe('organizationSchema', () => {
     expect(s.name).toBe('yao.care 藥提醒科技');
     expect(s.url).toBe('https://yao.care');
   });
-  it('sameAs 為空時不輸出該欄位', () => {
-    const s = organizationSchema(site) as Record<string, unknown>;
-    expect('sameAs' in s).toBe(false);
+  it('輸出 sameAs，且每筆為官方據點的 https URL', () => {
+    const s = organizationSchema(site) as Record<string, unknown> & { sameAs?: string[] };
+    expect(Array.isArray(s.sameAs)).toBe(true);
+    expect(s.sameAs!.length).toBeGreaterThan(0);
+    for (const url of s.sameAs!) expect(url).toMatch(/^https:\/\//);
+    // 僅列本專案實際經營的據點，勿混入未經營的社群帳號
+    expect(s.sameAs).toContain('https://github.com/yao-care/smart-pedi-cds');
+  });
+});
+
+describe('softwareApplicationSchema — citation（評估依據來源）', () => {
+  it('輸出 citation，每筆具 name 與 https URL', () => {
+    const s = softwareApplicationSchema(site) as Record<string, unknown> & {
+      citation?: { '@type': string; name: string; url: string }[];
+    };
+    expect(Array.isArray(s.citation)).toBe(true);
+    expect(s.citation!.length).toBeGreaterThanOrEqual(2);
+    for (const c of s.citation!) {
+      expect(c['@type']).toBe('CreativeWork');
+      expect(c.name.length).toBeGreaterThan(0);
+      expect(c.url).toMatch(/^https:\/\//);
+    }
+  });
+
+  it('citation 不得含佔位或明顯捏造的路徑', () => {
+    const s = softwareApplicationSchema(site) as Record<string, unknown> & {
+      citation?: { url: string }[];
+    };
+    // 曾誤將憑印象拼出的 hpa.gov.tw Detail.aspx 路徑寫入（實測 404）。
+    // 引用來源之 URL 必須實測可達後才可加入 site.ts 的 citations。
+    for (const c of s.citation!) {
+      expect(c.url).not.toMatch(/example\.com|TODO|placeholder|xxx/i);
+      expect(c.url).not.toMatch(/hpa\.gov\.tw\/Pages\/Detail\.aspx\?nodeid=1600/);
+    }
   });
 });
 

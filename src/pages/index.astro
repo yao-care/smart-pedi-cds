@@ -2,6 +2,7 @@
 import App from '../layouts/App.astro';
 import { siteFaqs } from '../data/site-faqs';
 import JsonLd from '../components/seo/JsonLd.astro';
+import { SITE } from '../lib/seo/site';
 import {
   organizationSchema,
   webSiteSchema,
@@ -10,6 +11,13 @@ import {
 } from '../lib/seo/schema';
 
 const site = Astro.site!;
+
+/**
+ * 內容最後審閱日期。題目經兒科專業人員審閱之時點——與 /about 常模來源聲明一致。
+ * 更動評估題目或分流門檻時同步更新。
+ */
+const LAST_REVIEWED = '2026-05-01';
+const lastReviewedLabel = '2026 年 5 月';
 
 const steps = [
   { n: '1', title: '填寫基本資料', desc: '輸入孩子的出生日期與性別，約 30 秒。' },
@@ -50,17 +58,21 @@ const trust = [
   <!-- 2. 共鳴痛點 -->
   <section class="section" aria-label="常見擔心">
     <h2>你是不是也有這些擔心？</h2>
-    <p class="lead">
-      「兩歲還不太會講話正常嗎？」「比同齡孩子晚走路要緊嗎？」
-      「該繼續觀察，還是去看醫生？」發展的每一步都讓人放心不下，
-      但網路資訊雜亂、又不知道該不該掛號。這個工具就是幫你把擔心整理成具體的方向。
+    <p class="lead key-answer" data-question="孩子發展比同齡慢，我該繼續觀察還是就醫？">
+      發展的每一步都讓人放心不下，但網路資訊雜亂、又不知道該不該掛號。
+      這個免費工具用依年齡的引導式問卷，幫你把「兩歲還不太會講話正常嗎」、
+      「比同齡孩子晚走路要緊嗎」這類擔心，整理成具體的方向與下一步。
     </p>
   </section>
 
   <!-- 3. 怎麼運作 -->
   <section class="section" aria-label="如何運作">
     <h2>三步驟，馬上開始</h2>
-    <ol class="steps">
+    <p class="lead key-answer" data-question="這個兒童發展評估要怎麼進行？需要多久？">
+      共三個步驟、約三分鐘：填寫出生日期與性別，依年齡回答發展題目，當下取得分級與建議。
+      免登入、免安裝，全程在你的瀏覽器內完成。
+    </p>
+    <ol class="steps actionable-steps">
       {steps.map((s) => (
         <li class="step-card">
           <span class="step-n">{s.n}</span>
@@ -74,9 +86,12 @@ const trust = [
   <!-- 4. 你會得到什麼 -->
   <section class="section" aria-label="評估結果">
     <h2>你會得到什麼</h2>
+    <p class="lead key-answer" data-question="做完評估我會得到什麼結果？">
+      你會得到六大發展面向的風險分級、對應的衛教建議，以及「是否建議進一步評估」的分流參考。
+    </p>
     <div class="card-grid">
       {gains.map((g) => (
-        <div class="info-card">
+        <div class="info-card key-takeaway">
           <h3>{g.title}</h3>
           <p>{g.desc}</p>
         </div>
@@ -87,6 +102,10 @@ const trust = [
   <!-- 5. 為什麼可信 -->
   <section class="section" aria-label="為什麼可信">
     <h2>為什麼可以放心使用</h2>
+    <p class="lead key-answer" data-question="這個工具可靠嗎？我的資料會被收集嗎？">
+      所有運算都在你的瀏覽器內完成，資料不離開裝置、不收集、不轉傳；程式碼開源可公開檢視。
+      判讀採常模參照，題目經兒科專業人員審閱（{lastReviewedLabel}）。
+    </p>
     <div class="card-grid">
       {trust.map((t) => (
         <div class="info-card">
@@ -97,9 +116,47 @@ const trust = [
     </div>
   </section>
 
+  <!-- 5b. 參考依據與維護者 -->
+  <section class="section" aria-label="參考依據與維護者">
+    <h2>參考依據與維護者</h2>
+    <p class="lead key-answer" data-question="這個評估工具的依據是什麼？由誰維護？">
+      本工具的發展面向架構與分流門檻參考下列公開來源，由 {SITE.organization.name} 開發與維護，程式碼全部開源。
+    </p>
+    <div class="provenance">
+      <div class="info-card">
+        <h3>參考來源</h3>
+        <ul class="citation-list">
+          {SITE.citations.map((c) => (
+            <li>
+              <a href={c.url} target="_blank" rel="noopener noreferrer">{c.name}</a>
+              <span class="citation-note">{c.note}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="info-card">
+        <h3>開發與維護</h3>
+        <p>
+          由 <a href={SITE.organization.url} target="_blank" rel="noopener noreferrer">{SITE.organization.name}</a>
+          開發維護。這是一個開源專案，任何人都可以檢視程式碼、回報問題或貢獻衛教內容。
+        </p>
+        <p>
+          <a href={SITE.repo} target="_blank" rel="noopener noreferrer">在 GitHub 檢視原始碼</a>
+        </p>
+        <p class="reviewed-at">
+          內容最後審閱：<time datetime={LAST_REVIEWED}>{lastReviewedLabel}</time>
+        </p>
+      </div>
+    </div>
+  </section>
+
   <!-- 6. FAQ -->
   <section class="section" aria-label="常見問題">
     <h2>常見問題</h2>
+    <p class="lead key-answer" data-question="關於這個兒童發展評估工具的常見問題">
+      以下整理家長最常問的問題：這個評估在評什麼面向、結果能不能取代醫師診斷、資料會不會被上傳、
+      是否需要費用或登入，以及評估後發現疑慮該怎麼辦。
+    </p>
     <div class="faq-list">
       {siteFaqs.map((faq) => (
         <details class="faq-item">
@@ -192,6 +249,49 @@ const trust = [
     line-height: var(--lh-base);
     color: color-mix(in srgb, var(--text), var(--bg) 25%);
     max-width: 72ch;
+  }
+  /* 直答段落（AEO）：緊接 h2 之後，先給結論再給細節 */
+  .key-answer {
+    margin-bottom: var(--space-5);
+  }
+
+  /* 參考依據與維護者 */
+  .provenance {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-5);
+  }
+  .citation-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .citation-list li {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+  .citation-list a,
+  .provenance a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: var(--text-sm);
+    line-height: var(--lh-sm);
+    color: var(--accent);
+  }
+  .citation-note {
+    font-size: var(--text-xs);
+    line-height: var(--lh-sm);
+    color: color-mix(in srgb, var(--text), var(--bg) 40%);
+  }
+  .reviewed-at {
+    margin-top: var(--space-3);
+    font-size: var(--text-xs);
+    color: color-mix(in srgb, var(--text), var(--bg) 40%);
   }
 
   .steps {

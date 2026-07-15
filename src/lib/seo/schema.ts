@@ -46,6 +46,12 @@ export function softwareApplicationSchema(site: URL) {
     isAccessibleForFree: true,
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'TWD' },
     publisher: organizationNode(site),
+    // 評估依據之公開來源；URL 皆經實測可達（見 site.ts 的 citations 註解）
+    citation: SITE.citations.map((c) => ({
+      '@type': 'CreativeWork',
+      name: c.name,
+      url: c.url,
+    })),
   };
 }
 

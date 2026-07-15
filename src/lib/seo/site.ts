@@ -19,5 +19,23 @@ export const SITE = {
     url: 'https://yao.care',
   },
   repo: 'https://github.com/yao-care/smart-pedi-cds',
-  sameAs: [] as string[],
+  // sameAs 僅列真實存在且由本專案營運的官方據點，勿填未經營的社群帳號。
+  sameAs: ['https://github.com/yao-care/smart-pedi-cds', 'https://yao.care'] as string[],
+  /**
+   * 評估工具之權威依據來源（E-E-A-T）。
+   * 僅列本專案實際採用者，且每個 URL 皆須實測可達（勿憑印象填寫政府網站路徑）。
+   * 與首頁「為什麼可以放心使用」及 /about 的常模來源聲明一致。
+   */
+  citations: [
+    {
+      name: '衛生福利部國民健康署：兒童發展篩檢服務',
+      url: 'https://www.hpa.gov.tw/Pages/List.aspx?nodeid=4816',
+      note: '我國官方兒童發展篩檢制度與轉介流程',
+    },
+    {
+      name: 'ASQ-3（Ages & Stages Questionnaires, Third Edition）',
+      url: 'https://agesandstages.com/products-pricing/asq3/',
+      note: '常模參照與 −1 / −2 SD 分流門檻之借用來源',
+    },
+  ],
 } as const;
