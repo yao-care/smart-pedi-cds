@@ -1,7 +1,6 @@
 ---
 import App from '../layouts/App.astro';
-import JsonLd from '../components/seo/JsonLd.astro';
-import { organizationSchema } from '../lib/seo/schema';
+import { SITE } from '../lib/seo/site';
 
 const introHighlights = [
   '家長可自行操作的兒童發展篩檢',
@@ -51,8 +50,6 @@ const outcomes = [
 ---
 
 <App title="關於" description="關於 Smart Pedi 兒童發展評估：免費、純瀏覽器、保護隱私的兒童發展篩檢自評工具。">
-  <JsonLd data={organizationSchema(Astro.site!)} />
-
   <h1>關於 Smart Pedi 兒童發展評估</h1>
 
   <section class="about-section about-twocol" aria-label="系統介紹">
@@ -148,6 +145,16 @@ const outcomes = [
       <strong>篩檢敏感性說明</strong>：本系統題目較 ASQ-3 精簡（每面向 1–2 題），統計上分數差 1 分相當於約 1.5–2 個標準差。
       為了維持「寧錯報不漏報」的篩檢精神，我們仍維持 −2 SD 嚴格門檻，因此假陽性會略高於 ASQ-3 全量表。
       若標示為「建議轉介」，請務必諮詢小兒科或兒童發展中心進行完整專業評估，本系統的篩檢結果不取代臨床診斷。
+    </p>
+  </section>
+
+  <section class="about-section" aria-label="開發與維運">
+    <h2>開發與維運</h2>
+    <p>
+      本系統由{SITE.organization.legalName}（{SITE.organization.name}，統一編號 {SITE.organization.taxID}，
+      地址：{SITE.organization.address.addressLocality}{SITE.organization.address.streetAddress}）開發與維運。
+      產品說明見 <a href={SITE.organization.productPage}>{SITE.organization.productPage}</a>，
+      原始碼公開於 <a href={SITE.repo} rel="noopener noreferrer">{SITE.repo}</a>。
     </p>
   </section>
 

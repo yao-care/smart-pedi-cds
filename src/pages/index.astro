@@ -4,7 +4,6 @@ import { siteFaqs } from '../data/site-faqs';
 import JsonLd from '../components/seo/JsonLd.astro';
 import { SITE } from '../lib/seo/site';
 import {
-  organizationSchema,
   webSiteSchema,
   softwareApplicationSchema,
   faqPageSchema,
@@ -40,7 +39,8 @@ const trust = [
 ---
 
 <App title="免費兒童發展篩檢自評" description="免費的兒童發展遲緩自評工具：依年齡引導式問卷，即時提供發展風險分級與衛教建議。資料只在瀏覽器端運算，免登入、保護隱私。">
-  <JsonLd data={[organizationSchema(site), webSiteSchema(site), softwareApplicationSchema(site), faqPageSchema(siteFaqs)]} />
+  {/* 公司節點由 Base.astro 統一輸出（全站每頁），此處只放本頁自己的節點。 */}
+  <JsonLd data={[webSiteSchema(site), softwareApplicationSchema(site), faqPageSchema(siteFaqs)]} />
 
   <!-- 1. Hero -->
   <section class="hero" aria-label="主要訴求">
