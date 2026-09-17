@@ -14,9 +14,16 @@
 commit `13c33dd` / `1053dd3` / `64237bc`）兩個月，上游新增告警，
 其中 **1 筆 critical** 需要判定。
 
-### 接受風險（暫不修補）
+### 已修補
 
-#### 1. astro 6.4.8 — Astro: Remote code execution through AVIF image optimization（Critical）
+#### 1. astro 6.4.6 → 7.3.3 — AVIF image optimization RCE（Critical）
+
+- **處置（2026-09-17）**：升級 `astro@^7.3.3` + `@astrojs/svelte@^9.0.1`
+  （peer 要求 astro ^7）＋ sitemap／rss 同步升版；override 中無範圍的
+  `"vite": "^7.3.5"` 改為範圍限定，否則會把 astro 7 需要的 vite ^8 鎖死。
+  升級後 `pnpm audit` critical 歸零。
+- **驗證**：`pnpm check` 0 error、735 測試全綠、`pnpm build` 完成且 SEO 守門通過。
+- **以下為升級前的判定記錄（保留供稽核）**
 
 - **弱點**：透過 AVIF 影像最佳化路徑可達成遠端程式碼執行。
 - **影響版本／修補版**：`<7.2.8` → `>=7.2.8`。**6.x 分支無修補版**，
@@ -38,7 +45,7 @@ commit `13c33dd` / `1053dd3` / `64237bc`）兩個月，上游新增告警，
 - **相同狀況的 repo**：`smart-geri-cds`、`smart-func-cds` 亦為 astro 6.4.8，
   同一判定成立；升級應三者同步評估。
 
-#### 2. 其餘 high／moderate 告警
+### 其餘 high／moderate 告警
 
 `pnpm audit` 的計數同時涵蓋 devDependencies 與間接相依的多條路徑，數字會遠大於
 實際暴露面（多為 DoS 類、僅在建置期或開發伺服器成立）。本次未逐筆接受，
