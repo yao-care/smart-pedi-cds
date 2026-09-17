@@ -9,6 +9,7 @@
 | **A.5.29** 中斷期間之資訊安全（備份還原） | [backup-restore-test.md](backup-restore-test.md) | ✅ 程序完整；**首次還原測試已於 2026-06-10 實跑通過並留存紀錄**（§3.1） |
 | **A.8.26** 應用程式安全需求（Web 安全標頭） | [web-headers-risk-acceptance.md](web-headers-risk-acceptance.md) | ✅ ZAP 7 項標頭告警已評估；repo 內可強化者已落地，平台限制項已風險接受（2026-06-11） |
 | **A.8.8 / A.8.28** 弱點評估正確性（誤報判定） | [scan-false-positives.md](scan-false-positives.md) | ✅ 掃描 `20260714-231430-127e` 之誤報／規則錯配已逐項實測判定並留證（2026-07-15） |
+| **A.8.8** 技術弱點管理（風險接受） | [dependency-risk-acceptance.md](dependency-risk-acceptance.md) | ✅ 2026-09-17 複查：1 筆 critical（astro AVIF RCE）經核實觸發條件不成立，附不適用理由與再評估條件 |
 
 ## 完成狀態
 

@@ -6,7 +6,7 @@
 
 ## 技術棧
 
-- **框架**: Astro 6 SSG + Svelte 5 (runes)
+- **框架**: Astro 7 SSG + Svelte 5 (runes)
 - **樣式**: CSS Custom Properties + OKLCH（`src/styles/tokens.css`，僅 7 個 source-of-truth 色 token）
 - **內容**: Astro Content Layer API + Zod
 - **資料庫**: IndexedDB via Dexie 4.x（瀏覽器端，多版本 upgrade，目前 schema v7）

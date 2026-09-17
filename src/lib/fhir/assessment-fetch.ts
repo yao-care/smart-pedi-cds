@@ -25,6 +25,26 @@ interface Bundle {
   entry?: BundleEntry[];
 }
 
+/** 任一 FHIR 資源；本模組不讀 Observation 的欄位，故不細部建模。 */
+type FhirResourceLike = Record<string, unknown>;
+
+/**
+ * DiagnosticReport **本模組實際會讀到的欄位**，非完整 FHIR 型別建模。
+ * 刻意不用 `Record<string, any>`：專案規則禁 `any`，而全欄位建模對這裡的
+ * 用途（擷取少數欄位還原 Assessment）過重且易與伺服器實際回傳脫節。
+ */
+interface FhirDiagnosticReportLike {
+  id?: string;
+  status?: string;
+  identifier?: Array<{ system?: string; value?: string }>;
+  conclusion?: string;
+  conclusionCode?: Array<{ coding?: Array<{ code?: string }> }>;
+  extension?: Array<{ url?: string; valueDecimal?: number }>;
+  effectivePeriod?: { start?: string; end?: string };
+  effectiveDateTime?: string;
+  subject?: { reference?: string };
+}
+
 /**
  * Map SNOMED conclusionCode → triage category. Falls back to 'monitor'
  * when the code is unrecognised so reverse-mapped reports stay usable.
@@ -58,27 +78,27 @@ export function parseObservationCode(text: string): { domain: string; metric: st
  * record is not in IndexedDB.
  */
 export function bundleToAssessment(
-  report: Record<string, any>,
-  _observations: Record<string, any>[],
+  report: FhirDiagnosticReportLike,
+  _observations: FhirResourceLike[],
 ): Assessment {
-  const identifiers = (report.identifier as Array<{ system?: string; value?: string }>) ?? [];
-  const idVal = identifiers.find((i) => i.system === ID_SYSTEM)?.value ?? report.id;
+  const identifiers = report.identifier ?? [];
+  const idVal = identifiers.find((i) => i.system === ID_SYSTEM)?.value ?? report.id ?? '';
 
-  const conclusionCode = report.conclusionCode?.[0]?.coding?.[0]?.code as string | undefined;
+  const conclusionCode = report.conclusionCode?.[0]?.coding?.[0]?.code;
   const category = snomedToCategory(conclusionCode);
 
-  const extensions = (report.extension as Array<{ url?: string; valueDecimal?: number }>) ?? [];
+  const extensions = report.extension ?? [];
   const confidence = extensions.find((x) => x.url === CONFIDENCE_EXT_URL)?.valueDecimal ?? 0;
 
-  const period = report.effectivePeriod as { start?: string; end?: string } | undefined;
+  const period = report.effectivePeriod;
   const startedAtStr = period?.start ?? report.effectiveDateTime;
   const startedAt = startedAtStr ? new Date(startedAtStr) : new Date(0);
   const completedAt = period?.end ? new Date(period.end) : undefined;
 
-  const conclusion = (report.conclusion as string | undefined) ?? '';
+  const conclusion = report.conclusion ?? '';
   const summary = stripLegacyConclusionPrefix(conclusion);
 
-  const subjectRef = (report.subject as { reference?: string } | undefined)?.reference ?? '';
+  const subjectRef = report.subject?.reference ?? '';
   const childId = subjectRef.replace(/^Patient\//, '');
 
   return {
@@ -95,7 +115,7 @@ export function bundleToAssessment(
       summary,
     },
     fhirSubmitted: true,
-    fhirDiagnosticReportId: report.id,
+    fhirDiagnosticReportId: report.id ?? '',
     createdAt: startedAt,
     updatedAt: completedAt ?? startedAt,
   } as Assessment;
@@ -117,8 +137,8 @@ export async function fetchAssessmentFromFhir(
   if (!reportEntry) return null;
   const observations = entries
     .filter((e) => e.resource.resourceType === 'Observation')
-    .map((e) => e.resource as Record<string, any>);
-  return bundleToAssessment(reportEntry.resource as Record<string, any>, observations);
+    .map((e) => e.resource as FhirResourceLike);
+  return bundleToAssessment(reportEntry.resource as FhirDiagnosticReportLike, observations);
 }
 
 /**
@@ -140,20 +160,19 @@ export async function listAssessmentsFromFhir(
       `&_sort=-date`,
   )) as Bundle;
   return (bundle.entry ?? []).map((e) => {
-    const r = e.resource as Record<string, any>;
-    const identifiers = (r.identifier as Array<{ system?: string; value?: string }>) ?? [];
-    const idVal = identifiers.find((i) => i.system === ID_SYSTEM)?.value ?? (r.id as string);
-    const period = r.effectivePeriod as { start?: string } | undefined;
-    const dateStr = period?.start ?? (r.effectiveDateTime as string | undefined);
-    const conclusionCode = r.conclusionCode?.[0]?.coding?.[0]?.code as string | undefined;
-    const patientRef = (r.subject as { reference?: string } | undefined)?.reference ?? '';
+    const r = e.resource as FhirDiagnosticReportLike;
+    const identifiers = r.identifier ?? [];
+    const idVal = identifiers.find((i) => i.system === ID_SYSTEM)?.value ?? r.id ?? '';
+    const dateStr = r.effectivePeriod?.start ?? r.effectiveDateTime;
+    const conclusionCode = r.conclusionCode?.[0]?.coding?.[0]?.code;
+    const patientRef = r.subject?.reference ?? '';
     return {
       id: idVal,
-      fhirReportId: r.id as string,
+      fhirReportId: r.id ?? '',
       patientRef,
       date: new Date(dateStr ?? 0),
       category: snomedToCategory(conclusionCode),
-      summary: stripLegacyConclusionPrefix((r.conclusion as string) ?? ''),
+      summary: stripLegacyConclusionPrefix(r.conclusion ?? ''),
     };
   });
 }
